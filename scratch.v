@@ -829,4 +829,76 @@ Module Functor.
     apply eq_trns with id; [auto | apply ret_right | apply eq_id_rid].
   Qed.
 
-End Functor
+  
+  Definition KTCompose {C: Category}{T: C -> C}(kt: KT T)
+             (X Y Z: C)(f: X ⟶ T Y)(g: Y ⟶ T Z): X ⟶ T Z :=
+    bind g ◦ f.
+  Hint Unfold KTCompose.
+
+  Program Instance KTMorphism
+          {C: Category}{T: C -> C}(kt: KT T)
+  : Morphism C :=
+    { fun_type X Y := X ⟶ T Y }.
+
+  Program Instance ComposableKTMorphism
+          {C: Category}{T: C -> C}(kt: KT T)
+  : Composable (KTMorphism kt) :=
+    { compose X Y Z f g := KTCompose kt X Y Z f g }.
+  Next Obligation.
+    apply compose_subst; [ assumption | apply bind_subst ; assumption ].
+  Qed.
+  Program Instance AssociativeKTMorphism
+          {C: Category}{T: C -> C}(kt: KT T)
+  : Associative (ComposableKTMorphism kt).
+  Next Obligation.
+    unfold KTCompose.
+    eapply eq_trns; [ auto | | apply compose_assoc ].
+    apply compose_subst; [ apply eq_refl; auto | ].
+    apply eq_symm; auto.
+    apply bind_assoc.
+  Qed.
+  Program Instance KTMorphismHasLeftId
+          {C: Category}{T: C -> C}(kt: KT T)
+  : HasLeftId (ComposableKTMorphism kt) :=
+    { lid X := ret }.
+  Next Obligation.
+    unfold KTCompose.
+    apply ret_right.
+  Qed.
+  Program Instance KTMorphismHasRightId
+          {C: Category}{T: C -> C}(kt: KT T)
+  : HasRightId (ComposableKTMorphism kt) :=
+    { rid X := ret }.
+  Next Obligation.
+    unfold KTCompose.
+    eapply eq_trns; [ auto | apply compose_subst | ].
+    - apply eq_refl; auto.
+    - apply ret_left.
+    - apply eq_trns with (rid ◦ f); auto; [ apply compose_subst | ]. 
+      + apply eq_refl; auto.
+      + apply eq_id_rid.
+      + apply right_rid_id.
+  Qed.
+  Program Instance KTMorphismHasId
+          {C: Category}{T: C -> C}(kt: KT T)
+  : HasId (ComposableKTMorphism kt) :=
+    { id X := ret }.
+  Next Obligation.
+    apply eq_refl; auto.
+  Qed.
+  Next Obligation.
+    apply eq_refl; auto.
+  Qed.
+
+  Program Instance KT_KleisliCategory
+          {C: Category}{T: C -> C}(kt: KT T)
+  : Category :=
+    { obj := obj ; arr := KTMorphism kt }.
+
+  Program Instance KleisliCategory
+          {C: Category}{T: Functor C C}(m: Monad T)
+  : Category := KT_KleisliCategory (MonadKT m).
+
+
+            
+End Functor.
