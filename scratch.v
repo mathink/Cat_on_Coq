@@ -110,7 +110,10 @@ Module Setoid.
     { fun_type (X Y: S): Setoid }.
   Notation "X ⟶ Y" := (fun_type X Y) (at level 60, right associativity).
   Class Composable {S: Type}(m: Morphism S) :=
-    { compose {X Y Z: S}: (X ⟶ Y) -> (Y ⟶ Z) -> (X ⟶ Z) }.
+    { compose {X Y Z: S}: (X ⟶ Y) -> (Y ⟶ Z) -> (X ⟶ Z);
+      compose_subst:
+        forall {X Y Z: S}(f f': X ⟶ Y)(g g': Y ⟶ Z),
+          f == f' -> g == g' -> compose f g == compose f' g' }.
   Notation "g ◦ f" := (compose f g) (at level 60, right associativity).
   Class Associative {S: Type}{m: Morphism S}(composable: Composable m) :=
     { compose_assoc:
@@ -164,6 +167,14 @@ Module Setoid.
 
   Program Instance ComposableMapMorphism: Composable MapMorphism :=
     { compose X Y Z f g := ComposeMap f g }.
+  Next Obligation.
+    simpl; unfold Map_eq; simpl; auto.
+    intros.
+    apply eq_trns with (g (f' x)); auto.
+    apply ap_preserve_eq.
+    apply H.
+  Qed.
+
   Program Instance AssociativeMapMorphism
   : Associative ComposableMapMorphism.
   Next Obligation.
@@ -220,6 +231,10 @@ Module Category.
     { fun_type X Y := FunctionSetoid X Y }.
   Program Instance ComposableFunctionMorphism: Composable FunctionMorphism :=
     { compose X Y Z f g := fun x => g (f x) }.
+  Next Obligation.
+    simpl.
+    congruence.
+  Qed.
   Program Instance: Associative ComposableFunctionMorphism.
   Next Obligation.
     simpl; auto.
@@ -253,6 +268,11 @@ Module Category.
           {S: Type}{m: Morphism S}(composable: Composable m)
   : Composable (op_Morphism m) :=
     { compose X Y Z := fun (f: Y ⟶ X)(g: Z ⟶ Y) => (compose (m:=m) g f) }.
+  Next Obligation.
+    simpl.
+    intros.
+    apply compose_subst; assumption.
+  Qed.
   Program Instance op_Associative
           {S: Type}{m: Morphism S}{composable: Composable m}
           (associative: Associative composable)
@@ -398,7 +418,7 @@ Module Functor.
         forall (X Y Z: C)(f: X ⟶ Y)(g: Y ⟶ Z),
           fmap g◦fmap f == fmap (g◦f) }.
   Coercion fobj: Functor >-> Funclass.
-  Notation "F .[ f ]" := (@fmap _ _ F _ _ f) (at level 55, left associativity).
+  (* Notation "F .[ f ]" := (@fmap _ _ F _ _ f) (at level 55, left associativity). *)
 
   Program Instance IdFunctor (C: Category): Functor C C :=
     { fobj X := X;
@@ -417,7 +437,7 @@ Module Functor.
   Next Obligation.
     intros.
     simpl.
-    apply eq_trns with (G.[id]); auto.
+    apply eq_trns with (fmap id); auto.
     - apply ap_preserve_eq; apply fmap_id.
     - apply fmap_id.
   Qed.
@@ -552,10 +572,10 @@ Module Functor.
           (m_join X) ◦ (m_unit (T X)) == id;
       m_join_T_unit:
         forall (X: C),
-          (m_join X) ◦ T.[m_unit X] == id;
+          (m_join X) ◦ fmap (m_unit X) == id;
       m_join_join:
         forall (X: C),
-          (m_join X) ◦ (m_join (T X)) == (m_join X) ◦ T.[m_join X] }.
+          (m_join X) ◦ (m_join (T X)) == (m_join X) ◦ fmap (m_join X) }.
 
   
   Program Instance cons_a_nil_Natrans: Natrans (IdFunctor Sets) ListFunctor :=
@@ -601,5 +621,212 @@ Module Functor.
   Qed.
   
   
-  
-End Category.
+  Class KT {C: Category}(T: C -> C) :=
+    { ret {X: C}: X ⟶ T X;
+      bind {X Y: C}: (X ⟶ T Y) -> (T X ⟶ T Y);
+      
+      bind_subst:
+        forall {X Y: C}(f f': X ⟶ T Y),
+          f == f' -> bind f == bind f';
+
+      ret_left:
+        forall (X: C),
+          bind (ret (X:=X)) == id;
+      ret_right:
+        forall (X Y: C)(f: X ⟶ T Y),
+          bind f ◦ ret == f;
+      bind_assoc:
+        forall (X Y Z: C)(f: X ⟶ T Y)(g: Y ⟶ T Z),
+          bind g◦bind f == bind (bind g◦f) }.
+
+
+  Lemma flat_map_app:
+    forall (X Y: Set)(f: X -> list Y)(l1 l2: list X),
+      flat_map f (l1 ++ l2) = flat_map f l1 ++ flat_map f l2.
+  Proof.
+    induction l1 as [ | h t ]; simpl in *; auto.
+    intros.
+    rewrite <- app_assoc; congruence.
+  Qed.
+
+  Program Instance ListKT: KT (fun X: Sets => list X) :=
+    { ret X a := cons a nil;
+      bind X Y f := flat_map f }.
+  Next Obligation.
+    induction x as [ | h t ]; simpl in *; auto; congruence.
+  Qed.
+  Next Obligation.
+    induction x as [ | h t ]; simpl in *; auto; congruence.
+  Qed.
+  Next Obligation.
+    apply app_nil_r.
+  Qed.
+  Next Obligation.
+    induction x as [ | h t ]; simpl in *; auto.
+    rewrite flat_map_app.
+    rewrite IHt.
+    reflexivity.
+  Qed.
+
+
+
+  Program Instance MonadKT `(monad: Monad): KT fobj :=
+    { ret X := m_unit X;
+      bind X Y f := m_join Y ◦ fmap f }.
+  Next Obligation.
+    apply compose_subst; [ | apply eq_refl; auto ].
+    apply ap_preserve_eq.
+    apply H.
+  Qed.
+  Next Obligation.
+    apply m_join_T_unit.
+  Qed.
+  Next Obligation.
+    apply eq_trns
+    with (m_join Y ◦ fmap f ◦ m_unit X);
+    [ auto | apply compose_assoc | ].
+    apply eq_trns
+    with (m_join Y ◦ (m_unit (T Y)) ◦ fmap f);
+    [ auto | apply compose_subst | ].
+    - apply eq_symm; auto. 
+      apply naturality.
+    - apply eq_refl; auto.
+    - apply eq_trns
+      with ((m_join Y ◦ m_unit (T Y)) ◦ fmap f);
+      [ auto | apply eq_symm; auto;  apply compose_assoc | ].
+      simpl.
+      apply eq_trns 
+      with (id ◦ f); [auto | apply compose_subst | ].
+      + apply eq_refl; auto.
+      + apply m_join_unit_T.
+      + apply eq_trns with (rid ◦ f); auto.
+        apply compose_subst; [ apply eq_refl; auto | apply eq_id_rid ].
+        apply right_rid_id.
+  Qed.
+  Next Obligation.
+    apply eq_symm; auto.
+    apply eq_trns
+    with ((m_join Z ◦ m_join (T Z)) ◦ (fmap (fmap g) ◦ fmap f)); auto.
+    - apply eq_symm; auto.
+      eapply eq_trns; [ auto | apply compose_subst | ].
+      + apply fmap_compose.
+      + apply m_join_join.
+      + apply eq_trns
+        with ((m_join Z ◦ fmap (m_join Z)) ◦ fmap (fmap g) ◦ fmap f); auto.
+        * apply compose_subst;
+          [ apply eq_symm; auto; apply fmap_compose | apply eq_refl; auto ].
+        * eapply eq_trns; [ auto | apply compose_assoc | ].
+          apply compose_subst; [ | apply eq_refl; auto ].
+          apply eq_symm; auto.
+          eapply eq_trns; [ auto | apply eq_symm; auto; apply fmap_compose | ].
+          eapply eq_trns; [ auto | | apply compose_assoc ].
+          apply compose_subst;
+            [ apply eq_refl; auto | apply eq_symm; auto; apply fmap_compose ].
+    - apply eq_trns
+      with (m_join Z ◦ (m_join (T Z)) ◦ fmap (fmap g) ◦ fmap f); auto.
+      + eapply eq_trns; [ auto | apply compose_assoc | ].
+        apply eq_refl; auto.
+      + eapply eq_trns; [ auto | | apply eq_symm; auto; apply compose_assoc ].
+        apply compose_subst; [ | apply eq_refl; auto ].
+        eapply eq_trns; [ auto | | apply compose_assoc ].
+        eapply eq_trns; [ auto | apply eq_symm; auto; apply compose_assoc | ].
+        apply compose_subst; [ apply eq_refl; auto | ].
+        change (m_join (T Z) ◦ fmap (Functor:=(ComposeFunctor T T)) g == fmap g ◦ m_join Y).
+        eapply eq_trns; [ auto | apply naturality | ].
+        apply eq_refl; auto.
+  Qed.
+
+  Program Instance KT_fmap_Map
+          (C: Category)(T: C -> C)(kt: KT T)(X Y: C)
+  : Map (X ⟶ Y)
+        (T X ⟶ T Y) :=
+    { ap f := bind (ret ◦ f) }.
+  Next Obligation.
+    apply bind_subst.
+    apply compose_subst; [ apply H | apply eq_refl; auto ].
+  Qed.
+
+  Program Instance KTFunctor {C: Category}{T: C -> C}(kt: KT T): Functor C C :=
+    { fobj := T;
+      fmap X Y := KT_fmap_Map C T kt X Y}.
+  Next Obligation.
+    apply eq_trns with (bind ret); auto.
+    - apply bind_subst.
+      apply eq_trns with (ret ◦ lid); auto.
+      + apply compose_subst; [ apply eq_id_lid | apply eq_refl; auto ].
+      + apply left_lid_id.
+    - apply ret_left.
+  Qed.
+  Next Obligation.
+    eapply eq_trns; [ auto | apply bind_assoc | ].
+    apply bind_subst.
+    eapply eq_trns; [ auto | | apply compose_assoc ].
+    eapply eq_trns; [ auto | apply eq_symm; auto; apply compose_assoc | ].
+    apply compose_subst; [ apply eq_refl; auto | apply ret_right ].
+  Qed.
+
+  Program Instance KTNatrans_unit
+          {C: Category}{T: C -> C}(kt: KT T)
+  : Natrans (IdFunctor C) (KTFunctor kt) :=
+    { natrans X := ret }.
+  Next Obligation.
+    apply eq_symm; auto; apply ret_right.
+  Qed.
+
+  Program Instance KTNatrans_join
+          {C: Category}{T: C -> C}(kt: KT T)
+  : Natrans (ComposeFunctor (KTFunctor kt) (KTFunctor kt)) (KTFunctor kt):=
+    { natrans X := bind id }.
+  Next Obligation.
+    eapply eq_trns; [ auto | apply bind_assoc | ].
+    eapply eq_trns; [ auto | | apply eq_symm; auto; apply bind_assoc ].
+    apply bind_subst.
+    eapply eq_trns; [ auto | apply eq_symm; auto; apply compose_assoc | ].
+    eapply eq_trns; [ auto | apply compose_subst | ].
+    - apply eq_refl; auto.
+    - apply ret_right.
+    - apply eq_trns with (rid ◦ bind (ret ◦ f)); auto.
+      + apply compose_subst; [ apply eq_refl; auto | ].
+        apply eq_id_rid.
+      + eapply eq_trns; [ auto | apply right_rid_id | ].
+        apply eq_trns with (bind (ret ◦ f) ◦ lid); auto.
+        * apply eq_symm; auto; apply left_lid_id.
+        * apply compose_subst; [ | apply eq_refl; auto ].
+          apply eq_symm; auto; apply eq_id_lid.
+  Qed.
+
+  Program Instance KTMonad
+          {C: Category}{T: C -> C}(kt: KT T)
+  : Monad (KTFunctor kt).
+  Next Obligation.
+    apply ret_right.
+  Qed.
+  Next Obligation.
+    eapply eq_trns; [ auto | apply bind_assoc | ].
+    eapply eq_trns; [ auto | apply bind_subst | ].
+    apply eq_symm; auto; apply compose_assoc.
+    eapply eq_trns; [ auto | apply bind_subst | ].
+    apply compose_subst; [ apply eq_refl; auto | apply ret_right ].
+    eapply eq_trns; [ auto | apply bind_subst | ].
+    apply compose_subst; [ apply eq_refl; auto | apply eq_id_rid ].
+    eapply eq_trns; [ auto | apply bind_subst | ].
+    apply right_rid_id.
+    apply ret_left.
+  Qed.
+  Next Obligation.
+    eapply eq_trns; [ auto | apply bind_assoc | ].
+    eapply eq_trns; [ auto | | apply eq_symm; auto; apply bind_assoc ].
+    apply bind_subst.
+    eapply eq_trns; [ auto | apply compose_subst | ].
+    apply eq_id_lid.
+    apply eq_refl; auto.
+    eapply eq_trns; [ auto | apply left_lid_id | ].
+    eapply eq_trns; [ auto | | apply compose_assoc ].
+    eapply eq_trns; [ auto | | apply compose_subst ].
+    apply eq_symm; auto; apply right_rid_id.
+    apply eq_refl; auto.
+    apply eq_symm; auto.
+    apply eq_trns with id; [auto | apply ret_right | apply eq_id_rid].
+  Qed.
+
+End Functor
