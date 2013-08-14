@@ -85,7 +85,7 @@ Module Setoid.
     Qed.
 
     Program Instance FunctionSetoid (X Y: Set): Setoid :=
-      { carrier := X -> Y;
+      { carrier := X -> Y : Set;
         equal f g := forall x, f x = g x }.
     Next Obligation.
       split; split; congruence.
@@ -381,10 +381,15 @@ Module Category.
     { obj := Setoid;
       arr := MapMorphism }.
 
-  Print arr.
+End Category.
+
+Module Functor.
+
+  Import Equivalence Setoid Category.
+
   Class Functor (C D: Category): Type :=
     { fobj: C -> D;
-      fmap {X Y: C}(f: X ⟶ Y): fobj X ⟶ fobj Y;
+      fmap {X Y: C}: (X ⟶ Y) ⟶ (fobj X ⟶ fobj Y);
       
       fmap_id:
         forall (X: C), fmap id == id (X:=fobj X);
@@ -395,17 +400,86 @@ Module Category.
   Coercion fobj: Functor >-> Funclass.
   Notation "F .[ f ]" := (@fmap _ _ F _ _ f) (at level 55, left associativity).
 
+  Program Instance IdFunctor (C: Category): Functor C C :=
+    { fobj X := X;
+      fmap X Y := IdMap (X ⟶ Y) }.
+  Next Obligation.
+    simpl; intros; apply eq_refl; auto.
+  Qed.
+  Next Obligation.
+    simpl; intros; apply eq_refl; auto.
+  Qed.
+  
+  Program Instance ComposeFunctor {C D E: Category}
+          (F: Functor C D)(G: Functor D E): Functor C E :=
+    { fobj X := G (F X);
+      fmap X Y := (fmap ◦ fmap) }.
+  Next Obligation.
+    intros.
+    simpl.
+    apply eq_trns with (G.[id]); auto.
+    - apply ap_preserve_eq; apply fmap_id.
+    - apply fmap_id.
+  Qed.
+  Next Obligation.
+    intros.
+    simpl.
+    eapply eq_trns; [ auto | apply fmap_compose | ].
+    apply ap_preserve_eq; apply fmap_compose.
+  Qed.
+
   Class Natrans {C D: Category}(F G: Functor C D) :=
-    { natrans {X: C}: F X ⟶ G X;
+    { natrans (X: C): (@fun_type _ (@arr D) (F X) (G X));
       naturality:
         forall (X Y: C)(f: X ⟶ Y),
-          natrans ◦ fmap f == fmap f ◦ natrans }.
-
-
+          (natrans Y) ◦ fmap f == fmap f ◦ (natrans X) }.
+  Coercion natrans: Natrans >-> Funclass.
+  
   Require Import List.
+  (*
+  Inductive list (A: Set) :=
+  | nil | cons (h: A)(t: list A).
+  Arguments nil {A}.
+  Arguments cons {A}(h)(t).
+  Fixpoint map {X Y: Set}(f: X -> Y)(l: list X): list Y :=
+    match l with
+      | nil => nil
+      | cons h t => cons (f h) (map f t)
+    end.
+  Fixpoint app {X: Set}(l1 l2: list X): list X :=
+    match l1 with
+      | nil => l2
+      | cons h t => cons h (app t l2)
+    end.
+  Lemma map_id:
+    forall {X: Set}(l: list X), map id l = l.
+  Proof.
+    induction l as [ | h t ]; simpl in *; congruence.
+  Qed.
+  Lemma map_map:
+    forall {X Y Z: Set}(f: X -> Y)(g: Y -> Z)(l: list X),
+      map g (map f l) = map (fun x => g (f x)) l.
+  Proof.
+    induction l as [ | h t ]; simpl in *; congruence.
+  Qed.
+  Lemma map_app:
+    forall (X Y: Set)(f: X -> Y)(l1 l2: list X),
+      map f (app l1 l2) = app (map f l1) (map f l2).
+  Proof.
+    induction l1 as [ | h t ]; simpl in *; congruence.
+  Qed. *)
+
+  Program Instance map_Map {X Y: Set}
+  : Map (FunctionSetoid X Y)
+        (FunctionSetoid (list X) (list Y)) :=
+    { ap := @map X Y }.
+  Next Obligation.
+    induction x0 as [ | h t]; simpl in *; congruence.
+  Qed.
+    
   Program Instance ListFunctor: Functor Sets Sets :=
     { fobj X := list X;
-      fmap X Y f := map f }.
+      fmap X Y := map_Map }.
   Next Obligation.
     apply map_id.
   Qed.
@@ -425,22 +499,27 @@ Module Category.
   Lemma map_tree_id:
     forall (A: Set)(t: tree A), map_tree id t = t.
   Proof.
-    induction t as [ a | l IHl r IHr ];
-    simpl in *; congruence.
+    induction t as [ a | l IHl r IHr ]; simpl in *; congruence.
   Qed.
   
   Lemma map_tree_map_tree:
     forall (A B C: Set)(f: A -> B)(g: B -> C)(t: tree A),
       map_tree g (map_tree f t) = map_tree (fun x => g (f x)) t.
   Proof.
-    induction t as [ a | l IHl r IHr]; simpl in *;
-    congruence.
+    induction t as [ a | l IHl r IHr]; simpl in *; congruence.
   Qed.
 
+  Program Instance map_tree_Map {X Y: Set}
+  : Map (FunctionSetoid X Y)
+        (FunctionSetoid (tree X) (tree Y)) :=
+    { ap := @map_tree X Y }.
+  Next Obligation.
+    induction x0 as [ a | l IHl r IHr ]; simpl in *; congruence.
+  Qed.
 
   Program Instance TreeFunctor: Functor Sets Sets :=
     { fobj X := tree X;
-      fmap X Y f := map_tree f }.
+      fmap X Y := map_tree_Map }.
   Next Obligation.
     apply map_tree_id.
   Qed.
@@ -464,4 +543,63 @@ Module Category.
   Qed.
 
 
+  Class Monad {C: Category}(T: Functor C C) :=
+    { m_unit:> Natrans (IdFunctor C) T;
+      m_join:> Natrans (ComposeFunctor T T) T;
+
+      m_join_unit_T:
+        forall (X: C),
+          (m_join X) ◦ (m_unit (T X)) == id;
+      m_join_T_unit:
+        forall (X: C),
+          (m_join X) ◦ T.[m_unit X] == id;
+      m_join_join:
+        forall (X: C),
+          (m_join X) ◦ (m_join (T X)) == (m_join X) ◦ T.[m_join X] }.
+
+  
+  Program Instance cons_a_nil_Natrans: Natrans (IdFunctor Sets) ListFunctor :=
+    { natrans X := fun x => cons x nil }.
+
+  Fixpoint concat {X: Set}(ll: list (list X)) :=
+    match ll with
+      | nil => nil
+      | cons hl tll => app hl (concat tll)
+    end.
+  Program Instance concat_Natrans
+  : Natrans (ComposeFunctor ListFunctor ListFunctor) ListFunctor :=
+    { natrans X := fun ll => concat ll }.
+  Next Obligation.
+    induction x as [ | hl tll ]; simpl in *; auto.
+    rewrite map_app.
+    congruence.
+  Qed.
+
+  Lemma concat_app:
+    forall {X: Set}(ll1 ll2: list (list X)),
+      concat (ll1 ++ ll2) = concat ll1 ++ concat ll2.
+  Proof.
+    induction ll1 as [ | hl tll ]; simpl in *; auto.
+    intros.
+    rewrite <- app_assoc.
+    rewrite IHtll.
+    reflexivity.
+  Qed.
+
+  Program Instance ListMonad: Monad ListFunctor.
+  Next Obligation.
+    apply app_nil_r.
+  Qed.
+  Next Obligation.
+    induction x as [ | h t ]; simpl in *; congruence.
+  Qed.
+  Next Obligation.
+    induction x as [ | hll tlll ]; simpl in *; auto.
+    rewrite concat_app.
+    rewrite IHtlll.
+    reflexivity.
+  Qed.
+  
+  
+  
 End Category.
