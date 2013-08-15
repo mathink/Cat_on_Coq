@@ -900,5 +900,52 @@ Module Functor.
   : Category := KT_KleisliCategory (MonadKT m).
 
 
-            
+
+  Class Adjunction {C D: Category}
+        (F: Functor C D)(G: Functor D C) :=
+    { adj_phi (X: C)(Y: D): (F X ⟶ Y) -> (X ⟶ G Y);
+      adj_phi_inv (X: C)(Y: D): (X ⟶ G Y) -> (F X ⟶ Y);
+
+      adj_phi_iso:
+        forall (X: C)(Y: D)(f: F X ⟶ Y),
+          adj_phi_inv X Y (adj_phi X Y f) == f;
+      adj_phi_inv_iso:
+        forall (X: C)(Y: D)(g: X ⟶ G Y),
+          adj_phi X Y (adj_phi_inv X Y g) == g;
+  
+      adj_naturality:
+        forall (X Y: C)(Z W: D)(f: X ⟶ Y)(g: F Y ⟶ Z)(h: Z ⟶ W),
+          adj_phi X W (h◦g◦fmap f) == fmap h ◦ adj_phi Y Z g ◦ f }.
+  
+
+  
+  Class Monoid :=
+    { mon :> Setoid;
+      mon_binop: mon -> mon -> mon;
+      mon_unit: mon;
+
+      monoid_unit_left:
+        forall x: mon,
+          mon_binop mon_unit x == x;
+      monoid_unit_right:
+        forall x: mon,
+          mon_binop mon_unit x == x;
+      monoid_assoc:
+        forall x y z: mon,
+          mon_binop x (mon_binop y z) == mon_binop (mon_binop x y) z }.
+  Notation "X ⊕ Y" := (mon_binop X Y) (at level 60, right associativity).
+  Coercion mon: Monoid >-> Setoid.
+
+  Class MonoidHom (M N: Monoid) :=
+    { mon_map :> Map M N;
+
+      mon_map_unit:
+        mon_map mon_unit == mon_unit;
+
+      mon_map_binop:
+        forall x y: M,
+          mon_map (x⊕y) == mon_map x⊕mon_map y }.
+  Coercion mon_map: MonoidHom >-> Map.
+  
+  
 End Functor.
