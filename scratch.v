@@ -920,32 +920,152 @@ Module Functor.
 
   
   Class Monoid :=
-    { mon :> Setoid;
+    { mon : Set;
       mon_binop: mon -> mon -> mon;
       mon_unit: mon;
 
       monoid_unit_left:
         forall x: mon,
-          mon_binop mon_unit x == x;
+          mon_binop mon_unit x = x;
       monoid_unit_right:
         forall x: mon,
-          mon_binop mon_unit x == x;
+          mon_binop x mon_unit = x;
       monoid_assoc:
         forall x y z: mon,
-          mon_binop x (mon_binop y z) == mon_binop (mon_binop x y) z }.
+          mon_binop x (mon_binop y z) =mon_binop (mon_binop x y) z }.
   Notation "X ⊕ Y" := (mon_binop X Y) (at level 60, right associativity).
-  Coercion mon: Monoid >-> Setoid.
-
+  Coercion mon: Monoid >-> Sortclass.
   Class MonoidHom (M N: Monoid) :=
-    { mon_map :> Map M N;
+    { mon_map : M -> N;
 
       mon_map_unit:
-        mon_map mon_unit == mon_unit;
+        mon_map mon_unit = mon_unit;
 
       mon_map_binop:
         forall x y: M,
-          mon_map (x⊕y) == mon_map x⊕mon_map y }.
-  Coercion mon_map: MonoidHom >-> Map.
+          mon_map (x⊕y) = mon_map x⊕mon_map y }.
+  Coercion mon_map: MonoidHom >-> Funclass.
+  Program Instance ComposeMH{M N L: Monoid}(f: MonoidHom M N)(g: MonoidHom N L)
+  : MonoidHom M L :=
+    { mon_map x := mon_map (mon_map x) }. 
+  Next Obligation.
+    repeat rewrite mon_map_unit; auto.
+  Qed.
+  Next Obligation.
+    repeat rewrite mon_map_binop; auto.
+  Qed.
+  Program Instance IdMH {M: Monoid}: MonoidHom M M :=
+    { mon_map x := x }. 
   
-  
+  Program Instance MonoidHomSetoid (X Y: Monoid): Setoid :=
+    { carrier := MonoidHom X Y; equal f g := forall x, f x = g x }. 
+  Next Obligation.
+    split; split; auto; congruence.
+  Qed.
+
+  Program Instance MonoidHomMorphism: Morphism Monoid :=
+    { fun_type X Y := MonoidHomSetoid X Y }.
+  Program Instance CMHM: Composable MonoidHomMorphism :=
+    { compose X Y Z f g := ComposeMH f g }.
+  Next Obligation.
+    congruence.
+  Qed.
+  Program Instance: Associative CMHM.
+  Program Instance: HasLeftId CMHM :=
+    { lid X := IdMH }.
+  Program Instance: HasRightId CMHM :=
+    { rid X := IdMH }.
+  Program Instance MHhasId: HasId CMHM :=
+    { id X := IdMH }.
+  Program Instance Mon: Category :=
+    { obj := Monoid ; arr := MonoidHomMorphism }.
+
+
+  Program Instance ForgetMon_fmap (X Y: Monoid)
+  : Map (MonoidHomSetoid X Y) (FunctionSetoid X Y) :=
+    { ap f := f }.
+  Program Instance ForgetMon: Functor Mon Sets :=
+    { fobj X := (@mon X) ; fmap X Y := ForgetMon_fmap X Y }.
+
+  Program Instance ListMonoid (X: Set): Monoid :=
+    { mon := list X;
+      mon_binop x y := app x y;
+      mon_unit := nil }.
+  Next Obligation.
+    apply app_nil_r.
+  Qed.
+  Next Obligation.
+    apply app_assoc.
+  Qed.
+
+  Program Instance map_MonoidHom {X Y: Set}(f: X -> Y)
+  : MonoidHom (ListMonoid X) (ListMonoid Y) :=
+    { mon_map := map f }.
+  Next Obligation.
+    apply map_app.
+  Qed.
+
+  Program Instance map_MonoidHomMap (X Y: Set)
+  : Map (X ⟶ Y) (ListMonoid X ⟶ ListMonoid Y) :=
+    { ap := map_MonoidHom }.
+  Next Obligation.
+    induction x0 as [ | h t ]; auto.
+    simpl.
+    rewrite H.
+    rewrite IHt.
+    reflexivity.
+  Qed.
+
+  Program Instance ListFunctorMon: Functor Sets Mon :=
+    { fobj X := ListMonoid X ; fmap X Y := map_MonoidHomMap X Y }.
+  Next Obligation.
+    induction x as [ | h t ]; simpl; congruence.
+  Qed.
+  Next Obligation.
+    induction x as [ | h t ]; simpl; congruence.
+  Qed.
+
+  Check terminal.
+
+  Program Instance RADJ (X: Sets)(Y: Mon)(g: X -> ForgetMon Y)
+  : MonoidHom (ListFunctorMon X) Y.
+  Next Obligation.
+    induction H as [ | h t ].
+    - exact mon_unit.
+    - exact (g h⊕IHt).
+  Defined.
+  Next Obligation.
+    unfold RADJ_obligation_1; simpl.
+    generalize dependent y.
+    induction x as [ | h t ].
+    - simpl.
+      intro.
+      rewrite monoid_unit_left; auto.
+    - simpl.
+      intro.
+      rewrite IHt.
+      rewrite monoid_assoc.
+      auto.
+  Qed.
+
+  Program Instance ListAdjunction
+  : Adjunction ListFunctorMon ForgetMon :=
+    { adj_phi X Y f := fun x => f (cons x nil);
+      adj_phi_inv X Y g := RADJ _ _ g
+    }.
+  Next Obligation.
+    unfold RADJ_obligation_1; simpl.
+    induction x as [ | h t ]; simpl.
+    - change (mon_unit = f mon_unit).
+      rewrite mon_map_unit; auto.
+    - rewrite IHt.
+      rewrite <- mon_map_binop.
+      simpl.
+      auto.
+  Qed.
+  Next Obligation.
+    rewrite monoid_unit_right.
+    auto.
+  Qed.
+
 End Functor.
