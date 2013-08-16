@@ -72,9 +72,10 @@ Module Setoid.
     { carrier: Type;
       equal: carrier -> carrier -> Prop;
       
-      prf_equal_equiv: Equivalence equal }.
+      prf_equal_equiv:> Equivalence equal }.
   Coercion carrier: Setoid >-> Sortclass.
   Notation "x == y" := (equal x y) (at level 80, no associativity).
+  Hint Unfold prf_equal_equiv.
   Hint Resolve prf_equal_equiv.
 
   Section SetoidInstances.
@@ -108,7 +109,7 @@ Module Setoid.
 
   (* Morphism *)
   Class Morphism (S: Type) :=
-    { fun_type (X Y: S): Setoid }.
+    { fun_type (X Y: S):> Setoid }.
   Notation "X ⟶ Y" := (fun_type X Y) (at level 60, right associativity).
   Class Composable {S: Type}(m: Morphism S) :=
     { compose {X Y Z: S}: (X ⟶ Y) -> (Y ⟶ Z) -> (X ⟶ Z);
@@ -116,17 +117,32 @@ Module Setoid.
         forall {X Y Z: S}(f f': X ⟶ Y)(g g': Y ⟶ Z),
           f == f' -> g == g' -> compose f g == compose f' g' }.
   Notation "g ◦ f" := (compose f g) (at level 60, right associativity).
+  Lemma compose_subst_fst:
+    forall (S: Type)(m: Morphism S)(c: Composable m)
+       {X Y Z: S}(f f': X ⟶ Y)(g: Y ⟶ Z),
+      f == f' -> compose f g == compose f' g.
+  Proof.
+    intros; apply compose_subst; [ assumption | apply eq_refl; auto ].
+  Qed.
+  Lemma compose_subst_snd:
+    forall (S: Type)(m: Morphism S)(c: Composable m)
+       {X Y Z: S}(f: X ⟶ Y)(g g': Y ⟶ Z),
+      g == g' -> compose f g == compose f g'.
+  Proof.
+    intros; apply compose_subst; [ apply eq_refl; auto | assumption ].
+  Qed.
+
   Class Associative {S: Type}{m: Morphism S}(composable: Composable m) :=
     { compose_assoc:
         forall (X Y Z W: S)(f: X ⟶ Y)(g: Y ⟶ Z)(h: Z ⟶ W),
           (h◦g)◦f == h◦(g◦f) }.
   Class HasLeftId {S: Type}{m: Morphism S}(composable: Composable m) :=
     { lid {X: S}: X ⟶ X;
-      left_lid_id:
+      lid_left_id:
         forall (X Y: S)(f: X ⟶ Y), f ◦ lid == f }.
   Class HasRightId {S: Type}{m: Morphism S}(composable: Composable m) :=
     { rid {X: S}: X ⟶ X;
-      right_rid_id:
+      rid_right_id:
         forall (X Y: S)(f: X ⟶ Y), rid ◦ f == f }.
   Class HasId {S: Type}{m: Morphism S}(composable: Composable m) :=
     { id {X: S}: X ⟶ X;
@@ -135,6 +151,24 @@ Module Setoid.
 
       eq_id_lid: forall (X: S), id (X:=X) == lid;
       eq_id_rid: forall (X: S), id (X:=X) == rid }.
+  Lemma id_left:
+    forall {S: Type}{m: Morphism S}{c: Composable m}(hasId: HasId c)
+       (X Y: S)(f: X ⟶ Y),
+      f ◦ id == f.
+  Proof.
+    intros.
+    apply eq_trns with (f◦lid);
+      [ auto | apply compose_subst_fst; apply eq_id_lid | apply lid_left_id ].
+  Qed.
+  Lemma id_right:
+    forall {S: Type}{m: Morphism S}{c: Composable m}(hasId: HasId c)
+       (X Y: S)(f: X ⟶ Y),
+      id ◦ f == f.
+  Proof.
+    intros.
+    apply eq_trns with (rid ◦ f);
+      [ auto | apply compose_subst_snd; apply eq_id_rid | apply rid_right_id ].
+  Qed.
 
   (* Definition of Map *)
   Class Map (X Y: Setoid): Type :=
@@ -296,7 +330,7 @@ Module Category.
   Next Obligation.
     intros S m c hasrid X Y f.
     simpl in *.
-    apply right_rid_id.
+    apply rid_right_id.
   Qed.
   Program Instance op_HasRightId
           S (m: Morphism S)(c: Composable m)(haslid: HasLeftId c)
@@ -305,7 +339,7 @@ Module Category.
   Next Obligation.
     intros S m c haslid X Y f.
     simpl in *.
-    apply left_lid_id.
+    apply lid_left_id.
   Qed.
   Program Instance op_HasId
           S (m: Morphism S)(c: Composable m)(hasid: HasId c)
@@ -437,7 +471,7 @@ Module Functor.
           op_fmap f◦op_fmap g == op_fmap (g◦f) }.
   Coercion op_fobj: contravariantFunctor >-> Funclass.
 
-  Program Instance op_Functor {C D: Category}(opF: contravariantFunctor C D)
+  Program Instance contFunctor_Functor {C D: Category}(opF: contravariantFunctor C D)
   : Functor (op_Category C) D :=
     { fobj X := op_fobj (contravariantFunctor:=opF) X;
       fmap X Y := op_fmap (contravariantFunctor:=opF) }.
@@ -478,6 +512,18 @@ Module Functor.
     apply ap_preserve_eq; apply fmap_compose.
   Qed.
 
+  Program Instance op_Functor C D (F: Functor C D)
+  : Functor C ^^op D ^^op :=
+    { fobj X := F X ; fmap X Y := fmap (Functor:=F) }.
+  Next Obligation.
+    intros.
+    apply (fmap_id (Functor:=F)).
+  Qed.
+  Next Obligation.
+    intros.
+    apply (fmap_compose (Functor:=F)).
+  Qed.
+
 
   Program Instance HomFunctor_fmap
           (C: Category)(X: C){Y Y': C}(g: Y ⟶ Y')
@@ -485,8 +531,7 @@ Module Functor.
     { ap f := compose f g }.
   Next Obligation.
     intros.
-    apply compose_subst; auto.
-    apply eq_refl; auto.
+    apply compose_subst_fst; auto.
   Qed.
 
   Program Instance HomFunctor_fmap_Map
@@ -496,7 +541,7 @@ Module Functor.
   Next Obligation.
     simpl; intros C X Y Y' g g' Heq f.
     unfold Map_eq; simpl.
-    apply compose_subst; [ apply eq_refl; auto | assumption ].
+    apply compose_subst_snd; auto.
   Qed.
 
   Program Instance opHomFunctor_fmap
@@ -505,8 +550,7 @@ Module Functor.
     { ap := compose f }.
   Next Obligation.
     intros.
-    apply compose_subst; auto.
-    apply eq_refl; auto.
+    apply compose_subst_snd; auto.
   Qed.
 
   Program Instance opHomFunctor_fmap_Map
@@ -516,7 +560,7 @@ Module Functor.
   Next Obligation.
     simpl; intros C Y X X' f f' Heq g.
     unfold Map_eq; simpl.
-    apply compose_subst; [ assumption | apply eq_refl; auto ].
+    apply compose_subst_fst; auto.
   Qed.
 
   Program Instance HomFunctor
@@ -525,9 +569,7 @@ Module Functor.
   Next Obligation.
     intros C X Y f.
     simpl.
-    apply eq_trns with (rid◦f); [ auto | | apply right_rid_id ].
-    apply compose_subst;
-      [ apply eq_refl; auto | apply eq_id_rid ].
+    apply id_right.
   Qed.
   Next Obligation.
     intros C X X' Y Z f g h.
@@ -541,9 +583,7 @@ Module Functor.
   Next Obligation.
     intros C Y X f.
     simpl.
-    apply eq_trns with (f◦lid); [ auto | | apply left_lid_id ].
-    apply compose_subst;
-      [ apply eq_id_lid | apply eq_refl; auto ].
+    apply id_left.
   Qed.
   Next Obligation.
     intros C X Y Y' Z f g h.
@@ -553,7 +593,7 @@ Module Functor.
   
   Program Instance opHomFunctor
           (C: Category)(Y: C): Functor (op_Category C) Setoids :=
-    op_Functor (contravariantHomFunctor C Y).
+    contFunctor_Functor (contravariantHomFunctor C Y).
 
 End Functor.
 
@@ -580,12 +620,12 @@ Module Natrans.
       [auto | apply compose_assoc | ].
     apply eq_trns with (T Y ◦ (fmap f ◦ S X));
       [auto | | ].
-    - apply compose_subst; [ apply naturality | apply eq_refl; auto ].
+    - apply compose_subst_fst; apply naturality.
     - apply eq_trns with ((T Y ◦ fmap f) ◦ S X);
       [auto | apply eq_symm; auto; apply compose_assoc | ].
       apply eq_trns with ((fmap f ◦ T X) ◦ S X);
         [auto | | apply compose_assoc ].
-      apply compose_subst; [ apply eq_refl; auto | apply naturality ].
+      apply compose_subst_snd; apply naturality.
   Qed.
 
   Program Instance hCompose_Natrans
@@ -595,28 +635,24 @@ Module Natrans.
     { natrans X := fmap (natrans X) ◦ natrans (fobj X) }.
   Next Obligation.
     intros.
-    eapply eq_trns; [ auto | apply compose_subst | ].
-    apply eq_refl; auto.
+    eapply eq_trns; [ auto | apply compose_subst_snd | ].
     apply eq_symm; auto.
     apply (naturality (Natrans:=T)).
     eapply eq_trns; [ auto | apply compose_assoc | ].
     apply eq_trns with (fmap f ◦ (T (G X) ◦ fmap (S X)));
-      [ auto | | ].
-    - eapply eq_trns; [ auto | | apply compose_assoc ].
-      apply eq_symm; auto.
-      eapply eq_trns; [ auto | apply compose_subst | ].
-      apply eq_refl; auto.
-      apply eq_symm; auto.
-      apply (naturality (Natrans:=T)).
-      eapply eq_trns; [ auto | apply compose_assoc | ].
-      apply compose_subst; [ | apply eq_refl; auto ].
-      eapply eq_trns; [ auto | apply (fmap_compose (Functor := F')) | ].
-      apply eq_symm; auto.
-      eapply eq_trns; [ auto | apply (fmap_compose (Functor := F')) | ].
-      apply ap_preserve_eq.
-      apply naturality.
-    - apply compose_subst; [ | apply eq_refl; auto ].
-      apply (naturality (Natrans:=T)).
+      [ auto | | apply compose_subst_fst; apply (naturality (Natrans:=T)) ].
+    eapply eq_trns; [ auto | | apply compose_assoc ].
+    apply eq_symm; auto.
+    eapply eq_trns; [ auto | apply compose_subst_snd | ].
+    apply eq_symm; auto.
+    apply (naturality (Natrans:=T)).
+    eapply eq_trns; [ auto | apply compose_assoc | ].
+    apply compose_subst_fst.
+    eapply eq_trns; [ auto | apply (fmap_compose (Functor := F')) | ].
+    apply eq_symm; auto.
+    eapply eq_trns; [ auto | apply (fmap_compose (Functor := F')) | ].
+    apply ap_preserve_eq.
+    apply naturality.
   Qed.
   
 End Natrans.
@@ -625,27 +661,354 @@ Module Adjunction.
 
   Import Equivalence Setoid Category Functor Natrans.
 
-  Class Adjunction (C D: Category)
-        (F: Functor C D)(G: Functor D C) :=
-    { adj_phi (X: C)(Y: D): (F X ⟶ Y) -> (X ⟶ G Y);
-      adj_phi_inv (X: C)(Y: D): (X ⟶ G Y) -> (F X ⟶ Y);
+  Section AdjunctionDef.
+    Context (C D: Category)(F: Functor C D)(G: Functor D C).
+    
+    (* Homset-Definition *)
+    Class Adjunction_Hom :=
+      { adj_phi (X: C)(Y: D): (F X ⟶ Y) -> (X ⟶ G Y);
+        adj_phi_inv (X: C)(Y: D): (X ⟶ G Y) -> (F X ⟶ Y);
 
-      adj_phi_iso:
-        forall (X: C)(Y: D)(f: F X ⟶ Y),
-          adj_phi_inv X Y (adj_phi X Y f) == f;
-      adj_phi_inv_iso:
-        forall (X: C)(Y: D)(g: X ⟶ G Y),
-          adj_phi X Y (adj_phi_inv X Y g) == g;
+        adj_phi_subst:
+          forall (X: C)(Y: D)(f f': F X ⟶ Y),
+            f == f' -> adj_phi X Y f == adj_phi X Y f';
+        adj_phi_inv_subst:
+          forall (X: C)(Y: D)(g g': X ⟶ G Y),
+            g == g' -> adj_phi_inv X Y g == adj_phi_inv X Y g';
+
+        adj_phi_iso:
+          forall (X: C)(Y: D)(f: F X ⟶ Y),
+            adj_phi_inv X Y (adj_phi X Y f) == f;
+        adj_phi_inv_iso:
+          forall (X: C)(Y: D)(g: X ⟶ G Y),
+            adj_phi X Y (adj_phi_inv X Y g) == g;
+        
+        adj_phi_naturality:
+          forall (X Y: C)(Z W: D)(f: X ⟶ Y)(g: F Y ⟶ Z)(h: Z ⟶ W),
+            adj_phi X W (h◦g◦fmap f) == fmap h ◦ adj_phi Y Z g ◦ f }.
+
+    Lemma adj_phi_inv_naturality:
+      forall (adj_h: Adjunction_Hom)
+         (X Y: C)(Z W: D)(f: X ⟶ Y)(g: Y ⟶ G Z)(h: Z ⟶ W),
+        adj_phi_inv X W (fmap h◦g◦ f) == h ◦ adj_phi_inv Y Z g ◦ fmap f.
+    Proof.
+      intros.
+      apply eq_trns with
+      (adj_phi_inv X W (fmap h ◦ (adj_phi Y Z (adj_phi_inv Y Z g)) ◦ f));
+        [ auto | apply adj_phi_inv_subst | ].
+      - apply compose_subst_fst;
+        apply compose_subst_snd;
+        apply eq_symm; auto; apply adj_phi_inv_iso.
+      - eapply eq_trns; [ auto | | apply adj_phi_iso ].
+        apply adj_phi_inv_subst.
+        apply eq_symm; auto; apply adj_phi_naturality.
+    Qed.
+    
+
+    (* Unit definition *)
+    Class Adjunction_Unit :=
+      { adj_unit:> Natrans (IdFunctor C) (ComposeFunctor F G);
+
+        adj_dc {X: C}{Y: D}(f: X ⟶ G Y): F X ⟶ Y;
+        adj_dc_property:
+          forall (X: C)(Y: D)(f: X ⟶ G Y),
+            fmap (adj_dc f) ◦ adj_unit X == f;
+        adj_dc_uniqueness:
+          forall (X: C)(Y: D)(f: X ⟶ G Y)(h: F X ⟶ Y),
+            fmap h ◦ adj_unit X == f -> adj_dc f == h }.
+    Lemma adj_dc_subst:
+      forall (adj_u: Adjunction_Unit)(X: C)(Y: D)(f f': X ⟶ G Y),
+        f == f' -> adj_dc f == adj_dc f'.
+    Proof.
+      intros.
+      apply adj_dc_uniqueness.
+      apply eq_trns with f';
+        [ auto | apply adj_dc_property | apply eq_symm; auto; assumption ].
+    Qed.
+    
+    (* Counit definition *)
+    Class Adjunction_Counit :=
+      { adj_counit:> Natrans (ComposeFunctor G F) (IdFunctor D);
+
+        adj_cd {X: C}{Y: D}(f: F X ⟶ Y): X ⟶ G Y;
+        adj_cd_property:
+          forall (X: C)(Y: D)(f: F X ⟶ Y),
+            adj_counit Y ◦ fmap (adj_cd f) == f;
+        adj_cd_uniqueness:
+          forall (X: C)(Y: D)(f: F X ⟶ Y)(h: X ⟶ G Y),
+            adj_counit Y ◦ fmap h == f -> adj_cd f == h }.
+    Lemma adj_cd_subst:
+      forall (adj_c: Adjunction_Counit)(X: C)(Y: D)(f f': F X ⟶ Y),
+        f == f' -> adj_cd f == adj_cd f'.
+    Proof.
+      intros.
+      apply adj_cd_uniqueness.
+      apply eq_trns with f';
+        [ auto | apply adj_cd_property | apply eq_symm; auto; assumption ].
+    Qed.
+
+    
+    (* Equivalency of Definitions *)
+    (* 1. Unit -> Hom *)
+    Program Instance Adj_Unit_Hom (adj_u: Adjunction_Unit): Adjunction_Hom :=
+      { adj_phi X Y f := fmap f ◦ adj_unit X;
+        adj_phi_inv X Y f := adj_dc f }.
+    Next Obligation.
+      intros.
+      apply compose_subst_snd; apply ap_preserve_eq; assumption.
+    Qed.  
+    Next Obligation.
+      apply adj_dc_subst.
+    Qed.  
+    Next Obligation.
+      intros.
+      apply adj_dc_uniqueness.
+      apply eq_refl; auto.
+    Qed.
+    Next Obligation.
+      intros.
+      apply adj_dc_property.
+    Qed.
+    Next Obligation.
+      intros.
+      apply eq_trns with ((fmap h◦fmap g◦fmap (fmap f))◦adj_unit X);
+        [ auto | apply compose_subst_snd | ].
+      - apply eq_trns with (fmap h ◦ fmap (g ◦ fmap f));
+          [ auto | apply eq_symm; auto; apply (fmap_compose (Functor:=G)) | ].
+        apply compose_subst_fst;
+          apply eq_symm; auto;
+          apply (fmap_compose (Functor:=G)).
+      - apply eq_symm; auto.
+        apply eq_trns with (fmap h◦(fmap g◦fmap (fmap f))◦adj_unit X);
+          [ auto 
+          | apply compose_subst_fst
+          | apply eq_symm; auto; apply compose_assoc ].
+        eapply eq_trns; [ auto | apply compose_assoc | ].
+        eapply eq_trns; [ auto | | apply eq_symm; auto; apply compose_assoc ].
+        apply compose_subst_fst; apply (naturality (Natrans:=adj_unit)).
+    Qed.
+
+
+    (* 2. Hom -> Unit *)
+    (* First, make Unit *)
+    Program Instance Adj_Hom_Unit_Natrans (adj_h: Adjunction_Hom)
+    : Natrans (IdFunctor C) (ComposeFunctor F G) :=
+      { natrans X := adj_phi X (F X) id }.
+    Next Obligation.
+      intros.
+      simpl.
+      eapply eq_trns; [ auto | | apply id_left ].
+      apply eq_trns with
+      (fmap (Functor:=ComposeFunctor F G) f ◦ adj_phi X (F X) id ◦ id);
+        [ auto | | apply eq_symm; auto; apply compose_assoc ].
+      eapply eq_trns; [ auto | | apply adj_phi_naturality ].
+      apply eq_symm; auto.
+      eapply eq_trns; [ auto | apply adj_phi_subst | ].
+      - apply eq_trns with (fmap f◦fmap id); [ auto | | ].
+        + apply compose_subst_fst; apply id_right.
+        + apply eq_trns with (fmap (f◦id));
+          [ auto | apply fmap_compose | apply ap_preserve_eq; apply id_left ].
+      - eapply eq_trns;
+        [ auto | | apply id_right ].
+        eapply eq_trns;
+        [ auto | | apply compose_subst_snd; apply fmap_id ].
+        eapply eq_trns;
+        [ auto | | apply adj_phi_naturality ].
+        apply adj_phi_subst.
+        apply eq_symm; auto.
+        apply eq_trns with (id◦fmap f);
+          [ auto | apply id_right | apply id_right ].
+    Qed.
+
+    (* Then, prove. *)
+    Program Instance Adj_Hom_Unit (adj_h: Adjunction_Hom): Adjunction_Unit :=
+      { adj_unit := Adj_Hom_Unit_Natrans adj_h; 
+        adj_dc := adj_phi_inv }.
+    Next Obligation.
+      intros.
+      simpl in * .
+      apply eq_symm; auto.
+      eapply eq_trns;
+        [ auto | | apply id_left ].
+      eapply eq_trns;
+        [ auto | | apply eq_symm; auto; apply compose_assoc ].
+      eapply eq_trns;
+        [ auto | | apply adj_phi_naturality  ].
+      apply eq_symm; auto.
+      eapply eq_trns;
+        [ auto | apply adj_phi_subst | ].
+      eapply eq_trns;
+        [ auto | apply compose_subst_fst; apply id_right | ].
+      eapply eq_trns;
+        [ auto | apply compose_subst_fst; apply fmap_id | ].
+      apply id_left.
+      apply adj_phi_inv_iso.
+    Qed.
+    Next Obligation.
+      intros; simpl in *.
+      eapply eq_trns;
+        [ auto | apply adj_phi_inv_subst; apply eq_symm; auto; apply H | ].
+      eapply eq_trns;
+        [ auto | apply adj_phi_inv_subst; apply eq_symm; auto; apply id_left | ].
+      eapply eq_trns;
+        [ auto | apply adj_phi_inv_subst; apply compose_assoc | ].
+      eapply eq_trns;
+        [ auto | apply adj_phi_inv_naturality | ].
+      eapply eq_trns;
+        [ auto | repeat apply compose_subst_fst; apply fmap_id | ].
+      eapply eq_trns;
+        [ auto | apply compose_subst_fst; apply id_left | ].
+      eapply eq_trns;
+        [ auto | apply compose_subst_fst; apply adj_phi_iso | ].
+      apply id_left.
+    Qed.
+             
+    
+    (* 3. Counit -> Hom *)
+    Program Instance Adj_Counit_Hom (adj_c: Adjunction_Counit): Adjunction_Hom :=
+      { adj_phi X Y f := adj_cd f;
+        adj_phi_inv X Y f := adj_counit Y ◦ fmap f }.
+    Next Obligation.
+      apply adj_cd_subst.
+    Qed.
+    Next Obligation.
+      intros.
+      apply compose_subst_fst; apply ap_preserve_eq; assumption.
+    Qed.
+    Next Obligation.
+      intros.
+      apply adj_cd_property.
+    Qed.
+    Next Obligation.
+      intros.
+      apply adj_cd_uniqueness.
+      apply eq_refl; auto.
+    Qed.
+    Next Obligation.
+      simpl.
+      intros.
+      eapply eq_trns;
+        [ auto | apply adj_cd_uniqueness | apply compose_assoc ].
+      eapply eq_trns;
+        [ auto 
+        | apply compose_subst_fst; apply eq_symm; auto;
+          apply fmap_compose
+        | ].
+      eapply eq_trns;
+        [ auto | | apply compose_assoc ].
+      eapply eq_trns;
+        [ auto | apply eq_symm; auto; apply compose_assoc | ].
+      apply compose_subst_snd.
+      eapply eq_trns;
+        [ auto | apply compose_subst_fst;
+                 apply eq_symm; auto; apply fmap_compose | ].
+      eapply eq_trns;
+        [ auto | apply eq_symm; auto; apply compose_assoc | ].
+      eapply eq_trns;
+        [ auto | apply compose_subst_snd | ].
+      apply (naturality (Natrans:=adj_counit)).
+      simpl.
+      eapply eq_trns;
+        [ auto | apply compose_assoc | ].
+      apply compose_subst_fst; apply adj_cd_property.
+    Qed.
       
-      adj_naturality:
-        forall (X Y: C)(Z W: D)(f: X ⟶ Y)(g: F Y ⟶ Z)(h: Z ⟶ W),
-          adj_phi X W (h◦g◦fmap f) == fmap h ◦ adj_phi Y Z g ◦ f }.
-  Notation "F ⊣ G : C ⟷ D" := (Adjunction C D F G)
-                               (at level 70, no associativity).
-  
+    
+    (* 4. Hom -> Counit *)
+    (* First, make Counit *)
+    Program Instance Adj_Hom_Counit_Natrans (adj_h: Adjunction_Hom)
+    : Natrans (ComposeFunctor G F) (IdFunctor D) :=
+      { natrans X := adj_phi_inv (G X) X id }.
+    Next Obligation.
+      simpl; intros.
+      eapply eq_trns;
+        [ auto | | apply id_left ].
+      eapply eq_trns;
+        [ auto | | apply compose_subst_fst; apply fmap_id ].
+      eapply eq_trns;
+        [ auto | | apply eq_symm; auto; apply compose_assoc ].
+      eapply eq_trns;
+        [ auto | | apply adj_phi_inv_naturality ].
+      apply eq_symm; auto.
+      eapply eq_trns;
+        [ auto | | apply id_right ].
+      eapply eq_trns;
+        [ auto | | apply adj_phi_inv_naturality ].
+      apply adj_phi_inv_subst.
+      eapply eq_trns;
+        [ auto | apply eq_symm; auto; apply compose_assoc | ].
+      eapply eq_trns; [ auto | apply id_left | ].
+      eapply eq_trns; [ auto | apply id_left | ].
+      apply eq_symm; auto.
+      eapply eq_trns; [ auto | apply compose_subst_snd; apply fmap_id | ].
+      eapply eq_trns; [ auto | apply id_right | ].
+      eapply eq_trns; [ auto | apply id_right | ].
+      apply eq_refl; auto.
+    Qed.
+      
+    (* Then, prove. *)
+    Program Instance Adj_Hom_Counit (adj_h: Adjunction_Hom): Adjunction_Counit :=
+      { adj_counit := Adj_Hom_Counit_Natrans adj_h; 
+        adj_cd := adj_phi }.
+    Next Obligation.
+      simpl in *; intros.
+      eapply eq_trns;
+        [ auto | apply eq_symm; auto; apply id_right | ].
+      eapply eq_trns;
+        [ auto | apply eq_symm; auto; apply adj_phi_inv_naturality | ].
+      eapply eq_trns;
+        [ auto | | apply adj_phi_iso ].
+      apply adj_phi_inv_subst.
+      eapply eq_trns;
+        [ auto | apply compose_subst_snd; apply fmap_id | ].
+      eapply eq_trns; [ auto | apply id_right | ].
+      eapply eq_trns; [ auto | apply id_right | ].
+      apply eq_refl; auto.
+    Qed.
+    Next Obligation.
+      simpl; intros.
+      eapply eq_trns;
+        [ auto | apply adj_phi_subst; apply eq_symm; auto; apply H | ].
+      eapply eq_trns;
+        [ auto | apply adj_phi_subst; apply eq_symm; auto; apply id_right | ].
+      eapply eq_trns;
+        [ auto | apply adj_phi_naturality | ].
+      eapply eq_trns;
+        [ auto | apply eq_symm; auto; apply compose_assoc | ].
+      eapply eq_trns;
+        [ auto | apply compose_subst_snd | apply id_right ].
+      eapply eq_trns;
+        [ auto | apply compose_subst_snd; apply fmap_id | ].
+      eapply eq_trns;
+        [ auto | apply id_right | ].
+      apply adj_phi_inv_iso.
+    Qed.
+      
+    
+    (*
+       以下，直接構成しようと試みるもうまく行かなかったため，
+       とっても妥協しての定義である．
+     *)
+    (* 5. Unit -> Counit *)
+    Program Instance Adj_Unit_Counit (adj_u: Adjunction_Unit)
+    : Adjunction_Counit := Adj_Hom_Counit (Adj_Unit_Hom adj_u).
 
-(* 自然変換絡みのことをやる予定 *)
-(* そのためには反変函手周りを整備する必要がある *)
+    (* 6. Counit -> Unit *)
+    Program Instance Adj_Counit_Unit (adj_c: Adjunction_Counit)
+    : Adjunction_Unit := Adj_Hom_Unit (Adj_Counit_Hom adj_c).
+
+  End AdjunctionDef.
+
+
+  Program Instance ADJ_phi_Setoid
+          (C D: Category)(F: Functor C D)(G: Functor D C)
+          (adj: Adjunction_Hom F G)(X: C)(Y: D)
+  : Map (F X ⟶ Y) (X ⟶ G Y) :=
+    { ap f := adj_phi X Y f }.
+  Next Obligation.
+    intros.
+    apply adj_phi_subst; assumption.
+  Qed.
 
 End Adjunction.
 
@@ -721,7 +1084,7 @@ Module Monad.
       + apply m_join_unit_T.
       + apply eq_trns with (rid ◦ f); auto.
         apply compose_subst; [ apply eq_refl; auto | apply eq_id_rid ].
-        apply right_rid_id.
+        apply rid_right_id.
   Qed.
   Next Obligation.
     intros.
@@ -777,7 +1140,7 @@ Module Monad.
     - apply bind_subst.
       apply eq_trns with (ret ◦ lid); auto.
       + apply compose_subst; [ apply eq_id_lid | apply eq_refl; auto ].
-      + apply left_lid_id.
+      + apply lid_left_id.
     - apply ret_left.
   Qed.
   Next Obligation.
@@ -815,9 +1178,9 @@ Module Monad.
     - apply eq_trns with (rid ◦ bind (ret ◦ f)); auto.
       + apply compose_subst; [ apply eq_refl; auto | ].
         apply eq_id_rid.
-      + eapply eq_trns; [ auto | apply right_rid_id | ].
+      + eapply eq_trns; [ auto | apply rid_right_id | ].
         apply eq_trns with (bind (ret ◦ f) ◦ lid); auto.
-        * apply eq_symm; auto; apply left_lid_id.
+        * apply eq_symm; auto; apply lid_left_id.
         * apply compose_subst; [ | apply eq_refl; auto ].
           apply eq_symm; auto; apply eq_id_lid.
   Qed.
@@ -839,7 +1202,7 @@ Module Monad.
     eapply eq_trns; [ auto | apply bind_subst | ].
     apply compose_subst; [ apply eq_refl; auto | apply eq_id_rid ].
     eapply eq_trns; [ auto | apply bind_subst | ].
-    apply right_rid_id.
+    apply rid_right_id.
     apply ret_left.
   Qed.
   Next Obligation.
@@ -850,10 +1213,10 @@ Module Monad.
     eapply eq_trns; [ auto | apply compose_subst | ].
     apply eq_id_lid.
     apply eq_refl; auto.
-    eapply eq_trns; [ auto | apply left_lid_id | ].
+    eapply eq_trns; [ auto | apply lid_left_id | ].
     eapply eq_trns; [ auto | | apply compose_assoc ].
     eapply eq_trns; [ auto | | apply compose_subst ].
-    apply eq_symm; auto; apply right_rid_id.
+    apply eq_symm; auto; apply rid_right_id.
     apply eq_refl; auto.
     apply eq_symm; auto.
     apply eq_trns with id; [auto | apply ret_right | apply eq_id_rid].
@@ -915,7 +1278,7 @@ Module Monad.
     - eapply eq_trns; auto; [ apply (compose_subst (Composable:=@arr_composable C))| ]. 
       + apply eq_refl; auto.
       + apply eq_id_rid.
-      + apply (@right_rid_id _ (@arr C)).
+      + apply (@rid_right_id _ (@arr C)).
   Qed.
   Program Instance KTMorphismHasId
           {C: Category}{T: C -> C}(kt: KT T)
@@ -1234,10 +1597,14 @@ Module Example.
   Qed.
 
   Program Instance ListAdjunction
-  : Adjunction ListFunctorMon ForgetMon :=
+  : Adjunction_Hom ListFunctorMon ForgetMon :=
     { adj_phi X Y f := fun x => f (cons x nil);
       adj_phi_inv X Y g := RADJ _ _ g
     }.
+  Next Obligation.
+    unfold RADJ_obligation_1; simpl.
+    induction x as [ | h t ]; simpl; congruence.
+  Qed.
   Next Obligation.
     unfold RADJ_obligation_1; simpl.
     induction x as [ | h t ]; simpl.
