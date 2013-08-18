@@ -254,7 +254,8 @@ End Setoid.
 Module Category.
   
   Import Equivalence Setoid.
-
+  
+  (*
   Class Category :=
     { obj: Type;
       arr:> Morphism obj;
@@ -262,8 +263,26 @@ Module Category.
       arr_composable:> Composable arr;
       arr_has_id:> HasId arr_composable;
       arr_associative:> Associative arr_composable }.
+   *)
+
+  Class Category :=
+    { obj: Type;
+      arr: obj -> obj -> Setoid;
+
+      compose {X Y Z: obj}:
+        arr X Y -> arr Y Z -> arr X Z;
+      id (X: obj): arr X X;
+
+      id_left:
+        forall (X Y: obj)(f: arr X Y),
+          compose (id X) f == f;
+
+      id_right:
+        forall (X Y: obj)(f: arr X Y),
+          compose f (id Y) == f }.
   Coercion obj: Category >-> Sortclass.
-  
+
+  (*
   Program Instance FunctionMorphism: Morphism Set :=
     { fun_type X Y := FunctionSetoid X Y }.
   Program Instance ComposableFunctionMorphism: Composable FunctionMorphism :=
@@ -294,16 +313,33 @@ Module Category.
   Next Obligation.
     simpl; auto.
   Qed.
+   *)
 
   Program Instance Sets: Category :=
     { obj := Set;
-      arr := FunctionMorphism }.
+      arr X Y := FunctionSetoid X Y;
+      compose X Y Z f g := fun (x: X) => g (f x);
+      id X := fun (x: X) => x }.
+  Next Obligation.
+    simpl; auto.
+  Qed.
+  Next Obligation.
+    simpl; auto.
+  Qed.
 
   Program Instance Setoids: Category :=
     { obj := Setoid;
-      arr := MapMorphism }.
-  
+      arr X Y := MapSetoid X Y;
+      compose X Y Z f g := ComposeMap f g;
+      id X := IdMap X }.
+  Next Obligation.
+    simpl; intros; apply eq_refl; auto.
+  Qed.
+  Next Obligation.
+    simpl; intros; apply eq_refl; auto.
+  Qed.
 
+  (*
   Program Instance op_Morphism {S: Type}(m: Morphism S): Morphism S :=
     { fun_type X Y := Y ⟶ X }.
   Program Instance op_Composable 
@@ -355,9 +391,20 @@ Module Category.
     intros; simpl.
     apply eq_id_lid.
   Qed.
-  
+  *)
+
   Program Instance op_Category (C: Category): Category :=
-    { obj := obj ; arr := op_Morphism arr }.
+    { obj := obj ;
+      arr X Y := arr Y X;
+      compose X Y Z f g := compose g f;
+      id X := id X }.
+  Next Obligation.
+    intros; apply id_right.
+  Qed.
+  Next Obligation.
+    intros; apply id_left.
+  Qed.
+    
   Notation "C ^^op" := (op_Category C) (at level 5, left associativity).
 
   Section CategoryProperties.
@@ -460,79 +507,6 @@ Module Functor.
         forall (X Y Z: C)(f: X ⟶ Y)(g: Y ⟶ Z),
           fmap g◦fmap f == fmap (g◦f) }.
   Coercion fobj: Functor >-> Funclass.
-
-  (*
-  Class make_Functor {C D: Category}(fobj: C -> D) :=
-    { make_fmap {X Y: C}:> Map (X ⟶ Y)  (fobj X ⟶ fobj Y);
-      
-      make_fmap_id:
-        forall (X: C), make_fmap id == id (X:=fobj X);
-
-      make_fmap_compose:
-        forall (X Y Z: C)(f: X ⟶ Y)(g: Y ⟶ Z),
-          make_fmap g◦make_fmap f == make_fmap (g◦f) }.
-  Program Instance making_Functor
-          {C D: Category}(fobj: C -> D)(mf: make_Functor fobj)
-  : Functor C D :=
-    { fobj := fobj ; fmap X Y := make_fmap }.
-  Next Obligation.
-    intros; apply make_fmap_id.
-  Qed.
-  Next Obligation.
-    intros; apply make_fmap_compose.
-  Qed.
-
-  Program Instance made_Functor
-          {C D: Category}(F: Functor C D): make_Functor fobj :=
-    { make_fmap X Y := fmap }.
-  Next Obligation.
-    intros; apply fmap_id.
-  Qed.
-  Next Obligation.
-    intros; apply fmap_compose.
-  Qed.
-
-  Inductive eq_Functor {C D: Category}: Functor C D -> Functor C D -> Prop :=
-  | eq_functor_equal: forall (F: Functor C D), eq_Functor F F
-  | eq_functor_make:
-      forall (fobj: C -> D)(F G: make_Functor fobj),
-        forall (X Y: C)(f: X ⟶ Y),
-          make_fmap (make_Functor:=F) f == make_fmap (make_Functor:=G) f ->
-          eq_Functor (making_Functor fobj F) (making_Functor fobj G)
-  | eq_functor_made_l:
-      forall (F G: Functor C D),
-        (forall X, F X = G X) ->
-        eq_Functor (making_Functor (fobj (Functor:=G)) (made_Functor F)) G ->
-        eq_Functor F G.
-  
-  Program Instance eq_Functor_equiv {C D: Category}
-  : Equivalence (eq_Functor (C:=C)(D:=D)).
-  Next Obligation.
-    split.
-    intros; apply eq_functor_equal.
-  Qed.
-  Next Obligation.
-    split.
-    intros x y H.
-    induction H.
-    - apply eq_functor_equal.
-    - apply eq_functor_make with X Y f.
-      apply eq_symm; auto.
-    - apply eq_functor_made; auto.
-  Qed.
-  Next Obligation.
-    split.
-    intros F G H HeqFG.
-    induction HeqFG; auto.
-    -\ intro.
-      induction H1.
-      inversion H1; subst.
-      + apply eq_functor_make with X Y f; auto.
-      + apply eq_functor_make with X Y f; auto.
-        inversion H1.
-        apply
-
-   *)
 
   Class contravariantFunctor (C D: Category): Type :=
     { op_fobj: C -> D;
@@ -1526,6 +1500,52 @@ Module Monad.
 
 End Monad.
 
+Module FAlgebra.
+
+  Import Equivalence Setoid Category Functor.
+  
+
+  Section FAlg.
+    Context (C: Category)(F: Functor C C).
+
+    Definition FAlg_Hom_property
+               (X: C)(fx: F X ⟶ X)(Y: C)(fy:F Y ⟶ Y)
+               (f: X ⟶ Y) :=
+      f ◦ fx == fy ◦ fmap f.
+
+    Class F_Algebra :=
+      { falg: C;
+        falg_arr: F falg ⟶ falg }.
+    Coercion falg: F_Algebra >-> obj.
+    
+    Class F_Algebra_Hom (X Y: F_Algebra) :=
+      { falg_hom: X ⟶ Y;
+        
+        falg_hom_comm:
+          FAlg_Hom_property X falg_arr Y falg_arr falg_hom }.
+    Coercion falg_hom: F_Algebra_Hom >-> arr.
+      { falg_hom:> (falg (F_Algebra:=X)) ⟶ (falg (F_Algebra:=Y)) ;
+
+    Program Instance F_Algebra_Hom_Setoid (X Y: F_Algebra)
+    : Setoid :=
+      { carrier := F_Algebra_Hom X Y;
+        equal f g := f == g }.
+    Next Obligation.
+      intros; split; split.
+      - intros; apply eq_refl; auto.
+      - intros f g Heq; apply eq_symm; auto.
+      - intros f g h Heqfg Heqgh;
+        apply eq_trns with (falg_hom (F_Algebra_Hom:=g)); auto.
+    Qed.
+      
+    Program Instance F_Algebra_Morphism: Morphism F_Algebra :=
+      { fun_type X Y := F_Algebra_Hom_Setoid X Y }.
+    Program Instance F_Algebra_Composable
+    : Composable F_Algebra_Morphism := 
+      { compose X Y f g :=  compose f g  }.
+      
+    
+
 
 Module Example.
 
@@ -1841,4 +1861,7 @@ Module Example.
     auto.
   Qed.
 
+  Program Instance ListMonad_Adj: Monad ListFunctor := Adj_Monad ListAdjunction.
+  Next Obligation.
+    
 End Example.
