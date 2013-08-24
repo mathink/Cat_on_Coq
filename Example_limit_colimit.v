@@ -194,7 +194,7 @@ Section Example.
   Qed.
 
   (* 錐と変換を定義できれば，圏の構成は簡単です．
-     Cone.v で一般の錐から県を構成する方法を与えていました． *)
+     Cone.v で一般の錐から圏を構成する方法を与えていました． *)
   Program Instance TwoFunctor_ConeTo_Cat (X Y: C): Category :=
     ConeTos (TwoFunctor X Y).
 
