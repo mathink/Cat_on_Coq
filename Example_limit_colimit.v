@@ -5,6 +5,7 @@
   普遍射を定義したらもっといい感じになると思います．
  *)
 
+Set Implicit Arguments.
 Require Import Setoid Category Functor Cone.
 
 (* 1. 直積と余直積
@@ -204,17 +205,16 @@ Section Example.
      錐のなす圏を構成できたので，早速本題にとりかかりましょう *)
   Section Product_as_limit.
     (* まず，C には直積対象が存在すると仮定します *)
-    Context (X Y XY: C)(proj_X: XY ⟶ X)(proj_Y: XY ⟶ Y)
-            (Hproduct: product C X Y XY proj_X proj_Y).
+    Context {X Y: C}(prod: Product C X Y).
 
     (* 直積自身も TwoFunctor への錐をなすことを示します
        極限対象はあくまで錐のなす圏に於ける対象なので，
        錐であることをしっかり証明しておかないと議論が進みません． *)
     Program Instance prod_ConeTo
     : ConeTo (TwoFunctor X Y)  :=
-      { apex_to := XY }.
+      { apex_to := prod }.
     Next Obligation.
-      case i; [ exact proj_X | exact proj_Y ].
+      case i; [ exact (proj_X (Product:=prod))  | exact (proj_Y (Product:=prod)) ].
     Defined.
     Next Obligation.
       destruct i; simpl in *.
@@ -230,53 +230,39 @@ Section Example.
        証明するので，任意の錐からの射が構成できるはずです． *)
     Program Instance prod_ConeTo_Hom
             (c: ConeTo (TwoFunctor X Y))
-    : ConeTo_Hom c prod_ConeTo.
-    (* あれ? 定義で与えてませんね? *)
+    : ConeTo_Hom c prod_ConeTo :=
+      { cone_to_hom :=
+          product_arr _
+                      (generatrix_to (ConeTo:=c) true)
+                      (generatrix_to (ConeTo:=c) false)}.
     Next Obligation.
-      unfold product in Hproduct.
-      generalize
-        (Hproduct c (generatrix_to (ConeTo:=c) true) (generatrix_to (ConeTo:=c) false)); intro H.
-      destruct H.
-      exact x.
-    Defined.
-    (* 証明モードで項を与えたときは Defined. で締める．これ大事です． *)
-    Next Obligation.
-      unfold product in Hproduct.
-      unfold prod_ConeTo_Hom_obligation_1.
-      (* あっ...... *)
-      generalize
-        (Hproduct c (generatrix_to (ConeTo:=c) true) (generatrix_to (ConeTo:=c) false)); intro H.
-      destruct H as [fg [[HX HY] Hh]].
-      case i; simpl; equiv_symm; auto.
+      case i; simpl; equiv_symm.
+      - apply product_arr_property_X.
+      - apply product_arr_property_Y.
     Qed.
     
-    (* これで準備が終わりました．
-       終対象であることは，更に射の唯一性を求めますが，それは次の定理の証明の中で示しましょう．
-       やっと，この例の目的であった「直積が極限である」ことの証明に入ります．
-       ステートメントが少し込み入っていますが，これは後々スッキリさせる予定です．
- *)
-    Theorem product_is_limit_of_TwoFunctor:
-      @is_Limit _ _ (TwoFunctor X Y)
-                prod_ConeTo
-                prod_ConeTo_Hom.
-    Proof.
-      unfold is_Limit, terminal.
-      intros c f.
-      simpl in *.
-      unfold prod_ConeTo_Hom_obligation_1.
-      generalize
-        (Hproduct c (generatrix_to (ConeTo:=c) true) (generatrix_to (ConeTo:=c) false)); intro H.
-      destruct H as [fg [[HX HY] Hh]].
-      simpl in *.
-      apply Hh.
-      split; equiv_symm.
-      generalize (cone_to_hom_commute (ConeTo_Hom:=f) true);
-        simpl; auto.
-      generalize (cone_to_hom_commute (ConeTo_Hom:=f) false);
-        simpl; auto.
+
+    (* そして，実際に終対象であることを示します．*)
+    Program Instance prod_ConeTo_Terminal
+    : Terminal (ConeTos (TwoFunctor X Y)) prod_ConeTo :=
+      { Te := prod_ConeTo_Hom }.
+    Next Obligation.
+      apply product_arr_universality; simpl; equiv_symm.
+      - apply (cone_to_hom_commute (ConeTo_Hom:=f) true).
+      - apply (cone_to_hom_commute (ConeTo_Hom:=f) false).
     Qed.
 
-  (* はい．この定理に至るまでにはいくつかの惨事を目にしたことと思いますが，
+    
+    (* これで準備が終わりました．
+       やっと，この例の目的であった「直積が極限である」ことの証明に入ります．
+       下準備で色々とこしらえたおかげで，証明することは既にありません．*)
+    Program Instance prod_ConeTo_Limit
+    : Limit (TwoFunctor X Y) :=
+      { limit := prod_ConeTo }.
+
+
+  (* これで終わりです．
+     この定理に至るまでにはいくつかの惨事を目にしたことと思いますが，
      この定理自身の証明はそこそこわかりやすいです...よね?
 
      とにかく，極限の例としてよく取り上げられる直積対象を Coq の上でもそのように扱うことができました．やったね! でもこのコードすっげー汚いよ! いろいろ練り直す必要があるね!

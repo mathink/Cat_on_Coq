@@ -87,9 +87,9 @@ Section ConeDef.
   Qed.
 
   (* 函手 D の極限とは D への錐全体の圏の終対象です *)
-  Definition is_Limit (lim: ConeTo)(lim_Te: forall (c: ConeTo), ConeTo_Hom c lim)
-    := terminal ConeTos lim lim_Te.
-
+  Class Limit :=
+    { limit :> ConeTo;
+      limit_terminal :> Terminal ConeTos limit }.
 
   (* 2. D からの錐について *)
   Class ConeFrom :=
@@ -156,7 +156,8 @@ Section ConeDef.
   Qed.
 
   (* 函手Dの余極限とはDからの錐全体の圏の始対象です *)
-  Definition is_Coimit (colim: ConeFrom)(colim_In: forall (c: ConeFrom), ConeFrom_Hom colim c)
-    := initial ConeFroms colim colim_In.
+  Class CoLimit :=
+    { colimit :> ConeFrom;
+      colimit_initial :> Initial ConeFroms colimit }.
 
 End ConeDef.
