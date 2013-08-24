@@ -1379,7 +1379,7 @@ Module FAlg_Example.
   Program Instance ListF_FAlg (A: Set): Category
     := FAlg (ListF_Functor A).
 
-  Definition foldr_F {A: Set}(B: ListF_FAlg A): list A -> (falg (FAlgebra:=B)) :=
+  Definition fold_F {A: Set}(B: ListF_FAlg A): list A -> (falg (FAlgebra:=B)) :=
     fix fbody l := match l with 
                     | nil => falg_arr (FAlgebra:=B) nilF
                     | cons h t => falg_arr (FAlgebra:=B) (consF h (fbody t))
@@ -1397,9 +1397,9 @@ Module FAlg_Example.
   Program Instance list_ListF (A: Set): FAlgebra (ListF_Functor A) :=
     {| falg := (list A: Sets); falg_arr := @list_arr_Map A |}.
 
-  Program Instance foldr_F_FAlg_Hom {A: Set}(B: ListF_FAlg A)
+  Program Instance fold_F_FAlg_Hom {A: Set}(B: ListF_FAlg A)
   : FAlgebra_Hom (list_ListF A) B :=
-    { falg_hom := foldr_F B }.
+    { falg_hom := fold_F B }.
   Next Obligation.
     simpl; intros.
     destruct x as [ | a l ]; simpl; auto.
@@ -1409,7 +1409,7 @@ Module FAlg_Example.
     forall (A: Set),
       initial (FAlg (ListF_Functor A))
               (list_ListF A)
-              (foldr_F_FAlg_Hom).
+              (fold_F_FAlg_Hom).
   Proof.
     simpl; intros.
     unfold initial.
@@ -1426,6 +1426,83 @@ Module FAlg_Example.
   Qed.
 
 End FAlg_Example.
+
+
+Module FCoAlgebra.
+
+  Import Equivalence Setoid Category Functor.
+
+  Section FCoAlg.
+    Context (C: Category)(F: Functor C C).
+
+    Class FCoAlgebra :=
+      { fcoalg:> C ; fcoalg_arr : fcoalg ⟶ F fcoalg }.
+    Coercion fcoalg: FCoAlgebra >-> obj.
+    Class FCoAlgebra_Hom (X Y: FCoAlgebra) :=
+      { fcoalg_hom: X ⟶ Y;
+        
+        fcoalg_hom_comm:
+          fmap fcoalg_hom ◦ fcoalg_arr == fcoalg_arr ◦ fcoalg_hom }.
+    Coercion fcoalg_hom: FCoAlgebra_Hom >-> carrier.
+
+    Program Instance Compose_FCoAlgebra_Hom
+            {X Y Z: FCoAlgebra}(f: FCoAlgebra_Hom X Y)(g: FCoAlgebra_Hom Y Z)
+    : FCoAlgebra_Hom X Z :=
+      { fcoalg_hom := fcoalg_hom ◦ fcoalg_hom }.
+    Next Obligation.
+      simpl; intros.
+      eapply eq_trns; [ auto | | apply compose_assoc ].
+      eapply eq_trns; [ auto | | apply compose_subst_snd; apply fcoalg_hom_comm ].
+      eapply eq_trns; [ auto | apply compose_subst_snd;
+                               apply eq_symm; auto; apply fmap_compose | ].
+      eapply eq_trns; [ auto | apply compose_assoc | ].
+      eapply eq_trns; [ auto | | apply eq_symm; auto; apply compose_assoc ].
+      apply compose_subst_fst; apply fcoalg_hom_comm.
+    Qed.
+
+    Program Instance Id_FCoAlgebra_Hom {X: FCoAlgebra}
+    : FCoAlgebra_Hom X X :=
+      { fcoalg_hom := id }.
+    Next Obligation.
+      simpl; intros.
+      eapply eq_trns; [ auto | apply compose_subst_snd; apply fmap_id | ].
+      eapply eq_trns;
+        [ auto | apply id_right | apply eq_symm; auto; apply id_left ].
+    Qed.
+
+    Program Instance FCoAlgebra_Hom_Setoid (X Y: FCoAlgebra): Setoid :=
+      { carrier := FCoAlgebra_Hom X  Y;
+        equal f g := f == g }.
+    Next Obligation.
+      simpl; intros; split; split.
+      - intros; apply eq_refl; auto.
+      - intros f g Heq; apply eq_symm; auto.
+      - intros.
+        eapply eq_trns; [ auto | apply Heq_xy | apply Heq_yz ].
+    Qed.
+
+    Program Instance FCoAlg: Category :=
+      { obj := FCoAlgebra;
+        arr X Y := FCoAlgebra_Hom_Setoid X Y;
+
+        compose X Y Z f g := Compose_FCoAlgebra_Hom f g;
+        id X := Id_FCoAlgebra_Hom }.
+    Next Obligation.
+      simpl; intros.
+      apply compose_assoc.
+    Qed.
+    Next Obligation.
+      simpl; intros; apply compose_subst; auto.
+    Qed.
+    Next Obligation.
+      simpl; intros; apply id_left.
+    Qed.
+    Next Obligation.
+      simpl; intros; apply id_right.
+    Qed.
+    
+  End FCoAlg.
+End FCoAlgebra.
 
 
 Module Example.
@@ -1494,7 +1571,6 @@ Module Example.
     apply map_tree_map_tree.
   Qed.
 
-
   Fixpoint flatten {A: Set}(t: tree A): list A :=
     match t with
       | leaf a => cons a nil
@@ -1508,8 +1584,6 @@ Module Example.
     rewrite map_app.
     congruence.
   Qed.
-
-
 
 
   Program Instance cons_a_nil_Natrans: Natrans (IdFunctor Sets) ListFunctor :=
@@ -1553,8 +1627,6 @@ Module Example.
     rewrite IHtlll.
     reflexivity.
   Qed.
-
-
 
 
   Lemma flat_map_app:
