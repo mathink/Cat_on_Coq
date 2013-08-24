@@ -1,5 +1,6 @@
 *~
 *.
 *.vo
+*.v.d
 *.glob
 !.gitignore
