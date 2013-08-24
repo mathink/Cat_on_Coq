@@ -258,7 +258,7 @@ Section Example.
     Theorem product_is_limit_of_TwoFunctor:
       @is_Limit _ _ (TwoFunctor X Y)
                 prod_ConeTo
-                (fun c => prod_ConeTo_Hom c).
+                prod_ConeTo_Hom.
     Proof.
       unfold is_Limit, terminal.
       intros c f.
