@@ -1,6 +1,6 @@
 
 Require Import List.
-Require Import Setoid Category Functor Natrans Adjunction Monad.
+Require Import Setoid Category Sets Functor Natrans Adjunction Monad.
 
 Set Implicit Arguments.
 

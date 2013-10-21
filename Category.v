@@ -1,12 +1,16 @@
 
-
-Require Import Utf8 Setoid Coq.Classes.Init.
+Require Import
+Utf8
+Coq.Classes.Init
+Coq.Program.Basics Coq.Program.Tactics
+Setoid
+.
 
 Set Implicit Arguments.
 
+
 Reserved Notation "X ⟶ Y" (at level 60, right associativity).
 Reserved Notation "g ◦ f" (at level 60, right associativity).
-
 Class Category :=
   { obj: Type;
     arr (X Y: obj): Setoid where "X ⟶ Y" := (arr X Y);
@@ -37,6 +41,7 @@ Lemma compose_subst_fst:
   forall (C: Category)(X Y Z: C)(f f': X ⟶ Y)(g: Y ⟶ Z),
     f == f' -> g◦f == g◦f'.
 Proof.
+  
   intros.
   apply compose_subst; [ apply H | equiv_refl ].
 Qed.
@@ -238,88 +243,3 @@ Next Obligation.
   apply coproduct_arr_universality; auto.
 Qed.
 
-(* Example *)
-(* Sets の始対象は Empty_set です 
-
-   以下における定義と証明は，人によってはなんか腑に落ちんなぁという人もいるかもしれない．
- *)
-Program Instance Sets: Category :=
-  { obj := Set;
-    arr X Y := FunctionSetoid X Y;
-    compose X Y Z f g := fun x => g (f x);
-    id X := fun x: X => x }.
-Next Obligation.
-  congruence.
-Qed.
-
-Program Instance Setoids: Category :=
-  { obj := Setoid;
-    arr X Y := MapSetoid X Y;
-    compose X Y Z f g := ComposeMap f g;
-    id X := IdMap X }.
-Next Obligation.
-  simpl; intros; try equiv_refl.
-Qed.
-Next Obligation.
-  equiv_trns_with (g' (f x)); auto.
-  apply ap_preserve_eq; auto.
-Qed.
-Next Obligation.
-  simpl; intros; try equiv_refl.
-Qed.
-Next Obligation.
-  simpl; intros; try equiv_refl.
-Qed.
-
-
-Definition from_Empty_set (A: Set)(f: Empty_set): A.
-  elim f.
-Defined.
-
-Program Instance Empty_set_Initial
-: Initial Sets Empty_set :=
-  { In X := from_Empty_set X }.
-Next Obligation.
-  contradiction.
-Qed.
-
-(* Sets の終対象は unit です 
-
-   こちらは大丈夫(何が?)
- *)
-Definition to_unit (A: Set): A -> unit :=
-  fun _ => tt.
-
-Program Instance unit_Terminal
-: Terminal Sets unit :=
-  { Te X := to_unit (A:=X) }.
-Next Obligation.
-  compute.
-  destruct (f x); simpl.
-  reflexivity.
-Qed.
-
-(* 直積型は直積対象です *)
-Program Instance prod_Product (X Y: Sets)
-: Product Sets X Y :=
-  { product := prod X Y;
-    proj_X := @fst X Y;
-    proj_Y := @snd X Y;
-    product_arr Q f g := fun q => (f q,g q) }.
-Next Obligation.
-  generalize (H x) (H0 x);
-  destruct (h x); simpl; congruence.
-Qed.
-
-
-(* 直和型は余直積対象です *)
-Program Instance sum_CoProduct (X Y: Sets)
-: CoProduct Sets X Y :=
-  { coproduct := sum X Y;
-    in_X := @inl X Y;
-    in_Y := @inr X Y;
-    coproduct_arr Q f g :=
-      fun m => match m with inl x => f x | inr y => g y end }.
-Next Obligation.
-  destruct x as [x | y]; congruence.
-Qed.

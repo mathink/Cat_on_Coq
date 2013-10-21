@@ -7,14 +7,17 @@
 Require Import Coq.Relations.Relation_Definitions.
 Require Export Coq.Classes.RelationClasses.
 
+Set Implicit Arguments.
+Unset Strict Implicit.
+
 Create HintDb setoid.
 Hint Unfold Reflexive Symmetric Transitive: setoid.
 Hint Resolve Build_Equivalence: setoid.
 
 Ltac equiv_refl := apply reflexivity.
-Ltac equiv_symm := apply symmetry.
+Ltac equiv_symm := apply symmetry; auto.
 Ltac equiv_trns := apply transitivity.
-Ltac equiv_trns_with H := apply transitivity with H.
+Ltac equiv_trns_with H := apply transitivity with H; auto.
 
 Ltac equiv_tac := 
   match goal with
@@ -34,33 +37,6 @@ Class Setoid: Type :=
 Coercion carrier: Setoid >-> Sortclass.
 Notation "x == y" := (equal x y) (at level 80, no associativity).
 
-Instance make_Setoid
-        {carrier: Type}
-        {equal: relation carrier}
-        (prf_equiv: Equivalence equal): Setoid :=
-  { carrier := carrier; equal := equal }.
-
-Instance Set_Setoid: Setoid :=
-  make_Setoid (eq_equivalence (A:=Set)).
-
-Instance nat_Setoid: Setoid :=
-  make_Setoid (eq_equivalence (A:=nat)).
-
-Program Instance FunctionSetoid (X Y: Set): Setoid :=
-  { carrier := X -> Y : Set;
-    equal f g := forall x, f x = g x }.
-Next Obligation.
-  start; congruence.
-Qed.
- 
-  (* Definition eq_Setoid (S S': Setoid) := carrier = carrier. *)
-(*
-  Program Instance PropSetoid: Setoid :=
-    { carrier := Prop; equal := iff }.
- *)
-
-Program Instance DataTypeSetoid (X: Set): Setoid :=
-  { carrier := X; equal := eq }.
 
 (* Definition of Map *)
 Class Map (X Y: Setoid): Type :=

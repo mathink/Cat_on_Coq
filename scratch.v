@@ -1,199 +1,926 @@
 
 (*  *)
-Require Import Utf8.
+
+Require Import
+Utf8
+Coq.Classes.Init
+Coq.Program.Basics Coq.Program.Tactics
+Ssreflect.ssreflect
+Setoid
+.
 
 Set Implicit Arguments.
-
-Module Equivalence.
-
-  Definition relation (X: Type) := X -> X -> Prop.
-  
-  Section RelationProperties.
-    Context {X: Type}(R: relation X).
-
-    Class Reflexive: Prop :=
-      { reflexive:
-          forall x, R x x }.
-
-    Class Symmetric: Prop :=
-      { symmetric:
-          forall (x y: X)(Heq_xy: R x y), R y x }.
-
-    Class Transitive: Prop :=
-      { transitive:
-          forall (x y z: X)(Heq_xy: R x y)(Heq_yz: R y z), R x z }.
-
-    Class Equivalence: Prop :=
-      { eq_refl:> Reflexive;
-        eq_symm:> Symmetric;
-        eq_trns:> Transitive }.
-
-  End RelationProperties.
-
-  Program Instance eqEquiv (A: Type): Equivalence (@eq A).
-  Next Obligation.
-    - split; congruence.
-  Qed.  
-  Next Obligation.
-    - split; congruence.
-  Qed.  
-  Next Obligation.
-    - split; congruence.
-  Qed.  
-
-  Program Instance iffEquiv: Equivalence iff.
-  Next Obligation.
-    - split; tauto.
-  Qed.
-  Next Obligation.
-    - split; tauto.
-  Qed.
-  Next Obligation.
-    - split; tauto.
-  Qed.
-
-End Equivalence.
-
-Module Setoid.
-
-  Import Equivalence.
-
-  (* Definition of Setoid *)
-  Class Setoid: Type :=
-    { carrier: Set;
-      equal: carrier -> carrier -> Prop;
-      
-      equal_equiv:> Equivalence equal }.
-  Coercion carrier: Setoid >-> Sortclass.
-  Notation "x == y" := (equal x y) (at level 80, no associativity).
-  Hint Resolve equal_equiv.
-  Ltac symm := 
-    match goal with
-      | H: Setoid |- ?X == ?Y =>
-        apply (eq_symm (Equivalence:=equal_equiv))
-    end.
-
-    Ltac trns_by term :=
-      match goal with
-        | [ H: Setoid , Heq:?X == term , Heq':term == ?Y |- ?X == ?Y ] =>
-          apply (eq_trns (Equivalence:=equal_equiv)) with term; auto
-        | H: Setoid |- ?X == ?Y =>
-          apply (eq_trns (Equivalence:=equal_equiv)) with term
-      end.
-
- 
-  Definition eq_Setoid (S S': Setoid) := carrier = carrier.
-
-  (* Instances *)
-  (*
-  Program Instance SetSetoid:Setoid :=
-    { carrier := Set; equal := eq }.
-   *)
-
-  Program Instance FunctionSetoid (X Y: Set): Setoid :=
-    { carrier := X -> Y : Set;
-      equal f g := forall x, f x = g x }.
-  Next Obligation.
-    split; split; congruence.
-  Qed.
-  
-  (*
-  Program Instance PropSetoid: Setoid :=
-    { carrier := Prop; equal := iff }.
-   *)
-
-  Program Instance DataTypeSetoid (X: Set): Setoid :=
-    { carrier := X; equal := eq }.
-
-  (* Definition of Map *)
-  Class Map (X Y: Setoid): Type :=
-    { ap: X -> Y;
-
-      ap_preserve_eq:
-        forall (x x': X)(Heq: x == x'), ap x == ap x' }.
-  Coercion ap: Map >-> Funclass.
-
-  Program Instance MapSetoid (X Y: Setoid): Setoid :=
-    { carrier := Map X Y; equal := (fun f g => forall x: X, f x == g x) }.
-  Next Obligation.
-    intros X Y; split; split.
-    - intros f x; apply eq_refl; auto.
-    - intros f g Heq x; symm; apply Heq.
-    - intros f g h Heq Heq' x; trns_by (g x); auto.
-  Qed.
-
-  Program Instance ComposeMap {X Y Z: Setoid}(f: Map X Y)(g: Map Y Z): Map X Z :=
-    { ap := fun x => g (f x) }.
-  Next Obligation.
-    intros.
-    repeat apply ap_preserve_eq; auto.
-  Qed.
-
-  Program Instance IdMap (X: Setoid): Map X X :=
-    { ap := fun x => x }.
-  Next Obligation.
-    auto.
-  Qed.
-
-End Setoid.
+Set Printing Universes.
 
 Module Category.
-  
-  Import Equivalence Setoid.
-  
-  (*
-  Class Category :=
-    { obj: Type;
-      arr:> Morphism obj;
 
-      arr_composable:> Composable arr;
-      arr_has_id:> HasId arr_composable;
-      arr_associative:> Associative arr_composable }.
-   *)
+  (* Small *)
+  Class SmallCategory :=
+    { objects:> Setoid;
+      arrows:> Setoid;
+      
+      domain: Map arrows objects;
+      codomain: Map arrows objects;
+      
+      identity: Map objects arrows;
+      compose: forall (f g: arrows)(composable: codomain f == domain g), arrows;
+
+      (* laws *)
+      identity_domain:
+        forall x: objects, domain (identity x) == x;
+      identity_codomain:
+        forall x: objects, codomain (identity x) == x;
+
+      identity_domain_id:
+        forall (f: arrows), compose (identity (domain f)) f
+                                (identity_codomain (domain f)) == f;
+
+      identity_codomain_id:
+        forall (f: arrows), compose f (identity (codomain f))
+                                (symmetry (identity_domain (codomain f))) == f;
+
+      compose_subst:
+        forall (f f' g g': arrows)
+           (Heqf: f == f')(Heqg: g == g')
+           (composable: codomain f == domain g)
+           (composable': codomain f' == domain g'),
+           compose f g composable == compose f' g' composable';
+
+      compose_domain:
+        forall (f g: arrows)(composable: codomain f == domain g),
+          domain (compose f g composable) == domain f;
+      compose_codomain:
+        forall (f g: arrows)(composable: codomain f == domain g),
+          codomain (compose f g composable) == codomain g;
+
+      compose_associative:
+        forall (f g h: arrows)
+           (composable_fg: codomain f == domain g)
+           (composable_gh: codomain g == domain h),
+          compose f (compose g h composable_gh)
+                  (transitivity composable_fg
+                                (symmetry (compose_domain g h composable_gh)))
+          ==
+          compose (compose f g composable_fg) h
+                  (transitivity (compose_codomain f g composable_fg) composable_gh)
+    }.
+
+  Coercion objects: SmallCategory >-> Setoid.
+  Definition Hom {C: SmallCategory}(X Y: objects) :=
+    { f: arrows | domain f == X ∧ codomain f == Y }.
+
+  Definition eq_Hom {C: SmallCategory}{X Y: C}(f g: Hom X Y) :=
+    match f, g with
+      | exist f _, exist g _ => f == g
+    end.
+
+  Program Instance eq_Hom_Equivalence {C: SmallCategory}(X Y: C)
+  : Equivalence (@eq_Hom C X Y).
+  Next Obligation.
+    rewrite /Reflexive /eq_Hom; move => [x [Hdom Hcod]].
+    apply reflexivity.
+  Qed.
+  Next Obligation.
+    rewrite /Symmetric /eq_Hom; move => [x Hx] [y Hy].
+    apply symmetry.
+  Qed.
+  Next Obligation.
+    rewrite /Transitive /eq_Hom; move => [x Hx] [y Hy] [z Hz].
+    apply transitivity.
+  Qed.
+
+  Program Instance HomSetoid {C: SmallCategory}(X Y: C): Setoid :=
+    { carrier := Hom X Y;
+      equal f g := eq_Hom f g }.
+(*  Notation "X ⟶ Y" := (HomSetoid X Y) (at level 60, right associativity). *)
+
+  Definition hom_identity {C: SmallCategory}(X: C): HomSetoid X X :=
+    exist _ (identity X) (conj (identity_domain X) (identity_codomain X)).
+
+  Definition hom_compose
+             {C: SmallCategory}{X Y Z: C}(f: HomSetoid X Y)(g: HomSetoid Y Z): HomSetoid X Z.
+    refine
+      (match f, g with
+         | exist f' Hf, exist g' Hg =>
+           let composable := (transitivity (proj2 Hf) (symmetry (proj1 Hg))) in
+           let gf := (compose f' g' composable) in
+           exist (fun h => domain h == X ∧ codomain h == Z) 
+                 gf
+                 (conj _  _)
+       end).
+    - apply transitivity with (domain f').
+      + apply (compose_domain (SmallCategory:=C)).
+      + apply Hf.
+    - apply transitivity with (codomain g').
+      + apply (compose_codomain (SmallCategory:=C)).
+      + apply Hg.
+  Defined.
+  Notation "g ◦ f" := (hom_compose f g) (at level 60, right associativity).
+
+  
+  Lemma hom_compose_subst:
+    forall (C: SmallCategory)(X Y Z: C)(f f': HomSetoid X Y)(g g': HomSetoid Y Z),
+      f == f' -> g == g' -> g◦f == g'◦f'.
+  Proof.
+    move => C X Y Z [f Hf] [f' Hf'] [g Hg] [g' Hg'] //= Heqf Heqg //=.
+    set (transitivity (x:=codomain f) (y:=Y) (z:=domain g) 
+          (proj2 Hf) (symmetry (x:=domain g) (y:=Y) (proj1 Hg))) as composable.
+    set (transitivity (x:=codomain f') (y:=Y) (z:=domain g') 
+        (proj2 Hf') (symmetry (x:=domain g') (y:=Y) (proj1 Hg'))) as composable'.
+    apply (compose_subst (SmallCategory:=C) f f' g g'); auto.
+  Qed.
+
+  Lemma hom_compose_subst_fst:
+    forall (C: SmallCategory)(X Y Z: C)(f f': HomSetoid X Y)(g: HomSetoid Y Z),
+      f == f' -> g◦f == g◦f'.
+  Proof.
+    move => C X Y Z f f' g Heqf; apply hom_compose_subst;
+            [ assumption | apply reflexivity ].
+  Qed.
+
+  Lemma hom_compose_subst_snd:
+    forall (C: SmallCategory)(X Y Z: C)(f: HomSetoid X Y)(g g': HomSetoid Y Z),
+      g == g' -> g◦f == g'◦f.
+  Proof.
+    move => C X Y Z f g g' Heqg; apply hom_compose_subst;
+            [ apply reflexivity | assumption ].
+  Qed.
+
+  
+  Lemma hom_identity_domain_id:
+    forall (C: SmallCategory)(X Y: C)(f: HomSetoid X Y),
+      hom_compose (hom_identity X) f  == f.
+  Proof.
+    move => C X Y [f H] //= .
+    eapply transitivity; [ apply compose_subst | ].
+    apply ap_preserve_eq.
+    apply symmetry, H.
+    apply reflexivity.
+    apply identity_domain_id.
+  Qed.
+
+  Lemma hom_identity_cdomain_id:
+    forall (C: SmallCategory)(X Y: C)(f: HomSetoid X Y),
+      hom_compose f (hom_identity Y)  == f.
+  Proof.
+    move => C X Y [f H] //= .
+    eapply transitivity; [ apply compose_subst | ].
+    apply reflexivity.
+    apply ap_preserve_eq.
+    apply symmetry, H.
+    apply identity_codomain_id.
+  Qed.
+
+  Lemma hom_compose_assoc:
+    forall (C: SmallCategory)(X Y Z W: C)
+           (f: HomSetoid X Y)(g: HomSetoid Y Z)(h: HomSetoid Z W),
+      (h◦g)◦f == h◦(g◦f).
+  Proof.
+    move => C X Y Z W [f [Hfd Hfc]] [g [Hgd Hgc]] [h [Hhd Hhc]] /=.
+    set (transitivity (x:=codomain f) (y:=Y) (z:=domain g)
+           (proj2 (conj Hfd Hfc))
+           (symmetry (x:=domain g) (y:=Y) (proj1 (conj Hgd Hgc))))
+           as composable_fg.
+    set (transitivity (x:=codomain g) (y:=Z) (z:=domain h)
+           (proj2 (conj Hgd Hgc))
+           (symmetry (x:=domain h) (y:=Z) (proj1 (conj Hhd Hhc))))
+      as composeable_gh.
+    eapply transitivity.
+    apply compose_subst.
+    apply reflexivity.
+    apply reflexivity.
+    eapply transitivity.
+    apply (compose_associative f g h composable_fg).
+    apply symmetry.
+    eapply transitivity.
+    apply compose_subst.
+    apply reflexivity.
+    apply reflexivity.
+    apply reflexivity.
+  Qed.
+
+  Class Functor (C D: SmallCategory) :=
+    { fobj: Map (objects (SmallCategory:=C)) (objects (SmallCategory:=D));
+      fmap: Map (arrows (SmallCategory:=C)) (arrows (SmallCategory:=D));
+
+      functoriality:
+        forall (f: arrows),
+          domain (fmap f) == fobj (domain f)
+         ∧ codomain (fmap f) == fobj (codomain f);
+      
+      fmap_identity:
+        forall X: C, fmap (identity X) == identity (fobj X);
+
+      fmap_compose:
+        forall (f g: arrows)(composable: codomain f == domain g),
+          fmap (compose f g composable) ==
+          compose (fmap f) (fmap g)
+                  
+                  (transitivity
+                     (proj2 (functoriality f))
+                     (transitivity
+                        (ap_preserve_eq composable)
+                        (symmetry
+                           (proj1 (functoriality g)))))
+    }.
+  Coercion fobj: Functor >-> Map.
+
+  Definition eq_Functor{C D: SmallCategory}(F G: Functor C D): Prop :=
+    (forall X: C, F X == G X)
+      ∧(forall f: arrows, fmap (Functor:=F) f == fmap (Functor:=G) f).
+
+  Program Instance eq_Functor_Equivalence {C D: SmallCategory}
+  : Equivalence (@eq_Functor C D).
+  Next Obligation.
+    rewrite /Reflexive /eq_Functor.
+    move => F ; split; move => ? ; apply reflexivity.
+  Qed.
+  Next Obligation.
+    rewrite /Symmetric /eq_Functor.
+    move => F G H; split; move => ? ; apply symmetry, H.
+  Qed.
+  Next Obligation.
+    rewrite /Transitive /eq_Functor.
+    move => F G H [Hoxy Hfxy] [Hoyz Hfyz] ; split; 
+      [ move => X ; move: (Hoxy X) (Hoyz X)
+      | move => f ; move: (Hfxy f) (Hfyz f) ];
+      apply transitivity.
+  Qed.
+
+  Program Instance compose_Functor {C D E: SmallCategory}
+             (F: Functor C D)(G: Functor D E): Functor C E :=
+    { fobj := ComposeMap (fobj (Functor:=F)) (fobj (Functor:=G));
+      fmap := ComposeMap (fmap (Functor:=F)) (fmap (Functor:=G)) }.
+  Next Obligation.
+    split.
+    eapply transitivity;
+      [ apply functoriality | apply ap_preserve_eq ];
+      apply functoriality.
+    eapply transitivity;
+      [ apply functoriality | apply ap_preserve_eq ];
+      apply functoriality.
+  Qed.
+  Next Obligation.
+    eapply transitivity;
+      [ apply ap_preserve_eq | apply fmap_identity ].
+      apply fmap_identity.
+  Qed.    
+  Next Obligation.
+    eapply transitivity;
+      [ apply ap_preserve_eq; apply fmap_compose | ].
+    eapply transitivity;
+      [ apply ap_preserve_eq; apply symmetry; apply fmap_compose | ].
+    eapply transitivity;
+      [ | apply compose_subst ].
+    eapply transitivity;
+      [ apply ap_preserve_eq | apply fmap_compose ].
+    apply fmap_compose.
+    apply reflexivity.
+    apply reflexivity.
+  Qed.
+
+  Program Instance identity_Functor (C: SmallCategory): Functor C C :=
+    { fobj := IdMap (objects (SmallCategory:=C));
+      fmap := IdMap (arrows (SmallCategory:=C)) }.
+  Next Obligation.
+    split; apply reflexivity.
+  Qed.
+  Next Obligation.
+    apply reflexivity.
+  Qed.
+  Next Obligation.
+    apply compose_subst; apply reflexivity.
+  Qed.
+
+  Program Instance FunctorSetoid (C D: SmallCategory): Setoid :=
+    { carrier := Functor C D;
+      equal := eq_Functor }.
+
+  Definition hom_fmap {C D: SmallCategory}{X Y: C}(F: Functor C D)
+             (f: HomSetoid X Y): HomSetoid (F X) (F Y).
+    refine 
+      (match f with
+         | exist f' H => exist _ (fmap f') _
+       end).
+    split.
+    eapply transitivity; [ apply functoriality | apply ap_preserve_eq, H ].
+    eapply transitivity; [ apply functoriality | apply ap_preserve_eq, H ].
+  Defined.
+
+  Lemma hom_fmap_subst:
+    forall (C D: SmallCategory)(F: Functor C D)
+           (X Y: C)(f g: HomSetoid X Y),
+      f == g -> hom_fmap F f == hom_fmap F g.
+  Proof.
+    by move => C D F X Y [f Hf] [g Hg] //= ; apply ap_preserve_eq.
+  Qed.
+
+  Lemma hom_fmap_identity:
+    forall (C D: SmallCategory)(F: Functor C D)(X: C),
+      hom_fmap F (hom_identity X) == hom_identity (F X).
+  Proof.
+    by move => C D F X //= ; apply fmap_identity.
+  Qed.  
+  
+  Lemma hom_fmap_compose:
+    forall (C D: SmallCategory)(F: Functor C D)(X Y Z: C)
+           (f: HomSetoid X Y)(g: HomSetoid Y Z),
+      hom_fmap F (hom_compose f g) == hom_compose (hom_fmap F f) (hom_fmap F g).
+  Proof.
+     move => C D F X Y Z [f Hf] [g Hg] //= .
+     eapply transitivity.
+     apply fmap_compose.
+     eapply transitivity.
+     apply compose_subst.
+     apply reflexivity.
+     apply reflexivity.
+     apply reflexivity.
+  Qed.  
+  
 
   Reserved Notation "X ⟶ Y" (at level 60, right associativity).
   Reserved Notation "g ◦ f" (at level 60, right associativity).
+
   Class Category :=
     { obj: Type;
-      arr (X Y: obj):> Setoid where "X ⟶ Y" := (arr X Y);
+      arr (X Y: obj): Setoid where "X ⟶ Y" := (arr X Y);
 
-      compose {X Y Z: obj}:
-        (X ⟶ Y) -> (Y ⟶ Z) -> (X ⟶ Z) where "g ◦ f" := (compose f g);
-      compose_assoc:
-        forall (X Y Z W: obj)(f: X ⟶ Y)(g: Y ⟶ Z)(h: Z ⟶ W),
-          (h◦g)◦f == h◦(g◦f);
-      compose_subst:
-        forall (X Y Z: obj)(f f': X ⟶ Y)(g g': Y ⟶ Z)
-          (Heq_fst: f == f')(Heq_snd: g == g'),
-          g◦f == g'◦f';
+      comp {X Y Z: obj}:
+        (X ⟶ Y) -> (Y ⟶ Z) -> (X ⟶ Z) where "g ◦ f" := (comp f g);
 
       id {X: obj}: X ⟶ X;
-      id_left:
-        forall (X Y: obj)(f: X ⟶ Y), f◦id == f;
-      id_right:
-        forall (X Y: obj)(f: X ⟶ Y), id◦f == f }.
-  Coercion obj: Category >-> Sortclass.
-  Notation "X ⟶ Y" := (arr X Y) (at level 60, right associativity).
-  Notation "g ◦ f" := (compose f g) (at level 60, right associativity).
-  Definition id_ {C: Category}(X: C) := id (X:=X).
-  Lemma compose_subst_fst:
-    forall (C: Category)(X Y Z: C)(f f': X ⟶ Y)(g: Y ⟶ Z),
-      f == f' -> g◦f == g◦f'.
-  Proof.
-    intros.
-    apply compose_subst; [ apply H | apply eq_refl; auto ].
+
+      comp_assoc:
+        forall (X Y Z W: obj)(f: X ⟶ Y)(g: Y ⟶ Z)(h: Z ⟶ W),
+          (h◦g)◦f == h◦(g◦f);
+      comp_subst:
+        forall (X Y Z: obj)(f f': X ⟶ Y)(g g': Y ⟶ Z)
+               (Heq_fst: f == f')(Heq_snd: g == g'),
+          g◦f == g'◦f';
+
+      id_dom: (* renamed from id_left *)
+        forall (X Y: obj)(f: X ⟶ Y), comp id f == f;
+      id_cod: (* renamed from id_rigth *)
+        forall (X Y: obj)(f: X ⟶ Y), comp f id == f }.
+
+
+  Program Instance Cat: Category :=
+    { obj := SmallCategory;
+      arr C D := FunctorSetoid C D;
+      comp C D E F G := compose_Functor F G;
+      id C := identity_Functor C }.
+  Next Obligation.
+    rewrite /eq_Functor; split; simpl;
+    move => ? ; apply reflexivity.
+  Qed.
+  Next Obligation.
+    move
+    : Heq_fst Heq_snd 
+    => [Heq_fst_o Heq_fst_m] [Heq_snd_o Heq_snd_m]; split.
+    move => x //=;
+      eapply transitivity; [ apply Heq_snd_o | apply ap_preserve_eq ];
+        apply Heq_fst_o. 
+    move => x //=;
+      eapply transitivity; [ apply Heq_snd_m | apply ap_preserve_eq ];
+        apply Heq_fst_m. 
+  Qed.
+  Next Obligation.
+    rewrite /eq_Functor; split; simpl;
+    move => ? ; apply reflexivity.
+  Qed.
+  Next Obligation.
+    rewrite /eq_Functor; split; simpl;
+    move => ? ; apply reflexivity.
   Qed.
 
-  Lemma compose_subst_snd:
-    forall (C: Category)(X Y Z: C)(f: X ⟶ Y)(g g': Y ⟶ Z),
-      g == g' -> g◦f == g'◦f.
-  Proof.
-    intros.
-    apply compose_subst; [ apply eq_refl; auto | apply H ].
+  
+  Class Natrans {C D: SmallCategory}(F G: Functor C D) :=
+    { natrans: Map (objects (SmallCategory:=C)) (arrows (SmallCategory:=D));
+
+      natrans_domain:
+        forall X: C, domain (natrans X) == F X;
+
+      natrans_codomain:
+        forall X: C, codomain (natrans X) == G X;
+
+      naturality:
+        forall f: arrows (SmallCategory:=C),
+          compose (fmap (Functor:=F) f) (natrans (codomain f))
+                  (transitivity
+                     (proj2 (functoriality f))
+                     (symmetry (natrans_domain (codomain f))))
+          ==
+          compose (natrans (domain f)) (fmap (Functor:=G) f)
+                  (transitivity
+                     (natrans_codomain (domain f))
+                     (symmetry (proj1 (functoriality f)))) }.
+  Coercion natrans: Natrans >-> Map.
+  
+  Definition eq_Natrans {C D: SmallCategory}{F G: Functor C D}
+  (S T: Natrans F G): Prop :=
+    forall X: C, S X == T X.
+
+  Program Instance eq_Natrans_Equivalence
+          {C D: SmallCategory}{F G: Functor C D}
+  : Equivalence (@eq_Natrans C D F G).
+  Next Obligation.
+    rewrite /Reflexive /eq_Natrans.
+    move => S X ; apply reflexivity.
   Qed.
+  Next Obligation.
+    rewrite /Symmetric /eq_Natrans.
+    move => S T Heq X ; move: (Heq X); apply symmetry.
+  Qed.
+  Next Obligation.
+    rewrite /Transitive /eq_Natrans.
+    move => S T U Heq Heq' X ; move: (Heq X) (Heq' X); apply transitivity.
+  Qed.
+
+  Program Instance NatransSetoid {C D: SmallCategory}(F G: Functor C D)
+  : Setoid :=
+    { carrier := Natrans F G;
+      equal := eq_Natrans }.
+
+
+  Program Instance compose_Natrans_natrans {C D: SmallCategory}{F G H: Functor C D}
+          (S: Natrans F G)(T: Natrans G H)
+  : Map (objects (SmallCategory:=C)) (arrows (SmallCategory:=D)) :=
+    { ap X := compose (natrans (Natrans:=S) X) (natrans (Natrans:=T) X)
+                      (transitivity
+                         (natrans_codomain X)
+                         (symmetry (natrans_domain X))) }.
+  Next Obligation.
+    by apply compose_subst; apply ap_preserve_eq.
+  Qed.
+
+  Program Instance compose_Natrans {C D: SmallCategory}{F G H: Functor C D}
+          (S: Natrans F G)(T: Natrans G H): Natrans F H :=
+    { natrans := compose_Natrans_natrans S T }.
+  Next Obligation.
+    eapply transitivity;
+    [ apply compose_domain | apply natrans_domain ].
+  Qed.
+  Next Obligation.
+    eapply transitivity;
+    [ apply compose_codomain | apply natrans_codomain ].
+  Qed.
+  Next Obligation.
+    eapply transitivity; [ apply compose_subst |  ].
+    apply reflexivity.
+    apply compose_subst.
+    apply reflexivity.
+    apply reflexivity.
+    eapply transitivity; [ apply compose_associative |  ].
+    eapply transitivity; [ apply compose_subst |  ].
+    apply naturality.
+    apply reflexivity.
+    eapply transitivity; [ apply symmetry; apply compose_associative |  ].
+    apply symmetry.
+    eapply transitivity; [ apply compose_subst |  ].
+    apply compose_subst.
+    apply reflexivity.
+    apply reflexivity.
+    apply reflexivity.
+    eapply transitivity; [ apply symmetry; apply compose_associative |  ].
+    apply compose_subst.
+    apply reflexivity.
+    apply symmetry.
+    apply naturality.
+
+    Grab Existential Variables.
+    eapply transitivity;
+      [ apply natrans_codomain | apply symmetry; apply natrans_domain  ].
+    eapply transitivity;
+      [ apply natrans_codomain | apply symmetry; apply natrans_domain  ].
+  Qed.
+
+  Program Instance identity_Natrans_natrans {C D: SmallCategory}(F: Functor C D)
+  : Map (objects (SmallCategory:=C)) (arrows (SmallCategory:=D)) :=
+    { ap X := identity (F X) }.
+  Next Obligation.
+    by repeat apply ap_preserve_eq.
+  Qed.
+
+  Program Instance identity_Natrans {C D: SmallCategory}(F: Functor C D)
+  : Natrans F F :=
+    { natrans := identity_Natrans_natrans F }.
+  Next Obligation.
+    apply identity_domain.
+  Qed.
+  Next Obligation.
+    apply identity_codomain.
+  Qed.
+  Next Obligation.
+    eapply transitivity; [ apply compose_subst | ].
+    apply reflexivity.
+    apply symmetry; apply fmap_identity.
+    eapply transitivity; [ apply symmetry; apply fmap_compose | ].
+    apply symmetry.
+    eapply transitivity; [ apply compose_subst | ].
+    apply symmetry; apply fmap_identity.
+    apply reflexivity.
+    eapply transitivity; [ apply symmetry; apply fmap_compose | ].
+    apply ap_preserve_eq.
+    eapply transitivity;
+      [ apply identity_domain_id | apply symmetry; apply identity_codomain_id ].
+  Qed.
+
+
+  Program Instance Func (C D: SmallCategory): Category :=
+    { obj := FunctorSetoid C D;
+      arr F G := NatransSetoid F G;
+      comp F G H S T := compose_Natrans S T;
+      id F := identity_Natrans F }.
+  Next Obligation.
+    rewrite /eq_Natrans.
+    move => x //= .
+    eapply transitivity; [ apply compose_subst | ].
+    apply reflexivity.
+    apply compose_subst.
+    apply reflexivity.
+    apply reflexivity.
+    eapply transitivity; [ apply compose_associative | ].
+    apply compose_subst.
+    apply compose_subst.
+    apply reflexivity.
+    apply reflexivity.
+    apply reflexivity.
+    Grab Existential Variables.
+    eapply transitivity;
+      [ apply natrans_codomain | apply symmetry; apply natrans_domain  ].
+    eapply transitivity;
+      [ apply natrans_codomain | apply symmetry; apply natrans_domain  ].
+  Qed.
+  Next Obligation.
+    rewrite /eq_Natrans.
+    by move => x //= ; apply compose_subst.
+  Qed.
+  Next Obligation.
+    rewrite /eq_Natrans.
+    move => x //= . 
+    eapply transitivity; [ | apply identity_domain_id ].
+    apply compose_subst.
+    apply ap_preserve_eq.
+    apply symmetry; apply natrans_domain.
+    apply reflexivity.
+  Qed.
+  Next Obligation.
+    rewrite /eq_Natrans.
+    move => x //= . 
+    eapply transitivity; [ | apply identity_codomain_id ].
+    apply compose_subst.
+    apply reflexivity.
+    apply ap_preserve_eq.
+    apply symmetry; apply natrans_codomain.
+  Qed.
+
+
+  Reserved Notation "x ⊕ y" (at level 60, right associativity).
+  Class Monoid  :=
+    { monoid: Set;
+      m_binop: monoid -> monoid -> monoid where "x ⊕ y" := (m_binop x y);
+      m_unit: monoid;
+      monoid_unit_left:
+        forall m: monoid, m_unit ⊕ m = m;
+      monoid_unit_right:
+        forall m: monoid, m ⊕ m_unit = m;
+      monoid_assoc:
+        forall m n k, (m⊕n)⊕k = m⊕(n⊕k) }.
+  Coercion monoid: Monoid >-> Sortclass.
+  Notation "x ⊕ y" := (m_binop x y) (at level 60, right associativity).
+
+  Program Instance unit_Setoid: Setoid :=
+    { carrier := unit; equal := eq }.
+  Program Instance Monoid_Setoid (M: Monoid): Setoid :=
+    { carrier := M; equal := eq }.
+  Program Instance unit_Monoid_Map(M: Monoid) 
+  : Map unit_Setoid (Monoid_Setoid M) :=
+    { ap X := m_unit }.
+  Program Instance Monoid_unit_Map (M: Monoid)
+  : Map (Monoid_Setoid M) unit_Setoid :=
+    { ap X := tt }.
+
+    Program Instance MonoidSC (M: Monoid): SmallCategory :=
+      { objects := unit_Setoid;
+        arrows := Monoid_Setoid M;
+        domain := Monoid_unit_Map M;
+        codomain := Monoid_unit_Map M;
+        identity := unit_Monoid_Map M;
+        compose m n H := m⊕n }.
+    Next Obligation.
+        by elim: x.
+    Qed.
+    Next Obligation.
+        by elim: x.
+    Qed.
+    Next Obligation.
+        by apply monoid_unit_left.
+    Qed.
+    Next Obligation.
+        by apply monoid_unit_right.
+    Qed.
+    Next Obligation.
+        by apply symmetry; apply monoid_assoc.
+    Qed.
+
+    Class MonoidHom (M N: Monoid) :=
+      { m_hom: M -> N;
+        m_hom_unit:
+          m_hom m_unit = m_unit;
+        m_hom_binop:
+          forall x y, m_hom (x⊕y) = (m_hom x)⊕(m_hom y) }.
+    Coercion m_hom: MonoidHom >-> Funclass.
+    
+    Program Instance identity_MonoidHom (M: Monoid): MonoidHom M M  :=
+      { m_hom x := x }.
+
+    Program Instance compose_MonoidHom {M N K: Monoid}
+            (f: MonoidHom M N)(g: MonoidHom N K): MonoidHom M K  :=
+      { m_hom x := m_hom (m_hom x) }.
+    Next Obligation.
+      apply eq_trans with (m_hom m_unit); [ |  apply m_hom_unit ].
+      apply f_equal; apply m_hom_unit.
+    Qed.
+    Next Obligation.
+      eapply eq_trans; [ |  apply m_hom_binop ].
+      apply f_equal; apply m_hom_binop.
+    Qed.      
+
+    Program Instance MonoidHom_Map {M N: Monoid}(f: MonoidHom M N)
+    : Map (Monoid_Setoid M) (Monoid_Setoid N) :=
+      { ap x := f x }.
+    
+    Program Instance MonoidHom_Functor {M N: Monoid}(f: MonoidHom M N)
+    : Functor (MonoidSC M) (MonoidSC N) :=
+      { fobj := IdMap unit_Setoid;
+        fmap := MonoidHom_Map f }.
+    Next Obligation.
+      apply m_hom_unit.
+    Qed.
+    Next Obligation.
+      apply m_hom_binop.
+    Qed.
+
+    Program Instance MonoidHom_Setoid (M N: Monoid): Setoid :=
+      { carrier := MonoidHom M N;
+        equal f g := forall x, f x = g x }.
+    Next Obligation.
+      split; congruence.
+    Qed.
+
+    Program Instance Mon: Category :=
+      { obj := Monoid;
+        arr := MonoidHom_Setoid;
+        id M := identity_MonoidHom M;
+        comp M N K f g := compose_MonoidHom f g }.
+    Next Obligation.
+      eapply eq_trans; [ apply Heq_snd | apply f_equal; apply Heq_fst ].
+    Qed.
+    Check Category.
+    Check SmallCategory.
+
+  Class CATEGORY :=
+    { Ob: Type;
+      Ar (X Y: Ob): Type }.
+
+  Check CATEGORY.
+
+  Program Instance SmallCategory_Category (sC: SmallCategory): Category :=
+    { obj := objects;
+      arr X Y := HomSetoid X Y;
+
+      comp X Y Z f g := hom_compose f g;
+      id X := identity X }.
+  Next Obligation.
+    split; [ apply identity_domain | apply identity_codomain ].
+  Qed.
+  Next Obligation.
+    apply hom_compose_assoc.
+  Qed.
+  Next Obligation.
+    apply hom_compose_subst; auto.
+  Qed.
+  Next Obligation.
+    move: f => [f [Hfd Hfc]] /=.
+    eapply transitivity.
+    apply compose_subst; [ | apply reflexivity ].
+    apply symmetry; apply ap_preserve_eq; exact Hfd.
+    apply identity_domain_id.
+  Qed.
+  Next Obligation.
+    move: f => [f [Hfd Hfc]] /=.
+    eapply transitivity.
+    apply compose_subst; [ apply reflexivity | ].
+    apply symmetry; apply ap_preserve_eq; exact Hfc.
+    apply identity_codomain_id.
+  Qed.
+  
+  Class CATEGORY :=
+    { Ob: Type;
+      Ar (X Y: Ob): Type }.
+
+  Program Instance Category_CATEGORY (C: Category): CATEGORY :=
+    { Ob := obj;
+      Ar X Y := arr X Y }.
+
+      comp {X Y Z: obj}:
+        (X ⟶ Y) -> (Y ⟶ Z) -> (X ⟶ Z) where "g ◦ f" := (comp f g);
+
+      id {X: obj}: X ⟶ X;
+
+      comp_assoc:
+        forall (X Y Z W: obj)(f: X ⟶ Y)(g: Y ⟶ Z)(h: Z ⟶ W),
+          (h◦g)◦f == h◦(g◦f);
+      comp_subst:
+        forall (X Y Z: obj)(f f': X ⟶ Y)(g g': Y ⟶ Z)
+               (Heq_fst: f == f')(Heq_snd: g == g'),
+          g◦f == g'◦f';
+
+      id_dom: (* renamed from id_left *)
+        forall (X Y: obj)(f: X ⟶ Y), comp id f == f;
+      id_cod: (* renamed from id_rigth *)
+        forall (X Y: obj)(f: X ⟶ Y), comp f id == f }.
+  
+
+
+  (* Example Sets *)
+  Program Instance SetSetoid: Setoid :=
+    { carrier := Set;
+      equal := eq }.
+
+  Inductive function_eq {X Y: Set}(f: X -> Y): forall (X' Y': Set)(g: X' -> Y'), Prop :=
+  | feq_def: forall f': X -> Y, (forall x: X, f x = f' x) -> function_eq f f'.
+
+  Lemma function_eq_refl:
+    forall (Xf Yf: Set)(f: Xf -> Yf),
+      function_eq f f.
+  Proof.
+    move => Xf Yf f.
+    by apply feq_def.
+  Qed.
+
+  Lemma function_eq_sym:
+    forall (Xf Yf Xg Yg: Set)(f: Xf -> Yf)(g: Xg -> Yg),
+      function_eq f g -> function_eq g f.
+  Proof.
+    move => Xf Yf Xg Yg f g Heq.
+    induction Heq; apply feq_def; auto.
+  Qed.
+
+  Lemma function_eq_trans:
+    forall (Xf Yf Xg Yg Xh Yh: Set)(f: Xf -> Yf)(g: Xg -> Yg)(h: Xh -> Yh),
+      function_eq f g -> function_eq g h -> function_eq f h.
+  Proof.
+    move => Xf Yf Xg Yg Xh Yh f g h Heqfg.
+    induction Heqfg; subst; auto.
+    move => Heqgh.
+    induction Heqgh; subst; auto.
+    apply feq_def.
+    congruence.
+  Qed.
+
+
+  Inductive functions: Type :=
+  | functions_def: forall (X Y: Set)(f: X -> Y), functions.
+  
+  Definition eq_functions (f g: functions): Prop :=
+    match f, g with 
+      | functions_def X Y f', functions_def X' Y' g' =>
+        function_eq f' g'
+    end.
+
+  Program Instance eq_functions_Equivalence: Equivalence eq_functions.
+  Next Obligation.
+    rewrite /Reflexive /eq_functions; move => [X Y f].
+    apply function_eq_refl.
+  Qed.
+  Next Obligation.
+    rewrite /Symmetric /eq_functions; move => [Xf Yf f] [Xg Yg g].
+    apply function_eq_sym.
+  Qed.
+  Next Obligation.
+    rewrite /Transitive /eq_functions; move => [Xf Yf f] [Xg Yg g] [Xh Yh h].
+    apply function_eq_trans.
+  Qed.
+
+  Program Instance FunctionSetoid: Setoid :=
+    { carrier := functions;
+      equal := eq_functions }.
+
+  Definition domain_Set (f: FunctionSetoid) :=
+    match f with | functions_def X _ _ => X end.
+  Definition codomain_Set (f: FunctionSetoid) :=
+    match f with | functions_def _ Y _ => Y end.
+ 
+  Program Instance domain_Set_Map: Map FunctionSetoid SetSetoid :=
+    { ap := domain_Set }.
+  Next Obligation.
+    move: x x' Heq => [X Y f] [X' Y' f'] //= Heq.
+    inversion Heq; subst; auto.
+  Qed.
+  Program Instance codomain_Set_Map: Map FunctionSetoid SetSetoid :=
+    { ap := codomain_Set }.
+  Next Obligation.
+    move: x x' Heq => [X Y f] [X' Y' f'] //= Heq.
+    inversion Heq; subst; auto.
+  Qed.
+
+
+  Definition identity_Set (X: SetSetoid) := functions_def (@id X).
+  Program Instance identity_Set_Map: Map SetSetoid FunctionSetoid :=
+    { ap := identity_Set }.
+  Next Obligation.
+    apply function_eq_refl.
+  Qed.
+
+  Definition compose_Set
+             (f g: FunctionSetoid)(composable: codomain_Set_Map f == domain_Set_Map g): functions.
+    refine (@functions_def (domain_Set f) (codomain_Set g) _).
+    destruct f, g.
+    simpl in *; subst.
+    intro x.
+    apply f0.
+    apply f.
+    exact x.
+  Defined.
+ 
+  Program Instance Sets_is_SmallCategory
+  : @is_SmallCategory SetSetoid FunctionSetoid
+                 domain_Set_Map codomain_Set_Map
+                 identity_Set_Map compose_Set.
+  Next Obligation.
+    move: f f' H => [X Y f] [X' Y' f'] //= H; simpl.
+    inversion H; subst; auto.
+  Qed.
+  Next Obligation
+    move: f f' H => [X Y f] [X' Y' f'] //= H; simpl.
+    inversion H; subst; auto.
+  Qed.    
+  Next Obligation.
+    apply function_eq_refl.
+  Qed.
+  Next Obligation.
+    move: f => [X Y f]; simpl.
+    unfold Sets_is_Category_obligation_5; simpl.
+    apply feq_def; simpl.
+    unfold eq_rec_r, eq_rec, eq_rect, eq_sym, id.
+    congruence.
+  Qed.
+  Next Obligation.
+    move: f => [X Y f]; simpl.
+    unfold Sets_is_Category_obligation_4; simpl.
+    apply feq_def; simpl.
+    move => x.
+    unfold eq_rec_r, eq_rec, eq_rect, eq_sym, id.
+    simpl.
+    congruence.
+  Qed.
+  Next Obligation.
+    move
+    : f f' g g' Heqf Heqg composable composable'
+    => [Xf Yf f] [Xf' Yf' f'] [Xg Yg g] [Xg' Yg' g'] //= Heqf Heqg ? ?; subst.
+    unfold eq_rec_r, eq_rec, eq_rect, eq_sym, id.
+    inversion Heqf; subst.
+    inversion Heqg; subst.
+    apply feq_def; simpl.
+    intro.
+    rewrite H6.
+    injection H7.
+    SearchAbout existT.
+    rewrite H4.
+    
+                 
+  { objects := Setoid;
+    arr X Y := MapSetoid X Y;
+    compose X Y Z f g := ComposeMap f g;
+    id X := IdMap X }.
+  Program Instance Setoids: Category :=
+  { objects := Setoid;
+    arr X Y := MapSetoid X Y;
+    compose X Y Z f g := ComposeMap f g;
+    id X := IdMap X }.
+Definition ext_eq {X Y: Set}(f g: X -> Y): Prop :=
+    forall x, f x = g x.
+  
+  Program Instance ext_eq_Equivalence (X Y: Set)
+  : Equivalence (A:=X -> Y) ext_eq.
+  Next Obligation.
+    congruence.
+  Qed.
+  Next Obligation.
+    congruence.
+  Qed.
+  Next Obligation.
+    congruence.
+  Qed.
+
+  Program Instance FunctionSetoid (X Y: Set): Setoid :=
+    { carrier := X -> Y : Set;
+      equal f g := ext_eq f g }.
+  
 
   Program Instance Sets: Category :=
-    { obj := Set;
+    { objects := Set;
       arr X Y := FunctionSetoid X Y;
       compose X Y Z f g := fun (x: X) => g (f x);
       id X := fun (x: X) => x }.
