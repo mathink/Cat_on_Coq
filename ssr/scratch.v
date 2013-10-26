@@ -29,15 +29,13 @@ Module Relation.
 
   End RelProperties.
 
-  Structure Equivalence (A: Type) :=
+  Structure Equivalence (A: Type)(eq: relation A) :=
     Mixin
-      { equiv_eq: relation A;
-        _ : reflexive equiv_eq;
-        _ : symmetric equiv_eq;
-        _ : transitive equiv_eq }.
+      { _ : reflexive eq;
+        _ : symmetric eq;
+        _ : transitive eq }.
 
   Module Exports.
-    Coercion equiv_eq: Equivalence >-> relation.
     Notation mkEquiv := Mixin.
     Notation equiv := Equivalence.
   End Exports.
@@ -46,6 +44,7 @@ End Relation.
 Export Relation.Exports.
 Hint Unfold Relation.reflexive Relation.symmetric Relation.transitive.
 
+(*
 Lemma equiv_refl T (e: equiv T):
   Relation.reflexive e.
 Proof.
@@ -63,7 +62,7 @@ Lemma equiv_trans T (e: equiv T):
 Proof.
   by case: e => ?.
 Qed.
-
+*)
 
 Section eqEquiv.
 
@@ -87,28 +86,45 @@ Section eqEquiv.
     by move=> a b c -> -> //=.
   Qed.
 
-  Canonical eqEquiv :=
-    mkEquiv (eqrefl) (eqsymm) (eqtrans).
+  Canonical eqEquiv := mkEquiv (eqrefl) (eqsymm) (eqtrans).
 
 End eqEquiv.
 
 Module Setoid.
 
-  Structure mixin :=
+  Structure mixin T :=
     Mixin
-      { carrier: Type;
-        equal: equiv carrier }.
+      { equal: relation T;
+        _: equiv equal }.
+
+  Section ClassDef.
+    Structure type :=
+      Pack
+        { sort;
+          _: mixin sort;
+          _: Type }.
+    Local Coercion sort : type >-> Sortclass.
+    Variables (T: Type)(t: type).
+
+    Definition class :=
+      let: Pack _ c _ := t return mixin t in c.
+
+    Definition pack c := @Pack T c T.
+
+    Definition clone := fun c & t -> T & phant_id (pack c) t => pack c.
+  End ClassDef.
 
   Module Exports.
-    Coercion carrier : mixin >-> Sortclass.
-    Notation setoid := mixin.
+    Coercion sort: type >-> Sortclass.
+    Notation setoid := type.
     Notation mkSetoid := Mixin.
+    Notation SetoidType T s := (@pack T s).
   End Exports.
 
 End Setoid.
 Export Setoid.Exports.
 
-Definition setoid_eq {S: setoid}: relation S := Setoid.equal S.
+Definition setoid_eq {S: setoid}: relation S := Setoid.equal (Setoid.class S).
 Hint Unfold setoid_eq.
 
 Notation "x === y" := (setoid_eq x y) (at level 89, no associativity).
@@ -119,7 +135,7 @@ Check setoid_eq.
 Lemma eqE T x : eq_op x = Equality.op (Equality.class T) x.
 Proof. by []. Qed.
 
-Lemma setoidE (S: setoid) x: setoid_eq x = Relation.equiv_eq (Setoid.equal S) x.
+Lemma setoidE (S: setoid) x: setoid_eq x = (Setoid.equal (Setoid.class S)) x.
 Proof.
   by [].
 Qed.
@@ -127,29 +143,29 @@ Qed.
 Lemma setoid_eq_refl (s: setoid):
   Relation.reflexive (@setoid_eq s).
 Proof.
-  apply equiv_refl.
+  by case: s => [t [e []]].
 Qed.
 
 Lemma setoid_eq_symm (s: setoid):
   Relation.symmetric (@setoid_eq s).
 Proof.
-  apply equiv_symm.
+  by case: s => [t [e []]].
 Qed.
 
 Lemma setoid_eq_trans (s: setoid):
   Relation.transitive (@setoid_eq s).
 Proof.
-  apply equiv_trans.
+  by case: s => [t [e []]].
 Qed.
-
 
 
 Section eqSetoid.
 
   Variable (A: Type).
 
-  Canonical eqSetoid := mkSetoid (eqEquiv A).
-
+  Canonical eqSetoidMixin := mkSetoid (eqEquiv A).
+  Canonical eqSetoidType := Eval hnf in SetoidType A eqSetoidMixin.
+  
 End eqSetoid.
 
 Definition ext_eq {X Y: Type}(f g: X -> Y) :=
@@ -181,11 +197,10 @@ End functionEquiv.
 
 Canonical functionSetoid (X Y: Type) := mkSetoid (functionEquiv X Y).
 
-Check (@setoid_eq (eqSetoid nat) 1 2).
 Check (1 === 2).
 Check (true === false).
 Check (S === S).
-Check id.
+(* Check id. *)
 (* Definition Id (X: Type)(x: X) := x. *)
 (* Check  (@Id nat). *)
 (* Check ((@Id nat) === S). *)
@@ -203,15 +218,31 @@ Module Map.
 
   End Properties.
 
-  Structure mixin (dom cod: setoid) := 
+  Structure mixin (dom cod: setoid)(f: dom -> cod) := 
     Mixin
-      { map: dom -> cod;
-        _: well_defined map }.
+      { _: well_defined f }.
+
+  Section ClassDef.
+    Structure type (domain codomain: setoid) :=
+      Pack
+        { map;
+          _: @mixin domain codomain map;
+          _: domain -> codomain }.
+    Local Coercion map: type >-> Funclass.
+    Variables (dom cod: setoid)(f: dom -> cod)(t: type dom cod).
+
+    Definition class :=
+      let: Pack _ c _ := t return mixin t in c.
+
+    Definition pack c := @Pack dom cod f c f.
+
+  End ClassDef.
 
   Module Exports.
-    Coercion map: mixin >-> Funclass.
-    Notation map := mixin.
+    Coercion map: type >-> Funclass.
+    Notation map := type.
     Notation mkMap := Mixin.
+    Notation MapType f m := (@pack f m).
   End Exports.    
 End Map.
 Export Map.Exports.
@@ -226,7 +257,9 @@ Section eqMap.
     move=> x y -> //=.
   Qed.
 
-  Canonical eqMap := mkMap eqfwd.
+  Canonical eqMapMixin := mkMap eqfwd.
+  Check eqMapMixin.
+  Canonical eqMapType := Eval hnf in MapType (eqSetoidType A) (eqSetoidType B) eqMapMixin.
 
 End eqMap.
 
@@ -237,7 +270,7 @@ Ltac eq_rewrite H :=
 
 Section mapSetoid.
   Variables (dom cod: setoid).
-
+  Check map.
   Definition eqmap (f g: map dom cod) :=
     forall x: dom, f x === g x.
   
@@ -260,12 +293,12 @@ Section mapSetoid.
     eq_rewrite (Heqfg x); apply Heqgh.
   Qed.
 
-  Canonical eqmapEquiv := mkEquiv eqmap_refl eqmap_symm eqmap_trans.    
-
-  Canonical mapSetoid := mkSetoid eqmapEquiv.
+  Canonical eqmapEquiv := mkEquiv eqmap_refl eqmap_symm eqmap_trans.
 
 End mapSetoid.
-Notation "X --> Y" := (mapSetoid X Y) (at level 70, right associativity).
+Canonical mapSetoidMixin (dom cod: setoid):= mkSetoid (@eqmapEquiv dom cod).
+Canonical mapSetoidType (dom cod: setoid) := Eval hnf in SetoidType (map dom cod) (mapSetoidMixin dom cod).
+Notation "X --> Y" := (mapSetoidType X Y) (at level 70, right associativity).
 
 
 Module MetaGraph.
@@ -288,7 +321,7 @@ Module MetaGraph.
     Definition class :=
       let: Pack _ _ mg _ _ := t return mixin (obj t) (arr t) in mg.
 
-    (* Definition pack mg := @Pack O A mg O A. *)
+    Definition pack mg := @Pack O A mg O A.
 
     (* Definition clone := fun mg & (obj t) -> O & (arr t) -> A & phant_id (pack mg) t => pack mg. *)
   End ClassDef.
@@ -296,8 +329,8 @@ Module MetaGraph.
   Module Exports.
     Coercion obj: type >-> setoid.
     Notation mgType := type.
-    Notation makeMetaGraph := mixin.
-    (* Notation MgType O A mg := (@pack O A mg). *)
+    Notation mkMetaGraph := Mixin.
+    Notation MGType O A mg := (@pack O A mg).
   End Exports.
 End MetaGraph.
 Export MetaGraph.Exports.
@@ -348,10 +381,11 @@ Module Category.
       Canonical eqhomEquiv := mkEquiv eqhom_refl eqhom_symm eqhom_trans.
     End eqhomEquiv.
 
-    Canonical homSetoid (X Y: obj meta) := mkSetoid (@eqhomEquiv X Y).
+    Canonical homSetoidMixin (X Y: obj meta) := mkSetoid (@eqhomEquiv X Y).
+    Canonical homSetoidType (X Y: obj meta) := Eval hnf in SetoidType (hom X Y) (homSetoidMixin X Y).
 
   End homSetoid.
-  Notation Hom := homSetoid.
+  Notation Hom := homSetoidType.
 
   Section Properties.
 
@@ -394,7 +428,7 @@ Module Category.
     Definition class :=
       let: Pack _ c _ := t return mixin (meta t) in c.
 
-    (* Definition pack mg := @Pack M mg M. *)
+    Definition pack mg := @Pack M mg M.
 
     (* Definition clone := fun c & (meta t) -> M & phant_id (pack c) t => pack c. *)
   End ClassDef.
@@ -403,9 +437,9 @@ Module Category.
     Coercion meta: type >-> mgType.
     Notation category := type.
     Notation mkCategory := Mixin.
-    (* Notation CatType M mg := (@pack M mg). *)
-    Notation Hom := homSetoid.
-    Arguments homSetoid {meta}(X Y).
+    Notation CatType M mg := (@pack M mg).
+    Arguments homSetoidType {meta}(X Y).
+    Notation Hom := homSetoidType.
   End Exports.
 
 End Category.
@@ -438,4 +472,5 @@ Lemma compA (c: category):
 Proof.
   by case: c => ? [].
 Qed.
+
 
