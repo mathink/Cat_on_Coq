@@ -288,16 +288,16 @@ Module MetaGraph.
     Definition class :=
       let: Pack _ _ mg _ _ := t return mixin (obj t) (arr t) in mg.
 
-    Definition pack mg := @Pack O A mg O A.
+    (* Definition pack mg := @Pack O A mg O A. *)
 
-    Definition clone := fun mg & (obj t) -> O & (arr t) -> A & phant_id (pack mg) t => pack mg.
+    (* Definition clone := fun mg & (obj t) -> O & (arr t) -> A & phant_id (pack mg) t => pack mg. *)
   End ClassDef.
 
   Module Exports.
     Coercion obj: type >-> setoid.
     Notation mgType := type.
     Notation makeMetaGraph := mixin.
-    Notation MgType O A mg := (@pack O A mg).
+    (* Notation MgType O A mg := (@pack O A mg). *)
   End Exports.
 End MetaGraph.
 Export MetaGraph.Exports.
@@ -394,16 +394,16 @@ Module Category.
     Definition class :=
       let: Pack _ c _ := t return mixin (meta t) in c.
 
-    Definition pack mg := @Pack M mg M.
+    (* Definition pack mg := @Pack M mg M. *)
 
-    Definition clone := fun c & (meta t) -> M & phant_id (pack c) t => pack c.
+    (* Definition clone := fun c & (meta t) -> M & phant_id (pack c) t => pack c. *)
   End ClassDef.
 
   Module Exports.
     Coercion meta: type >-> mgType.
     Notation category := type.
     Notation mkCategory := Mixin.
-    Notation CatType M mg := (@pack M mg).
+    (* Notation CatType M mg := (@pack M mg). *)
     Notation Hom := homSetoid.
     Arguments homSetoid {meta}(X Y).
   End Exports.
