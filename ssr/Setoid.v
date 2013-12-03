@@ -166,7 +166,7 @@ Section eqSetoid.
   Qed.
 
 
-  Canonical eqSetoidMixin := SetoidMixin eqrefl eqsymm eqtrans.
+  Canonical eqSetoidMixin := Eval hnf in SetoidMixin eqrefl eqsymm eqtrans.
   Canonical eqSetoidType := Eval hnf in SetoidType A eqSetoidMixin.
   
 End eqSetoid.
@@ -195,8 +195,8 @@ Section functionEquiv.
     by move=> f g h Heqfg Heqgh x; move: (Heqfg x) => ->.
   Qed.
 
-  Canonical functionSetoidMixin := SetoidMixin exteqrefl exteqsymm exteqtrans.
-  Canonical functionSetoidType  := SetoidType (X -> Y) functionSetoidMixin.
+  Canonical functionSetoidMixin := Eval hnf in SetoidMixin exteqrefl exteqsymm exteqtrans.
+  Canonical functionSetoidType  := Eval hnf in SetoidType (X -> Y) functionSetoidMixin.
 
 End functionEquiv.
 
@@ -221,7 +221,7 @@ Module Map.
     Structure type (domain codomain: setoid) :=
       Pack
         { map;
-          _: @mixin_of domain codomain map;
+          _: @class_of domain codomain map;
           _: domain -> codomain }.
     Local Coercion map: type >-> Funclass.
     Variables (dom cod: setoid)(f: dom -> cod)(t: type dom cod).
@@ -291,7 +291,7 @@ Section eqMap.
     move=> x y -> //=.
   Qed.
 
-  Canonical eqMapMixin := MapMixin eqfwd.
+  Canonical eqMapMixin := Eval hnf in MapMixin eqfwd.
   Canonical eqMapType := Eval hnf in MapType eqMapMixin.
 
 End eqMap.
@@ -326,7 +326,7 @@ Section mapSetoid.
     eq_rewrite (Heqfg x); apply Heqgh.
   Qed.
 
-  Canonical mapSetoidMixin := SetoidMixin eqmap_refl eqmap_symm eqmap_trans.
+  Canonical mapSetoidMixin := Eval hnf in SetoidMixin eqmap_refl eqmap_symm eqmap_trans.
   Canonical mapSetoidType := Eval hnf in SetoidType (map dom cod) mapSetoidMixin.
 
 End mapSetoid.

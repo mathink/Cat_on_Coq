@@ -74,7 +74,7 @@ Module Category.
     Notation Hom X Y := (@hom _ X Y). 
     Notation category := type.
     Notation CatMixin := Mixin.
-    Notation CatType T c := (@pack T c).
+    Notation CatType T c := (@pack T _ c).
   End Exports.
 End Category.
 Export Category.Exports.
@@ -114,6 +114,37 @@ Proof.
 Qed.
 
 
+Section OpCategory.
+  Variable (C: category).
+
+  Definition opHom := fun (X Y: C) => Hom Y X.
+  Definition opCompose (X Y Z: C)(f: opHom X Y)(g: opHom Y Z) := f • g.
+  Definition opIdent (X: C): opHom X X := ident X.
+    
+  Lemma opcat_comp_id_dom :
+    Category.comp_id_dom opCompose opIdent.
+  Proof.
+    by move=> X Y f; apply compf1.
+  Qed.           
+
+  Lemma opcat_comp_id_cod :
+    Category.comp_id_cod opCompose opIdent.
+  Proof.
+    by move=> X Y f; apply comp1f.
+  Qed.           
+
+  Lemma opcat_comp_assoc:
+    Category.comp_assoc opCompose.
+  Proof.
+    by move=> X Y Z W f g h; apply setoid_eq_symm, compA.
+  Qed.           
+  
+  Canonical OpCatMixin := CatMixin opcat_comp_id_dom opcat_comp_id_cod opcat_comp_assoc.
+  Canonical OpCat := Eval hnf in CatType C OpCatMixin.
+
+End OpCategory.
+
+
 Section Sets.
   Definition function_compose (X Y Z: Type)(f: X -> Y)(g: Y -> Z) :=
     fun x => g (f x).
@@ -137,8 +168,8 @@ Section Sets.
     by [].
   Qed.           
 
-  Canonical SetsCatMixin := CatMixin sets_comp_id_dom sets_comp_id_cod sets_comp_assoc.
-  Canonical Sets := CatType Type _ SetsCatMixin.
+  Canonical SetsMixin := CatMixin sets_comp_id_dom sets_comp_id_cod sets_comp_assoc.
+  Canonical Sets := Eval hnf in CatType Type SetsMixin.
 End Sets.
 
 Goal (plus 1 • S === S • plus 1).
@@ -176,7 +207,7 @@ Section Setoids.
   Qed.           
 
   Canonical SetoidsCatMixin := CatMixin setoids_comp_id_dom setoids_comp_id_cod setoids_comp_assoc.
-  Canonical SetoidsCatType := CatType setoid mapSetoidType SetoidsCatMixin.
+  Canonical SetoidsCatType := Eval hnf in CatType setoid SetoidsCatMixin.
 End Setoids.
 
 
@@ -192,9 +223,9 @@ Module MetaGraph.
         cod: arr --> obj }.
 
   Structure class_of (O A: Type) :=
-    { base_obj: Setoid.class_of O;
-      base_arr: Setoid.class_of A;
-      mixin: mixin_of (Setoid.Pack base_obj O) (Setoid.Pack base_arr A) }.
+    Class { base_obj: Setoid.class_of O;
+            base_arr: Setoid.class_of A;
+            mixin: mixin_of (Setoid.Pack base_obj O) (Setoid.Pack base_arr A) }.
 
   Section ClassDef.
     Structure type :=
@@ -214,7 +245,9 @@ Module MetaGraph.
     Let xA := let: Pack O A _ _ _ := t in A.
     Notation xclass := (class : class_of xO xA).
 
-    Definition pack mg := @Pack O A mg O A.
+    Definition pack bo0 ba0 (m0: mixin_of (SetoidType O bo0) (SetoidType A ba0)) :=
+      fun boT baT bo ba & phant_id (Setoid.class boT) bo & phant_id (Setoid.class baT) ba =>
+        fun m & phant_id m0 m => Pack (@Class O A bo ba m) O A.
 
     Definition objSetoid := @Setoid.Pack (obj t) (base_obj xclass) xO.
     Definition arrSetoid := @Setoid.Pack (arr t) (base_arr xclass) xA.
@@ -222,14 +255,16 @@ Module MetaGraph.
   End ClassDef.
 
   Module Exports.
+    Coercion objSetoid: type >-> Setoid.type.
+    Coercion base_obj: class_of >-> Setoid.class_of.
     Coercion mixin : class_of >-> mixin_of.
-    Notation mgObj := objSetoid.
-    Notation mgArr := arrSetoid.
     Canonical objSetoid.
     Canonical arrSetoid.
+    Notation mgObj := objSetoid.
+    Notation mgArr := arrSetoid.
     Notation mgType := type.
-    Notation mkMetaGraph := Mixin.
-    Notation MGType O A mg := (@pack O A mg).
+    Notation MetaGraphMixin := Mixin.
+    Notation MetaGraphType O A mg := (@pack O A _ _ mg _ _ _ _ id id _ id).
   End Exports.
 End MetaGraph.
 Export MetaGraph.Exports.
@@ -307,11 +342,11 @@ Module SmallCategory.
 
   Structure mixin_of (meta: mgType) :=
     Mixin
-      { base_mixin: Category.mixin_of (@Hom meta) }.
+      { mixin_base: Category.mixin_of (@homSetoidType meta) }.
 
   Structure class_of (O A: Type) :=
-    { base: MetaGraph.class_of O A;
-      mixin: mixin_of (MetaGraph.Pack base O A) }.
+    Class { base: MetaGraph.class_of O A;
+            mixin: mixin_of (MetaGraph.Pack base O A) }.
 
   Section ClassDef.
     Structure type :=
@@ -321,23 +356,165 @@ Module SmallCategory.
           _: class_of obj arr;
           _: Type;
           _: Type }.
-    Variables (O A: Type)(t: type).
+    Variables (O A: setoid)(t: type).
 
     Definition class :=
       let: Pack _ _ c _ _ := t return class_of (obj t) (arr t) in c.
 
-    Definition pack c := @Pack O A c O A.
+    Definition pack b0 (m0: mixin_of (MetaGraphType O A b0)) :=
+      fun bT b & phant_id (MetaGraph.class bT) b  =>
+        fun m & phant_id m0 m => Pack (@Class O A b m) O A.
 
     (* Definition clone := fun c & (meta t) -> M & phant_id (pack c) t => pack c. *)
+    Let xO := let: Pack O' _ _ _ _ := t in O'.
+    Let xA := let: Pack _ A' _ _ _ := t in A'.
+    Notation xclass := (class : class_of xO xA).
+
+    Definition mgType := @MetaGraph.Pack (obj t) (arr t) (base xclass) xO xA.
+    Definition category := @Category.Pack (obj t) (@homSetoidType mgType) (@mixin_base mgType (mixin xclass)) xO (@homSetoidType mgType).
   End ClassDef.
 
-  Module Exports.
+  Module Import Exports.
+    Coercion mixin_base : mixin_of >-> Category.mixin_of.
+    Coercion base: class_of >-> MetaGraph.class_of.
+    Coercion mixin : class_of >-> mixin_of.
+    Coercion obj: type >-> Sortclass.
+    Coercion mgType: type >-> MetaGraph.type.
+    Canonical mgType.
+    Coercion category: type >-> Category.type.
+    Canonical category.
     Notation scategory := type.
     Notation sCatMixin := Mixin.
-    Notation sCatType M mg := (@pack M mg).
-    Arguments homSetoidType {meta}(X Y).
-    Notation Hom := homSetoidType.
+Check @pack.
+    Notation sCatType mg cat := (@pack _ _ mg cat _ _ id _ id).
+    Notation sHom sC X Y := (@homSetoidType (mgType sC) X Y).
+    (* Notation sHom := homSetoidType. *)
+    (* Check Category.hom. *)
   End Exports.
 
 End SmallCategory.
 Export SmallCategory.Exports.
+
+Definition small_compose (C: scategory) := @compose (SmallCategory.category C).
+Arguments small_compose {C X Y Z}(f g).
+Definition small_ident C := @ident (SmallCategory.category C).
+Arguments small_ident {C}(X).
+
+Notation "f >>> g" := (small_compose f g)
+                        (at level 60, right associativity).
+
+Section sigSetoid.
+  Variables (T: Type)(P: T -> Prop).
+  Let S := {x: T | P x }.
+
+  Definition sig_eq (x y: S) :=
+    match x, y with
+      | exist x' _, exist y' _ => x' = y'
+    end.
+
+  Lemma sig_eq_refl:
+    Relation.reflexive sig_eq.
+  Proof.
+    by move=> [x ?] /=.
+  Qed.
+
+  Lemma sig_eq_symm:
+    Relation.symmetric sig_eq.
+  Proof.
+    by move=> [x ?] [y ?] /=.
+  Qed.
+
+  Lemma sig_eq_trans:
+    Relation.transitive sig_eq.
+  Proof.
+    move=> [x ?] [y ?] [z ?] /=; apply eqtrans.
+  Qed.
+
+
+  Canonical sigSetoidMixin := Eval hnf in SetoidMixin sig_eq_refl sig_eq_symm sig_eq_trans.
+  Canonical sigSetoidType := Eval hnf in SetoidType S sigSetoidMixin.
+
+End sigSetoid.
+
+
+(* example of small category *)
+Require Import Ssreflect.ssrnat.
+Section nat_le_scat.
+  Definition nat_le_pord := sigSetoidType (fun p => fst p <= snd p).
+
+  Definition nlp_dom (p: nat_le_pord): nat :=
+    let: exist (x,_) _ := p in x.
+  
+  Lemma nlp_dom_wd:
+    Map.well_defined nlp_dom.
+  Proof.
+    by rewrite/Map.well_defined /setoid_eq;
+    move=> [[x1 x2] Hx] [[y1 y2] Hy] /=; case.
+  Qed.
+
+  Canonical nlp_dom_MapMixin := MapMixin nlp_dom_wd.
+  Canonical nlp_dom_Map := MapType nlp_dom_MapMixin.
+
+
+  Definition nlp_cod (p: nat_le_pord): nat :=
+    let: exist (_,y) _ := p in y.
+
+  Lemma nlp_cod_wd:
+    Map.well_defined nlp_cod.
+  Proof.
+    by rewrite/Map.well_defined /setoid_eq;
+    move=> [[x1 x2] Hx] [[y1 y2] Hy] /=; case.
+  Qed.
+
+  Canonical nlp_cod_MapMixin := MapMixin nlp_cod_wd.
+  Canonical nlp_cod_Map := Eval hnf in MapType nlp_cod_MapMixin.
+
+  Canonical nlp_MGMixin := Eval hnf in MetaGraphMixin nlp_dom_Map nlp_cod_Map.
+  Canonical nlp_MG := Eval hnf in MetaGraphType nat nat_le_pord nlp_MGMixin.
+
+  Definition nlp_comp (n m p: nat):
+    @SmallCategory.homSetoidType nlp_MG n m -> @SmallCategory.homSetoidType nlp_MG m p -> @SmallCategory.homSetoidType nlp_MG n p.
+    rewrite/SmallCategory.homSetoidType /SmallCategory.hom /setoid_eq /=.
+    move=> [[[? ?] /= ?] /= ? ?] [[[? ?] /= ?] /= ? ?] /=; subst.
+    have H: n <= p; first by apply leq_trans with m.
+    refine (exist2 _ _ (exist _ (n,p) H) _ _); reflexivity.
+  Defined.
+
+  Definition nlp_id (n: nat): 
+    @SmallCategory.homSetoidType nlp_MG n n.
+    rewrite/SmallCategory.homSetoidType /SmallCategory.hom /setoid_eq /=.
+    refine (exist2 _ _ (exist _ (n,n) (leqnn n)) _ _ ); reflexivity.
+  Defined.
+
+  Lemma nlp_comp_id_dom:
+    Category.comp_id_dom nlp_comp nlp_id.
+  Proof.
+    rewrite/Category.comp_id_dom /setoid_eq /= /SmallCategory.hom /=.
+    move=> X Y [[[]]] /=; rewrite /setoid_eq /=.
+          by move=> a b Hle Heqa Heqb; subst.
+  Qed.
+
+  Lemma nlp_comp_id_cod:
+    Category.comp_id_cod nlp_comp nlp_id.
+  Proof.
+    rewrite/Category.comp_id_cod /setoid_eq /= /SmallCategory.hom /=.
+    move=> X Y [[[]]] /=; rewrite /setoid_eq /=.
+          by move=> a b Hle Heqa Heqb; subst.
+  Qed.
+
+  Lemma nlp_comp_assoc:
+    Category.comp_assoc nlp_comp.
+  Proof.
+    rewrite/Category.comp_assoc /setoid_eq /= /SmallCategory.hom /SmallCategory.eqhom /= /setoid_eq /=.
+           by move=> X Y Z W [[[? ?] /= ?] /= ? ?] [[[? ?] /= ?] /= ? ?] [[[? ?] /= ?] /= ? ?] /=; subst.
+  Qed.
+
+  Canonical nlpCatMixin := Eval hnf in CatMixin nlp_comp_id_dom nlp_comp_id_cod nlp_comp_assoc.
+  Canonical nlpCatType := Eval hnf in CatType _ nlpCatMixin.
+
+  Canonical nlpSCatMixin := Eval hnf in sCatMixin nlpCatMixin.
+  Canonical nlpSCatType := Eval hnf in sCatType nlp_MGMixin nlpSCatMixin.
+
+End nat_le_scat.
+
+Check (fun (f: sHom nlpSCatType 1 2)(g: sHom nlpSCatType 2 3) => f >>> g).
