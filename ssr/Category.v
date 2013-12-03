@@ -517,4 +517,4 @@ Section nat_le_scat.
 
 End nat_le_scat.
 
-Check (fun (f: sHom nlpSCatType 1 2)(g: sHom nlpSCatType 2 3) => f >>> g).
+Check (fun (f: sHom nlpSCatType 1 2)(g: sHom nlpSCatType 2 3) => f >>> g: sHom nlpSCatType 1 3).
