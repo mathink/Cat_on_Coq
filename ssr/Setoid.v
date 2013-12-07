@@ -201,7 +201,7 @@ Section functionEquiv.
 End functionEquiv.
 
 
-Module Map.
+Module Morphism.
 
   Section Properties.
     
@@ -220,10 +220,10 @@ Module Map.
   Section ClassDef.
     Structure type (domain codomain: setoid) :=
       Pack
-        { map;
-          _: @class_of domain codomain map;
+        { morphism;
+          _: @class_of domain codomain morphism;
           _: domain -> codomain }.
-    Local Coercion map: type >-> Funclass.
+    Local Coercion morphism: type >-> Funclass.
     Variables (dom cod: setoid)(f: dom -> cod)(t: type dom cod).
 
     Definition class :=
@@ -234,100 +234,100 @@ Module Map.
   End ClassDef.
 
   Module Exports.
-    Coercion map: type >-> Funclass.
-    Notation map := type.
-    Notation MapMixin := Mixin.
-    Notation MapType m := (@pack _ _ _ m).
+    Coercion morphism: type >-> Funclass.
+    Notation morphism := type.
+    Notation MorphismMixin := Mixin.
+    Notation MorphismType m := (@pack _ _ _ m).
   End Exports.    
-End Map.
-Export Map.Exports.
+End Morphism.
+Export Morphism.Exports.
 
-Lemma map_f_equal {X Y: setoid}(f: map X Y):
+Lemma morphism_f_equal {X Y: setoid}(f: morphism X Y):
   forall (x y: X), x === y -> f x === f y.
 Proof.
   by case: f => [g [H e]] //=.
 Qed.
 
-Section MapCompose.
- Variables (X Y Z: setoid)(f: map X Y)(g: map Y Z).
+Section MorphismCompose.
+ Variables (X Y Z: setoid)(f: morphism X Y)(g: morphism Y Z).
  
- Lemma mapCompose_well_defined:
-   Map.well_defined (fun x => g (f x)).
+ Lemma morphismCompose_well_defined:
+   Morphism.well_defined (fun x => g (f x)).
  Proof.
-   rewrite/Map.well_defined.
-   by move=> x y Heq; do 2 apply map_f_equal.
+   rewrite/Morphism.well_defined.
+   by move=> x y Heq; do 2 apply morphism_f_equal.
  Qed.
 
- Canonical mapComposeMapMixin := MapMixin mapCompose_well_defined.
+ Canonical morphismComposeMorphismMixin := MorphismMixin morphismCompose_well_defined.
 
-End MapCompose.
+End MorphismCompose.
 
-Canonical mapComposeMapType {X Y Z: setoid}(f: map X Y)(g: map Y Z) :=
-  Eval hnf in MapType (mapComposeMapMixin f g).
+Canonical morphismComposeMorphismType {X Y Z: setoid}(f: morphism X Y)(g: morphism Y Z) :=
+  Eval hnf in MorphismType (morphismComposeMorphismMixin f g).
 
-Section IdMap.
+Section IdMorphism.
  Variables (X: setoid).
  
- Lemma idMap_well_defined:
-   Map.well_defined (fun x: X => x).
+ Lemma idMorphism_well_defined:
+   Morphism.well_defined (fun x: X => x).
  Proof.
    by []. 
  Qed.
 
- Canonical idMapMixin := MapMixin idMap_well_defined.
+ Canonical idMorphismMixin := MorphismMixin idMorphism_well_defined.
 
-End IdMap.
+End IdMorphism.
 
-Canonical idMapType (X: setoid) :=
-  Eval hnf in MapType (idMapMixin X).
+Canonical idMorphismType (X: setoid) :=
+  Eval hnf in MorphismType (idMorphismMixin X).
 
-Section eqMap.
+Section eqMorphism.
 
   Variables (A B: Type)(f: A -> B).
 
   Lemma eqfwd:
-    Map.well_defined f.
+    Morphism.well_defined f.
   Proof.
     move=> x y -> //=.
   Qed.
 
-  Canonical eqMapMixin := Eval hnf in MapMixin eqfwd.
-  Canonical eqMapType := Eval hnf in MapType eqMapMixin.
+  Canonical eqMorphismMixin := Eval hnf in MorphismMixin eqfwd.
+  Canonical eqMorphismType := Eval hnf in MorphismType eqMorphismMixin.
 
-End eqMap.
+End eqMorphism.
 
 Ltac eq_rewrite H :=
   do [ apply (setoid_eq_trans H) | apply setoid_eq_symm, (setoid_eq_trans (setoid_eq_symm H)), setoid_eq_symm ].
 
   
-(* ** instance of map *)
-Section mapSetoid.
+(* ** instance of morphism *)
+Section morphismSetoid.
   Variables (dom cod: setoid).
-  Let eqmap (f g: map dom cod) :=
+  Let eqmorphism (f g: morphism dom cod) :=
     forall x: dom, f x === g x.
-  Hint Unfold eqmap.
+  Hint Unfold eqmorphism.
   
-  Lemma eqmap_refl:
-    Relation.reflexive eqmap.
+  Lemma eqmorphism_refl:
+    Relation.reflexive eqmorphism.
   Proof.
     move=> f x; apply setoid_eq_refl.
   Qed.  
 
-  Lemma eqmap_symm:
-    Relation.symmetric eqmap.
+  Lemma eqmorphism_symm:
+    Relation.symmetric eqmorphism.
   Proof.
     move=> f g Heq x; apply setoid_eq_symm, Heq.
   Qed.  
 
-  Lemma eqmap_trans:
-    Relation.transitive eqmap.
+  Lemma eqmorphism_trans:
+    Relation.transitive eqmorphism.
   Proof.
     move=> f g h Heqfg Heqgh x.
     eq_rewrite (Heqfg x); apply Heqgh.
   Qed.
 
-  Canonical mapSetoidMixin := Eval hnf in SetoidMixin eqmap_refl eqmap_symm eqmap_trans.
-  Canonical mapSetoidType := Eval hnf in SetoidType (map dom cod) mapSetoidMixin.
+  Canonical morphismSetoidMixin := Eval hnf in SetoidMixin eqmorphism_refl eqmorphism_symm eqmorphism_trans.
+  Canonical morphismSetoidType := Eval hnf in SetoidType (morphism dom cod) morphismSetoidMixin.
 
-End mapSetoid.
-Notation "X --> Y" := (mapSetoidType X Y) (at level 70, right associativity).
+End morphismSetoid.
+Notation "X --> Y" := (morphismSetoidType X Y) (at level 70, right associativity).

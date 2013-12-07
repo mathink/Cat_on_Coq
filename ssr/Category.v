@@ -186,21 +186,21 @@ Qed.
 Section Setoids.
   Check Category.comp_id_dom.
   Lemma setoids_comp_id_dom:
-    Category.comp_id_dom (@mapComposeMapType) (@idMapType).
+    Category.comp_id_dom (@morphismComposeMorphismType) (@idMorphismType).
   Proof.
     rewrite/Category.comp_id_dom /setoid_eq //=.
       by move=> X Y f x; apply setoid_eq_refl.
   Qed.           
 
   Lemma setoids_comp_id_cod:
-    Category.comp_id_cod (@mapComposeMapType) (@idMapType).
+    Category.comp_id_cod (@morphismComposeMorphismType) (@idMorphismType).
   Proof.
     rewrite/Category.comp_id_cod /setoid_eq //=.
       by move=> X Y f x; apply setoid_eq_refl.
   Qed.           
 
   Lemma setoids_comp_assoc:
-    Category.comp_assoc (@mapComposeMapType).
+    Category.comp_assoc (@morphismComposeMorphismType).
   Proof.
     rewrite/Category.comp_assoc /setoid_eq //=.
       by move=> X Y Z W f g h x; apply setoid_eq_refl.
@@ -431,7 +431,7 @@ Section sigSetoid.
   Qed.
 
 
-  Canonical sigSetoidMixin := Eval hnf in SetoidMixin sig_eq_refl sig_eq_symm sig_eq_trans.
+  Canonical sigSetoidMixin := SetoidMixin sig_eq_refl sig_eq_symm sig_eq_trans.
   Canonical sigSetoidType := Eval hnf in SetoidType S sigSetoidMixin.
 
 End sigSetoid.
@@ -446,30 +446,30 @@ Section nat_le_scat.
     let: exist (x,_) _ := p in x.
   
   Lemma nlp_dom_wd:
-    Map.well_defined nlp_dom.
+    Morphism.well_defined nlp_dom.
   Proof.
-    by rewrite/Map.well_defined /setoid_eq;
+    by rewrite/Morphism.well_defined /setoid_eq;
     move=> [[x1 x2] Hx] [[y1 y2] Hy] /=; case.
   Qed.
 
-  Canonical nlp_dom_MapMixin := MapMixin nlp_dom_wd.
-  Canonical nlp_dom_Map := MapType nlp_dom_MapMixin.
+  Canonical nlp_dom_MorphismMixin := MorphismMixin nlp_dom_wd.
+  Canonical nlp_dom_Morphism := MorphismType nlp_dom_MorphismMixin.
 
 
   Definition nlp_cod (p: nat_le_pord): nat :=
     let: exist (_,y) _ := p in y.
 
   Lemma nlp_cod_wd:
-    Map.well_defined nlp_cod.
+    Morphism.well_defined nlp_cod.
   Proof.
-    by rewrite/Map.well_defined /setoid_eq;
+    by rewrite/Morphism.well_defined /setoid_eq;
     move=> [[x1 x2] Hx] [[y1 y2] Hy] /=; case.
   Qed.
 
-  Canonical nlp_cod_MapMixin := MapMixin nlp_cod_wd.
-  Canonical nlp_cod_Map := Eval hnf in MapType nlp_cod_MapMixin.
+  Canonical nlp_cod_MorphismMixin := MorphismMixin nlp_cod_wd.
+  Canonical nlp_cod_Morphism := Eval hnf in MorphismType nlp_cod_MorphismMixin.
 
-  Canonical nlp_MGMixin := Eval hnf in MetaGraphMixin nlp_dom_Map nlp_cod_Map.
+  Canonical nlp_MGMixin := MetaGraphMixin nlp_dom_Morphism nlp_cod_Morphism.
   Canonical nlp_MG := Eval hnf in MetaGraphType nat nat_le_pord nlp_MGMixin.
 
   Definition nlp_comp (n m p: nat):
@@ -509,10 +509,10 @@ Section nat_le_scat.
            by move=> X Y Z W [[[? ?] /= ?] /= ? ?] [[[? ?] /= ?] /= ? ?] [[[? ?] /= ?] /= ? ?] /=; subst.
   Qed.
 
-  Canonical nlpCatMixin := Eval hnf in CatMixin nlp_comp_id_dom nlp_comp_id_cod nlp_comp_assoc.
+  Canonical nlpCatMixin := CatMixin nlp_comp_id_dom nlp_comp_id_cod nlp_comp_assoc.
   Canonical nlpCatType := Eval hnf in CatType _ nlpCatMixin.
 
-  Canonical nlpSCatMixin := Eval hnf in sCatMixin nlpCatMixin.
+  Canonical nlpSCatMixin := sCatMixin nlpCatMixin.
   Canonical nlpSCatType := Eval hnf in sCatType nlp_MGMixin nlpSCatMixin.
 
 End nat_le_scat.
