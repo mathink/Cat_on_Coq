@@ -195,7 +195,7 @@ Section functionEquiv.
     by move=> f g h Heqfg Heqgh x; move: (Heqfg x) => ->.
   Qed.
 
-  Canonical functionSetoidMixin := Eval hnf in SetoidMixin exteqrefl exteqsymm exteqtrans.
+  Canonical functionSetoidMixin := SetoidMixin exteqrefl exteqsymm exteqtrans.
   Canonical functionSetoidType  := Eval hnf in SetoidType (X -> Y) functionSetoidMixin.
 
 End functionEquiv.
@@ -291,7 +291,7 @@ Section eqMorphism.
     move=> x y -> //=.
   Qed.
 
-  Canonical eqMorphismMixin := Eval hnf in MorphismMixin eqfwd.
+  Canonical eqMorphismMixin :=  MorphismMixin eqfwd.
   Canonical eqMorphismType := Eval hnf in MorphismType eqMorphismMixin.
 
 End eqMorphism.
@@ -326,7 +326,7 @@ Section morphismSetoid.
     eq_rewrite (Heqfg x); apply Heqgh.
   Qed.
 
-  Canonical morphismSetoidMixin := Eval hnf in SetoidMixin eqmorphism_refl eqmorphism_symm eqmorphism_trans.
+  Canonical morphismSetoidMixin := SetoidMixin eqmorphism_refl eqmorphism_symm eqmorphism_trans.
   Canonical morphismSetoidType := Eval hnf in SetoidType (morphism dom cod) morphismSetoidMixin.
 
 End morphismSetoid.

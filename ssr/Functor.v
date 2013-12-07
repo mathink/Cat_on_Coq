@@ -110,8 +110,10 @@ Section ListFunctor.
   Qed.
 
   Canonical seq_FunctorMixin := FunctorMixin list_functor_ident list_functor_compose.
+  (* 対象関数と同じ名前で函手に名前をつけると， *)
   Canonical seq := Eval hnf in FunctorType list _ seq_FunctorMixin.
 End ListFunctor.
 
-Eval compute in  (fmap seq S [:: 1; 2 ]).
+(* このようにして，普段通りに使いつつ函手としても扱う，という具合の記法 *)
+Eval compute in  (fmap seq S ([:: 1; 2 ]: seq nat)).
 Eval compute in  (fmap seq negb [:: true; false; false; true; false ]).
