@@ -21,13 +21,13 @@ Module Functor.
 
     Variables (C D: category)
               (fobj: C -> D)
-              (farr: forall {X Y: C}, Hom X Y --> Hom (fobj X) (fobj Y)).
+              (farr: forall {X Y: C}, C X Y --> D (fobj X) (fobj Y)).
     Arguments farr {X Y}.
     Definition functor_ident :=
       forall (X: C), farr (ident X) === ident (fobj X).
 
     Definition functor_compose :=
-      forall (X Y Z: C)(f: Hom X Y)(g: Hom Y Z),
+      forall (X Y Z: C)(f: C X Y)(g: C Y Z),
         farr (g•f) === farr g•farr f.
 
   End Properties.
@@ -35,7 +35,7 @@ Module Functor.
   Structure mixin_of
             (C D: category)
             (fobj: C -> D)
-            (farr: forall {X Y: C}, Hom X Y --> Hom (fobj X) (fobj Y)) :=
+            (farr: forall {X Y: C}, C X Y --> D (fobj X) (fobj Y)) :=
     Mixin
       { _: functor_ident (@farr);
         _: functor_compose (@farr) }.
@@ -48,11 +48,12 @@ Module Functor.
           farr;
           _: @class_of C D fobj farr;
           _: C -> D;
-          _: forall {X Y: C}, Hom X Y --> Hom (fobj X) (fobj Y) }.
+          _: forall {X Y: C}, C X Y --> D (fobj X) (fobj Y) }.
     Local Coercion fobj: type >-> Funclass.
+    Local Coercion farr: type >-> Funclass.
     Variables (C D: category)
               (fo: C -> D)
-              (fa: forall {X Y: C}, Hom X Y --> Hom (fo X) (fo Y))
+              (fa: forall {X Y: C}, C X Y --> D (fo X) (fo Y))
               (t: type C D).
 
     Definition class :=
@@ -64,11 +65,12 @@ Module Functor.
 
   Module Exports.
     Coercion fobj: type >-> Funclass.
+    Coercion farr: type >-> Funclass.
     Notation functor := type.
     Notation FunctorMixin := Mixin.
     Notation FunctorType Fo Fa m := (@pack _ _ Fo Fa m).
     Definition fmap {C D: category}{F: functor C D}
-               {X Y: C}(f: Hom X Y): Hom (F X) (F Y) := @farr C D F X Y f.
+               {X Y: C}(f: C X Y): D (F X) (F Y) := @farr C D F X Y f.
     Arguments fmap {C D}(F){X Y}(f).
   End Exports.    
 End Functor.
