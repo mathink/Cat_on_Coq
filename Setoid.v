@@ -5,14 +5,16 @@
   *)
 
 Require Import Coq.Relations.Relation_Definitions.
-Require Export Coq.Classes.RelationClasses.
+Require Import Coq.Classes.RelationClasses.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
 
 Create HintDb setoid.
 Hint Unfold Reflexive Symmetric Transitive: setoid.
-Hint Resolve Build_Equivalence: setoid.
+Existing Instance Equivalence_Reflexive.
+Existing Instance Equivalence_Symmetric.
+Existing Instance Equivalence_Transitive.
 
 Ltac equiv_refl := apply reflexivity.
 Ltac equiv_symm := apply symmetry; auto.
@@ -30,36 +32,52 @@ Ltac start :=
 
 
 (* Definition of Setoid *)
-Class Setoid: Type :=
+Structure Setoid: Type :=
+  make_Setoid
   { carrier:> Type;
-    equal: carrier -> carrier -> Prop;
-    prf_equiv :> Equivalence equal }.
-Coercion carrier: Setoid >-> Sortclass.
+    equal: relation carrier;
+    prf_equiv : Equivalence equal }.
+Arguments equal {setoid}(x y): rename.
 Notation "x == y" := (equal x y) (at level 80, no associativity).
+Existing Instance prf_equiv.
 
+Definition reflexivity_setoid (s: Setoid) :=
+  @reflexivity s _ (@Equivalence_Reflexive s (@equal s) (prf_equiv s)).
 
 (* Definition of Map *)
-Class Map (X Y: Setoid): Type :=
-  { ap: X -> Y;
+Structure Map (X Y: Setoid): Type :=
+  make_Map
+  { ap:> X -> Y;
     ap_preserve_eq:
     forall (x x': X)(Heq: x == x'), ap x == ap x' }.
-Coercion ap: Map >-> Funclass.
 
-Program Instance MapSetoid (X Y: Setoid): Setoid :=
-  { carrier := Map X Y; equal := (fun f g => forall x: X, f x == g x) }.
+Definition Map_eq {X Y: Setoid}(f g: Map X Y) :=
+  forall x: X, f x == g x.
+
+Program Instance Map_eq_equiv (X Y: Setoid):
+  Equivalence (@Map_eq X Y).
 Next Obligation.
-  start.
-  - intros f x; equiv_refl; auto.
-  - intros f g Heq x; equiv_symm; apply Heq.
-  - intros f g h Heq Heq' x; equiv_trns_with (g x); auto.
+  intros f x; apply reflexivity.
+Qed.
+Next Obligation.
+  intros f g Heq x; apply symmetry; apply Heq.
+Qed.
+Next Obligation.
+  intros f g h Heq Heq' x; apply transitivity with (g x);
+  [apply Heq | apply Heq'].
 Qed.
 
-Program Instance ComposeMap {X Y Z: Setoid}
+Canonical Structure MapSetoid (X Y: Setoid): Setoid :=
+  make_Setoid (Map_eq_equiv X Y).
+
+Program Definition  ComposeMap {X Y Z: Setoid}
         (f: Map X Y)(g: Map Y Z): Map X Z :=
-  { ap := (fun x => g (f x)) }.
+  {| ap := (fun x: X => g (f x)) |}.
 Next Obligation.
   repeat apply ap_preserve_eq; assumption.
 Qed.
 
-Program Instance IdMap (X: Setoid): Map X X :=
-  { ap := fun x => x }.
+Canonical Structure ComposeMap.
+
+Program Definition IdMap (X: Setoid): Map X X :=
+  {| ap := fun x => x |}.
