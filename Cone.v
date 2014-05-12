@@ -16,148 +16,153 @@
  *)
 
 Set Implicit Arguments.
-Require Import Setoid Category Functor.
+Require Import 
+Ssreflect.ssreflect
+Ssreflect.eqtype
+Ssreflect.ssrbool
+Setoid Category Functor.
 
 
 Section ConeDef.
   Context {J C: Category}(D: Functor J C).
 
   (* 1. D への錐について *)
-  Class ConeTo :=
+  Structure ConeTo :=
     { apex_to:> C;
-      generatrix_to (i: J): apex_to ⟶ (D i);
+      generatrix_to (i: J): apex_to --> (D i);
 
       generatrix_to_commute:
-        forall (i j: J)(alpha: i ⟶ j),
-          fmap alpha ◦ generatrix_to i == generatrix_to j }.
-  Coercion apex_to: ConeTo >-> obj.
+        forall (i j: J)(alpha: i --> j),
+          fmap D alpha • generatrix_to i === generatrix_to j }.
 
-  Class ConeTo_Hom (c d: ConeTo) :=
-    { cone_to_hom:> @apex_to c ⟶ @apex_to d;
+  Structure ConeTo_Map (c d: ConeTo) :=
+    { cone_to_map:> @apex_to c --> @apex_to d;
       
-      cone_to_hom_commute:
+      cone_to_map_commute:
         forall (i: J),
-          generatrix_to i == generatrix_to i ◦ cone_to_hom }.
-  Coercion cone_to_hom: ConeTo_Hom >-> carrier.
+          generatrix_to c i === generatrix_to d i • cone_to_map }.
+ 
+  Definition eq_ConeTo_Map {c d: ConeTo}(f g: ConeTo_Map c d) :=
+    cone_to_map f === cone_to_map g.
 
-  Program Instance Compose_ConeTo_Hom 
-          {c d e: ConeTo}(f: ConeTo_Hom c d)(g: ConeTo_Hom d e): ConeTo_Hom c e :=
-    { cone_to_hom := g ◦ f }.
+  Program Definition ConeTo_Map_Setoid (c d: ConeTo): Setoid :=
+    {| equal := @eq_ConeTo_Map c d |}.
   Next Obligation.
-    apply transitivity with (generatrix_to (ConeTo:=d) i ◦ f);
-    [ apply cone_to_hom_commute | ].
-    apply transitivity with ((generatrix_to i ◦ g) ◦ f);
-      [ apply compose_subst_snd; apply cone_to_hom_commute
-      | apply compose_assoc ].
+    split; rewrite /eq_ConeTo_Map.
+    move=> x //=; equiv_refl.
+    move=> x y //=; equiv_symm.
+    move=> x y z //=; equiv_trns.
   Qed.
 
-  Program Instance Id_ConeTo_Hom (c: ConeTo): ConeTo_Hom c c :=
-    { cone_to_hom := id }.
+  Program Definition compose_ConeTo_Map 
+          {c d e: ConeTo}(f: ConeTo_Map_Setoid c d)(g: ConeTo_Map_Setoid d e): ConeTo_Map c e :=
+    {| cone_to_map := g • f |}.
   Next Obligation.
-    equiv_symm; apply id_dom.
+    eapply transitivity;
+    [ apply cone_to_map_commute |].
+    eapply transitivity;
+      [| apply compose_assoc ].
+    apply compose_subst_snd, cone_to_map_commute.
   Qed.
 
-  Program Instance ConeTo_Hom_Setoid (c d: ConeTo): Setoid :=
-    { carrier := ConeTo_Hom c d ; equal f g := f == g }.
+  Program Definition id_ConeTo_Map (c: ConeTo): ConeTo_Map_Setoid c c :=
+    {| cone_to_map := id |}.
   Next Obligation.
-    start.
-    - intros x; equiv_refl.
-    - intros x y; equiv_symm.
-    - intros x y z; equiv_trns.
+    by equiv_symm; apply id_dom.
   Qed.
-
 
   (* Category of ConeTo *)
-  Program Instance ConeTos: Category :=
-    { obj := ConeTo;
-      arr X Y := ConeTo_Hom_Setoid X Y;
-      compose X Y Z f g := Compose_ConeTo_Hom f g;
-      id X := Id_ConeTo_Hom X }.
+  Program Definition ConeTos: Category :=
+    {| compose X Y Z f g :=
+         compose_ConeTo_Map f g;
+       id X := id_ConeTo_Map X |}.
   Next Obligation.
-    apply compose_assoc.
+    by apply compose_assoc.
   Qed.
   Next Obligation.
-    apply compose_subst; auto.
+    by apply compose_subst; auto.
   Qed.
   Next Obligation.
-    apply id_dom.
+    by apply id_dom.
   Qed.
   Next Obligation.
-    apply id_cod.
+    by apply id_cod.
   Qed.
 
   (* 函手 D の極限とは D への錐全体の圏の終対象です *)
-  Class Limit :=
-    { limit :> ConeTo;
-      limit_terminal :> Terminal ConeTos limit }.
+  Structure Limit :=
+    { limit:> Terminal ConeTos }.
+
+  Structure hasLimit :=
+    { limit_obj:> Limit }.
 
   (* 2. D からの錐について *)
-  Class ConeFrom :=
+  Structure ConeFrom :=
     { apex_from:> C;
-      generatrix_from (i: J): apex_from ⟶ (D i);
+      generatrix_from (i: J): apex_from --> (D i);
 
       generatrix_from_commute:
-        forall (i j: J)(alpha: i ⟶ j),
-          fmap alpha ◦ generatrix_from i == generatrix_from j }.
-  Coercion apex_from: ConeFrom >-> obj.
+        forall (i j: J)(alpha: i --> j),
+          fmap D alpha • generatrix_from i === generatrix_from j }.
 
-  Class ConeFrom_Hom (c d: ConeFrom) :=
-    { cone_from_hom:> @apex_from c ⟶ @apex_from d;
+  Structure ConeFrom_Map (c d: ConeFrom) :=
+    { cone_from_map:> @apex_from c --> @apex_from d;
       
-      cone_from_hom_commute:
+      cone_from_map_commute:
         forall (i: J),
-          generatrix_from i == generatrix_from i ◦ cone_from_hom }.
-  Coercion cone_from_hom: ConeFrom_Hom >-> carrier.
+          generatrix_from c i === generatrix_from d i • cone_from_map }.
 
-  Program Instance Compose_ConeFrom_Hom 
-          {c d e: ConeFrom}(f: ConeFrom_Hom c d)(g: ConeFrom_Hom d e): ConeFrom_Hom c e :=
-    { cone_from_hom := g ◦ f }.
+  Definition eq_ConeFrom_Map {c d: ConeFrom}(f g: ConeFrom_Map c d) :=
+    cone_from_map f === cone_from_map g.
+
+  Program Definition ConeFrom_Map_Setoid (c d: ConeFrom): Setoid :=
+    {| equal := @eq_ConeFrom_Map c d |}.
   Next Obligation.
-    apply transitivity with (generatrix_from (ConeFrom:=d) i ◦ f);
-    [ apply cone_from_hom_commute | ].
-    apply transitivity with ((generatrix_from i ◦ g) ◦ f);
-      [ apply compose_subst_snd; apply cone_from_hom_commute
-      | apply compose_assoc ].
+    split; rewrite /eq_ConeFrom_Map.
+    move=> x //=; equiv_refl.
+    move=> x y //=; equiv_symm.
+    move=> x y z //=; equiv_trns.
   Qed.
 
-  Program Instance Id_ConeFrom_Hom (c: ConeFrom): ConeFrom_Hom c c :=
-    { cone_from_hom := id }.
+  Program Definition compose_ConeFrom_Map 
+          {c d e: ConeFrom}(f: ConeFrom_Map_Setoid c d)(g: ConeFrom_Map_Setoid d e): ConeFrom_Map c e :=
+    {| cone_from_map := g • f |}.
+  Next Obligation.
+    eapply transitivity;
+    [ eapply transitivity; [apply cone_from_map_commute |] |
+      apply compose_assoc ].
+    apply compose_subst_snd, cone_from_map_commute.
+  Qed.
+
+  Program Definition id_ConeFrom_Map (c: ConeFrom): ConeFrom_Map_Setoid c c :=
+    {| cone_from_map := id |}.
   Next Obligation.
     equiv_symm; apply id_dom.
   Qed.
 
-  Program Instance ConeFrom_Hom_Setoid (c d: ConeFrom): Setoid :=
-    { carrier := ConeFrom_Hom c d ; equal f g := f == g }.
-  Next Obligation.
-    start.
-    - intros x; equiv_refl.
-    - intros x y; equiv_symm.
-    - intros x y z; equiv_trns.
-  Qed.
-
-
   (* Category of ConeFrom *)
-  Program Instance ConeFroms: Category :=
-    { obj := ConeFrom;
-      arr X Y := ConeFrom_Hom_Setoid X Y;
-      compose X Y Z f g := Compose_ConeFrom_Hom f g;
-      id X := Id_ConeFrom_Hom X }.
+  Program Definition ConeFroms: Category :=
+    {| compose X Y Z f g := compose_ConeFrom_Map f g;
+       id X := id_ConeFrom_Map X |}.
   Next Obligation.
-    apply compose_assoc.
+    by apply compose_assoc.
   Qed.
   Next Obligation.
-    apply compose_subst; auto.
+    by apply compose_subst.
   Qed.
   Next Obligation.
-    apply id_dom.
+    by apply id_dom.
   Qed.
   Next Obligation.
-    apply id_cod.
+    by apply id_cod.
   Qed.
 
   (* 函手Dの余極限とはDからの錐全体の圏の始対象です *)
-  Class CoLimit :=
-    { colimit :> ConeFrom;
-      colimit_initial :> Initial ConeFroms colimit }.
+  Structure CoLimit :=
+    { colimit :> Initial ConeFroms }.
+
+  Structure hasCoLimit :=
+    { colimit_obj:> CoLimit }.
+
 
 End ConeDef.
