@@ -10,7 +10,7 @@ Unset Strict Implicit.
 Structure Functor (C D: Category): Type :=
   make_Functor
   { fobj:> C -> D;
-    fmap {X Y: C}:> Map (X --> Y)  (fobj X --> fobj Y);
+    fmap {X Y: C}: Map_base (X --> Y)  (fobj X --> fobj Y);
     
     fmap_id:
       forall (X: C), fmap id === id_(fobj X) ;
@@ -43,7 +43,7 @@ Qed.
 
 Program Definition IdFunctor (C: Category): Functor C C :=
   {| fobj X := X;
-     fmap X Y := IdMap (X --> Y) |}.
+     fmap X Y := id_Map (X --> Y) |}.
 Next Obligation.
   by equiv_refl.
 Qed.
@@ -53,7 +53,7 @@ Qed.
 
 Program Definition ComposeFunctor {C D E: Category}
         (F: Functor C D)(G: Functor D E): Functor C E :=
-  {| fmap X Y := ComposeMap (fmap F) (fmap G) |}.
+  {| fmap X Y := compose_Map (fmap F) (fmap G) |}.
 Next Obligation.
   apply transitivity with (fmap G (id_ (F X))); auto.
   - apply map_preserve_eq, fmap_id.

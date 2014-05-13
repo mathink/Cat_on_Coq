@@ -15,14 +15,15 @@
    (J は小さい圏と仮定する．CoqならTypeで問題ないかしら)
  *)
 
-Set Implicit Arguments.
+
 Require Import 
 Ssreflect.ssreflect
 Ssreflect.eqtype
 Ssreflect.ssrbool
 Setoid Category Functor.
 
-
+Set Implicit Arguments.
+Unset Strict Implicit.
 Section ConeDef.
   Context {J C: Category}(D: Functor J C).
 

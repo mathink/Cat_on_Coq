@@ -50,18 +50,18 @@ Notation "x === y" := (setoid_equal x y) (at level 80, no associativity).
 
 (* Definition of Map *)
 
-Structure Map (X Y: Setoid): Type :=
-  make_Map
+Structure Map_base (X Y: Setoid): Type :=
+  make_Map_base
   { map_function:> X -> Y;
     map_preserve_eq:
       forall (x x': X)(Heq: x === x'),
         map_function x === map_function x' }.
 
-Definition Map_eq {X Y: Setoid}(f g: Map X Y) :=
+Definition eq_Map {X Y: Setoid}(f g: Map_base X Y) :=
   forall x: X, f x === g x.
 
-Program Canonical Structure MapSetoid (X Y: Setoid): Setoid :=
-  {| equal := @Map_eq X Y |}.
+Program Definition Map (X Y: Setoid): Setoid :=
+  {| equal := @eq_Map X Y |}.
 Next Obligation.
   split.
   - move=> f x; apply reflexivity.
@@ -70,13 +70,13 @@ Next Obligation.
     [apply Heq | apply Heq'].
 Defined.
 
-Program Canonical Structure  ComposeMap {X Y Z: Setoid}
+Program Definition  compose_Map {X Y Z: Setoid}
         (f: Map X Y)(g: Map Y Z): Map X Z :=
   {| map_function := (fun x: X => g (f x)) |}.
 Next Obligation. 
   repeat apply map_preserve_eq; done.
 Qed.
 
-Program Canonical Structure IdMap (X: Setoid): Map X X :=
+Program Definition id_Map (X: Setoid): Map X X :=
   {| map_function := fun x => x |}.
 

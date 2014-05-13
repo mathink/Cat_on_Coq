@@ -7,13 +7,15 @@ Setoid.
 Set Implicit Arguments.
 Unset Strict Implicit.
 
-Reserved Notation "X --> Y" (at level 60, right associativity).
+Reserved Notation "X --> Y" (at level 60, no associativity).
 Reserved Notation "g • f" (at level 60, right associativity).
 
-Class Category_Spec (obj: Type)(arr: obj -> obj -> Setoid) :=
-  { notation_01 := tt where  "X --> Y" := (arr X Y);
+Structure Category :=
+  make_Category
+  { obj:> Type;
+    arr: obj -> obj -> Setoid where  "X --> Y" := (arr X Y);
     compose {X Y Z: obj}:
-      (arr X Y) -> (Y --> Z) -> (X --> Z) where "g • f" := (compose f g);
+      (X --> Y) -> (Y --> Z) -> (X --> Z) where "g • f" := (compose f g);
 
     id {X: obj}: X --> X;
 
@@ -30,21 +32,13 @@ Class Category_Spec (obj: Type)(arr: obj -> obj -> Setoid) :=
       forall (X Y: obj)(f: X --> Y), compose id f === f;
     id_cod: (* renamed from id_rigth *)
       forall (X Y: obj)(f: X --> Y), compose f id === f }.
-
-Structure Category :=
-  make_Category
-  { obj:> Type;
-    arr (X Y: obj): Setoid;
-    category_spec:> Category_Spec arr }.
-Notation Hom C X Y := (arr (c:=C) X Y).
-Coercion make_Category: Category_Spec >-> Category.
-Existing Instance category_spec.
 Arguments arr {category}(X Y): rename.
-Arguments compose {obj arr spec}{X Y Z}(f g): rename.
-Arguments id {obj arr spec}{X}: rename.
-Notation "X --> Y" := (arr X Y) (at level 60, right associativity).
+Arguments compose {category}{X Y Z}(f g): rename.
+Arguments id {category}{X}: rename.
+Notation Hom C := (arr (category:=C)).
+Notation "X --> Y" := (Hom _ X Y) (at level 60, no associativity).
 Notation "g • f" := (compose f g) (at level 60, right associativity).
-Definition id_ {C: Category}(X: C) := @id C _ C X.
+Definition id_ {C: Category}(X: C) := @id C X.
 
 Lemma compose_subst_fst:
   forall (C: Category)(X Y Z: C)(f f': X --> Y)(g: Y --> Z),
@@ -64,7 +58,7 @@ Qed.
 
 
 Program Definition op_Category (C: Category): Category :=
-  {| compose X Y Z f g := compose (spec:=C) g f;
+  {| compose X Y Z f g := compose g f;
      id X := id_ (C:=C) X |}.
 Next Obligation.
   equiv_symm; apply compose_assoc.
@@ -128,11 +122,11 @@ Section CategoryProperties.
       null_initial_spec:> Initial_Spec null_obj;
       null_terminal_spec:> Terminal_Spec null_obj }.
   
-  Class Product_Spec (X Y XY: C) :=
-    { proj_X: XY --> X;
-      proj_Y: XY --> Y;
+  Class Product_Spec (X Y prod: C) :=
+    { proj_X: prod --> X;
+      proj_Y: prod --> Y;
       
-      product_arr (Q: C)(f: Q --> X)(g: Q --> Y): Q --> XY;
+      product_arr (Q: C)(f: Q --> X)(g: Q --> Y): Q --> prod;
       
       product_arr_property_X:
         forall (Q: C)(f: Q --> X)(g: Q --> Y),
@@ -143,7 +137,7 @@ Section CategoryProperties.
           proj_Y • (product_arr f g) === g;
 
       product_universality:
-        forall (Q: C)(f: Q --> X)(g: Q --> Y)(h: Q --> XY),
+        forall (Q: C)(f: Q --> X)(g: Q --> Y)(h: Q --> prod),
           proj_X • h === f -> proj_Y • h === g ->
           product_arr f g === h }.
 
@@ -217,6 +211,7 @@ Section CategoryProperties.
     by move=> *; apply product_arr_subst; try equiv_refl.
   Qed.
 
+  
   Structure Product (X Y: C) :=
     make_Product
     { product:> C;
@@ -279,13 +274,19 @@ Section CategoryProperties.
       coproduct_spec:> CoProduct_Spec X Y coproduct }.
   Existing Instance coproduct_spec.
 
-(* exponential *)
+  (* exponential *)
+  Check @proj_X.
+  Check @product_arr.
   Class hasProduct :=
-    { prod (X Y: C):> Product X Y;
-      prod_arr {X Y Z W: C}(f: X --> Z)(g: Y --> W)
-      : prod X Y --> prod Z W
-      := product_arr (f•proj_X) (g•proj_Y)
-    }.
+    { prod (X Y: C):> Product X Y
+}.
+
+Definition prod_arr {H: hasProduct}{X Y Z W: C}(f: X --> Z)(g: Y --> W)
+      : (prod X Y) --> (prod Z W)
+      := @product_arr Z W (prod Z W) (prod Z W) (prod X Y)
+                     (f•proj_X) (g•proj_Y) .
+Check @prod_arr.
+Check prod_arr.
 
   Class hasCoProduct :=
     { coprod (X Y: C):> CoProduct X Y;
@@ -296,6 +297,7 @@ Section CategoryProperties.
 
 End CategoryProperties.
 
+
 Arguments initial_arr {C I}(spec X): rename.
 Arguments terminal_arr {C T}(spec X): rename.
 Arguments proj_X {C X Y prod}(spec): rename.
@@ -304,7 +306,7 @@ Arguments product_arr {C X Y XY}(spec Q f g): rename.
 Arguments in_X {C X Y XY}(spec): rename.
 Arguments in_Y {C X Y XY}(spec): rename.
 Arguments coproduct_arr {C X Y XY}(spec Q f g): rename.
-  Existing Instance coproduct_spec.
+Existing Instance coproduct_spec.
 
 Coercion make_Initial: Initial_Spec >-> Initial.
 Coercion make_Terminal: Terminal_Spec >-> Terminal.
@@ -454,19 +456,48 @@ Proof.
     apply compose_assoc. }
 Qed.
 
-  Lemma initial_refl:
-    forall (C: Category)(I: Initial C),
-      initial_arr I I === id.
-  Proof.
-    move=> C I.
-    apply initiality.
-  Qed.
+Lemma initial_refl:
+  forall (C: Category)(I: Initial C),
+    initial_arr I I === id.
+Proof.
+  move=> C I.
+  apply initiality.
+Qed.
 
-  Lemma initial_fusion:
-    forall (C: Category)(I: Initial C)(X Y: C)(f: X --> Y),
-      f•initial_arr I X === initial_arr I Y.
-  Proof.
-    move=> C I X Y f.
-    apply symmetry, initiality.
-  Qed.
+Lemma initial_fusion:
+  forall (C: Category)(I: Initial C)(X Y: C)(f: X --> Y),
+    f•initial_arr I X === initial_arr I Y.
+Proof.
+  move=> C I X Y f.
+  apply symmetry, initiality.
+Qed.
 
+
+Section Setoids.
+
+  Program Definition Setoids: Category :=
+    {| arr := Map;
+       compose := @compose_Map;
+       id := id_Map |}.
+  Next Obligation.
+    by rewrite /eq_Map /=; move=> x; equiv_refl.
+  Qed.
+  Next Obligation.
+   rewrite /eq_Map /=; move=> x.
+   unfold eq_Map in *.
+   apply transitivity with (g (f' x)).
+   - by apply map_preserve_eq, Heq_fst.
+   - by apply Heq_snd.
+  Qed.
+  Next Obligation.
+   rewrite /eq_Map /=; move=> x; equiv_refl.
+  Qed.    
+  Next Obligation.
+   rewrite /eq_Map /=; move=> x; equiv_refl.
+  Qed.    
+
+  Print Setoids.
+  Canonical Structure Setoids.
+
+End Setoids.
+  
