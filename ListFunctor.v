@@ -343,3 +343,10 @@ Proof.
 Qed.
 
 (* やったね! これで foldr に関する様々な議論をする時、定理証明系の上でも圏論的な性質を参照できるようになる(予定だ)よ! *)
+
+(* そして Haskell へ...... *)
+Extraction Language Haskell.
+Extract Inductive list => "([])" ["[]" "(:)"].
+Extraction "ext/cata_foldr.hs" cata_foldr.
+
+(* Coq2Haskell は改善した方がいい部分ありますな *)
