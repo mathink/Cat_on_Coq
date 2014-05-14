@@ -7,6 +7,8 @@ Setoid Category Functor.
 Set Implicit Arguments.
 (* Unset Strict Implicit. *)
 
+
+(* F-代数とF-代数からなる圏 ALG F を定義する *)
 Section Algebra.
 
   Variable (C: Category)(F: Functor C C).
@@ -15,6 +17,7 @@ Section Algebra.
     { alg_obj:> C;
       alg_arr: F alg_obj --> alg_obj }.
 
+  (* これはF-代数準同型 *)
   Structure Algebra_Map_base (X Y: Algebra) :=
     make_Algebra_Map_base
     { alg_map:> X --> Y;
@@ -95,6 +98,7 @@ Section Algebra.
   Defined.
 *)
 
+  (* catamorphism とは F-代数の圏における始代数からの射 *)
   Definition catamorphism
              (I: Initial ALG)(X: Algebra)
   : alg_obj (initial_obj I) --> alg_obj X :=
@@ -120,7 +124,7 @@ Section Algebra.
   
 End Algebra.
 
-
+(* 使わないけど、代数がちゃんと定義できているかの確認のために Lambek's lemma の証明をしてみる *)
 Lemma Lambek_lemma:
   forall (C: Category)(F: Functor C C)(I: Initial (ALG F)),
     Iso (C:=C) (alg_obj (initial_obj I)) (F (alg_obj (initial_obj I))).
@@ -149,9 +153,9 @@ Proof.
     apply cata_refl.
 Defined.    
 
-  
-
+(* いよいよリスト *)
 Section ListFunctor.
+  (* 積、余積、終対象があればリスト函手は定義できるので、一般的な設定で定義してみる *)
   Variables (C: Category)
             (Hprod: hasProduct C)(Hcoprod: hasCoProduct C)
             (T: Terminal C).
@@ -197,6 +201,7 @@ Section ListFunctor.
     apply compose_subst_snd, id_dom.
   Defined.
 
+  (* 補助関数 *)
   Program Definition listF_alg_gen {A X: C}
              (fnil: T --> X)(fcons: prod A X --> X)
   : Algebra (listF A) :=
@@ -204,6 +209,9 @@ Section ListFunctor.
   
 End ListFunctor.
 
+
+(* これより Set からなる圏 Sets を構成する *)
+(* まずは関数の等価性を定義。外延的等価性。 *)
 Definition eq_function {A B: Set}(f g: A -> B) :=
   forall x, f x = g x.
 Hint Unfold eq_function.
@@ -227,6 +235,7 @@ Definition id_function (A: Set): function A A :=
   fun x => x.
 Hint Unfold id_function.
 
+(* Sets 本体の定義 *)
 Program Definition Sets: Category :=
   {| arr := function;
      compose := @compose_function;
@@ -234,9 +243,8 @@ Program Definition Sets: Category :=
 Next Obligation.
   by move=> x //=; rewrite /compose_function -Heq_snd Heq_fst.
 Qed.
-Check Initial_Spec.
 
-Open Scope type_scope.
+(* 以降、積やらを持つことの "証明" *)
 Program Definition Sets_Product (A B: Sets): Product A B :=
   {| proj_X := @fst A B: (A*B:Sets) --> A;
      proj_Y := @snd A B: (A*B:Sets) --> B;
@@ -270,17 +278,19 @@ Program Definition Sets_Terminal: Terminal Sets :=
 Next Obligation.
   by move=> x //=; destruct (f x).
 Qed.
- 
-Eval compute in (listF Sets_hasProduct Sets_hasCoProduct Sets_Terminal nat).
+
+(* リスト函手の Sets 版 *)
 Definition listF_Sets (A: Set) :=
   (listF Sets_hasProduct Sets_hasCoProduct Sets_Terminal A).
 
+(* list A が listF_A 代数であることを述べて、 *)
 Program Definition list_Algebra (A: Set): Algebra (listF_Sets A) :=
   {| alg_arr := fun (x: unit + (A*list A)) =>
                   match x with
                     | inl _ => nil
                     | inr (h,t) => cons h t
                   end |}.
+
 
 Fixpoint listF_init_map_function (A: Set)
         (X: Algebra (listF_Sets A))(l: list A): alg_obj X :=
@@ -296,6 +306,7 @@ Next Obligation.
   move=> [[] | [h t]] //=.
 Qed.
 
+(* さらに始代数であることを示す *)
 Program Definition listF_init (A: Set)
 : Initial (ALG (listF Sets_hasProduct Sets_hasCoProduct Sets_Terminal A)) :=
   {| initial_arr X := listF_init_map X |}.
@@ -307,7 +318,7 @@ Next Obligation.
     [apply: (Hf (inl tt)) | apply: (Hf (inr (h,t))) ].
 Qed.
 
-
+(* 道具が全て得られたので、 リスト函手の catamorphism を構成し、*)
 Definition cata_foldr {A X: Set}(e: X)(f: A -> X -> X): list A -> X :=
   catamorphism (listF_init A)
                (listF_alg_gen Sets_hasProduct Sets_hasCoProduct
@@ -315,15 +326,19 @@ Definition cata_foldr {A X: Set}(e: X)(f: A -> X -> X): list A -> X :=
                               (fun _: unit => e)
                               (fun p: A*X => f (fst p) (snd p))).
 
+(* 一方で通常の foldr も定義し、 *)
 Fixpoint foldr {A X: Set}(e: X)(f: A -> X -> X)(l: list A): X :=
   match l with
     | nil => e
     | cons h t => f h (foldr e f t)
   end.
 
+(* 両者の等価性を証明。 *)
 Theorem foldr_cata_foldr_equiv:
   forall (A X: Set)(e: X)(f: A -> X -> X)(l: list A),
     cata_foldr e f l = foldr e f l.
 Proof.
   by move=> A X e f; elim=> [| h t /= <-] //=.
-Qed.                                     
+Qed.
+
+(* やったね! これで foldr に関する様々な議論をする時、定理証明系の上でも圏論的な性質を参照できるようになる(予定だ)よ! *)
