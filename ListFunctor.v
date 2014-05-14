@@ -245,6 +245,7 @@ Next Obligation.
 Qed.
 
 (* 以降、積やらを持つことの "証明" *)
+Open Scope type_scope.
 Program Definition Sets_Product (A B: Sets): Product A B :=
   {| proj_X := @fst A B: (A*B:Sets) --> A;
      proj_Y := @snd A B: (A*B:Sets) --> B;
