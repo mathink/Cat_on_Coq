@@ -204,262 +204,126 @@ Section ListFunctor.
   
 End ListFunctor.
 
+Definition eq_function {A B: Set}(f g: A -> B) :=
+  forall x, f x = g x.
+Hint Unfold eq_function.
 
-(* for Initial Algebra of listF *)
-Require Import Le Coq.Logic.ProofIrrelevance.
-
-(*
-Inductive leq (n: nat): nat -> Set :=
-| leq_n : leq n n
-| leq_S (m: nat): leq n m -> leq n (S m).
-
-Definition eq_leq (n m: nat)(H H': leq n m) := True.
-
-Program Definition LEQ (n m: nat): Setoid :=
-  {| equal H H' := @eq_leq n m H H' |}.
+Program Definition function (A B: Set): Setoid :=
+  {| equal := @eq_function A B |}.
 Next Obligation.
-  rewrite /eq_leq; split.
-  - by move=> x.
-  - by move=> x y.
-  - by move=> x y z /=.
-Defined.
+  split; rewrite /eq_function.
+  - by move=> x /=.
+  - by move=> x y /=.
+  - move=> x y z /= Hxy Hyz a /=.
+    by rewrite -Hyz -Hxy.
+Qed.
 
-Fixpoint leq_0_n (n: nat): leq 0 n :=
-  match n as m return (leq 0 m) with
-    | 0 => leq_n 0
-    | S p => leq_S (leq_0_n p)
+Definition compose_function
+        {A B C: Set}(f: function A B)(g: function B C): function A C :=
+  fun x => g (f x).
+Hint Unfold compose_function.
+
+Definition id_function (A: Set): function A A :=
+  fun x => x.
+Hint Unfold id_function.
+
+Program Definition Sets: Category :=
+  {| arr := function;
+     compose := @compose_function;
+     id := id_function |}.
+Next Obligation.
+  by move=> x //=; rewrite /compose_function -Heq_snd Heq_fst.
+Qed.
+Check Initial_Spec.
+
+Open Scope type_scope.
+Program Definition Sets_Product (A B: Sets): Product A B :=
+  {| proj_X := @fst A B: (A*B:Sets) --> A;
+     proj_Y := @snd A B: (A*B:Sets) --> B;
+     product_arr Q f g := fun x => (f x, g x) |}.
+Next Obligation.
+  move=> x //=; rewrite -H0 -H /compose_function //=.
+  by destruct (h x).
+Qed.
+
+Canonical Structure Sets_hasProduct: hasProduct Sets :=
+  {| prod := Sets_Product |}.
+  
+Program Definition Sets_CoProduct (A B: Sets): CoProduct A B :=
+  {| in_X := @inl A B: A --> (A+B:Sets);
+     in_Y := @inr A B: B --> (A+B:Sets);
+     coproduct_arr Q f g := fun x => match x with
+                                       | inl a => f a
+                                       | inr b => g b
+                                     end |}.
+Next Obligation.
+  move=> [a | b] //=.
+  - rewrite -H /compose_function //=.
+  - rewrite -H0 /compose_function //=.
+Qed.
+
+Canonical Structure Sets_hasCoProduct: hasCoProduct Sets :=
+  {| coprod := Sets_CoProduct |}.
+  
+Program Definition Sets_Terminal: Terminal Sets :=
+  {| terminal_arr X := (fun (x: X) => tt): X --> (unit:Sets) |}.
+Next Obligation.
+  by move=> x //=; destruct (f x).
+Qed.
+ 
+Eval compute in (listF Sets_hasProduct Sets_hasCoProduct Sets_Terminal nat).
+Definition listF_Sets (A: Set) :=
+  (listF Sets_hasProduct Sets_hasCoProduct Sets_Terminal A).
+
+Program Definition list_Algebra (A: Set): Algebra (listF_Sets A) :=
+  {| alg_arr := fun (x: unit + (A*list A)) =>
+                  match x with
+                    | inl _ => nil
+                    | inr (h,t) => cons h t
+                  end |}.
+
+Fixpoint listF_init_map_function (A: Set)
+        (X: Algebra (listF_Sets A))(l: list A): alg_obj X :=
+  match l with
+    | nil => alg_arr X (inl tt)
+    | cons h t => alg_arr X (inr (h,listF_init_map_function X t))
   end.
 
-Fixpoint leq_n_S (n m: nat)(Hleq: leq n m): leq (S n) (S m) :=
-  match Hleq with
-    | leq_n => leq_n (S n)
-    | leq_S p H => leq_S (leq_n_S H)
+Program Definition listF_init_map (A: Set)
+        (X: Algebra (listF_Sets A)): Algebra_Map (list_Algebra A) X :=
+  {| alg_map := listF_init_map_function X |}.
+Next Obligation.
+  move=> [[] | [h t]] //=.
+Qed.
+
+Program Definition listF_init (A: Set)
+: Initial (ALG (listF Sets_hasProduct Sets_hasCoProduct Sets_Terminal A)) :=
+  {| initial_arr X := listF_init_map X |}.
+Next Obligation.
+  move: X f => [] //= X Xf [] /= f /=.
+  rewrite /eq_Algebra_Map //= /eq_function /= /compose_function /= /coprod_arr /= /compose_function /prod_arr /= /compose_function /= /id_function //=.
+  move=> Hf.
+  elim=> [| h t /= ->];
+    [apply: (Hf (inl tt)) | apply: (Hf (inr (h,t))) ].
+Qed.
+
+
+Definition cata_foldr {A X: Set}(e: X)(f: A -> X -> X): list A -> X :=
+  catamorphism (listF_init A)
+               (listF_alg_gen Sets_hasProduct Sets_hasCoProduct
+                              Sets_Terminal
+                              (fun _: unit => e)
+                              (fun p: A*X => f (fst p) (snd p))).
+
+Fixpoint foldr {A X: Set}(e: X)(f: A -> X -> X)(l: list A): X :=
+  match l with
+    | nil => e
+    | cons h t => f h (foldr e f t)
   end.
-Check @eq_rec
-.
-Fixpoint leq_Sn_m (n m: nat)(Hleq: leq (S n) m): leq n m :=
-  match Hleq in (leq _ m') return leq _ m' with
-    | leq_n => leq_S (leq_n n)
-    | leq_S p H => leq_S (leq_Sn_m H)
-  end.
 
-Fixpoint leq_trans (n m k: nat)(Hleq: leq n m)
-: leq m k -> leq n k.
-refine(
-  match Hleq in (leq _ m') return (leq m' k -> leq n k) with
-    | leq_n => fun (H: leq n k) =>
-                 match H in (leq _ k') return leq n k' with
-                   | leq_n => leq_n n
-                   | leq_S p H => leq_S H
-                 end
-    | leq_S p Hp => fun (H: leq (S p) k) => 
-                      match H in (leq _ k') return leq n k' with
-                        | leq_n => leq_trans _ _ _ Hp (leq_S (leq_n p))
-                        | leq_S q Hq => _
-                      end
-  end).
-apply leq_S.
-
-
-Lemma leq_trans_assoc:
-  forall (n m k p: nat)(f: leq n m)(g: leq m k)(h: leq k p),
-    leq_trans f (leq_trans g h) = leq_trans (leq_trans f g) h.
+Theorem foldr_cata_foldr_equiv:
+  forall (A X: Set)(e: X)(f: A -> X -> X)(l: list A),
+    cata_foldr e f l = foldr e f l.
 Proof.
-  move=> n m k p Hleq; move: k p.
-  elim: Hleq => [| m' Hm IHleq_m] //= k p g h.
-  - move: g p h.
-    elim=> [| k' Hk IHleq_k] //=.
-    + move=> p [| p' Hp] //=.
-    + move=> p h.
-      inversion h.
-      * subst.
-        move: (IHleq_k k' (leq_n k')).
-        apply leq_S_n in h.
- move=> p.
-      elim=> [| p' Hp IHleq_p] //=.
-      move: (IHleq_k _ (leq_S (leq_n k'))) => ->.
-      by destruct Hk.
-  rewrite -IHleq.
-  induction g; move=> //=.
-Qed.
-
-Definition compose_leq
-        {n m k: nat}(f: LEQ n m)(g: LEQ m k): LEQ n k :=
-  leq_trans f g.
-
-Definition id_leq (n: nat): LEQ n n := leq_n n.
-
-  
-*)
-Definition eq_le (n m: nat)(H H': n <= m) := True.
-
-Program Definition LEQ (n m: nat): Setoid :=
-  {| equal H H' := @eq_le n m H H' |}.
-Next Obligation.
-  rewrite /eq_le; split.
-  - by move=> x.
-  - by move=> x y.
-  - by move=> x y z /=.
-Qed.
-                     
-Program Definition Omega: Category :=
-  {| arr := LEQ;
-     compose := @le_trans;
-     id := @le_n |}.
-Next Obligation.
-  by rewrite /eq_le.
-Qed.
-Next Obligation.
-  by rewrite /eq_le.
-Qed.
-Next Obligation.
-  by rewrite /eq_le.
-Qed.
-
-Definition Omega_Chain (C: Category) := Functor Omega C.
-Definition Omega_CoLimit {C: Category}(F: Omega_Chain C) := CoLimit F.
-
-Class Omega_CoComplete (C: Category) :=
-  occ_spec (F: Omega_Chain C): hasCoLimit F.
-
-Section InitialOmega.
-
-  Variables (C: Category)
-            (Hprod: hasProduct C)(Hcoprod: hasCoProduct C).
-  
-  Fixpoint n_f_prod (n: nat)(f: nat -> C): C :=
-    match n with 
-      | 0 => f 0
-      | S p => prod (f n) (n_f_prod p f)
-    end.
-
-  Fixpoint n_app (F: Functor C C)(n: nat)(X: C): C :=
-    match n with
-      | 0 => X
-      | S p => F (n_app F p X)
-    end.
-  
-  Fixpoint n_app_fmap (F: Functor C C)(n: nat){X Y: C}(f: X --> Y) :=
-    match n as m return (n_app F m X --> n_app F m Y) with
-      | 0 => f
-      | S p => fmap F (n_app_fmap F p f)
-    end.
-  
-  Lemma n_app_inc:
-    forall (F: Functor C C)(n: nat)(X: C),
-      F (n_app F n X) = n_app F n (F X).
-  Proof.
-    move=> F; elim=> [| n IHn] //= X.
-    by rewrite IHn.
-  Qed.
-
-  Fixpoint n_omega_chain (F: Functor C C)(X: C)(f: X --> F X)(n: nat) :=
-    match n as m return (n_app F m X --> n_app F (S m) X) with
-      | 0 => f
-      | S p => fmap F (n_omega_chain F X f p)
-    end.
-
-(*
-  Definition leq_rect
-  : forall (n : nat) (P : nat -> Type),
-      P n ->
-      (forall m : nat, leq n m -> P m -> P (S m)) ->
-      forall m : nat, leq n m -> P m.
-  Proof.
-    elim=> [| n IHn] P IHp IHle.
-    - elim=> [| m IHm] //= Hle.
-      apply IHle; [| apply IHm]; apply leq_0_n.
-    - elim=> [| m IHm] //= Hle; [elim (leq_Sn_0 Hle) |].
-      apply (IHn (fun n => P (S n)) IHp).
-      + by move=> m' Hle'; apply IHle, leq_n_S.
-      + apply leq_S_n.
-
-    move=> P Hnn Hle n; move: n P Hnn Hle.
-    elim=> [| n IHn] P IHnn IHle.
-    - elim=> [| m IHm].
-      + move=> _; apply IHnn.
-      + move=> H; apply IHle, IHm; apply leq_le, le_0_n.
-    - move=> [| m] H.
-      + apply leq_le in H; elim (le_Sn_0 n H).
-      + have: forall n, P (S n) (S n).
-        by move=> n'; apply IHnn.
-        have: forall n m : nat, P (S n) (S m) -> P (S n) (S (S m)).
-        by move=> n' m'; apply IHle.
-        move=> Hle Hnn; apply : (IHn (fun n m => P (S n) (S m)) Hnn Hle).
-        by apply leq_le in H; apply leq_le, le_S_n.
-  Defined.
-*)
-
-  Fixpoint ioc_fmap_function (F: Functor C C)(X: C)(f: X --> F X){n m: nat}(Heq: leq n m): (n_app F n X --> n_app F m X) :=
-    match Heq in (leq _ m') return (n_app F n X --> n_app F m' X) with
-      | leq_n => n_app_fmap F n id
-      | leq_S p H => n_omega_chain F X f p•ioc_fmap_function F X f H
-    end.
-
-  Program Definition ioc_fmap (F: Functor C C)(X: C)(f: X --> F X){n m: nat}
-  : Map (LEQ n m) (n_app F n X --> n_app F m X) :=
-    {| map_function H := ioc_fmap_function F X f H |}.
-  Next Obligation.
-    unfold eq_leq in Heq.
-    induction x.
-    rewrite (proof_irrelevance (leq n m) x x').
-    equiv_refl.
-  Defined.
-
-  
-
-  Program Definition initial_omega_chain (I: Initial C)(F: Functor C C)
-  : Omega_Chain C :=
-    {| fobj n := n_app F n I;
-       fmap := @ioc_fmap F I (initial_arr I (F I))|}.
-  Next Obligation.
-    elim: X => [| n IHn] /=.
-    - equiv_refl.
-    - 
-      (* oh... *)
-
-
-
-
-Inductive Void: Set := .
-Print Void_rec.
-Print False_rec.
-Definition leq_Sn_n (n: nat)(Hleq: leq (S n) n): Void.
-  inversion Hleq.
-  move: H; apply Void_rec.
-Definition leq_Sn_0 (n: nat)(Hleq: leq (S n) 0): Void.
-  inversion Hleq.
-Defined.
-Print leq_Sn_0.
-
-Fixpoint leq_n_S (n m: nat)(Hleq: leq n m): leq (S n) (S m) :=
-  match Hleq with
-    | leq_n => leq_n (S n)
-    | leq_S k H => leq_S (leq_n_S H)
-  end.
-
-Fixpoint leq_Sn_m (n m: nat)(Hleq: leq (S n) m): leq n m :=
-  match Hleq in (leq (S n0) _) return leq n0 _ with
-    | leq_n => 
-
-Lemma leq_Sn_m:
-  forall n m, leq (S n) m -> leq n m.
-Proof.
-    move=> n m; move: m n.
-    induction m.
-    intros.
-    elim (leq_Sn_0 H).
-    move=> [| n].
-    intros.
-    apply leq_0_n.
-
-    intro.
-
-    inversion H.
-    apply leq_S, leq_n.
-    subst.
-    apply IHm in H1.
-    by apply leq_S.
-  Defined.
-
-
+  by move=> A X e f; elim=> [| h t /= <-] //=.
+Qed.                                     
