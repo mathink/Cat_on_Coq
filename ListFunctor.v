@@ -2,7 +2,7 @@ Require Import
 Ssreflect.ssreflect
 Ssreflect.eqtype
 Ssreflect.ssrbool
-Setoid Category Functor Cone.
+Setoid Category Functor.
 
 Set Implicit Arguments.
 (* Unset Strict Implicit. *)
