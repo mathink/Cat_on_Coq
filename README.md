@@ -1,14 +1,22 @@
 Cat_on_Coq
 ==========
 
-* 内容物
+* 現状報告(2014/05/15)
 
-  Setoid.v -> Category.v -> Functor.v -> Natrans.v -> Adjunction.v -> Monad.v ->
-  Examle_... 
-  の順に coqc でコンパイルしてください(あとで Makefile 用意します......)
+  設計を見直したり SSReflect の利用を標準としたりなど大きい変更をしているので、現時点で動作を確認できているのは
 
+  - Setoid.v
+  - Category.v
+  - Functor.v
+  - Cone.v
+  - ListFunctor.v
 
-  Example_Adj_FreeMonoid_List.v には拙いながらも説明がついています．
+  の 5 つです。
+  
+* foldr as catamorphism
+
+  ListFunctor.v は foldr が Set のなす圏の上の自己函手 listF_A: X |-> 1+A*X の始代数の catamorphism であることを証明しています。
+  また、そうやって得られた foldr (ファイル中では cata_foldr) を Haskell コードへ Extraction したものが [[ext/cata_foldr.hs]] にあります。
 
 * 目的
 
