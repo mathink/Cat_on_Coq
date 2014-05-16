@@ -36,17 +36,17 @@ Section ConeDef.
         forall (i j: J)(alpha: i --> j),
           fmap D alpha • generatrix_to i === generatrix_to j }.
 
-  Structure ConeTo_Map (c d: ConeTo) :=
-    { cone_to_map:> @apex_to c --> @apex_to d;
+  Structure ConeTo_Map_base (c d: ConeTo) :=
+    { cone_to_map:> c --> d;
       
       cone_to_map_commute:
         forall (i: J),
           generatrix_to c i === generatrix_to d i • cone_to_map }.
  
-  Definition eq_ConeTo_Map {c d: ConeTo}(f g: ConeTo_Map c d) :=
+  Definition eq_ConeTo_Map {c d: ConeTo}(f g: ConeTo_Map_base c d) :=
     cone_to_map f === cone_to_map g.
 
-  Program Definition ConeTo_Map_Setoid (c d: ConeTo): Setoid :=
+  Program Definition ConeTo_Map (c d: ConeTo): Setoid :=
     {| equal := @eq_ConeTo_Map c d |}.
   Next Obligation.
     split; rewrite /eq_ConeTo_Map.
@@ -56,17 +56,17 @@ Section ConeDef.
   Qed.
 
   Program Definition compose_ConeTo_Map 
-          {c d e: ConeTo}(f: ConeTo_Map_Setoid c d)(g: ConeTo_Map_Setoid d e): ConeTo_Map c e :=
+          {c d e: ConeTo}(f: ConeTo_Map c d)(g: ConeTo_Map d e): ConeTo_Map c e :=
     {| cone_to_map := g • f |}.
   Next Obligation.
     eapply transitivity;
-    [ apply cone_to_map_commute |].
-    eapply transitivity;
       [| apply compose_assoc ].
+    eapply transitivity;
+    [ apply cone_to_map_commute |].
     apply compose_subst_snd, cone_to_map_commute.
   Qed.
 
-  Program Definition id_ConeTo_Map (c: ConeTo): ConeTo_Map_Setoid c c :=
+  Program Definition id_ConeTo_Map (c: ConeTo): ConeTo_Map c c :=
     {| cone_to_map := id |}.
   Next Obligation.
     by equiv_symm; apply id_dom.

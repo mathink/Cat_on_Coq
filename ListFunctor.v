@@ -70,8 +70,7 @@ Section Algebra.
 
 
   Program Definition ALG: Category :=
-    {| arr := Algebra_Map;
-       compose := @compose_Algebra_Map ;
+    {| compose := @compose_Algebra_Map ;
        id := id_Algebra_Map |}.
   Next Obligation.
     by rewrite /eq_Algebra_Map //=; apply compose_assoc.

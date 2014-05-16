@@ -6,14 +6,13 @@ module Cata_foldr where
 import qualified Prelude
 
 
+unsafeCoerce :: a -> b
 #ifdef __GLASGOW_HASKELL__
 import qualified GHC.Base
-unsafeCoerce :: a -> b
 unsafeCoerce = GHC.Base.unsafeCoerce#
 #else
 -- HUGS
 import qualified IOExts
-unsafeCoerce :: a -> b
 unsafeCoerce = IOExts.unsafeCoerce
 #endif
 
@@ -201,16 +200,16 @@ coprod c hasCoProduct =
 
 coprod_arr :: Category -> HasCoProduct -> Obj -> Obj -> Obj -> Obj -> Carrier
               -> Carrier -> Carrier
-coprod_arr c hasCoProduct x y z w f g =
-  coproduct_arr c x y (coproduct c x y (coprod c hasCoProduct x y))
-    (coproduct_spec c x y (coprod c hasCoProduct x y))
-    (coproduct c z w (coprod c hasCoProduct z w))
-    (compose c x z (coproduct c z w (coprod c hasCoProduct z w)) f
-      (in_X c z w (coproduct c z w (coprod c hasCoProduct z w))
-        (coproduct_spec c z w (coprod c hasCoProduct z w))))
-    (compose c y w (coproduct c z w (coprod c hasCoProduct z w)) g
-      (in_Y c z w (coproduct c z w (coprod c hasCoProduct z w))
-        (coproduct_spec c z w (coprod c hasCoProduct z w))))
+coprod_arr c h x y z w f g =
+  coproduct_arr c x y (coproduct c x y (coprod c h x y))
+    (coproduct_spec c x y (coprod c h x y))
+    (coproduct c z w (coprod c h z w))
+    (compose c x z (coproduct c z w (coprod c h z w)) f
+      (in_X c z w (coproduct c z w (coprod c h z w))
+        (coproduct_spec c z w (coprod c h z w))))
+    (compose c y w (coproduct c z w (coprod c h z w)) g
+      (in_Y c z w (coproduct c z w (coprod c h z w))
+        (coproduct_spec c z w (coprod c h z w))))
 
 data Functor =
    Make_Functor (Obj -> Obj) (Obj -> Obj -> Map_base)

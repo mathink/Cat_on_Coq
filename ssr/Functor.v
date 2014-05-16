@@ -119,3 +119,5 @@ End ListFunctor.
 (* このようにして，普段通りに使いつつ函手としても扱う，という具合の記法 *)
 Eval compute in  (fmap seq S ([:: 1; 2 ]: seq nat)).
 Eval compute in  (fmap seq negb [:: true; false; false; true; false ]).
+
+(* kanari utisyasui *)

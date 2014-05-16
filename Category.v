@@ -122,6 +122,7 @@ Section CategoryProperties.
       null_initial_spec:> Initial_Spec null_obj;
       null_terminal_spec:> Terminal_Spec null_obj }.
   
+  Reserved Notation "<| f , g |>".
   Class Product_Spec (X Y prod: C) :=
     { proj_X: prod --> X;
       proj_Y: prod --> Y;
@@ -140,8 +141,11 @@ Section CategoryProperties.
         forall (Q: C)(f: Q --> X)(g: Q --> Y)(h: Q --> prod),
           proj_X • h === f -> proj_Y • h === g ->
           product_arr f g === h }.
+  Notation "<| f , g |>" := (product_arr f g).
+  Notation π_X := proj_X.
+  Notation π_Y := proj_Y.
 
-  Lemma product_uniqueness:
+  Lemma product_uniqueness_aux:
     forall (X Y P Q: C),
       Product_Spec X Y P -> Product_Spec X Y Q ->
       Iso P Q.
@@ -151,18 +155,17 @@ Section CategoryProperties.
     exists (product_arr (Q:=Q) proj_X proj_Y).
     split.
     - apply transitivity with (product_arr (Q:=P) proj_X proj_Y);
-      [| apply product_universality; apply id_dom].
-      apply symmetry. 
+        [apply symmetry | apply product_universality; apply id_dom].
       apply product_universality.
       + eapply transitivity;
         [ apply symmetry; apply compose_assoc |].
         eapply transitivity;
-        [ apply compose_subst_snd; apply product_arr_property_X |].
+        [ apply compose_subst_snd |];
         apply product_arr_property_X.
       + eapply transitivity;
         [ apply symmetry; apply compose_assoc |].
         eapply transitivity;
-        [ apply compose_subst_snd; apply product_arr_property_Y |].
+        [ apply compose_subst_snd |];
         apply product_arr_property_Y.
     - apply transitivity with (product_arr (Q:=Q) proj_X proj_Y);
       [| apply product_universality; apply id_dom].
@@ -171,12 +174,12 @@ Section CategoryProperties.
       + eapply transitivity;
         [ apply symmetry; apply compose_assoc |].
         eapply transitivity;
-        [ apply compose_subst_snd; apply product_arr_property_X |].
+        [ apply compose_subst_snd |];
         apply product_arr_property_X.
       + eapply transitivity;
         [ apply symmetry; apply compose_assoc |].
         eapply transitivity;
-        [ apply compose_subst_snd; apply product_arr_property_Y |].
+        [ apply compose_subst_snd |];
         apply product_arr_property_Y.
   Qed.        
         
@@ -218,6 +221,14 @@ Section CategoryProperties.
       product_spec:> Product_Spec X Y product }.
   Existing Instance product_spec.
 
+  Theorem product_uniqueness:
+    forall (X Y: C)(P Q: Product X Y),
+      Iso P Q.
+  Proof.
+    by move=> X Y [P Hp] [Q Hq] //=; apply: product_uniqueness_aux.
+  Qed.
+
+
   Class CoProduct_Spec (X Y coprod: C) :=
     { in_X: X --> coprod;
       in_Y: Y --> coprod;
@@ -236,6 +247,44 @@ Section CategoryProperties.
         forall (Q: C)(f: X --> Q)(g: Y --> Q)(h: coprod --> Q),
           h • in_X === f -> h • in_Y === g ->
           coproduct_arr f g === h }.
+
+  Lemma coproduct_uniqueness_aux:
+    forall (X Y P Q: C),
+      CoProduct_Spec X Y P -> CoProduct_Spec X Y Q ->
+      Iso P Q.
+  Proof.
+    move=> X Y P Q p1 p2; rewrite /Iso /iso.
+    exists (coproduct_arr (Q:=Q) in_X in_Y).
+    exists (coproduct_arr (Q:=P) in_X in_Y).
+    split.
+    - apply transitivity with (coproduct_arr (Q:=P) in_X in_Y);
+        [apply symmetry | apply coproduct_universality; apply id_cod].
+      apply coproduct_universality.
+      + eapply transitivity;
+        [ apply compose_assoc |].
+        eapply transitivity;
+        [ apply compose_subst_fst |];
+        apply coproduct_arr_property_X.
+      + eapply transitivity;
+        [ apply compose_assoc |].
+        eapply transitivity;
+        [ apply compose_subst_fst |];
+        apply coproduct_arr_property_Y.
+    - apply transitivity with (coproduct_arr (Q:=Q) in_X in_Y);
+      [| apply coproduct_universality; apply id_cod].
+      apply symmetry.
+      apply coproduct_universality.
+      + eapply transitivity;
+        [ apply compose_assoc |].
+        eapply transitivity;
+        [ apply compose_subst_fst |];
+        apply coproduct_arr_property_X.
+      + eapply transitivity;
+        [ apply compose_assoc |].
+        eapply transitivity;
+        [ apply compose_subst_fst |];
+        apply coproduct_arr_property_Y.
+  Qed.        
 
   Lemma coproduct_arr_subst:
     forall (X Y P: C)(H: CoProduct_Spec X Y P)
@@ -274,26 +323,27 @@ Section CategoryProperties.
       coproduct_spec:> CoProduct_Spec X Y coproduct }.
   Existing Instance coproduct_spec.
 
-  (* exponential *)
-  Check @proj_X.
-  Check @product_arr.
-  Class hasProduct :=
-    { prod (X Y: C):> Product X Y
-}.
+  Theorem coproduct_uniqueness:
+    forall (X Y: C)(P Q: CoProduct X Y),
+      Iso P Q.
+  Proof.
+    by move=> X Y [P Hp] [Q Hq] //=; apply: coproduct_uniqueness_aux.
+  Qed.
 
-Definition prod_arr {H: hasProduct}{X Y Z W: C}(f: X --> Z)(g: Y --> W)
+  (* exponential *)
+  Class hasProduct :=
+    { prod (X Y: C):> Product X Y }.
+
+  Definition prod_arr {H: hasProduct}{X Y Z W: C}(f: X --> Z)(g: Y --> W)
       : (prod X Y) --> (prod Z W)
-      := @product_arr Z W (prod Z W) (prod Z W) (prod X Y)
-                     (f•proj_X) (g•proj_Y) .
-Check @prod_arr.
-Check prod_arr.
+      := product_arr (f•proj_X) (g•proj_Y) .
 
   Class hasCoProduct :=
-    { coprod (X Y: C):> CoProduct X Y;
-      coprod_arr {X Y Z W: C}(f: X --> Z)(g: Y --> W)
+    { coprod (X Y: C):> CoProduct X Y }.
+
+  Definition coprod_arr {H: hasCoProduct}{X Y Z W: C}(f: X --> Z)(g: Y --> W)
       : coprod X Y --> coprod Z W 
-      := coproduct_arr (in_X•f) (in_Y•g)
-    }.
+      := coproduct_arr (in_X•f) (in_Y•g).
 
 End CategoryProperties.
 
@@ -501,3 +551,25 @@ Section Setoids.
 
 End Setoids.
   
+Inductive eq_fun {X Y: Type}(f: X -> Y):
+  forall {Z W: Type}, (Z -> W) -> Prop :=
+| def_eq_fun: forall (g: X -> Y), (forall x, f x = g x) -> eq_fun f g.
+
+Inductive function :=
+| def_fun (dom cod: Type)(body: dom -> cod).
+
+Definition eq_function (f g: function) :=
+  let (_,_,bf) := f in let (_,_,bg) := g in eq_fun bf bg.
+
+Program Definition function_Setoid: Setoid :=
+  {| equal := eq_function |}.
+Next Obligation.
+  rewrite /eq_function; split.
+  - move=> [dx cx fx].
+    by apply def_eq_fun.
+  - move=> [dx cx fx] [dy cy fy] [g Hg].
+    by apply def_eq_fun; move=> x; rewrite Hg.
+  - move=> [dx cx fx] [dy cy fy] [dz cz fz] [g Hg] [h Hh].
+    by apply def_eq_fun; move=> x; rewrite Hg.
+Qed.    
+
