@@ -48,10 +48,6 @@ type Setoid =
   
 type Carrier = ()
 
-type Map_base =
-  Carrier -> Carrier
-  -- singleton inductive, whose constructor was make_Map_base
-  
 data Category =
    Make_Category (() -> () -> Setoid) (() -> () -> () -> Carrier -> Carrier
                                       -> Carrier) (() -> Carrier)
@@ -212,7 +208,7 @@ coprod_arr c h x y z w f g =
         (coproduct_spec c z w (coprod c h z w))))
 
 data Functor =
-   Make_Functor (Obj -> Obj) (Obj -> Obj -> Map_base)
+   Make_Functor (Obj -> Obj) (Obj -> Obj -> Carrier)
 
 data Algebra =
    Build_Algebra Obj Carrier
@@ -282,7 +278,7 @@ listF_arr c hprod hcoprod t a x y =
 listF :: Category -> HasProduct -> HasCoProduct -> Terminal -> Obj -> Functor
 listF c hprod hcoprod t a =
   Make_Functor (listF_obj c hprod hcoprod t a) (\x y ->
-    unsafeCoerce (listF_arr c hprod hcoprod t a x y))
+    listF_arr c hprod hcoprod t a x y)
 
 listF_alg_gen :: Category -> HasProduct -> HasCoProduct -> Terminal -> Obj ->
                  Obj -> Carrier -> Carrier -> Algebra
