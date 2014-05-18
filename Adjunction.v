@@ -18,54 +18,54 @@ Section AdjunctionDef.
        X --> G Y
    *)
   Class Adjunction_Hom :=
-    { adj_phi {X: C}{Y: D}: Map (F X --> Y) (X --> G Y);
-      adj_phi_inv {X: C}{Y: D}: Map (X --> G Y) (F X --> Y);
+    { adj_h_phi {X: C}{Y: D}: Map (F X --> Y) (X --> G Y);
+      adj_h_phi_inv {X: C}{Y: D}: Map (X --> G Y) (F X --> Y);
 
-      adj_phi_iso:
+      adj_h_phi_iso:
         forall (X: C)(Y: D)(f: F X --> Y),
-          adj_phi_inv (adj_phi f) === f;
-      adj_phi_inv_iso:
+          adj_h_phi_inv (adj_h_phi f) === f;
+      adj_h_phi_inv_iso:
         forall (X: C)(Y: D)(g: X --> G Y),
-          adj_phi (adj_phi_inv g) === g;
+          adj_h_phi (adj_h_phi_inv g) === g;
       
-      adj_phi_naturality:
+      adj_h_phi_naturality:
         forall (X Y: C)(Z W: D)(f: X --> Y)(g: F Y --> Z)(h: Z --> W),
-          adj_phi (h • g • fmap F f) === fmap G h • adj_phi g • f }.
+          adj_h_phi (h • g • fmap F f) === fmap G h • adj_h_phi g • f }.
 
-  Lemma adj_phi_inv_naturality:
+  Lemma adj_h_phi_inv_naturality:
     forall (adj_h: Adjunction_Hom)
        (X Y: C)(Z W: D)(f: X --> Y)(g: Y --> G Z)(h: Z --> W),
-      adj_phi_inv (fmap G h•g• f) === h • adj_phi_inv g • fmap F f.
+      adj_h_phi_inv (fmap G h•g• f) === h • adj_h_phi_inv g • fmap F f.
   Proof.
     move=> adj_h X Y Z W f g h.
     apply transitivity with
-    (adj_phi_inv (fmap G h • (adj_phi (adj_phi_inv g)) • f));
+    (adj_h_phi_inv (fmap G h • (adj_h_phi (adj_h_phi_inv g)) • f));
       [ apply map_preserve_eq | ].
     - apply compose_subst_fst;
       apply compose_subst_snd;
-      apply symmetry, adj_phi_inv_iso.
-    - eapply transitivity; [ | apply adj_phi_iso ].
+      apply symmetry, adj_h_phi_inv_iso.
+    - eapply transitivity; [ | apply adj_h_phi_iso ].
       apply map_preserve_eq;
-      apply symmetry, adj_phi_naturality.
+      apply symmetry, adj_h_phi_naturality.
   Qed.
   
 
   (* Unit definition *)
   Class Adjunction_Unit
-        (adj_unit: Natrans (IdFunctor C) (ComposeFunctor F G)) :=
+        (adj_u_unit: Natrans (IdFunctor C) (ComposeFunctor F G)) :=
     { adj_dc {X: C}{Y: D}: Map (X --> G Y) (F X --> Y);
       adj_dc_property:
         forall (X: C)(Y: D)(f: X --> G Y),
-          fmap G (adj_dc f) • adj_unit X === f;
+          fmap G (adj_dc f) • adj_u_unit X === f;
       adj_dc_uniqueness:
         forall (X: C)(Y: D)(f: X --> G Y)(h: F X --> Y),
-          fmap G h • adj_unit X === f -> adj_dc f === h }.
+          fmap G h • adj_u_unit X === f -> adj_dc f === h }.
 
   Lemma adj_dc_subst:
-    forall `(H: Adjunction_Unit adj_unit)(X: C)(Y: D)(f f': X --> G Y),
+    forall `(H: Adjunction_Unit adj_u_unit)(X: C)(Y: D)(f f': X --> G Y),
       f === f' -> adj_dc f === adj_dc f'.
   Proof.
-    move=> adj_unit H X Y f f' Heq.
+    move=> adj_u_unit H X Y f f' Heq.
     apply adj_dc_uniqueness.
     apply transitivity with f'; [| apply symmetry; assumption].
     apply adj_dc_property.
@@ -73,17 +73,17 @@ Section AdjunctionDef.
   
   (* Counit definition *)
   Class Adjunction_Counit
-        (adj_counit: Natrans (ComposeFunctor G F) (IdFunctor D)) :=
+        (adj_c_counit: Natrans (ComposeFunctor G F) (IdFunctor D)) :=
     { adj_cd {X: C}{Y: D}: Map (F X --> Y) (X --> G Y);
       adj_cd_property:
         forall (X: C)(Y: D)(f: F X --> Y),
-          adj_counit Y • fmap F (adj_cd f) === f;
+          adj_c_counit Y • fmap F (adj_cd f) === f;
       adj_cd_uniqueness:
         forall (X: C)(Y: D)(f: F X --> Y)(h: X --> G Y),
-          adj_counit Y • fmap F h === f -> adj_cd f === h }.
+          adj_c_counit Y • fmap F h === f -> adj_cd f === h }.
 
   Lemma adj_cd_subst:
-    forall `(H: Adjunction_Counit adj_counit)(X: C)(Y: D)(f f': F X --> Y),
+    forall `(H: Adjunction_Counit adj_c_counit)(X: C)(Y: D)(f f': F X --> Y),
       f === f' -> adj_cd f === adj_cd f'.
   Proof.
     move=> counit H X Y f f' Heq.
@@ -96,10 +96,10 @@ Section AdjunctionDef.
   (* Equivalency of Definitions *)
   (* 1. Unit -> Hom *)
   Program Instance Adj_Unit_Hom
-  `(Hu: Adjunction_Unit adj_unit): Adjunction_Hom :=
-    { adj_phi X Y :=
-        {| map_function f := fmap G f • adj_unit X |};
-      adj_phi_inv X Y := adj_dc }.
+  `(Hu: Adjunction_Unit adj_u_unit): Adjunction_Hom :=
+    { adj_h_phi X Y :=
+        {| map_function f := fmap G f • adj_u_unit X |};
+      adj_h_phi_inv X Y := adj_dc }.
   Next Obligation.
     apply compose_subst_snd; apply map_preserve_eq; assumption.
   Qed.  
@@ -120,7 +120,7 @@ Section AdjunctionDef.
     eapply transitivity;
       [apply compose_subst_fst |].
     apply symmetry.
-    apply (@naturality _ _ _ _ adj_unit).
+    apply (@naturality _ _ _ _ adj_u_unit).
     by apply symmetry, compose_assoc.
   Qed.
 
@@ -128,22 +128,22 @@ Section AdjunctionDef.
   (* First, make Unit *)
   Program Definition Adj_Hom_Unit_Natrans (adj_h: Adjunction_Hom)
   : Natrans (IdFunctor C) (ComposeFunctor F G) :=
-    {| natrans X := adj_phi id |}.
+    {| natrans X := adj_h_phi id |}.
   Next Obligation.
     apply transitivity with
-    (fmap (ComposeFunctor F G) f • adj_phi id • id);
+    (fmap (ComposeFunctor F G) f • adj_h_phi id • id);
     [| eapply transitivity;
        [ apply symmetry, compose_assoc |]; apply id_dom].
-    eapply transitivity; [ | apply adj_phi_naturality ].
-    apply transitivity with (adj_phi (fmap F f)).
+    eapply transitivity; [ | apply adj_h_phi_naturality ].
+    apply transitivity with (adj_h_phi (fmap F f)).
     - apply symmetry.
-      apply transitivity with (adj_phi (id•id•fmap F f)).
+      apply transitivity with (adj_h_phi (id•id•fmap F f)).
       + apply map_preserve_eq.
         eapply transitivity; [ apply symmetry, id_cod |].
         eapply transitivity;
           [| apply compose_assoc ]; apply compose_subst_snd;
           apply symmetry, id_cod.
-      + eapply transitivity; [apply adj_phi_naturality |].
+      + eapply transitivity; [apply adj_h_phi_naturality |].
         eapply transitivity; [| apply id_cod ];
         apply compose_subst_snd, fmap_id.
     - apply map_preserve_eq.
@@ -157,13 +157,13 @@ Section AdjunctionDef.
   (* Then, prove. *)
   Program Instance Adj_Hom_Unit (adj_h: Adjunction_Hom)
   : Adjunction_Unit (Adj_Hom_Unit_Natrans adj_h) :=
-    { adj_dc := @adj_phi_inv adj_h }.
+    { adj_dc := @adj_h_phi_inv adj_h }.
   Next Obligation.
     eapply transitivity; [ apply symmetry, id_dom |].
     eapply transitivity; [ apply compose_assoc |].
-    eapply transitivity; [ apply symmetry, adj_phi_naturality |].
+    eapply transitivity; [ apply symmetry, adj_h_phi_naturality |].
     eapply transitivity;
-      [| apply adj_phi_inv_iso ]; apply map_preserve_eq.
+      [| apply adj_h_phi_inv_iso ]; apply map_preserve_eq.
     eapply transitivity;
       [ apply compose_subst_fst; apply id_cod |].
     eapply transitivity;
@@ -177,21 +177,21 @@ Section AdjunctionDef.
     eapply transitivity;
     [ apply map_preserve_eq, compose_assoc |].
     eapply transitivity;
-    [ apply adj_phi_inv_naturality |].
+    [ apply adj_h_phi_inv_naturality |].
     apply transitivity with (h•id); [| apply id_dom ];
     apply compose_subst_fst;
     eapply transitivity; [| apply fmap_id ].
     eapply transitivity; [ apply compose_subst_snd | apply id_cod  ];
-    apply adj_phi_iso.
+    apply adj_h_phi_iso.
   Qed.
   
   
   (* 3. Counit -> Hom *)
   Program Instance Adj_Counit_Hom
-          `(Hc: Adjunction_Counit adj_counit): Adjunction_Hom :=
-    { adj_phi X Y := adj_cd;
-      adj_phi_inv X Y := 
-        {| map_function f := adj_counit Y • fmap F f |} }.
+          `(Hc: Adjunction_Counit adj_c_counit): Adjunction_Hom :=
+    { adj_h_phi X Y := adj_cd;
+      adj_h_phi_inv X Y := 
+        {| map_function f := adj_c_counit Y • fmap F f |} }.
   Next Obligation.
     by apply compose_subst_fst, map_preserve_eq, Heq.
   Qed.
@@ -212,7 +212,7 @@ Section AdjunctionDef.
     eapply transitivity; [apply symmetry, compose_assoc |].
     eapply transitivity; [| apply compose_assoc]; apply compose_subst_snd.
     eapply transitivity; [ apply compose_subst_snd |].
-    apply (@naturality _ _ _ _ adj_counit).
+    apply (@naturality _ _ _ _ adj_c_counit).
     eapply transitivity; [ apply compose_assoc |].
     apply compose_subst; [ apply adj_cd_property |  apply reflexivity ].
   Qed.
@@ -222,21 +222,21 @@ Section AdjunctionDef.
   (* First, make Counit *)
   Program Definition Adj_Hom_Counit_Natrans (adj_h: Adjunction_Hom)
   : Natrans (ComposeFunctor G F) (IdFunctor D) :=
-    {| natrans X := adj_phi_inv id |}.
+    {| natrans X := adj_h_phi_inv id |}.
   Next Obligation.
-    (* adj_phi_inv (fmap G h•g• f) === h • adj_phi_inv g • fmap F f *)
+    (* adj_h_phi_inv (fmap G h•g• f) === h • adj_h_phi_inv g • fmap F f *)
     apply symmetry;
     eapply transitivity; [| apply id_cod].
-    eapply transitivity; [| apply adj_phi_inv_naturality].
-    apply transitivity with (adj_phi_inv (fmap G f));
+    eapply transitivity; [| apply adj_h_phi_inv_naturality].
+    apply transitivity with (adj_h_phi_inv (fmap G f));
       [| apply map_preserve_eq ].
-    apply transitivity with (f•adj_phi_inv id•fmap F id);
+    apply transitivity with (f•adj_h_phi_inv id•fmap F id);
       [ eapply transitivity;
         [ apply symmetry; eapply transitivity;
           [ apply compose_subst_fst, fmap_id | apply id_dom ]
         | apply compose_assoc ] |].
     apply symmetry; eapply transitivity;
-    [| apply adj_phi_inv_naturality ].
+    [| apply adj_h_phi_inv_naturality ].
     apply map_preserve_eq.
     apply symmetry.
     eapply transitivity; [apply compose_subst_fst, id_dom | apply id_dom].
@@ -248,12 +248,12 @@ Section AdjunctionDef.
   (* Then, prove. *)
   Program Instance Adj_Hom_Counit (adj_h: Adjunction_Hom)
   : Adjunction_Counit (Adj_Hom_Counit_Natrans adj_h) := 
-    { adj_cd := @adj_phi adj_h }.
+    { adj_cd := @adj_h_phi adj_h }.
   Next Obligation.
-    (* adj_phi_inv (fmap G h•g• f) === h • adj_phi_inv g • fmap F f *)
+    (* adj_h_phi_inv (fmap G h•g• f) === h • adj_h_phi_inv g • fmap F f *)
     apply symmetry; eapply transitivity; [| apply id_cod];
-    eapply transitivity; [| apply adj_phi_inv_naturality ].
-    apply symmetry; eapply transitivity; [| apply adj_phi_iso].
+    eapply transitivity; [| apply adj_h_phi_inv_naturality ].
+    apply symmetry; eapply transitivity; [| apply adj_h_phi_iso].
     apply map_preserve_eq;
       eapply transitivity; [| apply id_cod].
     eapply transitivity; [ apply symmetry, compose_assoc |].
@@ -262,14 +262,14 @@ Section AdjunctionDef.
   Qed.
   Next Obligation.
     apply transitivity with
-    (adj_phi (id•adj_phi_inv id •fmap F h));
+    (adj_h_phi (id•adj_h_phi_inv id •fmap F h));
     [ apply map_preserve_eq |].
     eapply transitivity; [| apply symmetry, id_cod ];
     apply symmetry, H.
-    eapply transitivity; [ apply adj_phi_naturality |].
+    eapply transitivity; [ apply adj_h_phi_naturality |].
     eapply transitivity; [ apply compose_subst_snd, fmap_id |].
     eapply transitivity; [ apply id_cod |].
-    eapply transitivity; [ apply compose_subst_snd, adj_phi_inv_iso | apply id_cod].
+    eapply transitivity; [ apply compose_subst_snd, adj_h_phi_inv_iso | apply id_cod].
   Qed.
   
   
@@ -278,14 +278,66 @@ Section AdjunctionDef.
        とっても妥協しての定義である．
    *)
   (* 5. Unit -> Counit *)
-  Program Instance Adj_Unit_Counit
-          `(Hu: Adjunction_Unit adj_unit)
+  Program Instance Adj_U_Unit_Counit
+          `(Hu: Adjunction_Unit adj_u_unit)
   : Adjunction_Counit _ := Adj_Hom_Counit (Adj_Unit_Hom Hu).
 
   (* 6. Counit -> Unit *)
-  Program Instance Adj_Counit_Unit 
+  Program Instance Adj_C_Counit_Unit 
           `(Hc: Adjunction_Counit)
   : Adjunction_Unit _ := Adj_Hom_Unit (Adj_Counit_Hom Hc).
 
+  
+  Structure Adjunction :=
+    { adj_phi {X: C}{Y: D}: Map (F X --> Y) (X --> G Y);
+      adj_phi_inv {X: C}{Y: D}: Map (X --> G Y) (F X --> Y);
+      adj_unit: Natrans (IdFunctor C) (ComposeFunctor F G);
+      adj_counit: Natrans (ComposeFunctor G F) (IdFunctor D);
+
+      adj_phi_iso:
+        forall (X: C)(Y: D)(f: F X --> Y),
+          adj_phi_inv (adj_phi f) === f;
+      adj_phi_inv_iso:
+        forall (X: C)(Y: D)(g: X --> G Y),
+          adj_phi (adj_phi_inv g) === g;
+      
+      adj_phi_naturality:
+        forall (X Y: C)(Z W: D)(f: X --> Y)(g: F Y --> Z)(h: Z --> W),
+          adj_phi (h • g • fmap F f) === fmap G h • adj_phi g • f;
+      
+      adj_phi_inv_naturality:
+        forall (adj: Adjunction_Hom)
+               (X Y: C)(Z W: D)(f: X --> Y)(g: Y --> G Z)(h: Z --> W),
+          adj_phi_inv (fmap G h•g• f) === h•adj_phi_inv g•fmap F f;
+
+      adj_phi_inv_counit:
+        forall (X: C)(Y: D)(f: X --> G Y),
+          fmap G (adj_phi_inv f) • adj_unit X === f;
+      adj_phi_inv_uniqueness:
+        forall (X: C)(Y: D)(f: X --> G Y)(h: F X --> Y),
+          fmap G h • adj_unit X === f -> adj_phi_inv f === h;
+
+      adj_phi_counit:
+        forall (X: C)(Y: D)(f: F X --> Y),
+          adj_counit Y • fmap F (adj_phi f) === f;
+
+      adj_phi_uniqueness:
+        forall (X: C)(Y: D)(f: F X --> Y)(h: X --> G Y),
+          adj_counit Y • fmap F h === f -> adj_phi f === h }.
+
+
+  (* mendoi node atode *)
+  (*
+  Program Definition Adj_Hom_Adj (adj: Adjunction_Hom): Adjunction :=
+    {| adj_phi := @adj_h_phi adj;
+       adj_phi_inv := @adj_h_phi_inv adj;
+       adj_unit := Adj_Hom_Unit_Natrans adj;
+       adj_counit := Adj_Hom_Counit_Natrans adj
+    |}.
+  Next Obligation.
+    *)
+          
+  
 End AdjunctionDef.
 
+Arguments Adjunction (C D F G): rename.
