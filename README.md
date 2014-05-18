@@ -15,7 +15,7 @@ Cat_on_Coq
 
   の 7 つです。
 
-  ファイル間の依存関係については [これ](dep_graph.dot.svg) をご参照ください。
+  ファイル間の依存関係については [これ](dep_graph.dot.png) をご参照ください。
   
 * foldr as catamorphism
 
