@@ -9,6 +9,7 @@ Cat_on_Coq
   - Category.v
   - Functor.v
   - Cone.v
+  - Adjunction.v
   - ListFunctor.v
 
   の 5 つです。

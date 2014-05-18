@@ -1,0 +1,8 @@
+-R . COC 
+Setoid.v
+Category.v
+Functor.v
+Natrans.v
+Adjunction.v
+Cone.v
+ListFunctor.v

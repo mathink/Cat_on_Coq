@@ -1,8 +1,6 @@
 Require Import 
 Ssreflect.ssreflect
-Ssreflect.eqtype
-Ssreflect.ssrbool
-Setoid.
+COC.Setoid.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -546,7 +544,6 @@ Section Setoids.
    rewrite /eq_Map /=; move=> x; equiv_refl.
   Qed.    
 
-  Print Setoids.
   Canonical Structure Setoids.
 
 End Setoids.

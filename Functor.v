@@ -1,8 +1,6 @@
 Require Import 
 Ssreflect.ssreflect
-Ssreflect.eqtype
-Ssreflect.ssrbool
-Setoid Category.
+COC.Setoid COC.Category.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -10,7 +8,7 @@ Unset Strict Implicit.
 Structure Functor (C D: Category): Type :=
   make_Functor
   { fobj:> C -> D;
-    fmap {X Y: C}: Map_base (X --> Y)  (fobj X --> fobj Y);
+    fmap {X Y: C}: Map (X --> Y)  (fobj X --> fobj Y);
     
     fmap_id:
       forall (X: C), fmap id === id_(fobj X) ;

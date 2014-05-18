@@ -1,6 +1,6 @@
 Require Import 
 Ssreflect.ssreflect
-Setoid Category Functor.
+COC.Setoid COC.Category COC.Functor.
 
 Set Implicit Arguments.
 

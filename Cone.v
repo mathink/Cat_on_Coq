@@ -18,9 +18,7 @@
 
 Require Import 
 Ssreflect.ssreflect
-Ssreflect.eqtype
-Ssreflect.ssrbool
-Setoid Category Functor.
+COC.Setoid COC.Category COC.Functor.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

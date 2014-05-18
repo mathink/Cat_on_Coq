@@ -1,10 +1,7 @@
 Require Import
 Coq.Relations.Relation_Definitions
 Coq.Classes.RelationClasses
-Ssreflect.ssreflect
-Ssreflect.ssrfun
-Ssreflect.eqtype
-Ssreflect.ssrbool.
+Ssreflect.ssreflect.
 
 Require Export Coq.Classes.RelationClasses.
 
