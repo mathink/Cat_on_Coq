@@ -8,11 +8,14 @@ Cat_on_Coq
   - Setoid.v
   - Category.v
   - Functor.v
+  - Natrans.v
   - Cone.v
   - Adjunction.v
   - ListFunctor.v
 
-  の 5 つです。
+  の 7 つです。
+
+  ファイル間の依存関係については [これ](dep_graph.dot.svg) をご参照ください。
   
 * foldr as catamorphism
 
