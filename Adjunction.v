@@ -294,6 +294,14 @@ Section AdjunctionDef.
       adj_unit: Natrans (IdFunctor C) (ComposeFunctor F G);
       adj_counit: Natrans (ComposeFunctor G F) (IdFunctor D);
 
+      adj_unit_as_phi:
+        forall (X: C),
+          adj_unit X === adj_phi id;
+
+      adj_counit_as_phi_inv:
+        forall (Y: D),
+          adj_counit Y === adj_phi_inv id;
+
       adj_phi_iso:
         forall (X: C)(Y: D)(f: F X --> Y),
           adj_phi_inv (adj_phi f) === f;
@@ -306,11 +314,10 @@ Section AdjunctionDef.
           adj_phi (h • g • fmap F f) === fmap G h • adj_phi g • f;
       
       adj_phi_inv_naturality:
-        forall (adj: Adjunction_Hom)
-               (X Y: C)(Z W: D)(f: X --> Y)(g: Y --> G Z)(h: Z --> W),
+        forall (X Y: C)(Z W: D)(f: X --> Y)(g: Y --> G Z)(h: Z --> W),
           adj_phi_inv (fmap G h•g• f) === h•adj_phi_inv g•fmap F f;
 
-      adj_phi_inv_counit:
+      adj_phi_inv_unit:
         forall (X: C)(Y: D)(f: X --> G Y),
           fmap G (adj_phi_inv f) • adj_unit X === f;
       adj_phi_inv_uniqueness:
