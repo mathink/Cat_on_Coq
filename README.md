@@ -1,21 +1,14 @@
 Cat_on_Coq
 ==========
 
-* 現状報告
+* あばうと
 
-  設計を見直したり SSReflect の利用を標準としたりなど大きい変更をしているので、現時点で動作を確認できているのは
+  make すればコンパイルされるのでお好きにどうぞ．
 
-  - Setoid.v
-  - Category.v
-  - Functor.v
-  - Natrans.v
-  - Cone.v
-  - Adjunction.v
-  - ListFunctor.v
-
-  の 7 つです。
+  次回の予定はモナド(や随伴)の具体例に伴うもろもろです．
 
   ファイル間の依存関係については [これ](dep_graph.dot.png) をご参照ください。
+
 
 * 環境
 
