@@ -81,9 +81,11 @@ endif
 ######################
 
 VFILES:=ListFunctor.v\
-  Cone.v\
+  Monad.v\
   Adjunction.v\
   Natrans.v\
+  Cone.v\
+  Algebra.v\
   Functor.v\
   Category.v\
   Setoid.v

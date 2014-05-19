@@ -3,7 +3,9 @@
 Setoid.v
 Category.v
 Functor.v
+Algebra.v
+Cone.v
 Natrans.v
 Adjunction.v
-Cone.v
+Monad.v
 ListFunctor.v
