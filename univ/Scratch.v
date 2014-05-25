@@ -1695,8 +1695,16 @@ Eval compute in
           (fun n:nat => match n with 0 => true | _ => false end) 0).
 
 Definition function_compose
-           {X Y: Set}(f: X -> Y) :=
-  fmap (YonedaFunctor (X: Sets)) f.
-Eval compute in  function_compose.
+           {X Y Z: Type}(f: X -> Y)(g: Y -> Z) :=
+  fmap (YonedaFunctor (X: Sets)) g f.
+
+Eval compute in  function_compose 
+                   (fun x: option bool =>
+                      match x with
+                        | Some b => negb b
+                        | Nonde => false
+                      end)
+                   (fun b: bool => if b then 1 else 0) (Some true).
+
 Extraction Language Haskell.
 Extraction "../ext/yoneda.hs" function_compose.

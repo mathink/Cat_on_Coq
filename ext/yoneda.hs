@@ -328,21 +328,34 @@ coYonedaFunctor c =
   Make_Functor (unsafeCoerce (coHomFunctor (unsafeCoerce c))) (\x y ->
     unsafeCoerce (\f -> unsafeCoerce (fmap_CoYonedaFunctor c x y f)))
 
-function_compose :: (a1 -> a2) -> Carrier
-function_compose f =
-  function (arr sets __ __)
-    (arr setoids
-      (fobj sets setoids
-        (unsafeCoerce
-          (fobj (op_Category sets) (fun sets setoids)
-            (yonedaFunctor (unsafeCoerce sets)) __)) __)
+function_compose :: (a1 -> a2) -> (a2 -> a3) -> Carrier
+function_compose f g =
+  function
+    (unsafeCoerce
       (fobj sets setoids
         (unsafeCoerce
           (fobj (op_Category sets) (fun sets setoids)
             (yonedaFunctor (unsafeCoerce sets)) __)) __))
     (unsafeCoerce
-      (fmap sets setoids
+      (fobj sets setoids
         (unsafeCoerce
           (fobj (op_Category sets) (fun sets setoids)
-            (yonedaFunctor (unsafeCoerce sets)) __)) __ __)) (unsafeCoerce f)
+            (yonedaFunctor (unsafeCoerce sets)) __)) __))
+    (unsafeCoerce
+      (function (arr sets __ __)
+        (arr setoids
+          (fobj sets setoids
+            (unsafeCoerce
+              (fobj (op_Category sets) (fun sets setoids)
+                (yonedaFunctor (unsafeCoerce sets)) __)) __)
+          (fobj sets setoids
+            (unsafeCoerce
+              (fobj (op_Category sets) (fun sets setoids)
+                (yonedaFunctor (unsafeCoerce sets)) __)) __))
+        (unsafeCoerce
+          (fmap sets setoids
+            (unsafeCoerce
+              (fobj (op_Category sets) (fun sets setoids)
+                (yonedaFunctor (unsafeCoerce sets)) __)) __ __))
+        (unsafeCoerce g))) (unsafeCoerce f)
 
