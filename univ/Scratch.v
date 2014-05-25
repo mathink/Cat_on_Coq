@@ -13,6 +13,7 @@
 Require Import
 Coq.Classes.Init Coq.Program.Basics Coq.Program.Tactics.
 
+Set Universe Polymorphism.
 Set Implicit Arguments.
 Unset Strict Implicit.
 
@@ -41,7 +42,6 @@ Module Relations.
 End Relations.
 Import Relations.
 
-Set Universe Polymorphism.
 
 
 Delimit Scope coc_scope with coc.
@@ -154,6 +154,30 @@ Module Map.
   End Notations.
 End Map.
 Export Map.Notations.
+
+(*
+Module Composable.
+
+  Reserved Notation "X --> Y" (at level 60, no associativity).
+  Reserved Notation "g • f" (at level 60, right associativity).
+
+  Structure type :=
+    builder
+      { obj: Type;
+        arr: obj -> obj -> Setoid where  "X --> Y" := (arr X Y);
+        compose {X Y Z: obj}:
+          (X --> Y) -> (Y --> Z) -> (X --> Z) where "g • f" := (compose f g);
+
+        compose_assoc:
+          forall (X Y Z W: obj)(f: X --> Y)(g: Y --> Z)(h: Z --> W),
+            (h•g)•f === h•(g•f);
+
+        compose_subst:
+          forall (X Y Z: obj)(f f': X --> Y)(g g': Y --> Z)
+                 (Heq_fst: f === f')(Heq_snd: g === g'),
+            g•f === g'•f' }.
+*)
+
 
 Module Category.
 
@@ -493,7 +517,7 @@ End Cat.
 Module Natrans.
   Import Category.
 
-  Structure type {C D: Cat}(F G: C --> D) :=
+  Structure type {C D: Category}(F G: C ---> D) :=
     { natrans (X: C): F X --> G X;
 
       naturality:
@@ -507,12 +531,12 @@ Module Natrans.
 
     Section Equality.
 
-      Definition equal_2 {C D: Cat}
-                 {F G: C --> D}(S: F ==> G)
-                 {F' G': C --> D}(T: F' ==> G') :=
+      Definition equal_2 {C D: Category}
+                 {F G: C ---> D}(S: F ==> G)
+                 {F' G': C ---> D}(T: F' ==> G') :=
         forall X: C, S X ==_H T X.
 
-      Context {C D: Cat}(F G: C --> D).
+      Context {C D: Category}(F G: C ---> D).
       Definition equal: relation (F ==> G) :=
         fun (S T: F ==> G) => forall X: C, S X === T X.
       Hint Unfold equal.
@@ -536,7 +560,7 @@ Module Natrans.
     Section Compositions.
 
       Program Definition v_compose
-              {C D: Cat}{F G H: C --> D}
+              {C D: Category}{F G H: C ---> D}
               (S: F ==> G)(T: G ==> H): F ==> H :=
         {| natrans X :=  T X • S X |}.
       Next Obligation.
@@ -552,7 +576,7 @@ Module Natrans.
       Qed.
 
       Lemma v_compose_assoc:
-        forall (C D: Cat)(F G H I:C --> D)
+        forall (C D: Category)(F G H I:C ---> D)
                (S: F ==> G)(T: G ==> H)(U: H ==> I),
           equal (v_compose S (v_compose T U))
                 (v_compose (v_compose S T) U).
@@ -564,8 +588,9 @@ Module Natrans.
 
 
       Program Definition h_compose
-              {C D E: Cat}{F G: C --> D}{F' G': D --> E}
-              (S: F ==> G)(T: F' ==> G'): (F'•F) ==> (G'•G) :=
+              {C D E: Category}{F G: C ---> D}{F' G': D ---> E}
+              (S: F ==> G)(T: F' ==> G')
+      : (Functor.compose F F') ==> (Functor.compose G G') :=
         {| natrans X := fmap G' (S X) • T (F X) |}.
       Next Obligation.
         apply symmetry.
@@ -584,8 +609,8 @@ Module Natrans.
 
 
       Lemma h_compose_assoc:
-        forall {C D E K: Cat}
-               {F G: C --> D}{F' G': D --> E}{F'' G'': E --> K}
+        forall {C D E K: Category}
+               {F G: C ---> D}{F' G': D ---> E}{F'' G'': E ---> K}
                (S: F ==> G)(T: F' ==> G')(U: F'' ==> G''),
           equal_2 (h_compose S (h_compose T U))
                      (h_compose (h_compose S T) U).
@@ -601,7 +626,7 @@ Module Natrans.
 
 
       Lemma interchange_law:
-        forall (C D E: Cat)(F G H: C --> D)(F' G' H': D --> E)
+        forall (C D E: Category)(F G H: C ---> D)(F' G' H': D ---> E)
                (S: F ==> G)(T: G ==> H)(S': F' ==> G')(T': G' ==> H'),
           equal (h_compose (v_compose S T) (v_compose S' T'))
                 (v_compose (h_compose S S') (h_compose T T')).
@@ -620,8 +645,9 @@ Module Natrans.
 
 
       Program Definition dom_compose
-              {B C D: Cat}{F G: C --> D}
-              (E: B --> C)(S: F ==> G): (F•E) ==> (G•E) :=
+              {B C D: Category}{F G: C ---> D}
+              (E: B ---> C)(S: F ==> G)
+      : (Functor.compose E F) ==> (Functor.compose E G) :=
         {| natrans X := (S (E X)) |}.
       Next Obligation.
         simpl in *.
@@ -629,18 +655,18 @@ Module Natrans.
       Qed.
 
       Lemma dom_compose_assoc:
-        forall (A B C D: Cat)(F G: C --> D)
-               (E: A --> B)(E': B --> C)(S: F ==> G),
+        forall (A B C D: Category)(F G: C ---> D)
+               (E: A ---> B)(E': B ---> C)(S: F ==> G),
           equal_2 (dom_compose E (dom_compose E' S))
-                     (dom_compose (E'•E) S).
+                     (dom_compose (Functor.compose E E') S).
       Proof.
         simpl; intros; intro X; apply eq_Hom_def; simpl.
         apply reflexivity.
       Qed.        
 
       Lemma dom_compose_distr:
-        forall (B C D: Cat)(F G H: C --> D)
-               (E: B --> C)(S: F ==> G)(T: G ==> H),
+        forall (B C D: Category)(F G H: C ---> D)
+               (E: B ---> C)(S: F ==> G)(T: G ==> H),
           equal (dom_compose E (v_compose S T))
                 (v_compose (dom_compose E S) (dom_compose E T)).
       Proof.
@@ -650,8 +676,9 @@ Module Natrans.
 
 
       Program Definition cod_compose
-              {C D E: Cat}{F G: C --> D}
-              (S: F ==> G)(H: D --> E): (H•F) ==> (H•G) :=
+              {C D E: Category}{F G: C ---> D}
+              (S: F ==> G)(H: D ---> E)
+      : (Functor.compose F H) ==> (Functor.compose G H) :=
         {| natrans X := fmap H (S X) |}.
       Next Obligation.
         simpl in *.
@@ -661,9 +688,9 @@ Module Natrans.
       Qed.
 
       Lemma cod_compose_assoc:
-        forall (C D E K: Cat)(F G: C --> D)
-               (S: F ==> G)(H: D --> E)(I: E --> K),
-          equal_2 (cod_compose S (I•H))
+        forall (C D E K: Category)(F G: C ---> D)
+               (S: F ==> G)(H: D ---> E)(I: E ---> K),
+          equal_2 (cod_compose S (Functor.compose H I))
                      (cod_compose (cod_compose S H) I).
       Proof.
         simpl; intros; intro X; apply eq_Hom_def; simpl.
@@ -671,8 +698,8 @@ Module Natrans.
       Qed.        
 
       Lemma cod_compose_distr:
-        forall (C D E: Cat)(F G H: C --> D)
-               (S: F ==> G)(T: G ==> H)(K: D --> E),
+        forall (C D E: Category)(F G H: C ---> D)
+               (S: F ==> G)(T: G ==> H)(K: D ---> E),
           equal (cod_compose (v_compose S T) K)
                 (v_compose (cod_compose S K) (cod_compose T K)).
       Proof.
@@ -681,8 +708,8 @@ Module Natrans.
       Qed.
 
       Lemma dom_cod_compose_assoc:
-        forall (B C D E: Cat)(F G: C --> D)
-               (I: B --> C)(S: F ==> G)(J: D --> E),
+        forall (B C D E: Category)(F G: C ---> D)
+               (I: B ---> C)(S: F ==> G)(J: D ---> E),
           equal_2 (dom_compose I (cod_compose S J))
                   (cod_compose (dom_compose I S) J).
       Proof.
@@ -694,7 +721,7 @@ Module Natrans.
 
     Section Identity.
 
-      Program Definition id {C D: Cat}(F: C --> D): F ==> F :=
+      Program Definition id {C D: Category}(F: C ---> D): F ==> F :=
         {| natrans X := id_ (F X) |}.
       Next Obligation.
         eapply transitivity; [ apply id_cod |].
@@ -703,7 +730,7 @@ Module Natrans.
       Qed.
 
       Lemma v_compose_id_dom:
-        forall {C D: Cat}(F G: C --> D)(S: F ==> G),
+        forall {C D: Category}(F G: C ---> D)(S: F ==> G),
           equal (v_compose (id F) S) S.
       Proof.
         simpl; intros; intro X; simpl.
@@ -711,7 +738,7 @@ Module Natrans.
       Qed.
 
       Lemma v_compose_id_cod:
-        forall {C D: Cat}(F G: C --> D)(S: F ==> G),
+        forall {C D: Category}(F G: C ---> D)(S: F ==> G),
           equal (v_compose S (id G)) S.
       Proof.
         simpl; intros; intro X; simpl.
@@ -736,7 +763,7 @@ Section Fun.
   (* Category cons *)
   Import Category.
 
-  Program Definition Fun (C D: Cat): Category :=
+  Program Definition Fun (C D: Category): Category :=
     {| arr := Natrans.setoid;
        compose := @Natrans.v_compose C D;
        id := Natrans.id |}.
@@ -762,17 +789,17 @@ Section Fun.
     intro; apply id_cod.
   Qed.
 
-  Definition IdFun (C: Cat) := Fun C C.
+  Definition IdFun (C: Category) := Fun C C.
 
 End Fun.
 
 Module Monad.
   Import Category.
 
-  Structure type (C: Cat) :=
-    { T: C --> C;
-      unit: id_ C ==> T;
-      join: T•T ==> T;
+  Structure type (C: Category) :=
+    { T: C ---> C;
+      unit: Functor.id C ==> T;
+      join: Functor.compose T T ==> T;
 
       join_unit_T:
         forall (X: C),
@@ -829,7 +856,7 @@ Export Monad.Notations.
 Module Kleisli.
   Import Category.  
 
-  Structure type (C: Cat) :=
+  Structure type (C: Category) :=
     { T: (obj C) -> (obj C);
       unit (X: C): X --> T X;
       bind {X Y: C}: Map (X --> T Y) (T X --> T Y);
@@ -1018,7 +1045,7 @@ Section MonadKT.
         eapply transitivity; [ apply compose_assoc |].
         apply compose_subst_fst.
         eapply transitivity; [ apply compose_subst_fst |].
-        + instantiate (1:=fmap (T m•T m) h•fmap (T m) g); simpl.
+        + instantiate (1:=fmap (Functor.compose (T m) (T m)) h•fmap (T m) g); simpl.
           eapply transitivity; [| apply symmetry, Functor.fmap_compose ].
           apply reflexivity.
         + eapply transitivity; [ apply symmetry, compose_assoc |].
@@ -1059,7 +1086,7 @@ Section MonadKT.
     Import Kleisli.
 
     Program Definition KC_KT
-            {C: Cat}(kt: KT C): Category :=
+            {C: Category}(kt: KT C): Category :=
       {| arr X Y := X --> T kt Y;
          compose X Y Z f g := [ g #]•f;
          id := unit kt |}.
@@ -1234,11 +1261,105 @@ Hint Unfold op_Category.
 Coercion op_Category: Category >-> Category.
 
 
+Module Product.
+
+  Section Setoid.
+    Context (X Y: Setoid).
+
+    Program Definition setoid: Setoid :=
+      {| Setoid.equal :=
+           fun p q:(X*Y)%type => fst p === fst q/\snd p === snd q |}.
+    Next Obligation.
+      simpl.
+      intros [x y]; simpl; split; apply reflexivity.
+    Qed.
+    Next Obligation.
+      simpl.
+      intros [x y] [x' y']; simpl;
+      intros [Heq Heq']; simpl; split;
+      apply symmetry; auto.
+    Qed.
+    Next Obligation.
+      simpl.
+      intros [x y] [x' y'] [x'' y'']; simpl;
+      intros [Heqf Heqs] [Heqf' Heqs']; simpl; split;
+      [generalize Heqf Heqf' | generalize Heqs Heqs' ];
+      apply transitivity.
+    Qed.
+
+  End Setoid.
+
+  Section Cat.
+    Context (C D: Category).
+    Import Category.
+    Program Definition category: Category :=
+      {| arr X Y :=
+           setoid (Hom C (fst X) (fst Y)) (Hom D (snd X)(snd Y));
+         compose X Y Z f g := (fst g•fst f,snd g•snd f);
+         id X := (id_ (fst X), id_ (snd X)) |}.
+    Next Obligation.
+      simpl in *; split; apply compose_assoc.
+    Qed.      
+    Next Obligation.
+      simpl in *; split; apply compose_subst; auto.
+    Qed.      
+    Next Obligation.
+      simpl in *; split; apply id_dom.
+    Qed.      
+    Next Obligation.
+      simpl in *; split; apply id_cod.
+    Qed.
+
+  End Cat.
+
+End Product.
+
+Section EvaluationFunctor.
+  Import Category.
+  Context (B C: Category).
+  Let P := Product.category (Fun C B) C.
+
+  Definition fobj_EF (FX: P): B := fst FX (snd FX).
+
+  Program Definition fmap_EF (FX GY: P)
+  : Map (Hom P FX GY) (Hom B (fobj_EF FX) (fobj_EF GY)) :=
+    {| Map.function Sf := fmap (fst GY) (snd Sf)•(natrans (fst Sf) (snd FX)) |}.
+  Next Obligation.
+    simpl in *.
+    apply Category.compose_subst;
+      [ apply H | apply Map.preserve_equal, H0 ].
+  Qed.    
+
+  Program Definition EvalFunctor
+  : Product.category (Fun C B) C ---> B :=
+    {| fmap FX GY := fmap_EF FX GY |}.
+  Next Obligation.
+    simpl; unfold fobj_EF; simpl.
+    subst_by (Functor.fmap_id t o).
+    apply id_dom.
+  Qed.
+  Next Obligation.
+    simpl in *.
+    eapply transitivity; [| apply compose_assoc ].
+    eapply transitivity; [apply symmetry, compose_assoc |].
+    apply compose_subst_snd.
+    eapply transitivity; [| apply (Natrans.naturality t) ].
+    eapply transitivity;
+      [| apply compose_subst_fst, Functor.fmap_compose ].
+    eapply transitivity; [| apply compose_assoc ].
+    apply compose_subst_snd.
+    apply symmetry, (Natrans.naturality t).
+  Qed.
+
+End EvaluationFunctor.
+
+
+
 Module Yoneda.
   Import Category.
 
   Section CovariantHom.
-    Context {C: Cat}.
+    Context {C: Category}.
     
     Program Definition fmap_HomFunctor (X Y Z: C)(g: Y --> Z)
     : Map (Hom C X Y)  (Hom C X Z) :=
@@ -1247,7 +1368,7 @@ Module Yoneda.
       apply compose_subst_fst; auto.
     Qed.      
 
-    Program Definition HomFunctor (X: C): C --> Setoids :=
+    Program Definition HomFunctor (X: C): C ---> Setoids :=
       {| fobj Y := Hom C X Y;
          fmap Y Z := {| Map.function g := fmap_HomFunctor X g |} |}.
     Next Obligation.
@@ -1266,7 +1387,7 @@ Module Yoneda.
   End CovariantHom.
 
   Section ContravariantHom.
-    Context {C: Cat}.
+    Context {C: Category}.
     
     Program Definition fmap_CoHomFunctor (X Y Z: C)(f: X --> Y)
     : Map (Hom C Y Z)  (Hom C X Z) :=
@@ -1275,7 +1396,7 @@ Module Yoneda.
       apply compose_subst_snd; auto.
     Qed.      
 
-    Program Definition CoHomFunctor (Z: C): op C --> Setoids :=
+    Program Definition CoHomFunctor (Z: C): op C ---> Setoids :=
       {| fobj X := Hom C X Z;
          fmap Y X := {| Map.function f := fmap_CoHomFunctor Z f|} |}.
     Next Obligation.
@@ -1294,18 +1415,115 @@ Module Yoneda.
   End ContravariantHom.
 
 
+  Section NF.
+    Context (C: Category).
+    
+    Definition fobj_NF
+               (FX: Product.category (Fun C Setoids) C)
+    : Setoids :=
+      Natrans.setoid (HomFunctor (snd FX)) (fst FX).
+    Check CoHomFunctor.
+
+    Program Definition map_natrans_fmap_NF
+            (FX GY: Product.category (Fun C Setoids) C)
+            (Sf: Hom (Product.category (Fun C Setoids) C) FX GY)
+            (alpha: fobj_NF FX)(X: C)
+    : Map (Hom C (snd GY) X) (fst GY X) :=
+      {| Map.function g :=
+           (natrans (fst Sf) X•natrans alpha X•fmap (CoHomFunctor X) (snd Sf)) g |}.
+    Next Obligation.
+      simpl.
+      do 2 apply Map.preserve_equal.
+      apply compose_subst_snd, Heq.
+    Qed.
+
+    Program Definition natrans_fmap_NF
+            (FX GY: Product.category (Fun C Setoids) C)
+            (Sf: Hom (Product.category (Fun C Setoids) C) FX GY)
+            (alpha: fobj_NF FX)
+    : Natrans (HomFunctor (snd GY)) (fst GY) :=
+      {| Natrans.natrans X :=
+           map_natrans_fmap_NF Sf alpha X |}.
+    Next Obligation.
+      simpl in *.
+      unfold Map.equal; simpl.
+      rename o into Z.
+      intro h.
+      eapply transitivity; [| apply (Natrans.naturality t)].
+      simpl.
+      apply Map.preserve_equal.
+      eapply transitivity; [| apply (Natrans.naturality alpha)].
+      simpl.
+      apply Map.preserve_equal, compose_assoc.
+    Qed.
+
+
+    Program Definition map_fmap_NF 
+            (FX GY: Product.category (Fun C Setoids) C)
+            (Sf: Hom (Product.category (Fun C Setoids) C) FX GY)
+    : Map (Natrans.setoid (HomFunctor (snd FX)) (fst FX))
+          (Natrans.setoid (HomFunctor (snd GY)) (fst GY)) :=
+      {| Map.function alpha := natrans_fmap_NF Sf alpha |}.
+    Next Obligation.
+      simpl in *.
+      unfold Natrans.equal; simpl.
+      unfold Map.equal; simpl.
+      intros.
+      apply Map.preserve_equal; simpl.
+      apply Heq.
+    Qed.
+
+    Program Definition NFunctor
+    : Product.category (Fun C Setoids) C ---> Setoids :=
+      {| fmap FX GY :=
+           {| Map.function Sf := map_fmap_NF Sf |} |}.
+    Next Obligation.
+      simpl in *.
+      unfold Map.equal; simpl.
+      unfold Natrans.equal; simpl.
+      unfold Map.equal; simpl.
+      intros S X f; simpl.
+      eapply transitivity; [apply Map.f_equal, H |].
+      do 2 apply Map.preserve_equal.
+      apply compose_subst_fst, H0.
+    Qed.
+    Next Obligation.
+      simpl in *.
+      unfold Map.equal; simpl.
+      unfold Natrans.equal; simpl.
+      unfold Map.equal; simpl.
+      intros S X f.
+      apply Map.preserve_equal, id_dom.
+    Qed.    
+    Next Obligation.
+      simpl in *.
+      unfold Map.equal; simpl.
+      unfold Natrans.equal; simpl.
+      unfold Map.equal; simpl.
+      intros S X f.
+      do 3 apply Map.preserve_equal.
+      apply compose_assoc.
+    Qed.
+
+  End NF.
+
+  Check (forall (C: Category) X,
+           Map (EvalFunctor Setoids C X) (NFunctor C X)).
+  Check (forall (C: Category),
+           Natrans (EvalFunctor Setoids C) (NFunctor C)).
+
   Section YonedaLemma.
     Context {C: Cat}(F: Fun C Setoids)(X: C).
 
     Program Definition yoneda
-    : Map (Natrans.setoid (HomFunctor X) F) (F X) :=
+    : (NFunctor C (F,X)) --> (EvalFunctor Setoids C (F,X)) :=
       {| Map.function alpha := alpha X (id_ X) |}.
     Next Obligation.
       apply Heq.
     Qed.    
 
     Program Definition inv_yoneda
-    : Map (F X) (Natrans.setoid (HomFunctor X) F) :=
+    : (EvalFunctor Setoids C (F,X)) --> (NFunctor C (F,X)) :=
       {| Map.function x := 
            {| Natrans.natrans A :=
                 {| Map.function f := fmap F f x |} |} |}.
@@ -1329,10 +1547,9 @@ Module Yoneda.
 
 
     Lemma yoneda_inv_yoned_iso_1:
-      forall (alpha: Natrans.setoid (HomFunctor X) F),
-        inv_yoneda (yoneda alpha) === alpha.
+      inv_yoneda •yoneda === id.
     Proof.
-      intro; simpl.
+      intro alpha; simpl in *.
       unfold Natrans.equal; simpl;
       unfold Map.equal; simpl.
       intros Y f; simpl.
@@ -1354,25 +1571,24 @@ Module Yoneda.
     Qed.
     
     Lemma yoneda_inv_yoned_iso_2:
-      forall (x: F X),
-        yoneda (inv_yoneda x) === x.
+      yoneda •inv_yoneda === id.
     Proof.
-      intro; simpl.
+      intro alpha; simpl.
       eapply transitivity;
         [ apply Map.f_equal, (Functor.fmap_id F) |].
       apply reflexivity.
     Qed.
 
     Lemma yoneda_lemma:
-      Map.equal (Map.compose yoneda inv_yoneda) (Map.id _)/\
-      Map.equal (Map.compose inv_yoneda yoneda) (Map.id _).
+      iso yoneda inv_yoneda.
     Proof.
       split; intro x; simpl;
       [ apply yoneda_inv_yoned_iso_1 |  apply yoneda_inv_yoned_iso_2 ].
     Qed.
 
   End YonedaLemma.
-
+  
+  
   Section YonedaFunctor.
     Context {C: Cat}.
 
@@ -1403,10 +1619,9 @@ Module Yoneda.
       intros; apply compose_subst_fst, Heq.
     Qed.
 
-  Set Printing Universes.
     Program Definition YonedaFunctor
     : Functor (op C: Cat) (Fun C Setoids) :=
-      {| fmap Y X := fmap_YonedaFunctor Y X |}.
+      {|fmap := fmap_YonedaFunctor |}.
     Next Obligation.
       simpl.
       unfold Natrans.equal, natrans_fmap_YonedaFunctor; simpl.
@@ -1419,14 +1634,13 @@ Module Yoneda.
       unfold Map.equal, map_natrans_fmap_YonedaFunctor; simpl.
       intros; apply Category.compose_assoc.
     Qed.      
-    
+
   End YonedaFunctor.
   Notation GrothendieckFunctor := YonedaFunctor.
 
 
   Section CoYonedaFunctor.
     Context {C: Cat}.
-
 
     Program Definition fmap_CoYonedaFunctor
             {X Y: C}(f: X --> Y)
@@ -1481,8 +1695,8 @@ Eval compute in
           (fun n:nat => match n with 0 => true | _ => false end) 0).
 
 Definition function_compose
-           {X Y Z: Set}(f: X -> Y)(g: Y -> Z): X -> Z :=
-  fmap (YonedaFunctor (X: Sets)) g f.
-
+           {X Y: Set}(f: X -> Y) :=
+  fmap (YonedaFunctor (X: Sets)) f.
+Eval compute in  function_compose.
 Extraction Language Haskell.
 Extraction "../ext/yoneda.hs" function_compose.

@@ -6,12 +6,31 @@ module Yoneda where
 import qualified Prelude
 
 
-import qualified GHC.Base
 unsafeCoerce :: a -> b
+#ifdef __GLASGOW_HASKELL__
+import qualified GHC.Base
 unsafeCoerce = GHC.Base.unsafeCoerce#
+#else
+-- HUGS
+import qualified IOExts
+unsafeCoerce = IOExts.unsafeCoerce
+#endif
 
 __ :: any
 __ = Prelude.error "Logical or arity value used"
+
+data Prod a b =
+   Pair a b
+
+fst :: (Prod a1 a2) -> a1
+fst p =
+  case p of {
+   Pair x y -> x}
+
+snd :: (Prod a1 a2) -> a2
+snd p =
+  case p of {
+   Pair x y -> y}
 
 data Type =
    Builder
@@ -109,82 +128,50 @@ type Type3 =
   Obj -> Carrier
   -- singleton inductive, whose constructor was Build_type
   
-natrans :: Obj -> Obj -> Carrier -> Carrier -> Type3 -> Obj -> Carrier
+natrans :: Type1 -> Type1 -> Type2 -> Type2 -> Type3 -> Obj -> Carrier
 natrans c d f g t =
   t
 
-setoid1 :: Obj -> Obj -> Carrier -> Carrier -> Type
+setoid1 :: Type1 -> Type1 -> Type2 -> Type2 -> Type
 setoid1 c d f g =
   Builder
 
-v_compose :: Obj -> Obj -> Carrier -> Carrier -> Carrier -> Type3 -> Type3 ->
+v_compose :: Type1 -> Type1 -> Type2 -> Type2 -> Type2 -> Type3 -> Type3 ->
              Type3
 v_compose c d f g h s t x =
-  compose0 (unsafeCoerce d)
-    (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x)
-    (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x)
-    (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce h) x)
+  compose0 d (fobj c d f x) (fobj c d g x) (fobj c d h x)
     (natrans c d f g s x) (natrans c d g h t x)
 
-h_compose :: Obj -> Obj -> Obj -> Carrier -> Carrier -> Carrier -> Carrier ->
+h_compose :: Type1 -> Type1 -> Type1 -> Type2 -> Type2 -> Type2 -> Type2 ->
              Type3 -> Type3 -> Type3
 h_compose c d e f g f' g' s t x =
-  compose0 (unsafeCoerce e)
-    (fobj (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce f')
-      (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x))
-    (fobj (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce g')
-      (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x))
-    (fobj (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce g')
-      (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x))
-    (natrans d e f' g' t
-      (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x))
-    (function
-      (arr (unsafeCoerce d)
-        (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x)
-        (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x))
-      (arr (unsafeCoerce e)
-        (fobj (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce g')
-          (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x))
-        (fobj (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce g')
-          (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x)))
-      (unsafeCoerce
-        (fmap (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce g')
-          (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x)
-          (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x)))
+  compose0 e (fobj d e f' (fobj c d f x)) (fobj d e g' (fobj c d f x))
+    (fobj d e g' (fobj c d g x)) (natrans d e f' g' t (fobj c d f x))
+    (function (arr d (fobj c d f x) (fobj c d g x))
+      (arr e (fobj d e g' (fobj c d f x)) (fobj d e g' (fobj c d g x)))
+      (unsafeCoerce (fmap d e g' (fobj c d f x) (fobj c d g x)))
       (natrans c d f g s x))
 
-dom_compose :: Obj -> Obj -> Obj -> Carrier -> Carrier -> Carrier -> Type3 ->
+dom_compose :: Type1 -> Type1 -> Type1 -> Type2 -> Type2 -> Type2 -> Type3 ->
                Type3
 dom_compose b c d f g e s x =
-  natrans c d f g s
-    (fobj (unsafeCoerce b) (unsafeCoerce c) (unsafeCoerce e) x)
+  natrans c d f g s (fobj b c e x)
 
-cod_compose :: Obj -> Obj -> Obj -> Carrier -> Carrier -> Type3 -> Carrier ->
+cod_compose :: Type1 -> Type1 -> Type1 -> Type2 -> Type2 -> Type3 -> Type2 ->
                Type3
 cod_compose c d e f g s h x =
-  function
-    (arr (unsafeCoerce d)
-      (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x)
-      (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x))
-    (arr (unsafeCoerce e)
-      (fobj (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce h)
-        (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x))
-      (fobj (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce h)
-        (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x)))
-    (unsafeCoerce
-      (fmap (unsafeCoerce d) (unsafeCoerce e) (unsafeCoerce h)
-        (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x)
-        (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce g) x)))
+  function (arr d (fobj c d f x) (fobj c d g x))
+    (arr e (fobj d e h (fobj c d f x)) (fobj d e h (fobj c d g x)))
+    (unsafeCoerce (fmap d e h (fobj c d f x) (fobj c d g x)))
     (natrans c d f g s x)
 
-id2 :: Obj -> Obj -> Carrier -> Type3
+id2 :: Type1 -> Type1 -> Type2 -> Type3
 id2 c d f x =
-  id0 (unsafeCoerce d)
-    (fobj (unsafeCoerce c) (unsafeCoerce d) (unsafeCoerce f) x)
+  id0 d (fobj c d f x)
 
-fun :: Obj -> Obj -> Type1
+fun :: Type1 -> Type1 -> Type1
 fun c d =
-  Builder0 (setoid1 c d) (unsafeCoerce (v_compose c d))
+  Builder0 (unsafeCoerce (setoid1 c d)) (unsafeCoerce (v_compose c d))
     (unsafeCoerce (id2 c d))
 
 function0 :: Type
@@ -202,34 +189,98 @@ op_Category c =
   Builder0 (\x y -> arr c y x) (\x y z f g -> compose0 c z y x g f) (\x ->
     id0 c x)
 
-fmap_HomFunctor :: Obj -> Obj -> Obj -> Obj -> Carrier -> Carrier
+fmap_HomFunctor :: Type1 -> Obj -> Obj -> Obj -> Carrier -> Carrier
 fmap_HomFunctor c x y z g =
-  unsafeCoerce (\f -> compose0 (unsafeCoerce c) x y z f g)
+  unsafeCoerce (\f -> compose0 c x y z f g)
 
-homFunctor :: Obj -> Obj -> Carrier
+homFunctor :: Type1 -> Obj -> Type2
 homFunctor c x =
-  unsafeCoerce (Make_Functor (\y -> unsafeCoerce (arr (unsafeCoerce c) x y))
-    (\y z -> unsafeCoerce (\g -> fmap_HomFunctor c x y z g)))
+  Make_Functor (\y -> unsafeCoerce (arr c x y)) (\y z ->
+    unsafeCoerce (\g -> fmap_HomFunctor c x y z g))
 
-fmap_CoHomFunctor :: Obj -> Obj -> Obj -> Obj -> Carrier -> Carrier
+fmap_CoHomFunctor :: Type1 -> Obj -> Obj -> Obj -> Carrier -> Carrier
 fmap_CoHomFunctor c x y z f =
-  unsafeCoerce (\g -> compose0 (unsafeCoerce c) x y z f g)
+  unsafeCoerce (\g -> compose0 c x y z f g)
 
-coHomFunctor :: Obj -> Obj -> Carrier
+coHomFunctor :: Type1 -> Obj -> Type2
 coHomFunctor c z =
-  unsafeCoerce (Make_Functor (\x -> unsafeCoerce (arr (unsafeCoerce c) x z))
-    (\y x -> unsafeCoerce (\f -> fmap_CoHomFunctor c x y z f)))
+  Make_Functor (\x -> unsafeCoerce (arr c x z)) (\y x ->
+    unsafeCoerce (\f -> fmap_CoHomFunctor c x y z f))
+
+fobj_NF :: Type1 -> Obj -> Obj
+fobj_NF c fX =
+  unsafeCoerce
+    (setoid1 c setoids (homFunctor c (snd (unsafeCoerce fX)))
+      (fst (unsafeCoerce fX)))
+
+map_natrans_fmap_NF :: Type1 -> Obj -> Obj -> Carrier -> Carrier -> Obj ->
+                       Carrier
+map_natrans_fmap_NF c fX gY sf alpha x =
+  unsafeCoerce (\g ->
+    function
+      (unsafeCoerce
+        (fobj (op_Category c) setoids (coHomFunctor c x)
+          (snd (unsafeCoerce gY))))
+      (unsafeCoerce (fobj c setoids (fst (unsafeCoerce gY)) x))
+      (unsafeCoerce
+        (compose0 setoids
+          (fobj (op_Category c) setoids (coHomFunctor c x)
+            (snd (unsafeCoerce gY)))
+          (fobj c setoids (fst (unsafeCoerce fX)) x)
+          (fobj c setoids (fst (unsafeCoerce gY)) x)
+          (compose0 setoids
+            (fobj (op_Category c) setoids (coHomFunctor c x)
+              (snd (unsafeCoerce gY)))
+            (fobj (op_Category c) setoids (coHomFunctor c x)
+              (snd (unsafeCoerce fX)))
+            (fobj c setoids (fst (unsafeCoerce fX)) x)
+            (function
+              (arr (op_Category c) (snd (unsafeCoerce gY))
+                (snd (unsafeCoerce fX)))
+              (arr setoids
+                (fobj (op_Category c) setoids (coHomFunctor c x)
+                  (snd (unsafeCoerce gY)))
+                (fobj (op_Category c) setoids (coHomFunctor c x)
+                  (snd (unsafeCoerce fX))))
+              (unsafeCoerce
+                (fmap (op_Category c) setoids (coHomFunctor c x)
+                  (snd (unsafeCoerce gY)) (snd (unsafeCoerce fX))))
+              (snd (unsafeCoerce sf)))
+            (natrans c setoids (homFunctor c (snd (unsafeCoerce fX)))
+              (fst (unsafeCoerce fX)) (unsafeCoerce alpha) x))
+          (natrans c setoids (fst (unsafeCoerce fX)) (fst (unsafeCoerce gY))
+            (fst (unsafeCoerce sf)) x))) g)
+
+natrans_fmap_NF :: Type1 -> Obj -> Obj -> Carrier -> Carrier -> Type3
+natrans_fmap_NF c fX gY sf alpha x =
+  map_natrans_fmap_NF c fX gY sf alpha x
+
+map_fmap_NF :: Type1 -> Obj -> Obj -> Carrier -> Carrier
+map_fmap_NF c fX gY sf =
+  unsafeCoerce (\alpha -> unsafeCoerce (natrans_fmap_NF c fX gY sf alpha))
+
+nFunctor :: Type1 -> Type2
+nFunctor c =
+  Make_Functor (\fX ->
+    unsafeCoerce
+      (setoid1 c setoids (homFunctor c (snd (unsafeCoerce fX)))
+        (fst (unsafeCoerce fX)))) (\fX gY ->
+    unsafeCoerce (\sf -> map_fmap_NF c fX gY sf))
 
 yoneda :: Obj -> Obj -> Obj -> Carrier
 yoneda c f x =
   unsafeCoerce (\alpha ->
     function
       (unsafeCoerce
-        (fobj (unsafeCoerce c) setoids (unsafeCoerce (homFunctor c x)) x))
-      (unsafeCoerce (fobj (unsafeCoerce c) setoids (unsafeCoerce f) x))
+        (fobj (unsafeCoerce c) setoids
+          (homFunctor (unsafeCoerce c) (snd (Pair f x))) x))
       (unsafeCoerce
-        (natrans c (unsafeCoerce setoids) (homFunctor c x) f
-          (unsafeCoerce alpha) x)) (id0 (unsafeCoerce c) x))
+        (fobj (unsafeCoerce c) setoids (fst (Pair (unsafeCoerce f) x)) x))
+      (unsafeCoerce
+        (natrans (unsafeCoerce c) setoids
+          (homFunctor (unsafeCoerce c) (snd (Pair f x)))
+          (fst (Pair (unsafeCoerce f) x)) (unsafeCoerce alpha) x))
+      (id0 (unsafeCoerce c) x))
 
 inv_yoneda :: Obj -> Obj -> Obj -> Carrier
 inv_yoneda c f x =
@@ -237,14 +288,18 @@ inv_yoneda c f x =
     unsafeCoerce (\a ->
       unsafeCoerce (\f0 ->
         function
-          (unsafeCoerce (fobj (unsafeCoerce c) setoids (unsafeCoerce f) x))
+          (unsafeCoerce
+            (fobj (unsafeCoerce c) setoids (unsafeCoerce f) (snd (Pair f x))))
           (unsafeCoerce (fobj (unsafeCoerce c) setoids (unsafeCoerce f) a))
           (unsafeCoerce
-            (function (arr (unsafeCoerce c) x a)
-              (arr setoids (fobj (unsafeCoerce c) setoids (unsafeCoerce f) x)
+            (function (arr (unsafeCoerce c) (snd (Pair f x)) a)
+              (arr setoids
+                (fobj (unsafeCoerce c) setoids (unsafeCoerce f)
+                  (snd (Pair f x)))
                 (fobj (unsafeCoerce c) setoids (unsafeCoerce f) a))
               (unsafeCoerce
-                (fmap (unsafeCoerce c) setoids (unsafeCoerce f) x a)) f0)) x0)))
+                (fmap (unsafeCoerce c) setoids (unsafeCoerce f)
+                  (snd (Pair f x)) a)) f0)) x0)))
 
 map_natrans_fmap_YonedaFunctor :: Obj -> Obj -> Obj -> Obj -> Carrier ->
                                   Carrier
@@ -261,7 +316,8 @@ fmap_YonedaFunctor c y x =
 
 yonedaFunctor :: Obj -> Type2
 yonedaFunctor c =
-  Make_Functor (homFunctor c) (\y x -> fmap_YonedaFunctor c y x)
+  Make_Functor (unsafeCoerce (homFunctor (unsafeCoerce c)))
+    (fmap_YonedaFunctor c)
 
 fmap_CoYonedaFunctor :: Obj -> Obj -> Obj -> Carrier -> Type3
 fmap_CoYonedaFunctor c x y f z =
@@ -269,43 +325,24 @@ fmap_CoYonedaFunctor c x y f z =
 
 coYonedaFunctor :: Obj -> Type2
 coYonedaFunctor c =
-  Make_Functor (coHomFunctor c) (\x y ->
+  Make_Functor (unsafeCoerce (coHomFunctor (unsafeCoerce c))) (\x y ->
     unsafeCoerce (\f -> unsafeCoerce (fmap_CoYonedaFunctor c x y f)))
 
-function_compose :: (a1 -> a2) -> (a2 -> a3) -> a1 -> a3
-function_compose f g =
-  unsafeCoerce
-    (function
-      (unsafeCoerce
-        (fobj sets setoids
-          (unsafeCoerce
-            (fobj (op_Category sets)
-              (fun (unsafeCoerce sets) (unsafeCoerce setoids))
-              (yonedaFunctor (unsafeCoerce sets)) __)) __))
-      (unsafeCoerce
-        (fobj sets setoids
-          (unsafeCoerce
-            (fobj (op_Category sets)
-              (fun (unsafeCoerce sets) (unsafeCoerce setoids))
-              (yonedaFunctor (unsafeCoerce sets)) __)) __))
-      (unsafeCoerce
-        (function (arr sets __ __)
-          (arr setoids
-            (fobj sets setoids
-              (unsafeCoerce
-                (fobj (op_Category sets)
-                  (fun (unsafeCoerce sets) (unsafeCoerce setoids))
-                  (yonedaFunctor (unsafeCoerce sets)) __)) __)
-            (fobj sets setoids
-              (unsafeCoerce
-                (fobj (op_Category sets)
-                  (fun (unsafeCoerce sets) (unsafeCoerce setoids))
-                  (yonedaFunctor (unsafeCoerce sets)) __)) __))
-          (unsafeCoerce
-            (fmap sets setoids
-              (unsafeCoerce
-                (fobj (op_Category sets)
-                  (fun (unsafeCoerce sets) (unsafeCoerce setoids))
-                  (yonedaFunctor (unsafeCoerce sets)) __)) __ __))
-          (unsafeCoerce g))) (unsafeCoerce f))
+function_compose :: (a1 -> a2) -> Carrier
+function_compose f =
+  function (arr sets __ __)
+    (arr setoids
+      (fobj sets setoids
+        (unsafeCoerce
+          (fobj (op_Category sets) (fun sets setoids)
+            (yonedaFunctor (unsafeCoerce sets)) __)) __)
+      (fobj sets setoids
+        (unsafeCoerce
+          (fobj (op_Category sets) (fun sets setoids)
+            (yonedaFunctor (unsafeCoerce sets)) __)) __))
+    (unsafeCoerce
+      (fmap sets setoids
+        (unsafeCoerce
+          (fobj (op_Category sets) (fun sets setoids)
+            (yonedaFunctor (unsafeCoerce sets)) __)) __ __)) (unsafeCoerce f)
 
