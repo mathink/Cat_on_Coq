@@ -1484,3 +1484,5 @@ Definition function_compose
            {X Y Z: Set}(f: X -> Y)(g: Y -> Z): X -> Z :=
   fmap (YonedaFunctor (X: Sets)) g f.
 
+Extraction Language Haskell.
+Extraction "../ext/yoneda.hs" function_compose.
