@@ -11,7 +11,7 @@
 
 
 Require Import
-Coq.Classes.Init Coq.Program.Basics Coq.Program.Tactics.
+Coq.Program.Basics Coq.Program.Tactics.
 
 Set Universe Polymorphism.
 Set Implicit Arguments.
@@ -20,12 +20,10 @@ Unset Strict Implicit.
 
 Module Relations.
 
-
   Definition relation A := A -> A -> Prop.
 
   Class Reflexive {A} (R : relation A) :=
     reflexivity : forall x, R x x.
-
 
   Class Symmetric {A} (R : relation A) :=
     symmetry : forall x y, R x y -> R y x.
@@ -33,19 +31,17 @@ Module Relations.
   Class Transitive {A} (R : relation A) :=
     transitivity : forall x y z, R x y -> R y z -> R x z.
 
-
   Class Equivalence {A} (R : relation A) : Prop :=
     { Equivalence_Reflexive :> Reflexive R ;
       Equivalence_Symmetric :> Symmetric R ;
       Equivalence_Transitive :> Transitive R }.
 
 End Relations.
-Import Relations.
+Export Relations.
 
 
-
-Delimit Scope coc_scope with coc.
-Open Scope coc.
+Delimit Scope base_scope with base.
+Open Scope base.
 
 Module Setoid.
     
@@ -73,7 +69,7 @@ Module Setoid.
     Coercion equal_equiv: type >-> Equivalence.
     Notation Setoid := type.
     Notation "x === y" := (equal x y)
-                            (at level 80, no associativity): coc_scope.
+                            (at level 80, no associativity): base_scope.
    End Notations.
 End Setoid.
 Export Setoid.Notations.
@@ -177,6 +173,9 @@ Module Composable.
                  (Heq_fst: f === f')(Heq_snd: g === g'),
             g•f === g'•f' }.
 *)
+
+Delimit Scope coc_scope with coc.
+Open Scope coc.
 
 
 Module Category.
@@ -896,219 +895,29 @@ Module Kleisli.
 End Kleisli.
 Export Kleisli.Notations.
  
+(* Sets *)
+Program Definition function (X Y: Type): Setoid :=
+  {| Setoid.equal := fun (f g: X -> Y) => forall x, f x = g x |}.
+Next Obligation.
+  intros f x; reflexivity.
+Qed.
+Next Obligation.
+  intros f g Heq x.
+  rewrite <- Heq; reflexivity.
+Qed.
+Next Obligation.
+  intros f g h Heqfg Heqgh x.
+  rewrite <- Heqgh; apply Heqfg.
+Qed.
 
-Section MonadKT.
-  Import Category.  
-  Context {C: Category}.
-  
-  Section FromMonad.
-    Import Monad.
-
-    Program Definition KT_from_Monad (m: Monad C): KT C :=
-      {| Kleisli.T := fobj (T m);
-         Kleisli.unit := natrans (unit m);
-         Kleisli.bind X Y :=
-           {| Map.function f := join m Y•fmap (T m) f |}
-      |}.
-    Next Obligation.
-      apply compose_subst_fst, Map.preserve_equal, Heq.
-    Qed.
-    Next Obligation.
-      apply join_T_unit.
-    Qed.
-    Next Obligation.
-      simpl.
-      eapply transitivity; [ apply compose_assoc |].
-      eapply transitivity;
-        [ apply symmetry, compose_subst_fst,
-          (Natrans.naturality (Monad.unit m))|].
-      eapply transitivity; [ apply symmetry, compose_assoc |].
-      eapply transitivity; [ apply compose_subst_snd, Monad.join_unit_T |].
-      eapply transitivity; [ apply compose_subst_fst | apply id_cod].
-      apply reflexivity.
-    Qed.
-    Next Obligation.
-      simpl in *.
-      eapply transitivity.
-      - eapply transitivity; [ apply symmetry, compose_assoc |].
-        eapply transitivity; [apply compose_subst_snd |].
-        + eapply transitivity; [ apply compose_assoc |].
-          apply compose_subst_fst.
-          apply symmetry, (Natrans.naturality (join m )).
-        + apply compose_subst_snd.
-          eapply transitivity; [ apply symmetry, compose_assoc |].
-          apply compose_subst_snd.
-          apply join_join.
-      - eapply transitivity; [ apply compose_assoc |]; simpl.
-        apply symmetry.
-        eapply transitivity; [apply compose_subst_fst |].
-        * apply symmetry, Functor.fmap_compose.
-        * eapply transitivity; [ apply symmetry, compose_assoc |]; simpl.
-          eapply transitivity; [ apply compose_subst_snd |]; simpl.
-          apply symmetry, compose_subst_fst, Functor.fmap_compose.
-          eapply transitivity; [| apply compose_assoc ].
-          apply compose_subst_snd.
-          eapply transitivity; [| apply symmetry, compose_assoc ].
-          apply reflexivity.
-    Qed.
-
-  End FromMonad.
-
-  Section FromKT.
-    Import Kleisli.
-
-    Program Definition Monad_from_KT (kt: KT C): Monad C :=
-      {| Monad.T :=
-           {| fmap X Y :=
-                {| Map.function f := bind kt (unit kt Y•f) |} |};
-         Monad.unit :=
-           {| natrans X := unit kt X |};
-         Monad.join :=
-           {| natrans X := bind kt (id_ (T kt X)) |} |}.
-    Next Obligation.
-      apply Map.preserve_equal, compose_subst_fst, Heq.
-    Qed.
-    Next Obligation.
-      simpl.
-      eapply transitivity; [ apply Map.preserve_equal, id_dom |].
-      apply bind_unit_id.
-    Qed.    
-    Next Obligation.
-      simpl.
-      eapply transitivity; [ apply bind_assoc |].
-      apply Map.preserve_equal.
-      eapply transitivity; [ apply symmetry, compose_assoc |].
-      eapply transitivity; 
-        [ apply compose_subst_snd, unit_bind_f |].
-      apply compose_assoc.
-    Qed.    
-    Next Obligation.
-      simpl.
-      apply symmetry, unit_bind_f.
-    Qed.    
-    Next Obligation.
-      simpl.
-      eapply transitivity; [ apply bind_assoc |].
-      eapply transitivity; [| apply symmetry, bind_assoc ].
-      apply Map.preserve_equal.
-      eapply transitivity; [| apply symmetry, id_dom ].
-      eapply transitivity; [ apply symmetry, compose_assoc |].
-      eapply transitivity; [ apply compose_subst_snd, unit_bind_f |].
-      apply id_cod.
-    Qed.    
-    Next Obligation.
-      simpl.
-      apply unit_bind_f.
-    Qed.    
-    Next Obligation.
-      simpl.
-      eapply transitivity; [ apply bind_assoc |].
-      eapply transitivity;
-        [ apply symmetry, Map.preserve_equal, compose_assoc |].
-      eapply transitivity; 
-        [ apply Map.preserve_equal, compose_subst_snd, unit_bind_f |].
-      eapply transitivity; 
-        [ apply Map.preserve_equal, id_cod |].
-      apply bind_unit_id.
-    Qed.    
-    Next Obligation.
-      simpl.
-      eapply transitivity; [ apply bind_assoc |].
-      eapply transitivity; [| apply symmetry, bind_assoc ].
-      apply Map.preserve_equal.
-      eapply transitivity; [| apply compose_assoc].
-      eapply transitivity;
-        [| apply symmetry, compose_subst_snd, unit_bind_f ].
-      eapply transitivity; [ apply id_dom |].
-      apply symmetry, id_cod.
-    Qed.
-  End FromKT.
-
-  Section KC_fromMonad.
-    Import Monad.
-
-    Program Definition KC_M
-            {C: Cat}(m: Monad C): Category :=
-      {| arr X Y := X --> T m Y;
-         compose X Y Z f g := join m Z•fmap (T m) g•f;
-         id := unit m |}.
-    Next Obligation.
-      simpl in *.
-      eapply transitivity; [ apply symmetry, compose_assoc |].
-      eapply transitivity; [ apply compose_subst_snd |].
-      - eapply transitivity; [ apply compose_subst_fst |].
-        + apply symmetry, Functor.fmap_compose.
-        + eapply transitivity; [apply symmetry, compose_assoc |].
-          apply compose_subst_snd.
-          apply symmetry, join_join.
-      - eapply transitivity; [ apply compose_subst_snd |].
-        eapply transitivity; [ apply compose_assoc |].
-        apply compose_subst_fst.
-        eapply transitivity; [ apply compose_subst_fst |].
-        + instantiate (1:=fmap (Functor.compose (T m) (T m)) h•fmap (T m) g); simpl.
-          eapply transitivity; [| apply symmetry, Functor.fmap_compose ].
-          apply reflexivity.
-        + eapply transitivity; [ apply symmetry, compose_assoc |].
-          apply compose_subst_snd.
-          apply (Natrans.naturality (join m)).
-        + eapply transitivity; [| apply compose_assoc ].
-          eapply transitivity; [| apply compose_assoc ].
-          eapply transitivity; [| apply compose_assoc ].
-          apply compose_subst_snd.
-          eapply transitivity; [| apply symmetry, compose_assoc ].
-          eapply transitivity; [| apply symmetry, compose_assoc ].
-          apply compose_subst_fst.
-          apply compose_assoc.
-    Qed.
-    Next Obligation.
-      apply compose_subst_fst.
-      apply compose_subst; [ apply Heq_fst |].
-      apply Map.preserve_equal, Heq_snd.
-    Qed.
-    Next Obligation.
-      eapply transitivity; [apply compose_subst_fst |].
-      apply symmetry, (Natrans.naturality (unit m)).
-      eapply transitivity; [apply symmetry, compose_assoc |].
-      eapply transitivity; [apply compose_subst_snd |].
-      apply join_unit_T; simpl.
-      apply id_cod.
-    Qed.
-    Next Obligation.
-      eapply transitivity; [apply symmetry, compose_assoc |].
-      eapply transitivity; [apply compose_subst_snd |].
-      apply join_T_unit.
-      apply id_cod.
-    Qed.
-
-  End KC_fromMonad.
-
-  Section KC_fromKT.
-    Import Kleisli.
-
-    Program Definition KC_KT
-            {C: Category}(kt: KT C): Category :=
-      {| arr X Y := X --> T kt Y;
-         compose X Y Z f g := [ g #]•f;
-         id := unit kt |}.
-    Next Obligation.
-      eapply transitivity; [| apply compose_assoc ].
-      apply symmetry, compose_subst_snd, bind_assoc.
-    Qed.      
-    Next Obligation.
-      apply compose_subst;
-      [ apply Heq_fst | apply Map.preserve_equal, Heq_snd ].
-    Qed.      
-    Next Obligation.
-      apply unit_bind_f.
-    Qed.
-    Next Obligation.
-      eapply transitivity;
-      [ apply compose_subst_snd, bind_unit_id | apply id_cod ].
-    Qed.
-
-  End KC_fromKT.
-
-End MonadKT.
+Program Definition Sets: Category :=
+  {| Category.arr := fun (X Y: Type) => function X Y;
+     Category.compose X Y Z f g := fun x => g (f x);
+     Category.id X := fun x => x |}.
+Next Obligation.
+  simpl.
+  rewrite Heq_fst, Heq_snd; reflexivity.
+Qed.
 
 
 Section ListMonad.
@@ -1132,31 +941,6 @@ Section ListMonad.
     intro ll2; rewrite IHtail1.
     rewrite app_assoc; reflexivity.
   Qed.
-  
-
-  Program Definition function (X Y: Type): Setoid :=
-    {| Setoid.equal := fun (f g: X -> Y) => forall x, f x = g x |}.
-  Next Obligation.
-    intros f x; reflexivity.
-  Qed.
-  Next Obligation.
-    intros f g Heq x.
-    rewrite <- Heq; reflexivity.
-  Qed.
-  Next Obligation.
-    intros f g h Heqfg Heqgh x.
-    rewrite <- Heqgh; apply Heqfg.
-  Qed.
-
-  Program Definition Sets: Category :=
-    {| arr := fun (X Y: Type) => function X Y;
-       compose X Y Z f g := fun x => g (f x);
-       id X := fun x => x |}.
-  Next Obligation.
-    simpl.
-    rewrite Heq_fst, Heq_snd; reflexivity.
-  Qed.
-
 
   Program Definition ListMonad: Monad Sets :=
     {| Monad.T :=
@@ -1256,7 +1040,7 @@ Qed.
 Next Obligation.
   apply Category.id_dom.
 Qed.
-Notation "'op' C" := (op_Category C: Cat) (at level 5, right associativity).
+Notation "'op' C" := (op_Category C: Cat) (at level 5, right associativity): coc_scope.
 Hint Unfold op_Category.
 Coercion op_Category: Category >-> Category.
 
@@ -1684,6 +1468,7 @@ Module Yoneda.
 End Yoneda.
 Export Yoneda.
 
+
 Eval compute in
     (fmap (YonedaFunctor (nat: Sets))
           (fun b:bool => if b then 1 else 0)
@@ -1694,9 +1479,14 @@ Eval compute in
           (fun b:bool => if b then 1 else 0)
           (fun n:nat => match n with 0 => true | _ => false end) 0).
 
+
 Definition function_compose
            {X Y Z: Type}(f: X -> Y)(g: Y -> Z) :=
   fmap (YonedaFunctor (X: Sets)) g f.
+
+Extraction Language Haskell.
+Extraction "../ext/yoneda.hs" function_compose.
+
 
 Eval compute in  function_compose 
                    (fun x: option bool =>
@@ -1706,5 +1496,218 @@ Eval compute in  function_compose
                       end)
                    (fun b: bool => if b then 1 else 0) (Some true).
 
-Extraction Language Haskell.
-Extraction "../ext/yoneda.hs" function_compose.
+
+Section MonadKT.
+  Import Category.  
+  Context {C: Category}.
+  
+  Section FromMonad.
+    Import Monad.
+
+    Program Definition KT_from_Monad (m: Monad C): KT C :=
+      {| Kleisli.T := fobj (T m);
+         Kleisli.unit := natrans (unit m);
+         Kleisli.bind X Y :=
+           {| Map.function f := join m Y•fmap (T m) f |}
+      |}.
+    Next Obligation.
+      apply compose_subst_fst, Map.preserve_equal, Heq.
+    Qed.
+    Next Obligation.
+      apply join_T_unit.
+    Qed.
+    Next Obligation.
+      simpl.
+      eapply transitivity; [ apply compose_assoc |].
+      eapply transitivity;
+        [ apply symmetry, compose_subst_fst,
+          (Natrans.naturality (Monad.unit m))|].
+      eapply transitivity; [ apply symmetry, compose_assoc |].
+      eapply transitivity; [ apply compose_subst_snd, Monad.join_unit_T |].
+      eapply transitivity; [ apply compose_subst_fst | apply id_cod].
+      apply reflexivity.
+    Qed.
+    Next Obligation.
+      simpl in *.
+      eapply transitivity.
+      - eapply transitivity; [ apply symmetry, compose_assoc |].
+        eapply transitivity; [apply compose_subst_snd |].
+        + eapply transitivity; [ apply compose_assoc |].
+          apply compose_subst_fst.
+          apply symmetry, (Natrans.naturality (join m )).
+        + apply compose_subst_snd.
+          eapply transitivity; [ apply symmetry, compose_assoc |].
+          apply compose_subst_snd.
+          apply join_join.
+      - eapply transitivity; [ apply compose_assoc |]; simpl.
+        apply symmetry.
+        eapply transitivity; [apply compose_subst_fst |].
+        * apply symmetry, Functor.fmap_compose.
+        * eapply transitivity; [ apply symmetry, compose_assoc |]; simpl.
+          eapply transitivity; [ apply compose_subst_snd |]; simpl.
+          apply symmetry, compose_subst_fst, Functor.fmap_compose.
+          eapply transitivity; [| apply compose_assoc ].
+          apply compose_subst_snd.
+          eapply transitivity; [| apply symmetry, compose_assoc ].
+          apply reflexivity.
+    Qed.
+
+  End FromMonad.
+
+  Section FromKT.
+    Import Kleisli.
+
+    Program Definition Monad_from_KT (kt: KT C): Monad C :=
+      {| Monad.T :=
+           {| fmap X Y :=
+                {| Map.function f := bind kt (unit kt Y•f) |} |};
+         Monad.unit :=
+           {| natrans X := unit kt X |};
+         Monad.join :=
+           {| natrans X := bind kt (id_ (T kt X)) |} |}.
+    Next Obligation.
+      apply Map.preserve_equal, compose_subst_fst, Heq.
+    Qed.
+    Next Obligation.
+      simpl.
+      eapply transitivity; [ apply Map.preserve_equal, id_dom |].
+      apply bind_unit_id.
+    Qed.    
+    Next Obligation.
+      simpl.
+      eapply transitivity; [ apply bind_assoc |].
+      apply Map.preserve_equal.
+      eapply transitivity; [ apply symmetry, compose_assoc |].
+      eapply transitivity; 
+        [ apply compose_subst_snd, unit_bind_f |].
+      apply compose_assoc.
+    Qed.    
+    Next Obligation.
+      simpl.
+      apply symmetry, unit_bind_f.
+    Qed.    
+    Next Obligation.
+      simpl.
+      eapply transitivity; [ apply bind_assoc |].
+      eapply transitivity; [| apply symmetry, bind_assoc ].
+      apply Map.preserve_equal.
+      eapply transitivity; [| apply symmetry, id_dom ].
+      eapply transitivity; [ apply symmetry, compose_assoc |].
+      eapply transitivity; [ apply compose_subst_snd, unit_bind_f |].
+      apply id_cod.
+    Qed.    
+    Next Obligation.
+      simpl.
+      apply unit_bind_f.
+    Qed.    
+    Next Obligation.
+      simpl.
+      eapply transitivity; [ apply bind_assoc |].
+      eapply transitivity;
+        [ apply symmetry, Map.preserve_equal, compose_assoc |].
+      eapply transitivity; 
+        [ apply Map.preserve_equal, compose_subst_snd, unit_bind_f |].
+      eapply transitivity; 
+        [ apply Map.preserve_equal, id_cod |].
+      apply bind_unit_id.
+    Qed.    
+    Next Obligation.
+      simpl.
+      eapply transitivity; [ apply bind_assoc |].
+      eapply transitivity; [| apply symmetry, bind_assoc ].
+      apply Map.preserve_equal.
+      eapply transitivity; [| apply compose_assoc].
+      eapply transitivity;
+        [| apply symmetry, compose_subst_snd, unit_bind_f ].
+      eapply transitivity; [ apply id_dom |].
+      apply symmetry, id_cod.
+    Qed.
+  End FromKT.
+
+  Section KC_fromMonad.
+    Import Monad.
+
+    Program Definition KC_M
+            {C: Cat}(m: Monad C): Category :=
+      {| arr X Y := X --> T m Y;
+         compose X Y Z f g := join m Z•fmap (T m) g•f;
+         id := unit m |}.
+    Next Obligation.
+      simpl in *.
+      eapply transitivity; [ apply symmetry, compose_assoc |].
+      eapply transitivity; [ apply compose_subst_snd |].
+      - eapply transitivity; [ apply compose_subst_fst |].
+        + apply symmetry, Functor.fmap_compose.
+        + eapply transitivity; [apply symmetry, compose_assoc |].
+          apply compose_subst_snd.
+          apply symmetry, join_join.
+      - eapply transitivity; [ apply compose_subst_snd |].
+        eapply transitivity; [ apply compose_assoc |].
+        apply compose_subst_fst.
+        eapply transitivity; [ apply compose_subst_fst |].
+        + instantiate (1:=fmap (Functor.compose (T m) (T m)) h•fmap (T m) g); simpl.
+          eapply transitivity; [| apply symmetry, Functor.fmap_compose ].
+          apply reflexivity.
+        + eapply transitivity; [ apply symmetry, compose_assoc |].
+          apply compose_subst_snd.
+          apply (Natrans.naturality (join m)).
+        + eapply transitivity; [| apply compose_assoc ].
+          eapply transitivity; [| apply compose_assoc ].
+          eapply transitivity; [| apply compose_assoc ].
+          apply compose_subst_snd.
+          eapply transitivity; [| apply symmetry, compose_assoc ].
+          eapply transitivity; [| apply symmetry, compose_assoc ].
+          apply compose_subst_fst.
+          apply compose_assoc.
+    Qed.
+    Next Obligation.
+      apply compose_subst_fst.
+      apply compose_subst; [ apply Heq_fst |].
+      apply Map.preserve_equal, Heq_snd.
+    Qed.
+    Next Obligation.
+      eapply transitivity; [apply compose_subst_fst |].
+      apply symmetry, (Natrans.naturality (unit m)).
+      eapply transitivity; [apply symmetry, compose_assoc |].
+      eapply transitivity; [apply compose_subst_snd |].
+      apply join_unit_T; simpl.
+      apply id_cod.
+    Qed.
+    Next Obligation.
+      eapply transitivity; [apply symmetry, compose_assoc |].
+      eapply transitivity; [apply compose_subst_snd |].
+      apply join_T_unit.
+      apply id_cod.
+    Qed.
+
+  End KC_fromMonad.
+
+  Section KC_fromKT.
+    Import Kleisli.
+
+    Program Definition KC_KT
+            {C: Category}(kt: KT C): Category :=
+      {| arr X Y := X --> T kt Y;
+         compose X Y Z f g := [ g #]•f;
+         id := unit kt |}.
+    Next Obligation.
+      eapply transitivity; [| apply compose_assoc ].
+      apply symmetry, compose_subst_snd, bind_assoc.
+    Qed.      
+    Next Obligation.
+      apply compose_subst;
+      [ apply Heq_fst | apply Map.preserve_equal, Heq_snd ].
+    Qed.      
+    Next Obligation.
+      apply unit_bind_f.
+    Qed.
+    Next Obligation.
+      eapply transitivity;
+      [ apply compose_subst_snd, bind_unit_id | apply id_cod ].
+    Qed.
+
+  End KC_fromKT.
+
+End MonadKT.
+
+
