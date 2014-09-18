@@ -1,0 +1,6 @@
+*~
+.*
+*.vo
+*.d
+*.glob
+!.gitignore
