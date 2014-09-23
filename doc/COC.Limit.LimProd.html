@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>COC.Limit.LimProd</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Limit.LimProd</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="COC.Base.Category.html#"><span class="id" type="library">Category</span></a> <a class="idref" href="COC.Base.Functor.html#"><span class="id" type="library">Functor</span></a> <a class="idref" href="COC.Limit.Cone.html#"><span class="id" type="library">Cone</span></a> <a class="idref" href="COC.Base.Discrete.html#"><span class="id" type="library">Discrete</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab41"></a><h1 class="section">例： 直積は圏 2 からの函手の極限である</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Section</span> <a name="ProdAsLim"><span class="id" type="section">ProdAsLim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Context</span> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>)(<span class="id" type="var">X</span> <span class="id" type="var">Y</span>: <a class="idref" href="COC.Limit.LimProd.html#C"><span class="id" type="variable">C</span></a>).<br/>
+</div>
+
+<div class="doc">
+<a name="lab42"></a><h2 class="section">圏 2 構成</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Let</span> <a name="ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a> := <a class="idref" href="COC.Base.Discrete.html#Discr_Category"><span class="id" type="definition">Discr_Category</span></a> 2.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+      これら二つの証明がそれぞれ圏 2 の対象である。
+   
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Lemma</span> <a name="ltb02"><span class="id" type="lemma">ltb02</span></a>: <a class="idref" href="COC.Base.Discrete.html#ltb"><span class="id" type="definition">ltb</span></a> 0 2 <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Logic.html#:type_scope:x_'='_x"><span class="id" type="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#true"><span class="id" type="constructor">true</span></a>.<br/>
+ 
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Lemma</span> <a name="ltb12"><span class="id" type="lemma">ltb12</span></a>: <a class="idref" href="COC.Base.Discrete.html#ltb"><span class="id" type="definition">ltb</span></a> 1 2 <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Logic.html#:type_scope:x_'='_x"><span class="id" type="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#true"><span class="id" type="constructor">true</span></a>.<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab43"></a><h2 class="section">圏 2 から圏 C への函手の構成</h2>
+
+      構成そのものは比較的容易である。
+   
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Program Definition</span> <a name="fobj_prod"><span class="id" type="definition">fobj_prod</span></a> (<span class="id" type="var">k</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a>): <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">let</span> (<span class="id" type="var">n</span>, <span class="id" type="var">H</span>) := <a class="idref" href="COC.Limit.LimProd.html#k"><span class="id" type="variable">k</span></a> <span class="id" type="keyword">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="COC.Limit.LimProd.html#n"><span class="id" type="variable">n</span></a> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0 =&gt; <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.X"><span class="id" type="variable">X</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1 =&gt; <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.Y"><span class="id" type="variable">Y</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">_</span> =&gt; <span class="id" type="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+射函数の定義そのものはあまり重要ではないので、証明モードを利用する 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="fmap_prod_body"><span class="id" type="definition">fmap_prod_body</span></a> (<span class="id" type="var">n</span> <span class="id" type="var">m</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a>)(<span class="id" type="var">k</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a> <a class="idref" href="COC.Limit.LimProd.html#n"><span class="id" type="variable">n</span></a> <a class="idref" href="COC.Limit.LimProd.html#m"><span class="id" type="variable">m</span></a>): <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> (<a class="idref" href="COC.Limit.LimProd.html#fobj_prod"><span class="id" type="definition">fobj_prod</span></a> <a class="idref" href="COC.Limit.LimProd.html#n"><span class="id" type="variable">n</span></a>) (<a class="idref" href="COC.Limit.LimProd.html#fobj_prod"><span class="id" type="definition">fobj_prod</span></a> <a class="idref" href="COC.Limit.LimProd.html#m"><span class="id" type="variable">m</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="fmap_prod"><span class="id" type="definition">fmap_prod</span></a>: <a class="idref" href="COC.Base.Functor.html#Fmap"><span class="id" type="abbreviation">Fmap</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#fobj_prod"><span class="id" type="definition">fobj_prod</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">fun</span> (<span class="id" type="var">n</span> <span class="id" type="var">m</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a>) =&gt; <a class="idref" href="COC.Base.Setoid.html#::'['_x_'..'_x_':->'_x_']'"><span class="id" type="notation">[</span></a> <span class="id" type="var">k</span> <a class="idref" href="COC.Base.Setoid.html#::'['_x_'..'_x_':->'_x_']'"><span class="id" type="notation">:-&gt;</span></a> <a class="idref" href="COC.Limit.LimProd.html#fmap_prod_body"><span class="id" type="definition">fmap_prod_body</span></a> <a class="idref" href="COC.Limit.LimProd.html#k"><span class="id" type="variable">k</span></a> <a class="idref" href="COC.Base.Setoid.html#::'['_x_'..'_x_':->'_x_']'"><span class="id" type="notation">]</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Instance</span> <a name="prod_IsFunctor"><span class="id" type="instance">prod_IsFunctor</span></a>: <a class="idref" href="COC.Base.Functor.html#isFunctor"><span class="id" type="class">isFunctor</span></a> <a class="idref" href="COC.Limit.LimProd.html#fmap_prod"><span class="id" type="definition">fmap_prod</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="prod_Functor"><span class="id" type="definition">prod_Functor</span></a>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Base.Functor.html#Build_Functor"><span class="id" type="constructor">Build_Functor</span></a>  <a class="idref" href="COC.Limit.LimProd.html#prod_IsFunctor"><span class="id" type="instance">prod_IsFunctor</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab44"></a><h2 class="section">極限が直積であることの証明</h2>
+ まずは任意の X &lt;- Q -&gt; Y から、上で定義した函手への錐を構成する。 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Program Definition</span> <a name="PUniq"><span class="id" type="definition">PUniq</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">Q</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a>)(<span class="id" type="var">qX</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#Q"><span class="id" type="variable">Q</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.X"><span class="id" type="variable">X</span></a>)(<span class="id" type="var">qY</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#Q"><span class="id" type="variable">Q</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.Y"><span class="id" type="variable">Y</span></a>)(<span class="id" type="var">i</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.DC2"><span class="id" type="variable">DC2</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#Q"><span class="id" type="variable">Q</span></a> (<a class="idref" href="COC.Limit.LimProd.html#prod_Functor"><span class="id" type="definition">prod_Functor</span></a> <a class="idref" href="COC.Limit.LimProd.html#i"><span class="id" type="variable">i</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Lemma</span> <a name="Q_IsICone"><span class="id" type="lemma">Q_IsICone</span></a> (<span class="id" type="var">Q</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a>)(<span class="id" type="var">qX</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#Q"><span class="id" type="variable">Q</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.X"><span class="id" type="variable">X</span></a>)(<span class="id" type="var">qY</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#Q"><span class="id" type="variable">Q</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.Y"><span class="id" type="variable">Y</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Limit.Cone.html#isICone"><span class="id" type="class">isICone</span></a> (<a class="idref" href="COC.Limit.LimProd.html#PUniq"><span class="id" type="definition">PUniq</span></a> <a class="idref" href="COC.Limit.LimProd.html#qX"><span class="id" type="variable">qX</span></a> <a class="idref" href="COC.Limit.LimProd.html#qY"><span class="id" type="variable">qY</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+錐の圏が構成できた。
+      これは任意の X &lt;- Q -&gt; Y について構成でき、この圏の終対象が X と Y の直積となる。
+   
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Canonical</span> <span class="id" type="keyword">Structure</span> <span class="id" type="var">QICone</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">Q</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a>)(<span class="id" type="var">qX</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#Q"><span class="id" type="variable">Q</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.X"><span class="id" type="variable">X</span></a>)(<span class="id" type="var">qY</span>: <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Limit.LimProd.html#Q"><span class="id" type="variable">Q</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.Y"><span class="id" type="variable">Y</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Limit.Cone.html#ICone"><span class="id" type="record">ICone</span></a> <a class="idref" href="COC.Limit.LimProd.html#prod_Functor"><span class="id" type="definition">prod_Functor</span></a> := <a class="idref" href="COC.Limit.Cone.html#Build_ICone"><span class="id" type="constructor">Build_ICone</span></a> (<a class="idref" href="COC.Limit.LimProd.html#Q_IsICone"><span class="id" type="lemma">Q_IsICone</span></a> <a class="idref" href="COC.Limit.LimProd.html#qX"><span class="id" type="variable">qX</span></a> <a class="idref" href="COC.Limit.LimProd.html#qY"><span class="id" type="variable">qY</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+その証明  
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Program Instance</span> <a name="lim_is_prod"><span class="id" type="instance">lim_is_prod</span></a> (<span class="id" type="var">P</span>: <a class="idref" href="COC.Limit.Cone.html#Limit"><span class="id" type="definition">Limit</span></a> <a class="idref" href="COC.Limit.LimProd.html#prod_Functor"><span class="id" type="definition">prod_Functor</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Base.Category.html#isProd"><span class="id" type="class">isProd</span></a> (<a class="idref" href="COC.Limit.Cone.html#igen"><span class="id" type="projection">igen</span></a> (<a class="idref" href="COC.Base.Category.html#term"><span class="id" type="projection">term</span></a> <a class="idref" href="COC.Limit.LimProd.html#P"><span class="id" type="variable">P</span></a>) (<a class="idref" href="COC.Base.Discrete.html#Elem"><span class="id" type="constructor">Elem</span></a> <a class="idref" href="COC.Limit.LimProd.html#ltb02"><span class="id" type="lemma">ltb02</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="COC.Limit.Cone.html#igen"><span class="id" type="projection">igen</span></a> (<a class="idref" href="COC.Base.Category.html#term"><span class="id" type="projection">term</span></a> <a class="idref" href="COC.Limit.LimProd.html#P"><span class="id" type="variable">P</span></a>) (<a class="idref" href="COC.Base.Discrete.html#Elem"><span class="id" type="constructor">Elem</span></a> <a class="idref" href="COC.Limit.LimProd.html#ltb12"><span class="id" type="lemma">ltb12</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="keyword">fun</span> <span class="id" type="var">Q</span> <span class="id" type="var">qX</span> <span class="id" type="var">qY</span> =&gt; <a class="idref" href="COC.Base.Category.html#terminal"><span class="id" type="projection">terminal</span></a> <a class="idref" href="COC.Limit.LimProd.html#P"><span class="id" type="variable">P</span></a> (<a class="idref" href="COC.Limit.LimProd.html#QICone"><span class="id" type="definition">QICone</span></a> <a class="idref" href="COC.Limit.LimProd.html#qX"><span class="id" type="variable">qX</span></a> <a class="idref" href="COC.Limit.LimProd.html#qY"><span class="id" type="variable">qY</span></a>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="LimProd"><span class="id" type="definition">LimProd</span></a> (<span class="id" type="var">P</span>: <a class="idref" href="COC.Limit.Cone.html#Limit"><span class="id" type="definition">Limit</span></a> <a class="idref" href="COC.Limit.LimProd.html#prod_Functor"><span class="id" type="definition">prod_Functor</span></a>): <a class="idref" href="COC.Base.Category.html#Prod"><span class="id" type="record">Prod</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.X"><span class="id" type="variable">X</span></a> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim.Y"><span class="id" type="variable">Y</span></a> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#Build_Prod"><span class="id" type="constructor">Build_Prod</span></a> (<a class="idref" href="COC.Limit.LimProd.html#lim_is_prod"><span class="id" type="instance">lim_is_prod</span></a> <a class="idref" href="COC.Limit.LimProd.html#P"><span class="id" type="variable">P</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">End</span> <a class="idref" href="COC.Limit.LimProd.html#ProdAsLim"><span class="id" type="section">ProdAsLim</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
