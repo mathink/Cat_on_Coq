@@ -1,7 +1,10 @@
 -R src COC
 -opt
 src/Base/Category.v
+src/Base/Discrete.v
 src/Base/Functor.v
 src/Base/Natrans.v
 src/Base/Setoid.v
+src/Limit/Cone.v
+src/Limit/LimProd.v
 src/Yoneda/YonedaLemma.v
