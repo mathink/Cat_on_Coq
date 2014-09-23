@@ -1,0 +1,7 @@
+-R src COC
+-opt
+src/Base/Category.v
+src/Base/Functor.v
+src/Base/Natrans.v
+src/Base/Setoid.v
+src/Yoneda/YonedaLemma.v
