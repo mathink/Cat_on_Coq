@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/25 21:47:30> *)
+(* Time-stamp: <2014/9/25 22:38:20> *)
 (*
   ListFunctor.v 
   - mathink : author
@@ -68,13 +68,6 @@ Definition list_alg_arr (A: Type): Sets (ListFunctor A (list A)) (list A) :=
   fun l => match l with Nil => nil | Cons a l => cons a l end.
 Definition listAlg (A: Type) := Build_Alg (list_alg_arr (A:=A)).
 
-(*
-   list A -> X
-
-   listF A (list A) -> list A
-
-   listF A X -> X
-  *)
 Fixpoint in_listAlg (A: Type)(x: Alg (ListFunctor A))(l: list A): alg_obj x :=
     match l with
       | nil => alg_arr x Nil
