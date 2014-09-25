@@ -1,5 +1,7 @@
 -R src COC
 -opt
+src/Algebra/Algebra.v
+src/Algebra/ListFunctor.v
 src/Base/Category.v
 src/Base/Discrete.v
 src/Base/Functor.v
