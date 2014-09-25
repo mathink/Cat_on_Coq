@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/23 15:16:40> *)
+(* Time-stamp: <2014/9/25 21:40:18> *)
 (*
   Setoid.v 
   - mathink : author
@@ -45,12 +45,13 @@ Notation makeSetoid eq := (@Build_Setoid _ eq _).
 
 (** これらは Haskell のセクションのように使いたい場合に備えての記法集です *)
 Notation "(==)" := (equal (s:=_)).
+Notation "x == y :> S" := (@equal S x y) (at level 80, no associativity, y at next level).
 Notation "x == y" := (equal x y) (at level 80, no associativity).
 Notation "( x == )" := (fun y => x == y).
 Notation "( == x )" := (fun y => y == x).
 
 (** Map も Setoid と同様に仕様を表わす Class である Proper が
-    定義されているので、 直接 Structure を定義する。
+    定義されているので、 直接 Structure を定義します。
  *)
 Structure Map (X Y: Setoid) :=
   { fbody:> X -> Y;
@@ -84,7 +85,7 @@ Next Obligation.
   intros x y Heq; rewrite Heq; reflexivity.
 Qed.
 
-(** Map 上の等価性は外延的等価性と同等のもので定義する。  *)
+(** Map 上の等価性は外延的等価性と同等のもので定義。  *)
 Definition equal_Map {X Y: Setoid}(f g: Map X Y): Prop :=
   forall x: X, f x == g x.
 Arguments equal_Map {X Y} / f g.
@@ -143,7 +144,7 @@ Coercion identity: Identity >-> Funclass.
 Notation "'Id' X" := (identity X) (at level 30).
 
 
-(** *** For Map  *)
+(** *** Map を登録 *)
 Instance Compose_Map: Compose (-->) := { compose := compose_Map }.
 Proof.
   intros X Y Z f f' Heqf g g' Heqg x; simpl.

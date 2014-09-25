@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/23 15:17:15> *)
+(* Time-stamp: <2014/9/25 21:42:36> *)
 (*
   Category.v 
   - mathink : author
@@ -81,6 +81,26 @@ Definition iso (C: Category)(X Y: C) :=
   exists (f: C X Y)(g: C Y X), Iso f g.
 Arguments iso {C} / X Y.
 
+(** 対象の同型性は同値関係なので示しておきます。
+
+    ただ、対象の同型性を [==] で表現することはあまりないと思います。
+    証明の際に rewrite タクティックを使えるようにすることが主目的です。
+
+   *)
+Instance iso_Equivalence (C: Category): Equivalence (iso (C:=C)).
+Proof.
+  split.
+  - now intros X; exists (ident (c:=C) X), (ident (c:=C) X); split;
+    simpl; rewrite (identity_cod (ident:=@ident C)).
+  - now intros X Y [f [g [Heql Heqr]]]; exists g, f; split.
+  - intros X Y Z [f [f' [Heqf Heqf']]] [g [g' [Heqg Heqg']]].
+    exists (g \o f), (f' \o g'); split.
+    + now rewrite compose_assoc, <- (compose_assoc f), Heqg, identity_cod.
+    + now rewrite compose_assoc, <- (compose_assoc g'), Heqf', identity_cod.
+Qed.
+
+Canonical Structure Setoid_obj (C: Category) := Build_Setoid (iso_Equivalence C).
+
 (** ** Product *)
 Class isProd (C: Category)(X Y P: C)(pX: C P X)(pY: C P Y)
       (parr: forall (Q: C)(qX: C Q X)(qY: C Q Y), C Q P)
@@ -137,10 +157,11 @@ Class isInitial (C: Category)(Init: C)(initial: forall X, C Init X): Prop :=
     forall (X: C)(f: C Init X), f == initial X.
 
 Structure Initial (C: Category) :=
-  { init:> C;
+  { init: C;
     initial: forall X, C init X;
 
     prf_Initial: isInitial initial }.
+Coercion init: Initial >-> obj.
 Existing Instance prf_Initial.
 
 Lemma Initial_unique (C: Category)(Init Init': Initial C):
@@ -150,6 +171,20 @@ Proof.
   exists (initial Init Init'), (initial Init' Init); simpl; split;
   now rewrite initial_uniqueness, <- (initial_uniqueness (Id _)).
 Qed.
+
+
+Lemma init_refl (C: Category)(Init: Initial C):
+  initial Init (init Init) == Id (init Init).
+Proof.
+  now symmetry; apply initial_uniqueness.
+Qed.
+
+Lemma init_fusion (C: Category)(Init: Initial C)(A B: C)(f: C A B):
+  f \o initial Init A == initial Init B.
+Proof.
+  apply initial_uniqueness.
+Qed.
+
 
 (* TODO: 直積みたいに書き直しましょう *)
 (** ** CoProduct *)
@@ -197,10 +232,11 @@ Class isTerminal (C: Category)(Term: C)(terminal: forall X, C X Term): Prop :=
     forall (X: C)(f: C X Term), f == terminal X.
 
 Structure Terminal (C: Category) :=
-  { term:> C;
+  { term: C;
     terminal: forall X, C X term;
 
     prf_Terminal: isTerminal terminal }.
+Coercion term: Terminal >-> obj.
 Existing Instance prf_Terminal.
 
 Lemma Terminal_unique (C: Category)(Term Term': Terminal C):
