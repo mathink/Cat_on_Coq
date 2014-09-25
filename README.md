@@ -36,3 +36,22 @@ Universe Polymorphism を利用しています。
 HoTT/coq にパスが通し、 Cat\_on\_Coq ディレクトリ直下で make すれば OK です。
 
 
+# 構成
+
+```
+src
+|-- Algebra
+|   |-- Algebra.v
+|   `-- ListFunctor.v
+|-- Base
+|   |-- Category.v
+|   |-- Discrete.v
+|   |-- Functor.v
+|   |-- Natrans.v
+|   `-- Setoid.v
+|-- Limit
+|   |-- Cone.v
+|   `-- LimProd.v
+`-- Yoneda
+    `-- YonedaLemma.v
+```
