@@ -9,7 +9,10 @@ univ ブランチ内のコードはそのままです。
 
 最新版への最初の更新は 9 月末です。
 
-9/23 現在、試験的に米田の補題 (src/Yoneda/YonedaLemma.v) までのコードを載せています。
+## 経過
+
+- 9/25 リストは始代数 (src/Algebra/ListFunctor.v) まで
+- 9/23 米田の補題 (src/Yoneda/YonedaLemma.v) まで
 
 # 概要
 
