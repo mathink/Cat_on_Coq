@@ -31,7 +31,7 @@
 </div>
 
 <div class="doc">
-<a name="lab29"></a><h1 class="section">Setoid &amp; Map</h1>
+<a name="lab34"></a><h1 class="section">Setoid &amp; Map</h1>
 
 まずは Setoid とその間の変換である Map の定義を行ないます。
  
@@ -55,11 +55,14 @@ rewrite による書き換えが出来るというのは非常にありがたい
 
 <div class="paragraph"> </div>
 
-1. 仕様を表わす Class を定義
-2. 仕様を含めた構成要素全てを内包する Structure を定義
+<ul class="doclist">
+<li> まずは仕様を表わす Class を定義し、
 
-<div class="paragraph"> </div>
+</li>
+<li> それから仕様を含めた構成要素全てを内包する Structure を定義
 
+</li>
+</ul>
 という順番で進めていきます。
 
 <div class="paragraph"> </div>
@@ -83,6 +86,7 @@ rewrite による書き換えが出来るというのは非常にありがたい
 </div>
 <div class="code">
 <span class="id" type="keyword">Notation</span> <a name="::'(==)'"><span class="id" type="notation">"</span></a>(==)" := (<a class="idref" href="COC.Base.Setoid.html#equal"><span class="id" type="projection">equal</span></a> (<span class="id" type="var">s</span>:=<span class="id" type="var">_</span>)).<br/>
+<span class="id" type="keyword">Notation</span> <a name="::x_'=='_x_':>'_x"><span class="id" type="notation">"</span></a>x == y :&gt; S" := (@<a class="idref" href="COC.Base.Setoid.html#equal"><span class="id" type="projection">equal</span></a> <span class="id" type="var">S</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span>) (<span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 80, <span class="id" type="keyword">no</span> <span class="id" type="keyword">associativity</span>, <span class="id" type="var">y</span> <span class="id" type="tactic">at</span> <span class="id" type="var">next</span> <span class="id" type="keyword">level</span>).<br/>
 <span class="id" type="keyword">Notation</span> <a name="::x_'=='_x"><span class="id" type="notation">"</span></a>x == y" := (<a class="idref" href="COC.Base.Setoid.html#equal"><span class="id" type="projection">equal</span></a> <span class="id" type="var">x</span> <span class="id" type="var">y</span>) (<span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 80, <span class="id" type="keyword">no</span> <span class="id" type="keyword">associativity</span>).<br/>
 <span class="id" type="keyword">Notation</span> <a name="::'('_x_'=='_')'"><span class="id" type="notation">"</span></a>( x == )" := (<span class="id" type="keyword">fun</span> <span class="id" type="var">y</span> =&gt; <span class="id" type="var">x</span> <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <a class="idref" href="COC.Base.Setoid.html#y"><span class="id" type="variable">y</span></a>).<br/>
 <span class="id" type="keyword">Notation</span> <a name="::'('_'=='_x_')'"><span class="id" type="notation">"</span></a>( == x )" := (<span class="id" type="keyword">fun</span> <span class="id" type="var">y</span> =&gt; <a class="idref" href="COC.Base.Setoid.html#y"><span class="id" type="variable">y</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <span class="id" type="var">x</span>).<br/>
@@ -92,7 +96,7 @@ rewrite による書き換えが出来るというのは非常にありがたい
 
 <div class="doc">
 Map も Setoid と同様に仕様を表わす Class である Proper が
-    定義されているので、 直接 Structure を定義する。
+    定義されているので、 直接 Structure を定義します。
  
 </div>
 <div class="code">
@@ -109,7 +113,7 @@ Map も Setoid と同様に仕様を表わす Class である Proper が
 </div>
 
 <div class="doc">
-<a name="lab30"></a><h2 class="section">Attributes of Map</h2>
+<a name="lab35"></a><h2 class="section">Attributes of Map</h2>
 
 </div>
 <div class="code">
@@ -126,7 +130,7 @@ Map も Setoid と同様に仕様を表わす Class である Proper が
 </div>
 
 <div class="doc">
-<a name="lab31"></a><h2 class="section">composition &amp; identity</h2>
+<a name="lab36"></a><h2 class="section">composition &amp; identity</h2>
 
 </div>
 <div class="code">
@@ -140,7 +144,7 @@ Map も Setoid と同様に仕様を表わす Class である Proper が
 </div>
 
 <div class="doc">
-Map 上の等価性は外延的等価性と同等のもので定義する。  
+Map 上の等価性は外延的等価性と同等のもので定義。  
 </div>
 <div class="code">
 <span class="id" type="keyword">Definition</span> <a name="equal_Map"><span class="id" type="definition">equal_Map</span></a> {<span class="id" type="var">X</span> <span class="id" type="var">Y</span>: <a class="idref" href="COC.Base.Setoid.html#Setoid"><span class="id" type="record">Setoid</span></a>}(<span class="id" type="var">f</span> <span class="id" type="var">g</span>: <a class="idref" href="COC.Base.Setoid.html#Map"><span class="id" type="record">Map</span></a> <a class="idref" href="COC.Base.Setoid.html#X"><span class="id" type="variable">X</span></a> <a class="idref" href="COC.Base.Setoid.html#Y"><span class="id" type="variable">Y</span></a>): <span class="id" type="keyword">Prop</span> :=<br/>
@@ -178,7 +182,7 @@ Map 上の等価性は外延的等価性と同等のもので定義する。
 </div>
 
 <div class="doc">
-<a name="lab32"></a><h2 class="section">Unique Existance for Setoid</h2>
+<a name="lab37"></a><h2 class="section">Unique Existance for Setoid</h2>
 
 </div>
 <div class="code">
@@ -195,14 +199,14 @@ Map 上の等価性は外延的等価性と同等のもので定義する。
 </div>
 
 <div class="doc">
-<a name="lab33"></a><h2 class="section">Operational Type Class</h2>
+<a name="lab38"></a><h2 class="section">Operational Type Class</h2>
 
     記法のための型クラスです。
     A Gentle Introduction to Type Classes and Relation on Coq を読みましょう。
  
 <div class="paragraph"> </div>
 
-<a name="lab34"></a><h3 class="section">「合成」のためのクラス</h3>
+<a name="lab39"></a><h3 class="section">「合成」のためのクラス</h3>
 
 </div>
 <div class="code">
@@ -216,7 +220,7 @@ Map 上の等価性は外延的等価性と同等のもので定義する。
 </div>
 
 <div class="doc">
-<a name="lab35"></a><h3 class="section">「恒等変換」のためのクラス</h3>
+<a name="lab40"></a><h3 class="section">「恒等変換」のためのクラス</h3>
 
 </div>
 <div class="code">
@@ -229,7 +233,7 @@ Map 上の等価性は外延的等価性と同等のもので定義する。
 </div>
 
 <div class="doc">
-<a name="lab36"></a><h3 class="section">For Map</h3>
+<a name="lab41"></a><h3 class="section">Map を登録</h3>
 
 </div>
 <div class="code">

@@ -29,7 +29,7 @@
 </div>
 
 <div class="doc">
-<a name="lab1"></a><h1 class="section">圏：定義と幾つかの性質たち</h1>
+<a name="lab6"></a><h1 class="section">圏：定義と幾つかの性質たち</h1>
 
 </div>
 <div class="code">
@@ -41,7 +41,7 @@
 </div>
 
 <div class="doc">
-<a name="lab2"></a><h2 class="section">Category</h2>
+<a name="lab7"></a><h2 class="section">Category</h2>
 
 </div>
 <div class="code">
@@ -74,7 +74,7 @@
 </div>
 
 <div class="doc">
-<a name="lab3"></a><h2 class="section">dual</h2>
+<a name="lab8"></a><h2 class="section">dual</h2>
 
 </div>
 <div class="code">
@@ -98,7 +98,7 @@
 </div>
 
 <div class="doc">
-<a name="lab4"></a><h2 class="section">Example: Setoids</h2>
+<a name="lab9"></a><h2 class="section">Example: Setoids</h2>
 
 </div>
 <div class="code">
@@ -112,7 +112,7 @@
 </div>
 
 <div class="doc">
-<a name="lab5"></a><h2 class="section">Attribute</h2>
+<a name="lab10"></a><h2 class="section">Attribute</h2>
 
 </div>
 <div class="code">
@@ -127,7 +127,28 @@
 </div>
 
 <div class="doc">
-<a name="lab6"></a><h2 class="section">Product</h2>
+対象の同型性は同値関係なので示しておきます。
+
+<div class="paragraph"> </div>
+
+    ただ、対象の同型性を <span class="inlinecode">==</span> で表現することはあまりないと思います。
+    証明の際に rewrite タクティックを使えるようにすることが主目的です。
+
+<div class="paragraph"> </div>
+
+   
+</div>
+<div class="code">
+<span class="id" type="keyword">Instance</span> <a name="iso_Equivalence"><span class="id" type="instance">iso_Equivalence</span></a> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>): <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Classes.RelationClasses.html#Equivalence"><span class="id" type="class">Equivalence</span></a> (<a class="idref" href="COC.Base.Category.html#iso"><span class="id" type="definition">iso</span></a> (<span class="id" type="var">C</span>:=<a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>)).<br/>
+
+<br/>
+<span class="id" type="keyword">Canonical</span> <span class="id" type="keyword">Structure</span> <span class="id" type="var">Setoid_obj</span> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>) := <a class="idref" href="COC.Base.Setoid.html#Build_Setoid"><span class="id" type="constructor">Build_Setoid</span></a> (<a class="idref" href="COC.Base.Category.html#iso_Equivalence"><span class="id" type="instance">iso_Equivalence</span></a> <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab11"></a><h2 class="section">Product</h2>
 
 </div>
 <div class="code">
@@ -163,7 +184,7 @@
 </div>
 
 <div class="doc">
-<a name="lab7"></a><h2 class="section">Initial</h2>
+<a name="lab12"></a><h2 class="section">Initial</h2>
 
 </div>
 <div class="code">
@@ -173,20 +194,29 @@
 
 <br/>
 <span class="id" type="keyword">Structure</span> <a name="Initial"><span class="id" type="record">Initial</span></a> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>) :=<br/>
-&nbsp;&nbsp;{ <a name="init"><span class="id" type="projection">init</span></a>:&gt; <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>;<br/>
+&nbsp;&nbsp;{ <a name="init"><span class="id" type="projection">init</span></a>: <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="initial"><span class="id" type="projection">initial</span></a>: <span class="id" type="keyword">forall</span> <span class="id" type="var">X</span>, <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Base.Category.html#init"><span class="id" type="method">init</span></a> <a class="idref" href="COC.Base.Category.html#X"><span class="id" type="variable">X</span></a>;<br/>
 <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="prf_Initial"><span class="id" type="projection">prf_Initial</span></a>: <a class="idref" href="COC.Base.Category.html#isInitial"><span class="id" type="class">isInitial</span></a> <a class="idref" href="COC.Base.Category.html#initial"><span class="id" type="method">initial</span></a> }.<br/>
+<span class="id" type="keyword">Coercion</span> <a class="idref" href="COC.Base.Category.html#init"><span class="id" type="projection">init</span></a>: <span class="id" type="var">Initial</span> &gt;-&gt; <span class="id" type="var">obj</span>.<br/>
 
 <br/>
 <span class="id" type="keyword">Lemma</span> <a name="Initial_unique"><span class="id" type="lemma">Initial_unique</span></a> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>)(<span class="id" type="var">Init</span> <span class="id" type="var">Init'</span>: <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>):<br/>
 &nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#iso"><span class="id" type="definition">iso</span></a> <a class="idref" href="COC.Base.Category.html#Init"><span class="id" type="variable">Init</span></a> <a class="idref" href="COC.Base.Category.html#Init'"><span class="id" type="variable">Init'</span></a>.<br/>
 
 <br/>
+<span class="id" type="keyword">Lemma</span> <a name="init_refl"><span class="id" type="lemma">init_refl</span></a> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>)(<span class="id" type="var">Init</span>: <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>):<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#initial"><span class="id" type="projection">initial</span></a> <a class="idref" href="COC.Base.Category.html#Init"><span class="id" type="variable">Init</span></a> (<a class="idref" href="COC.Base.Category.html#init"><span class="id" type="projection">init</span></a> <a class="idref" href="COC.Base.Category.html#Init"><span class="id" type="variable">Init</span></a>) <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <a class="idref" href="COC.Base.Setoid.html#::'Id'_x"><span class="id" type="notation">Id</span></a> <a class="idref" href="COC.Base.Setoid.html#::'Id'_x"><span class="id" type="notation">(</span></a><a class="idref" href="COC.Base.Category.html#init"><span class="id" type="projection">init</span></a> <a class="idref" href="COC.Base.Category.html#Init"><span class="id" type="variable">Init</span></a><a class="idref" href="COC.Base.Setoid.html#::'Id'_x"><span class="id" type="notation">)</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="init_fusion"><span class="id" type="lemma">init_fusion</span></a> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>)(<span class="id" type="var">Init</span>: <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>)(<span class="id" type="var">A</span> <span class="id" type="var">B</span>: <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>)(<span class="id" type="var">f</span>: <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Base.Category.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="COC.Base.Category.html#B"><span class="id" type="variable">B</span></a>):<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'\o'_x"><span class="id" type="notation">\</span></a><a class="idref" href="COC.Base.Setoid.html#::x_'\o'_x"><span class="id" type="notation">o</span></a> <a class="idref" href="COC.Base.Category.html#initial"><span class="id" type="projection">initial</span></a> <a class="idref" href="COC.Base.Category.html#Init"><span class="id" type="variable">Init</span></a> <a class="idref" href="COC.Base.Category.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <a class="idref" href="COC.Base.Category.html#initial"><span class="id" type="projection">initial</span></a> <a class="idref" href="COC.Base.Category.html#Init"><span class="id" type="variable">Init</span></a> <a class="idref" href="COC.Base.Category.html#B"><span class="id" type="variable">B</span></a>.<br/>
+
+<br/>
 </div>
 
 <div class="doc">
-<a name="lab8"></a><h2 class="section">CoProduct</h2>
+<a name="lab13"></a><h2 class="section">CoProduct</h2>
 
 </div>
 <div class="code">
@@ -215,7 +245,7 @@
 </div>
 
 <div class="doc">
-<a name="lab9"></a><h2 class="section">Terminal</h2>
+<a name="lab14"></a><h2 class="section">Terminal</h2>
 
 </div>
 <div class="code">
@@ -225,10 +255,11 @@
 
 <br/>
 <span class="id" type="keyword">Structure</span> <a name="Terminal"><span class="id" type="record">Terminal</span></a> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>) :=<br/>
-&nbsp;&nbsp;{ <a name="term"><span class="id" type="projection">term</span></a>:&gt; <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>;<br/>
+&nbsp;&nbsp;{ <a name="term"><span class="id" type="projection">term</span></a>: <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>;<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="terminal"><span class="id" type="projection">terminal</span></a>: <span class="id" type="keyword">forall</span> <span class="id" type="var">X</span>, <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Base.Category.html#X"><span class="id" type="variable">X</span></a> <a class="idref" href="COC.Base.Category.html#term"><span class="id" type="method">term</span></a>;<br/>
 <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="prf_Terminal"><span class="id" type="projection">prf_Terminal</span></a>: <a class="idref" href="COC.Base.Category.html#isTerminal"><span class="id" type="class">isTerminal</span></a> <a class="idref" href="COC.Base.Category.html#terminal"><span class="id" type="method">terminal</span></a> }.<br/>
+<span class="id" type="keyword">Coercion</span> <a class="idref" href="COC.Base.Category.html#term"><span class="id" type="projection">term</span></a>: <span class="id" type="var">Terminal</span> &gt;-&gt; <span class="id" type="var">obj</span>.<br/>
 
 <br/>
 <span class="id" type="keyword">Lemma</span> <a name="Terminal_unique"><span class="id" type="lemma">Terminal_unique</span></a> (<span class="id" type="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a>)(<span class="id" type="var">Term</span> <span class="id" type="var">Term'</span>: <a class="idref" href="COC.Base.Category.html#Terminal"><span class="id" type="record">Terminal</span></a> <a class="idref" href="COC.Base.Category.html#C"><span class="id" type="variable">C</span></a>):<br/>
@@ -238,7 +269,7 @@
 </div>
 
 <div class="doc">
-<a name="lab10"></a><h2 class="section">Terminal is unit of Product</h2>
+<a name="lab15"></a><h2 class="section">Terminal is unit of Product</h2>
  X * T == X 
 </div>
 <div class="code">
@@ -259,7 +290,7 @@ T * X == X
 </div>
 
 <div class="doc">
-<a name="lab11"></a><h2 class="section">Initial is unit of CoProduct</h2>
+<a name="lab16"></a><h2 class="section">Initial is unit of CoProduct</h2>
  X + I == X 
 </div>
 <div class="code">
@@ -280,8 +311,8 @@ I + X == X
 </div>
 
 <div class="doc">
-<a name="lab12"></a><h2 class="section">Product Category</h2>
-<a name="lab13"></a><h3 class="section">Product of Setoid</h3>
+<a name="lab17"></a><h2 class="section">Product Category</h2>
+<a name="lab18"></a><h3 class="section">Product of Setoid</h3>
 
 </div>
 <div class="code">
@@ -301,7 +332,7 @@ I + X == X
 </div>
 
 <div class="doc">
-<a name="lab14"></a><h3 class="section">Product of Map</h3>
+<a name="lab19"></a><h3 class="section">Product of Map</h3>
 
 </div>
 <div class="code">
@@ -313,7 +344,7 @@ I + X == X
 </div>
 
 <div class="doc">
-<a name="lab15"></a><h3 class="section">Product of Category</h3>
+<a name="lab20"></a><h3 class="section">Product of Category</h3>
 
 </div>
 <div class="code">

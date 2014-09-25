@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>COC.Algebra.ListFunctor</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Algebra.ListFunctor</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="COC.Base.Category.html#"><span class="id" type="library">Category</span></a> <a class="idref" href="COC.Base.Functor.html#"><span class="id" type="library">Functor</span></a> <a class="idref" href="COC.Algebra.Algebra.html#"><span class="id" type="library">Algebra</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Note: 型函手による議論に一般化したいなぁと思っています。  
+</div>
+<div class="code">
+<span class="id" type="keyword">Inductive</span> <a name="ListF"><span class="id" type="inductive">ListF</span></a> (<span class="id" type="var">A</span> <span class="id" type="var">X</span>: <span class="id" type="keyword">Type</span>): <span class="id" type="keyword">Type</span> :=<br/>
+| <a name="Nil"><span class="id" type="constructor">Nil</span></a>: <a class="idref" href="COC.Algebra.ListFunctor.html#ListF"><span class="id" type="inductive">ListF</span></a> <span class="id" type="var">A</span> <span class="id" type="var">X</span><br/>
+| <a name="Cons"><span class="id" type="constructor">Cons</span></a> (<span class="id" type="var">a</span>: <span class="id" type="var">A</span>)(<span class="id" type="var">x</span>: <span class="id" type="var">X</span>): <a class="idref" href="COC.Algebra.ListFunctor.html#ListF"><span class="id" type="inductive">ListF</span></a> <span class="id" type="var">A</span> <span class="id" type="var">X</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="equal_fun"><span class="id" type="definition">equal_fun</span></a> {<span class="id" type="var">A</span> <span class="id" type="var">B</span>: <span class="id" type="keyword">Type</span>}(<span class="id" type="var">f</span> <span class="id" type="var">g</span>: <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Logic.html#:type_scope:x_'->'_x"><span class="id" type="notation">-&gt;</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#B"><span class="id" type="variable">B</span></a>) := <span class="id" type="keyword">forall</span> <span class="id" type="var">a</span>, <a class="idref" href="COC.Algebra.ListFunctor.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#a"><span class="id" type="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Logic.html#:type_scope:x_'='_x"><span class="id" type="notation">=</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#g"><span class="id" type="variable">g</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#a"><span class="id" type="variable">a</span></a>.<br/>
+<span class="id" type="keyword">Instance</span> <a name="equal_fun_Equiv"><span class="id" type="instance">equal_fun_Equiv</span></a> (<span class="id" type="var">A</span> <span class="id" type="var">B</span>: <span class="id" type="keyword">Type</span>): <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Classes.RelationClasses.html#Equivalence"><span class="id" type="class">Equivalence</span></a> (@<a class="idref" href="COC.Algebra.ListFunctor.html#equal_fun"><span class="id" type="definition">equal_fun</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#B"><span class="id" type="variable">B</span></a>).<br/>
+<span class="id" type="keyword">Canonical</span> <span class="id" type="keyword">Structure</span> <span class="id" type="var">Setoid_fun</span> (<span class="id" type="var">A</span> <span class="id" type="var">B</span>: <span class="id" type="keyword">Type</span>) := <a class="idref" href="COC.Base.Setoid.html#Build_Setoid"><span class="id" type="constructor">Build_Setoid</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#equal_fun_Equiv"><span class="id" type="instance">equal_fun_Equiv</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#B"><span class="id" type="variable">B</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="Compose_fun"><span class="id" type="instance">Compose_fun</span></a>: <a class="idref" href="COC.Base.Setoid.html#Compose"><span class="id" type="class">Compose</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Setoid_fun"><span class="id" type="definition">Setoid_fun</span></a> :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="COC.Base.Setoid.html#compose"><span class="id" type="method">compose</span></a> <span class="id" type="var">X</span> <span class="id" type="var">Y</span> <span class="id" type="var">Z</span> <span class="id" type="var">f</span> <span class="id" type="var">g</span> := <span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> =&gt; <a class="idref" href="COC.Algebra.ListFunctor.html#g"><span class="id" type="variable">g</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a>) }.<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="Identity_fun"><span class="id" type="instance">Identity_fun</span></a>: <a class="idref" href="COC.Base.Setoid.html#Identity"><span class="id" type="class">Identity</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Setoid_fun"><span class="id" type="definition">Setoid_fun</span></a> :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="COC.Base.Setoid.html#identity"><span class="id" type="definition">identity</span></a> <span class="id" type="var">X</span> := <span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> =&gt; <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a> }.<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="Sets_IsCategory"><span class="id" type="instance">Sets_IsCategory</span></a>: <a class="idref" href="COC.Base.Category.html#isCategory"><span class="id" type="class">isCategory</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Compose_fun"><span class="id" type="instance">Compose_fun</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Identity_fun"><span class="id" type="instance">Identity_fun</span></a>.<br/>
+<span class="id" type="keyword">Canonical</span> <span class="id" type="keyword">Structure</span> <span class="id" type="var">Sets</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a> := <a class="idref" href="COC.Base.Category.html#Build_Category"><span class="id" type="constructor">Build_Category</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Sets_IsCategory"><span class="id" type="instance">Sets_IsCategory</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Program Definition</span> <a name="fmap_ListF"><span class="id" type="definition">fmap_ListF</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>): <a class="idref" href="COC.Base.Functor.html#Fmap"><span class="id" type="abbreviation">Fmap</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Sets"><span class="id" type="definition">Sets</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Sets"><span class="id" type="definition">Sets</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListF"><span class="id" type="inductive">ListF</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">fun</span> <span class="id" type="var">X</span> <span class="id" type="var">Y</span> =&gt; <a class="idref" href="COC.Base.Setoid.html#::'['_x_'..'_x_':->'_x_']'"><span class="id" type="notation">[</span></a> <span class="id" type="var">f</span> <a class="idref" href="COC.Base.Setoid.html#::'['_x_'..'_x_':->'_x_']'"><span class="id" type="notation">:-&gt;</span></a> <span class="id" type="keyword">fun</span> <span class="id" type="var">l</span> =&gt; <span class="id" type="keyword">match</span> <a class="idref" href="COC.Algebra.ListFunctor.html#l"><span class="id" type="variable">l</span></a> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="COC.Algebra.ListFunctor.html#Nil"><span class="id" type="constructor">Nil</span></a> =&gt; <a class="idref" href="COC.Algebra.ListFunctor.html#Nil"><span class="id" type="constructor">Nil</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="COC.Algebra.ListFunctor.html#Cons"><span class="id" type="constructor">Cons</span></a> <span class="id" type="var">a</span> <span class="id" type="var">x</span> =&gt; <a class="idref" href="COC.Algebra.ListFunctor.html#Cons"><span class="id" type="constructor">Cons</span></a> <span class="id" type="var">a</span> (<a class="idref" href="COC.Algebra.ListFunctor.html#f"><span class="id" type="variable">f</span></a> <span class="id" type="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span> <a class="idref" href="COC.Base.Setoid.html#::'['_x_'..'_x_':->'_x_']'"><span class="id" type="notation">]</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="ListF_IsFunctor"><span class="id" type="instance">ListF_IsFunctor</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>): <a class="idref" href="COC.Base.Functor.html#isFunctor"><span class="id" type="class">isFunctor</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#fmap_ListF"><span class="id" type="definition">fmap_ListF</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="ListFunctor"><span class="id" type="definition">ListFunctor</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>): <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Sets"><span class="id" type="definition">Sets</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Sets"><span class="id" type="definition">Sets</span></a> := <br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Functor.html#Build_Functor"><span class="id" type="constructor">Build_Functor</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListF_IsFunctor"><span class="id" type="instance">ListF_IsFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+list A is (ListFunctor A)-Algebra  
+</div>
+<div class="code">
+<span class="id" type="keyword">Definition</span> <a name="list_alg_arr"><span class="id" type="definition">list_alg_arr</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>): <a class="idref" href="COC.Algebra.ListFunctor.html#Sets"><span class="id" type="definition">Sets</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListFunctor"><span class="id" type="definition">ListFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>)) (<a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">fun</span> <span class="id" type="var">l</span> =&gt; <span class="id" type="keyword">match</span> <a class="idref" href="COC.Algebra.ListFunctor.html#l"><span class="id" type="variable">l</span></a> <span class="id" type="keyword">with</span> <a class="idref" href="COC.Algebra.ListFunctor.html#Nil"><span class="id" type="constructor">Nil</span></a> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" type="constructor">nil</span></a> | <a class="idref" href="COC.Algebra.ListFunctor.html#Cons"><span class="id" type="constructor">Cons</span></a> <span class="id" type="var">a</span> <span class="id" type="var">l</span> =&gt; <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#cons"><span class="id" type="constructor">cons</span></a> <span class="id" type="var">a</span> <a class="idref" href="COC.Algebra.ListFunctor.html#l"><span class="id" type="variable">l</span></a> <span class="id" type="keyword">end</span>.<br/>
+<span class="id" type="keyword">Definition</span> <a name="listAlg"><span class="id" type="definition">listAlg</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>) := <a class="idref" href="COC.Algebra.Algebra.html#Build_Alg"><span class="id" type="constructor">Build_Alg</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#list_alg_arr"><span class="id" type="definition">list_alg_arr</span></a> (<span class="id" type="var">A</span>:=<a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>)).<br/>
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <a name="in_listAlg"><span class="id" type="definition">in_listAlg</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>)(<span class="id" type="var">x</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListFunctor"><span class="id" type="definition">ListFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>))(<span class="id" type="var">l</span>: <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>): <a class="idref" href="COC.Algebra.Algebra.html#alg_obj"><span class="id" type="projection">alg_obj</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="COC.Algebra.ListFunctor.html#l"><span class="id" type="variable">l</span></a> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" type="constructor">nil</span></a> =&gt; <a class="idref" href="COC.Algebra.Algebra.html#alg_arr"><span class="id" type="projection">alg_arr</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#Nil"><span class="id" type="constructor">Nil</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Init.Datatypes.html#cons"><span class="id" type="constructor">cons</span></a> <span class="id" type="var">a</span> <span class="id" type="var">l</span> =&gt; <a class="idref" href="COC.Algebra.Algebra.html#alg_arr"><span class="id" type="projection">alg_arr</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#Cons"><span class="id" type="constructor">Cons</span></a> <span class="id" type="var">a</span> (<a class="idref" href="COC.Algebra.ListFunctor.html#in_listAlg"><span class="id" type="definition">in_listAlg</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#l"><span class="id" type="variable">l</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="in_listAlg_IsAlgMap"><span class="id" type="instance">in_listAlg_IsAlgMap</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>)(<span class="id" type="var">x</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListFunctor"><span class="id" type="definition">ListFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>))<br/>
+: <a class="idref" href="COC.Algebra.Algebra.html#isAlgMap"><span class="id" type="class">isAlgMap</span></a> (<span class="id" type="var">F</span>:=<a class="idref" href="COC.Algebra.ListFunctor.html#ListFunctor"><span class="id" type="definition">ListFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>) (<span class="id" type="var">x</span>:=<a class="idref" href="COC.Algebra.ListFunctor.html#listAlg"><span class="id" type="definition">listAlg</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>) (<span class="id" type="var">y</span>:=<a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a>) (<a class="idref" href="COC.Algebra.ListFunctor.html#in_listAlg"><span class="id" type="definition">in_listAlg</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="in_listAlgMap"><span class="id" type="definition">in_listAlgMap</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>)(<span class="id" type="var">x</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListFunctor"><span class="id" type="definition">ListFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>)): <a class="idref" href="COC.Algebra.Algebra.html#AlgMap"><span class="id" type="record">AlgMap</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#listAlg"><span class="id" type="definition">listAlg</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>) <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">Build_AlgMap</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#in_listAlg_IsAlgMap"><span class="id" type="instance">in_listAlg_IsAlgMap</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#x"><span class="id" type="variable">x</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="list_IsInitial"><span class="id" type="instance">list_IsInitial</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>): <a class="idref" href="COC.Base.Category.html#isInitial"><span class="id" type="class">isInitial</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#in_listAlgMap"><span class="id" type="definition">in_listAlgMap</span></a> (<span class="id" type="var">A</span>:=<a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>)).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="Initial_list"><span class="id" type="definition">Initial_list</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>): <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#ALG"><span class="id" type="definition">ALG</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListFunctor"><span class="id" type="definition">ListFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>)) :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#Build_Initial"><span class="id" type="constructor">Build_Initial</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#list_IsInitial"><span class="id" type="instance">list_IsInitial</span></a> (<span class="id" type="var">A</span>:=<a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>)).<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="list_initiality"><span class="id" type="lemma">list_initiality</span></a> (<span class="id" type="var">A</span>: <span class="id" type="keyword">Type</span>)(<span class="id" type="var">In</span>: <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#ALG"><span class="id" type="definition">ALG</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#ListFunctor"><span class="id" type="definition">ListFunctor</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>))):<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#iso"><span class="id" type="definition">iso</span></a> (<a class="idref" href="COC.Algebra.ListFunctor.html#listAlg"><span class="id" type="definition">listAlg</span></a> <a class="idref" href="COC.Algebra.ListFunctor.html#A"><span class="id" type="variable">A</span></a>) <a class="idref" href="COC.Algebra.ListFunctor.html#In"><span class="id" type="variable">In</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
