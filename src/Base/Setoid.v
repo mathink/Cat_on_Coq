@@ -28,8 +28,8 @@ Require Export Init Basics Tactics Coq.Setoids.Setoid Morphisms.
 (**
 基本的に、数学的構造の定義は
 
-1. 仕様を表わす Class を定義
-2. 仕様を含めた構成要素全てを内包する Structure を定義
+- まずは仕様を表わす Class を定義し、
+- それから仕様を含めた構成要素全てを内包する Structure を定義
 
 という順番で進めていきます。
 
