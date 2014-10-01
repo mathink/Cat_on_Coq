@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>COC.Algebra.Algebra</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Algebra.Algebra</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1"></a><h1 class="section">F-代数</h1>
+
+    F-代数の圏を定義し、始代数から catamophism を定義します。
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="COC.Base.Category.html#"><span class="id" type="library">Category</span></a> <a class="idref" href="COC.Base.Functor.html#"><span class="id" type="library">Functor</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2"></a><h2 class="section">F-代数</h2>
+
+</div>
+<div class="code">
+<span class="id" type="keyword">Structure</span> <a name="Alg"><span class="id" type="record">Alg</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>) :=<br/>
+&nbsp;&nbsp;{ <a name="alg_obj"><span class="id" type="projection">alg_obj</span></a>:&gt; <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="alg_arr"><span class="id" type="projection">alg_arr</span></a>:&gt; <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a> <a class="idref" href="COC.Algebra.Algebra.html#alg_obj"><span class="id" type="method">alg_obj</span></a>) <a class="idref" href="COC.Algebra.Algebra.html#alg_obj"><span class="id" type="method">alg_obj</span></a> }.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab3"></a><h2 class="section">F-代数の間の準同型</h2>
+
+ F X -F h-&gt; F Y
+  |         |
+  X  - h -&gt;  Y
+
+</div>
+<div class="code">
+<span class="id" type="keyword">Class</span> <a name="isAlgMap"><span class="id" type="record">isAlgMap</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">x</span> <span class="id" type="var">y</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>)(<span class="id" type="var">h</span>: <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a>): <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<a name="alg_commute"><span class="id" type="projection">alg_commute</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a> <a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">\</span></a><a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">o</span></a><a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">{</span></a><a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a><a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">}</span></a> <a class="idref" href="COC.Base.Functor.html#fmap"><span class="id" type="projection">fmap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a> <a class="idref" href="COC.Algebra.Algebra.html#h"><span class="id" type="variable">h</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <a class="idref" href="COC.Algebra.Algebra.html#h"><span class="id" type="variable">h</span></a> <a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">\</span></a><a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">o</span></a><a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">{</span></a><a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a><a class="idref" href="COC.Base.Category.html#::x_'\o{'_x_'}'_x"><span class="id" type="notation">}</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Structure</span> <a name="AlgMap"><span class="id" type="record">AlgMap</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">x</span> <span class="id" type="var">y</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a name="alg_map"><span class="id" type="projection">alg_map</span></a>:&gt; <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="prf_AlgMap"><span class="id" type="projection">prf_AlgMap</span></a>: <a class="idref" href="COC.Algebra.Algebra.html#isAlgMap"><span class="id" type="class">isAlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#alg_map"><span class="id" type="method">alg_map</span></a> }.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab4"></a><h2 class="section">ALG(F) :: F-代数の圏</h2>
+
+</div>
+<div class="code">
+<span class="id" type="keyword">Program Definition</span> <a name="compose_AlgMap"><span class="id" type="definition">compose_AlgMap</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">x</span> <span class="id" type="var">y</span> <span class="id" type="var">z</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">f</span>: <a class="idref" href="COC.Algebra.Algebra.html#AlgMap"><span class="id" type="record">AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a>)(<span class="id" type="var">g</span>: <a class="idref" href="COC.Algebra.Algebra.html#AlgMap"><span class="id" type="record">AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a> <a class="idref" href="COC.Algebra.Algebra.html#z"><span class="id" type="variable">z</span></a>): <a class="idref" href="COC.Algebra.Algebra.html#AlgMap"><span class="id" type="record">AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#z"><span class="id" type="variable">z</span></a> :=<br/>
+&nbsp;&nbsp;{| <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">alg_map</span></a> <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">:=</span></a> <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">g</span></a> <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">\</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">o</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">{</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">C</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">}</span></a> <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">f</span></a> |}.<br/>
+
+<br/>
+<span class="id" type="keyword">Program Definition</span> <a name="id_AlgMap"><span class="id" type="definition">id_AlgMap</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">x</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>): <a class="idref" href="COC.Algebra.Algebra.html#AlgMap"><span class="id" type="record">AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> :=<br/>
+&nbsp;&nbsp;{| <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">alg_map</span></a> <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">:=</span></a> <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">Id</span></a> <a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">(</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">x</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">:</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">C</span></a><a class="idref" href="COC.Algebra.Algebra.html#Build_AlgMap"><span class="id" type="constructor">)</span></a> |}.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="equal_AlgMap"><span class="id" type="definition">equal_AlgMap</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">x</span> <span class="id" type="var">y</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>)(<span class="id" type="var">f</span> <span class="id" type="var">g</span>: <a class="idref" href="COC.Algebra.Algebra.html#AlgMap"><span class="id" type="record">AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a>) :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">(</span></a><a class="idref" href="COC.Algebra.Algebra.html#f"><span class="id" type="variable">f</span></a>: <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a><a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">)</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">(</span></a><a class="idref" href="COC.Algebra.Algebra.html#g"><span class="id" type="variable">g</span></a>: <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a><a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">)</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="equal_AlgMap_Equiv"><span class="id" type="instance">equal_AlgMap_Equiv</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">x</span> <span class="id" type="var">y</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>)<br/>
+: <a class="idref" href="http://coq.inria.fr/distrib/trunk/stdlib/Coq.Classes.RelationClasses.html#Equivalence"><span class="id" type="class">Equivalence</span></a> (@<a class="idref" href="COC.Algebra.Algebra.html#equal_AlgMap"><span class="id" type="definition">equal_AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a>).<br/>
+<span class="id" type="keyword">Canonical</span> <span class="id" type="keyword">Structure</span> <span class="id" type="var">Setoid_AlgMap</span> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">x</span> <span class="id" type="var">y</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>)<br/>
+&nbsp;&nbsp;:= <a class="idref" href="COC.Base.Setoid.html#Build_Setoid"><span class="id" type="constructor">Build_Setoid</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#equal_AlgMap_Equiv"><span class="id" type="instance">equal_AlgMap_Equiv</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="Compose_AlgMap"><span class="id" type="instance">Compose_AlgMap</span></a> <span class="id" type="var">C</span> (<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a>): <a class="idref" href="COC.Base.Setoid.html#Compose"><span class="id" type="class">Compose</span></a> (@<a class="idref" href="COC.Algebra.Algebra.html#Setoid_AlgMap"><span class="id" type="definition">Setoid_AlgMap</span></a> <span class="id" type="var">_</span> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="COC.Base.Setoid.html#compose"><span class="id" type="method">compose</span></a> <span class="id" type="var">x</span> <span class="id" type="var">y</span> <span class="id" type="var">z</span> <span class="id" type="var">f</span> <span class="id" type="var">g</span> := @<a class="idref" href="COC.Algebra.Algebra.html#compose_AlgMap"><span class="id" type="definition">compose_AlgMap</span></a> <span class="id" type="var">C</span> <span class="id" type="var">F</span> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="COC.Algebra.Algebra.html#y"><span class="id" type="variable">y</span></a> <a class="idref" href="COC.Algebra.Algebra.html#z"><span class="id" type="variable">z</span></a> <a class="idref" href="COC.Algebra.Algebra.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="COC.Algebra.Algebra.html#g"><span class="id" type="variable">g</span></a> }.<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <a name="Identity_AlgMap"><span class="id" type="instance">Identity_AlgMap</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>): <a class="idref" href="COC.Base.Setoid.html#Identity"><span class="id" type="class">Identity</span></a> (@<a class="idref" href="COC.Algebra.Algebra.html#Setoid_AlgMap"><span class="id" type="definition">Setoid_AlgMap</span></a> <span class="id" type="var">_</span> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>) :=<br/>
+&nbsp;&nbsp;{ <a class="idref" href="COC.Base.Setoid.html#identity"><span class="id" type="definition">identity</span></a> := @<a class="idref" href="COC.Algebra.Algebra.html#id_AlgMap"><span class="id" type="definition">id_AlgMap</span></a> <span class="id" type="var">C</span> <span class="id" type="var">F</span> }.<br/>
+
+<br/>
+<span class="id" type="keyword">Program Instance</span> <a name="Alg_IsCategory"><span class="id" type="instance">Alg_IsCategory</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)<br/>
+: <a class="idref" href="COC.Base.Category.html#isCategory"><span class="id" type="class">isCategory</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#Compose_AlgMap"><span class="id" type="instance">Compose_AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>) (<a class="idref" href="COC.Algebra.Algebra.html#Identity_AlgMap"><span class="id" type="instance">Identity_AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Canonical</span> <span class="id" type="keyword">Structure</span> <span class="id" type="var">ALG</span> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>): <a class="idref" href="COC.Base.Category.html#Category"><span class="id" type="record">Category</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#Build_Category"><span class="id" type="constructor">Build_Category</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#Alg_IsCategory"><span class="id" type="instance">Alg_IsCategory</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab5"></a><h2 class="section">catamorphism :: F-始代数からの射</h2>
+
+</div>
+<div class="code">
+<span class="id" type="keyword">Definition</span> <a name="catamorphism"><span class="id" type="definition">catamorphism</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">In</span>: <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#ALG"><span class="id" type="definition">ALG</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>))(<span class="id" type="var">x</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>): <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a> (<a class="idref" href="COC.Base.Category.html#init"><span class="id" type="projection">init</span></a> <a class="idref" href="COC.Algebra.Algebra.html#In"><span class="id" type="variable">In</span></a>) <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Base.Category.html#initial"><span class="id" type="projection">initial</span></a> <a class="idref" href="COC.Algebra.Algebra.html#In"><span class="id" type="variable">In</span></a> <a class="idref" href="COC.Algebra.Algebra.html#x"><span class="id" type="variable">x</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="cata_refl"><span class="id" type="lemma">cata_refl</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">In</span>: <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#ALG"><span class="id" type="definition">ALG</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>)):<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Algebra.Algebra.html#catamorphism"><span class="id" type="definition">catamorphism</span></a> <a class="idref" href="COC.Algebra.Algebra.html#In"><span class="id" type="variable">In</span></a> (<a class="idref" href="COC.Base.Category.html#init"><span class="id" type="projection">init</span></a> <a class="idref" href="COC.Algebra.Algebra.html#In"><span class="id" type="variable">In</span></a>) <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <a class="idref" href="COC.Base.Setoid.html#::'Id'_x"><span class="id" type="notation">Id</span></a> <a class="idref" href="COC.Base.Setoid.html#::'Id'_x"><span class="id" type="notation">(</span></a><a class="idref" href="COC.Base.Category.html#init"><span class="id" type="projection">init</span></a> <a class="idref" href="COC.Algebra.Algebra.html#In"><span class="id" type="variable">In</span></a>: <a class="idref" href="COC.Algebra.Algebra.html#C"><span class="id" type="variable">C</span></a><a class="idref" href="COC.Base.Setoid.html#::'Id'_x"><span class="id" type="notation">)</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="cata_fusion"><span class="id" type="lemma">cata_fusion</span></a> `(<span class="id" type="var">F</span>: <a class="idref" href="COC.Base.Functor.html#Functor"><span class="id" type="record">Functor</span></a> <span class="id" type="var">C</span> <span class="id" type="var">C</span>)(<span class="id" type="var">In</span>: <a class="idref" href="COC.Base.Category.html#Initial"><span class="id" type="record">Initial</span></a> (<a class="idref" href="COC.Algebra.Algebra.html#ALG"><span class="id" type="definition">ALG</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">f</span> <span class="id" type="var">g</span>: <a class="idref" href="COC.Algebra.Algebra.html#Alg"><span class="id" type="record">Alg</span></a> <a class="idref" href="COC.Algebra.Algebra.html#F"><span class="id" type="variable">F</span></a>)(<span class="id" type="var">h</span>: <a class="idref" href="COC.Algebra.Algebra.html#AlgMap"><span class="id" type="record">AlgMap</span></a> <a class="idref" href="COC.Algebra.Algebra.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="COC.Algebra.Algebra.html#g"><span class="id" type="variable">g</span></a>):<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Algebra.Algebra.html#h"><span class="id" type="variable">h</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'\o'_x"><span class="id" type="notation">\</span></a><a class="idref" href="COC.Base.Setoid.html#::x_'\o'_x"><span class="id" type="notation">o</span></a> <a class="idref" href="COC.Algebra.Algebra.html#catamorphism"><span class="id" type="definition">catamorphism</span></a> <a class="idref" href="COC.Algebra.Algebra.html#In"><span class="id" type="variable">In</span></a> <a class="idref" href="COC.Algebra.Algebra.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="COC.Base.Setoid.html#::x_'=='_x"><span class="id" type="notation">==</span></a> <a class="idref" href="COC.Algebra.Algebra.html#catamorphism"><span class="id" type="definition">catamorphism</span></a> <a class="idref" href="COC.Algebra.Algebra.html#In"><span class="id" type="variable">In</span></a> <a class="idref" href="COC.Algebra.Algebra.html#g"><span class="id" type="variable">g</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="lib_index.html.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
