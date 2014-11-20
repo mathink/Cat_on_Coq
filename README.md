@@ -11,6 +11,7 @@ univ ブランチ内のコードはそのままです。
 
 ## 経過
 
+- 11/21 モナド追加(src/Monad/)。着手自体は 9 月末。クライスリトリプルやクライスリ圏も。
 - 9/25 リストは始代数 (src/Algebra/ListFunctor.v) まで
 - 9/23 米田の補題 (src/Yoneda/YonedaLemma.v) まで
 
