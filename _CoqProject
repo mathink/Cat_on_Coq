@@ -9,4 +9,7 @@ src/Base/Natrans.v
 src/Base/Setoid.v
 src/Limit/Cone.v
 src/Limit/LimProd.v
+src/Monad/Kleisli.v
+src/Monad/KTMonad.v
+src/Monad/Monad.v
 src/Yoneda/YonedaLemma.v
