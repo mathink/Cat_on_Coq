@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/23 15:19:48> *)
+(* Time-stamp: <2014/11/21 0:3:18> *)
 (*
   Functor.v 
   - mathink : author
@@ -41,10 +41,10 @@ Program Definition compose_Functor (C D E: Category)
         (F: Functor C D)(G: Functor D E): Functor C E :=
   makeFunctor (fun X Y => fmap G \o fmap (X:=X) (Y:=Y) F).
 Next Obligation.
-  split; simpl; intros.
-  - now do 2 rewrite fmap_comp.
-  - now do 2 rewrite fmap_ident.
-Qed.
+split; simpl; intros.
+- now do 2 rewrite fmap_comp.
+- now do 2 rewrite fmap_ident.
+Defined.
 
 Program Definition id_Functor (C: Category): Functor C C :=
   makeFunctor (fun X Y => @id_Map (C X Y)).
