@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>COC.Monad.KTMonad</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Monad.KTMonad</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <span class="id" type="var">Category</span> <span class="id" type="var">Functor</span> <span class="id" type="var">Natrans</span> <span class="id" type="var">Monad</span> <span class="id" type="var">Kleisli</span>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab51"></a><h1 class="section">Equivalence between Monad &amp; Kleisli triple</h1>
+
+</div>
+<div class="code">
+<span class="id" type="keyword">Program Definition</span> <span class="id" type="var">bind_Monad</span> `(<span class="id" type="var">m</span>: <span class="id" type="var">Monad</span> <span class="id" type="var">C</span>)<br/>
+: <span class="id" type="keyword">forall</span> <span class="id" type="var">X</span> <span class="id" type="var">Y</span>, <span class="id" type="var">Map</span> (<span class="id" type="var">C</span> <span class="id" type="var">X</span> (<span class="id" type="var">m</span> <span class="id" type="var">Y</span>)) (<span class="id" type="var">C</span> (<span class="id" type="var">m</span> <span class="id" type="var">X</span>) (<span class="id" type="var">m</span> <span class="id" type="var">Y</span>)) :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">fun</span> <span class="id" type="var">X</span> <span class="id" type="var">Y</span> =&gt; [ <span class="id" type="var">f</span>  :-&gt; <span class="id" type="var">monad_mu</span> <span class="id" type="var">m</span> <span class="id" type="var">Y</span> \<span class="id" type="var">o</span> <span class="id" type="var">fmap</span> <span class="id" type="var">m</span> <span class="id" type="var">f</span>].<br/>
+
+<br/>
+<span class="id" type="keyword">Program Instance</span> <span class="id" type="var">isKTfromMonad</span> `(<span class="id" type="var">m</span>: <span class="id" type="var">Monad</span> <span class="id" type="var">C</span>)<br/>
+: <span class="id" type="var">isKT</span> (<span class="id" type="var">monad_eta</span> <span class="id" type="var">m</span>) (<span class="id" type="var">bind_Monad</span> <span class="id" type="var">m</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">KTfromMonad</span> `(<span class="id" type="var">m</span>: <span class="id" type="var">Monad</span> <span class="id" type="var">C</span>): <span class="id" type="var">KT</span> <span class="id" type="var">C</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">Build_KT</span> (<span class="id" type="var">isKTfromMonad</span> <span class="id" type="var">m</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Program Definition</span> <span class="id" type="var">fmap_KT</span> `(<span class="id" type="var">T</span>: <span class="id" type="var">KT</span> <span class="id" type="var">C</span>): <span class="id" type="var">Fmap</span> <span class="id" type="var">C</span> <span class="id" type="var">C</span> <span class="id" type="var">T</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">fun</span> <span class="id" type="var">X</span> <span class="id" type="var">Y</span> =&gt; [ <span class="id" type="var">f</span> :-&gt; <span class="id" type="var">bind</span> <span class="id" type="var">T</span> (<span class="id" type="var">emb</span> <span class="id" type="var">T</span> <span class="id" type="var">Y</span> \<span class="id" type="var">o</span> <span class="id" type="var">f</span>) ].<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <span class="id" type="var">KT_IsFunctor</span> `(<span class="id" type="var">T</span>: <span class="id" type="var">KT</span> <span class="id" type="var">C</span>): <span class="id" type="var">isFunctor</span> (<span class="id" type="var">fmap_KT</span> <span class="id" type="var">T</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">KT_F</span> `(<span class="id" type="var">T</span>: <span class="id" type="var">KT</span> <span class="id" type="var">C</span>): <span class="id" type="var">Functor</span> <span class="id" type="var">C</span> <span class="id" type="var">C</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="var">Build_Functor</span> (<span class="id" type="var">KT_IsFunctor</span> <span class="id" type="var">T</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Program Definition</span> <span class="id" type="var">KTeta</span> `(<span class="id" type="var">T</span>: <span class="id" type="var">KT</span> <span class="id" type="var">C</span>): <span class="id" type="var">Natrans</span> (<span class="id" type="var">Id</span> <span class="id" type="var">C</span>) (<span class="id" type="var">KT_F</span> <span class="id" type="var">T</span>) := [: <span class="id" type="var">X</span> :=&gt; <span class="id" type="var">emb</span> <span class="id" type="var">T</span> <span class="id" type="var">X</span> :].<br/>
+
+<br/>
+<span class="id" type="keyword">Program Definition</span> <span class="id" type="var">KTmu</span> `(<span class="id" type="var">T</span>: <span class="id" type="var">KT</span> <span class="id" type="var">C</span>): <span class="id" type="var">Natrans</span> (<span class="id" type="var">KT_F</span> <span class="id" type="var">T</span> \<span class="id" type="var">o</span> <span class="id" type="var">KT_F</span> <span class="id" type="var">T</span>) (<span class="id" type="var">KT_F</span> <span class="id" type="var">T</span>) :=<br/>
+&nbsp;&nbsp;[: <span class="id" type="var">X</span> :=&gt; <span class="id" type="var">bind</span> <span class="id" type="var">T</span> (<span class="id" type="var">Id</span> (<span class="id" type="var">T</span> <span class="id" type="var">X</span>)) :].<br/>
+
+<br/>
+<span class="id" type="keyword">Instance</span> <span class="id" type="var">isMonadfromKT</span> `(<span class="id" type="var">T</span>: <span class="id" type="var">KT</span> <span class="id" type="var">C</span>): <span class="id" type="var">isMonad</span> (<span class="id" type="var">KTeta</span> <span class="id" type="var">T</span>) (<span class="id" type="var">KTmu</span> <span class="id" type="var">T</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">MonadfromKT</span> `(<span class="id" type="var">T</span>: <span class="id" type="var">KT</span> <span class="id" type="var">C</span>): <span class="id" type="var">Monad</span> <span class="id" type="var">C</span> := <span class="id" type="var">Build_Monad</span> (<span class="id" type="var">isMonadfromKT</span> <span class="id" type="var">T</span>).<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="lib_index.html.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
