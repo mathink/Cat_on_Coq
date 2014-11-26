@@ -190,11 +190,10 @@ Section BiComp_3.
 
 End BiComp_3.
 
-
 Definition Assoc (C: Category)(Op: Functor (C [*] C) C) :=
   forall X Y Z, C (Op (Op (X, Y), Z)) (Op (X, Op (Y, Z))).
 
-Class isAssociativeBiFunctor
+Class isAssoc
       (C: Category)
       (Tensor: Functor (C [*] C) C)
       (assoc: Assoc Tensor) :=
@@ -227,7 +226,6 @@ Class isAssociativeBiFunctor
     assoc_isomorphic_3:
       forall X Y, natural_isomorphism (assoc_3 X Y)
   }.
-
 
 Program Definition fmap_BCL (C: Category)(F: Functor (C [*] C) C)(Y: C)
 : Fmap C C (fun X => F (X,Y)) :=
@@ -282,7 +280,7 @@ Class isMonoidal
       (raw: Natrans (BCL Tensor Unit) (Identity_Functor C))
       (raw_inv: Natrans (Identity_Functor C) (BCL Tensor Unit)) :=
   {
-    assoc_associative: isAssociativeBiFunctor assoc;
+    assoc_associative: isAssoc assoc;
     lam_iso: forall X, Iso (lam X) (lam_inv X);
     raw_iso: forall X, Iso (raw X) (raw_inv X);
 
@@ -310,32 +308,134 @@ Structure MonoidalCategory :=
     mc1XR: Natrans (Identity_Functor mcCat) (BCR mcX mcI);
     mcX1: Natrans (BCL mcX mcI) (Identity_Functor mcCat);
     mcX1R: Natrans (Identity_Functor mcCat) (BCL mcX mcI);
-    prf_MonidalCategory:> isMonoidal mcA mc1X mc1XR mcX1 mcX1R
+    prf_MonoidalCategory:> isMonoidal mcA mc1X mc1XR mcX1 mcX1R
   }.
 Notation "X [x] Y" := (mcX _ (X,Y)) (at level 55, right associativity).
+Notation "g [ 'x' V ] f" := (fmap (mcX V) ((g, f): (V [*] V) (_,_) (_,_))) (at level 55, right associativity).
 
-Class isSymmetricMonoidal (C: MonoidalCategory)
-      (comm: forall X Y: C, C (X [x] Y) (Y [x] X)) :=
+Arguments mcA (V){X Y Z}: rename.
+
+Lemma tensor_comp_id `(V: MonoidalCategory):
+  forall (X X' Y Y': V)(f: V X X')(g: V Y Y'),
+    g [x V] f == (g [x V] (Id X')) \o ((Id Y) [x V] f).
+Proof.
+  intros; simpl.
+  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+  apply eq_arg; simpl; split; symmetry;
+  [apply identity_dom | apply identity_cod].
+Qed.
+
+
+Lemma tensor_comp_l `(V: MonoidalCategory):
+  forall (X Y Z X': V)(f: V X Y)(g: V Y Z),
+    (g \o f) [x V] Id X' == g [x V] Id X' \o f [x V] Id X'.
+Proof.
+  intros; simpl.
+  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+  apply eq_arg; simpl; split;
+  [reflexivity | symmetry; apply identity_cod].
+Qed.
+
+Lemma tensor_comp `(V: MonoidalCategory):
+  forall (X Y Z X' Y' Z': V)(f: V X Y)(g: V Y Z)
+         (f': V X' Y')(g': V Y' Z'),
+    (g \o f) [x V] (g' \o f') == g [x V] g' \o f [x V] f'.
+Proof.
+  intros; simpl.
+  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+  apply eq_arg; simpl; split; reflexivity.
+Qed.
+
+Lemma assoc_naturality `(V: MonoidalCategory):
+  forall (X X' Y Y' Z Z': V)(f: V X X')(g: V Y Y')(h: V Z Z'),
+    mcA V \o (h [x V] g) [x V] f == h [x V] (g [x V] f) \o mcA V.
+Proof.
+  intros; simpl.
+  rewrite (tensor_comp_id f (h[x V]g)); simpl.
+  assert
+    ((h [x V] g)[x V]Id X'
+     == (h [x V] (Id Y') \o (Id Z) [x V] g) [x V] Id X')
+    by 
+      (apply eq_arg; split; simpl;
+       [apply (tensor_comp_id g h) | reflexivity]).
+  rewrite H; clear H; simpl.
+
+  generalize
+    (naturality (isNatrans := assoc_naturality_1 (isAssoc := assoc_associative (isMonoidal:=V)) Y' X') h); simpl.
+  intro H.
+  rewrite <- (compose_assoc _ _ (mcA V)); simpl.
+  rewrite (tensor_comp_l X' (Id Z [x V] g)(h [x V] Id Y')).
+  rewrite <- compose_assoc.
+  rewrite H; clear H.
+  rewrite compose_assoc.
+  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))); simpl.
+  rewrite compose_assoc.
+  rewrite (tensor_comp (Id (Z [x] Y)) (Id Z [x V] g)  f (Id X')).
+  rewrite <- (compose_assoc _ _ (mcA V)).
+  generalize
+    (naturality (isNatrans := assoc_naturality_2 (isAssoc := assoc_associative (isMonoidal:=V)) Z X') g); simpl.
+  intro H.
+  rewrite H; clear H.
+  rewrite compose_assoc.
+  generalize
+    (naturality (isNatrans := assoc_naturality_3 (isAssoc := assoc_associative (isMonoidal:=V)) Z Y) f); simpl; intro H.
+  assert
+    ((Id Z [x V] Id Y)[x V] f
+     ==
+     Id (Z [x] Y) [x V] f)
+    by (apply eq_arg; simpl; split;
+        [rewrite <- fmap_ident |]; reflexivity).
+  rewrite H0 in H; clear H0.
+  rewrite H; clear H.
+  rewrite <- compose_assoc.
+  rewrite <- compose_assoc.
+  rewrite <- tensor_comp.
+  rewrite <- tensor_comp.
+
+  assert
+    (((h \o Id Z) \o Id Z)
+       [x V]
+       (((Id Y'[x V] Id X') \o (g [x V] Id X')) \o (Id Y [x V] f))
+     == h [x V](g [x V] f)).
+  {
+    simpl.
+    apply eq_arg; simpl; split;
+    [do 2 rewrite identity_dom; reflexivity |].
+    rewrite compose_assoc.
+    rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))); simpl.
+    rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))); simpl.
+    apply eq_arg; simpl; split.
+    - rewrite identity_dom, identity_cod; reflexivity.
+    - rewrite identity_cod, identity_cod; reflexivity.
+  }
+  rewrite H; clear H.
+
+  reflexivity.
+  
+Qed.
+
+Class isSymmetricMonoidal (V: MonoidalCategory)
+      (comm: forall X Y: V, V (X [x] Y) (Y [x] X)) :=
   {
     comm_IsNatrans_l:
-      forall Y: C, isNatrans (F:=BCL (mcX C) Y) (G:=BCR (mcX C) Y) (fun X => comm X Y);
-    comm_natrans_l (Y: C): Natrans (BCL (mcX C) Y) (BCR (mcX C) Y) :=
+      forall Y: V, isNatrans (F:=BCL (mcX V) Y) (G:=BCR (mcX V) Y) (fun X => comm X Y);
+    comm_natrans_l (Y: V): Natrans (BCL (mcX V) Y) (BCR (mcX V) Y) :=
       Build_Natrans (comm_IsNatrans_l Y);
     comm_IsNatrans_r:
-      forall X: C, isNatrans (F:=BCR (mcX C) X) (G:=BCL (mcX C) X) (fun Y => comm X Y);
-    comm_natrans_r (X: C): Natrans (BCR (mcX C) X) (BCL (mcX C) X) :=
+      forall X: V, isNatrans (F:=BCR (mcX V) X) (G:=BCL (mcX V) X) (fun Y => comm X Y);
+    comm_natrans_r (X: V): Natrans (BCR (mcX V) X) (BCL (mcX V) X) :=
       Build_Natrans (comm_IsNatrans_r X);
 
     (* coherence condition *)
 
     symm_monoidal_coherence_comm_assoc:
-      forall (X Y Z: C),
-        mcA Y Z X \o comm X (Y [x] Z) \o mcA X Y Z ==
-        fmap (mcX C) ((Id Y, comm X Z): (C [*] C) (Y,_) (Y,_))
-             \o mcA Y X Z \o fmap (mcX C) ((comm X Y, Id Z): (C [*] C) (_,Z) (_,Z));
+      forall (X Y Z: V),
+        mcA V \o comm X (Y [x] Z) \o mcA V ==
+        (Id Y) [x V] (comm X Z)
+             \o mcA V \o (comm X Y) [x V] (Id Z);
 
     symm_monoidal_coherence_comm_ident:
-      forall (X Y: C),
+      forall (X Y: V),
         comm Y X \o comm X Y == Id (X [x] Y)
   }.
 
@@ -356,22 +456,18 @@ Class isEnrichedCategory
   {
     ecomp_assoc:
       forall (X Y Z W: eobj),
-        ecomp X Y W \o fmap (mcX V) ((ecomp Y Z W, Id (ehom X Y))
-                                     : (V [*] V) (_,ehom X Y) (_,ehom X Y)) ==
-        ecomp X Z W \o fmap (mcX V) ((Id (ehom Z W), ecomp X Y Z)
-                                     : (V [*] V) (ehom Z W,_) (ehom Z W,_))
-              \o mcA (ehom Z W) (ehom Y Z) (ehom X Y);
+        ecomp X Y W \o (ecomp Y Z W)[x V](Id (ehom X Y))
+        ==
+        ecomp X Z W \o (Id (ehom Z W))[x V](ecomp X Y Z) \o mcA V;
 
     ecomp_unital_l:
       forall (X Y: eobj),
-        ecomp X Y Y
-              \o fmap (mcX V) ((eident Y, Id (ehom X Y)): (V [*] V) (mcI V,_) (ehom Y Y,_)) ==
+        ecomp X Y Y \o (eident Y)[x V](Id (ehom X Y)) ==
         mc1X V (ehom X Y);
 
     ecomp_unital_r:
       forall (X Y: eobj),
-        ecomp X X Y
-              \o fmap (mcX V) ((Id (ehom X Y), eident X): (V [*] V) (_,mcI V) (_,ehom X X)) ==
+        ecomp X X Y \o (Id (ehom X Y))[x V](eident X) ==
         mcX1 V (ehom X Y)
     
   }.
@@ -386,18 +482,17 @@ Structure EnrichedCategory (V: MonoidalCategory) :=
 
     prf_EnrichedCategory:> isEnrichedCategory ecomp eident
   }.
+Arguments ecomp {V EC X Y Z}: rename.
+Arguments eident {V EC}(X): rename.
 
 Definition ECHom `(C: EnrichedCategory V)(X Y: C): Setoid := V (mcI V) (ehom X Y) .
 Instance Compose_ECHom `(C: EnrichedCategory V): Compose (@ECHom V C) :=
   {
-    compose X Y Z f g :=
-      ecomp X Y Z
-            \o fmap (mcX V) ((g,  f): (V [*] V) (mcI V, mcI V) (ehom Y Z, ehom X Y))
-            \o mc1XR V (mcI V)
+    compose X Y Z f g := ecomp \o g [x V] f \o mc1XR V (mcI V)
   }.
 Proof.
   intros X Y Z f f' Heqf g g' Heqg; simpl.
-  assert ((fmap (mcX V)) ((g, f): (V [*] V) (mcI V, mcI V) (ehom Y Z, ehom X Y)) == (fmap (mcX V)) ((g', f'): (V [*] V) (mcI V, mcI V) (ehom Y Z, ehom X Y))).
+  assert (g[x V]f == g'[x V]f').
   - apply eq_arg; simpl; split; assumption.
   - rewrite H; reflexivity.
 Defined.
@@ -413,28 +508,33 @@ Proof.
   split.
   - intros X Y Z W f g h; simpl.
     assert
-      (fmap (mcX V)
-            ((ecomp (e:=C) Y Z W \o{
-                      V} (fmap (mcX V)) ((h, g): (V [*] V) (mcI V, mcI V) (ehom Z W, ehom Y Z)) \o{ V} (mc1XR V) (mcI V), f)
-             : (V [*] V) (mcI V, _) (ehom Y W, _))
+      ((ecomp \o h [x V] g  \o mc1XR V (mcI V))[x V]f
        ==
-       fmap (mcX V) ((ecomp (e:=C) Y Z W, Id (ehom X Y))
-                     : (V [*] V) (_, ehom X Y) (_, ehom X Y))
-            \o{V} fmap (mcX V)
-            ((fmap (mcX V) ((h, g): (V [*] V) (mcI V, mcI V) (ehom Z W, ehom Y Z)), f)
-             : (V [*] V) (mcI V [x] mcI V, mcI V) (ehom Z W [x] ehom Y Z, ehom X Y))
-            \o fmap (mcX V)
-            ((mc1XR V (mcI V), Id (mcI V))
-             : (V [*] V) (mcI V, mcI V) (_, mcI V))).
-    + rewrite compose_assoc.
-      rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+       ecomp [x V] (Id (ehom X Y))
+            \o (h [x V] g) [x V] f
+            \o (mc1XR V (mcI V))[x V](Id (mcI V))).
+    { rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
       rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
       simpl.
       apply eq_arg; simpl; split; [reflexivity |].
       rewrite identity_dom, identity_cod; reflexivity.
-    + rewrite H; clear H.
-      do 3 rewrite <- compose_assoc.
-      rewrite (ecomp_assoc (isEnrichedCategory := prf_EnrichedCategory C)).
-      do 4 rewrite -> compose_assoc.
+    }
+    rewrite H; clear H.
+    do 3 rewrite <- compose_assoc.
+    rewrite (ecomp_assoc (isEnrichedCategory := prf_EnrichedCategory C)).
+    do 4 rewrite -> compose_assoc.
+    rewrite <- (compose_assoc _ _ (mcA V)).
+    rewrite assoc_naturality.
+    rewrite compose_assoc.
+    rewrite <- (compose_assoc _ _ (Id (ehom Z W) [x V] ecomp)).
+    rewrite <- tensor_comp; simpl.
 
+    assert
+      ((Id (ehom Z W) \o{V} h) [x V] (ecomp \o (g [x V] f))
+       ==
+       h [x V] (ecomp \o (g [x V] f)))
+      by (apply eq_arg; simpl; split;
+          [apply identity_cod |]; reflexivity).
+    rewrite H; clear H.
     (* TODO *)
+    
