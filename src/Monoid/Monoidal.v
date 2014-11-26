@@ -412,4 +412,29 @@ Instance EC_IsCategory `(C: EnrichedCategory V)
 Proof.
   split.
   - intros X Y Z W f g h; simpl.
+    assert
+      (fmap (mcX V)
+            ((ecomp (e:=C) Y Z W \o{
+                      V} (fmap (mcX V)) ((h, g): (V [*] V) (mcI V, mcI V) (ehom Z W, ehom Y Z)) \o{ V} (mc1XR V) (mcI V), f)
+             : (V [*] V) (mcI V, _) (ehom Y W, _))
+       ==
+       fmap (mcX V) ((ecomp (e:=C) Y Z W, Id (ehom X Y))
+                     : (V [*] V) (_, ehom X Y) (_, ehom X Y))
+            \o{V} fmap (mcX V)
+            ((fmap (mcX V) ((h, g): (V [*] V) (mcI V, mcI V) (ehom Z W, ehom Y Z)), f)
+             : (V [*] V) (mcI V [x] mcI V, mcI V) (ehom Z W [x] ehom Y Z, ehom X Y))
+            \o fmap (mcX V)
+            ((mc1XR V (mcI V), Id (mcI V))
+             : (V [*] V) (mcI V, mcI V) (_, mcI V))).
+    + rewrite compose_assoc.
+      rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+      rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+      simpl.
+      apply eq_arg; simpl; split; [reflexivity |].
+      rewrite identity_dom, identity_cod; reflexivity.
+    + rewrite H; clear H.
+      do 3 rewrite <- compose_assoc.
+      rewrite (ecomp_assoc (isEnrichedCategory := prf_EnrichedCategory C)).
+      do 4 rewrite -> compose_assoc.
+
     (* TODO *)
