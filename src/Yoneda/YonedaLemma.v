@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/23 15:21:37> *)
+(* Time-stamp: <2014/11/29 1:27:4> *)
 (*
   Yoneda.v 
   - mathink : author
@@ -40,16 +40,17 @@ Section EF.
     split.
     - intros [F X] [G Y] [H Z] [S f] [T g]; simpl in *.
       repeat rewrite <- compose_assoc.
-      repeat rewrite <- naturality.
-      repeat rewrite compose_assoc.
-      repeat rewrite naturality.
-      rewrite fmap_comp.
-      repeat rewrite compose_assoc.
+      do 2 rewrite <- (naturality T). 
+      rewrite compose_assoc.
+      rewrite <- (naturality S).
+      do 2 rewrite compose_assoc.
+      rewrite <- (compose_assoc (S X)).
+      rewrite <- (fmap_comp G).
+      rewrite <- (naturality S).
       reflexivity.
     - intros [F X]; simpl.
-      now rewrite fmap_ident, identity_cod.
+      now rewrite (fmap_ident F), identity_cod.
   Qed.
-
 
   Definition EvalFunctor: Functor ((C :=> B) [*] C) B :=
     Build_Functor Eval_IsFunctor.
@@ -59,7 +60,6 @@ End EF.
 (** ** Natrans to Setoids  *)
 Section NF.
   Context (C: Category).
-  
 
   Definition fobj_NFunctor (FX: (C :=> Setoids) [*] C): Setoids :=
     (C :=> Setoids) Hom(snd FX,-) (fst FX).
@@ -72,11 +72,9 @@ Section NF.
     [: X :=> fst Sf X \o alpha X \o fmap Hom(-,X) (snd Sf) :].
   Next Obligation.
     revert f0 o0 f o n c alpha; simpl; intros F X G Y S f T Z W h g; simpl.
-    generalize (@naturality C Setoids F G S _ _ _ h ((T Z) (g \o f))); simpl;
-    intro H; rewrite <- H; clear H.
-    generalize (@naturality C Setoids _ _ T _ _ _ h (g \o f)); simpl;
-    intro H; rewrite <- H; clear H.
-    now rewrite compose_assoc.
+    generalize (naturality S (f:=h) ((T Z) (g \o f))); simpl; intro H; rewrite <- H; clear H.
+    generalize (naturality T (f:=h) (g \o f)); simpl; intro H; rewrite <- H; clear H.
+    rewrite compose_assoc; reflexivity.
   Qed.    
 
   Program Definition fmap_NFunctor
@@ -134,7 +132,7 @@ Section Yoneda.
     Qed.
     Next Obligation.
       intros Y Z g f; simpl in *.
-      assert (fmap F (g \o f) == fmap F g \o fmap F f) by now rewrite fmap_comp.
+      assert (fmap F (g \o f) == fmap F g \o fmap F f) by now rewrite (fmap_comp F).
       now apply H.
     Qed.    
     Next Obligation.
@@ -142,17 +140,16 @@ Section Yoneda.
       now rewrite Heq.
     Qed.    
 
-
     Lemma yoneda_lemma_aux:
       Iso (C:=Setoids) yoneda inv_yoneda.
     Proof.
       split; simpl.
       - intros N Y f; simpl.
         transitivity ((fmap F f \o N X) (Id X)); [now auto |].
-        rewrite <- (naturality (natrans:=N) f (Id X)); simpl.
+        rewrite <- (naturality N (f:=f) (Id X)); simpl.
         now simpl; rewrite identity_dom.
       - intros; simpl.
-        assert (fmap F (Id X) == Id (F X)) by now rewrite fmap_ident.
+        assert (fmap F (Id X) == Id (F X)) by now rewrite (fmap_ident F).
         now apply H.
     Qed.
 
@@ -173,10 +170,10 @@ Section Yoneda.
     intros [F1 X1] [F2 X2] [S f] T; simpl in *.
     rewrite identity_cod.
     transitivity ((fmap F2 f \o (S X1)) (T X1 (Id X1))); [| now idtac].
-    rewrite <- (naturality (natrans:=S) f (T X1 (Id X1))); simpl.
+    rewrite <- (naturality S (f:=f) (T X1 (Id X1))); simpl.
     apply eq_arg.
     transitivity ((fmap F1 f \o (T X1)) (Id X1)); [| now idtac].
-    rewrite <- (naturality (natrans:=T) f (Id X1)); simpl.
+    rewrite <- (naturality T (f:=f) (Id X1)); simpl.
     now rewrite identity_dom.
   Qed.
 
@@ -240,8 +237,7 @@ Section YonedaFunctor.
     split.
     - simpl; intros X Y S.
       exists (S X (Id X)); intros Z f.
-      generalize (@naturality _ _ _ _ S _ X Z f (Id X)); simpl; intro H.
-      now rewrite <- H, identity_dom.
+      now generalize (naturality S (f:=f) (Id X)); simpl; intro H; rewrite <- H, identity_dom.
     - simpl; intros Y X f1 f2 Heq.
       rewrite <- (identity_cod f1), <- (identity_cod f2).
       now apply Heq.

@@ -33,7 +33,7 @@ Section BiComp_1.
   Proof.
     split.
     - intros X X' X'' f f'; simpl.
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
+      rewrite <- (fmap_comp F).
       apply eq_arg; simpl; split; simpl; [| symmetry; apply identity_dom].
       rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
       apply eq_arg; simpl; split; [reflexivity | symmetry; apply identity_dom].

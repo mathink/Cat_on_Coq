@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/25 21:42:36> *)
+(* Time-stamp: <2014/11/28 21:57:21> *)
 (*
   Category.v 
   - mathink : author
@@ -90,8 +90,8 @@ Arguments iso {C} / X Y.
 Instance iso_Equivalence (C: Category): Equivalence (iso (C:=C)).
 Proof.
   split.
-  - now intros X; exists (ident (c:=C) X), (ident (c:=C) X); split;
-    simpl; rewrite (identity_cod (ident:=@ident C)).
+  - now intros X; exists (Id X), (Id X); split;
+    simpl; rewrite identity_cod.
   - now intros X Y [f [g [Heql Heqr]]]; exists g, f; split.
   - intros X Y Z [f [f' [Heqf Heqf']]] [g [g' [Heqg Heqg']]].
     exists (g \o f), (f' \o g'); split.

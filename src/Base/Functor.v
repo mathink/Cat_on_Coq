@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/23 15:19:48> *)
+(* Time-stamp: <2014/11/28 21:57:11> *)
 (*
   Functor.v 
   - mathink : author
@@ -8,9 +8,9 @@
 Set Implicit Arguments.
 Unset Strict Implicit.
 
-Set Universe Polymorphism.
-
 Require Import Category.
+
+Set Universe Polymorphism.
 
 (** * 函手：圏の間のモルフィズム  *)
 (** 射関数の型を Notation でまとめておく。  *)
@@ -24,12 +24,14 @@ Class isFunctor (C D: Category)(fobj: C -> D)(fmap: Fmap C D fobj): Prop :=
     fmap_ident:
       forall X: C,
         fmap X X (Id X) == Id (fobj X) }.
+Arguments fmap_comp {C D fobj fmap}(F){X Y Z f g}: rename.
+Arguments fmap_ident {C D fobj fmap}(F){X}: rename.
 
 Structure Functor (C D: Category) :=
   { fobj: C -> D;
     fmap: Fmap C D fobj;
 
-    prf_Functor: isFunctor fmap }.
+    prf_Functor:> isFunctor fmap }.
 Existing Instance prf_Functor.
 Coercion fobj: Functor >-> Funclass.
 Arguments fmap {C D}(F){X Y}: rename.
@@ -37,21 +39,24 @@ Arguments fmap {C D}(F){X Y}: rename.
 Notation makeFunctor fmap :=
   (@Build_Functor _ _ _ fmap _).
 
-Program Definition compose_Functor (C D E: Category)
-        (F: Functor C D)(G: Functor D E): Functor C E :=
-  makeFunctor (fun X Y => fmap G \o fmap (X:=X) (Y:=Y) F).
-Next Obligation.
+Instance compose_IsFunctor (C D E: Category)
+         (F: Functor C D)(G: Functor D E)
+: isFunctor (fun (X Y: C) => fmap G \o fmap F).
+Proof.
   split; simpl; intros.
-  - now do 2 rewrite fmap_comp.
-  - now do 2 rewrite fmap_ident.
+  - rewrite (fmap_comp F); rewrite (fmap_comp G); reflexivity.
+  - rewrite (fmap_ident F); rewrite (fmap_ident G); reflexivity.
 Qed.
+
+Definition compose_Functor (C D E: Category)
+           (F: Functor C D)(G: Functor D E): Functor C E :=
+  Build_Functor (compose_IsFunctor F G).
 
 Program Definition id_Functor (C: Category): Functor C C :=
   makeFunctor (fun X Y => @id_Map (C X Y)).
 Next Obligation.
   now split; simpl; intros.
 Qed.
-
 
 
 (** *** Equality for Functor *)
@@ -159,13 +164,15 @@ Arguments full {C D} / F.
 Arguments faithful {C D} / F.
 Arguments fullyfaithful {C D}/F.
 
+
 Lemma full_comp (C D E: Category)(F: Functor C D)(G: Functor D E):
   full F -> full G -> full (G \o F).
 Proof.
   simpl; intros HF HG X Y g.
   destruct (HG _ _ g) as [f' Heqf'].
   destruct (HF _ _ f') as [f Heqf].
-  now exists f; rewrite Heqf, Heqf'.
+  exists f; rewrite Heqf, Heqf'.
+  reflexivity.
 Qed.
 
 Lemma faithful_comp (C D E: Category)(F: Functor C D)(G: Functor D E):
