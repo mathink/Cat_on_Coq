@@ -9,4 +9,6 @@ src/Base/Natrans.v
 src/Base/Setoid.v
 src/Limit/Cone.v
 src/Limit/LimProd.v
+src/Monoid/Enriched.v
+src/Monoid/Monoidal.v
 src/Yoneda/YonedaLemma.v
