@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/25 21:42:36> *)
+(* Time-stamp: <2014/11/29 3:32:11> *)
 (*
   Category.v 
   - mathink : author
@@ -90,8 +90,8 @@ Arguments iso {C} / X Y.
 Instance iso_Equivalence (C: Category): Equivalence (iso (C:=C)).
 Proof.
   split.
-  - now intros X; exists (ident (c:=C) X), (ident (c:=C) X); split;
-    simpl; rewrite (identity_cod (ident:=@ident C)).
+  - now intros X; exists (Id X), (Id X); split;
+    simpl; rewrite identity_cod.
   - now intros X Y [f [g [Heql Heqr]]]; exists g, f; split.
   - intros X Y Z [f [f' [Heqf Heqf']]] [g [g' [Heqg Heqg']]].
     exists (g \o f), (f' \o g'); split.
@@ -331,6 +331,22 @@ Definition Setoid_Product (A B: Setoid): Setoid :=
 Infix "[x]" := Setoid_Product (at level 55, right associativity).
 Canonical Structure Setoid_Product.
 
+Instance pair_Proper (X Y: Setoid)
+: Proper ((==) ==> (==) ==> (==)) (@pair X Y).
+Proof.
+  intros x x' Heqx y y' Heqy; simpl; split; assumption.
+Qed.
+
+Instance fst_Proper (X Y: Setoid): Proper ((==) ==> (==)) (@fst X Y).
+Proof.
+  intros [x y] [x' y'] [Heqx _]; simpl; assumption.
+Qed.
+         
+Instance snd_Proper (X Y: Setoid): Proper ((==) ==> (==)) (@snd X Y).
+Proof.
+  intros [x y] [x' y'] [_ Heqy]; simpl; assumption.
+Qed.
+
 (** *** Product of Map  *)
 Program Definition Map_Product (A B C D: Setoid)(f: Map A B)(g: Map C D)
 : Map (A [x] C) (B [x] D) := [ p :-> (f (fst p), g (snd p)) ].
@@ -374,3 +390,6 @@ Qed.
 Definition Product_Category (C D: Category): Category :=
   Build_Category (Product_IsCategory C D).
 Infix "[*]" := Product_Category (at level 70, right associativity).
+
+
+Notation "f  [* C , D ] g" := ((f,g): (C [*] D) (_,_) (_,_)) (at level 57, left associativity).

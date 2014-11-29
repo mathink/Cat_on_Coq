@@ -12,4 +12,6 @@ src/Limit/LimProd.v
 src/Monad/Kleisli.v
 src/Monad/KTMonad.v
 src/Monad/Monad.v
+src/Monoid/Monoidal.v
+src/Monoid/MonoidObj.v
 src/Yoneda/YonedaLemma.v

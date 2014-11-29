@@ -7,10 +7,12 @@ Category Theory on Coq
 ただし、一掃されたのは master ブランチのみですので、
 univ ブランチ内のコードはそのままです。
 
-最新版への最初の更新は 9 月末です。
-
 ## 経過
 
+<<<<<<< HEAD
+=======
+- 11/29 モナドは自己函手の圏のモノイド対象です(src/Monoidal/MonoidObj.v)。
+>>>>>>> monoidal
 - 11/21 モナド追加(src/Monad/)。着手自体は 9 月末。クライスリトリプルやクライスリ圏も。
 - 9/25 リストは始代数 (src/Algebra/ListFunctor.v) まで
 - 9/23 米田の補題 (src/Yoneda/YonedaLemma.v) まで
@@ -37,7 +39,7 @@ Universe Polymorphism を利用しています。
 
 ## ビルド
 
-HoTT/coq にパスが通し、 Cat\_on\_Coq ディレクトリ直下で make すれば OK です。
+HoTT/coq にパスを通し、 Cat\_on\_Coq ディレクトリ直下で make すれば OK です。
 
 
 # 構成
@@ -56,6 +58,13 @@ src
 |-- Limit
 |   |-- Cone.v
 |   `-- LimProd.v
+|-- Monad
+|   |-- KTMonad.v
+|   |-- Kleisli.v
+|   `-- Monad.v
+|-- Monoid
+|   |-- MonoidObj.v
+|   `-- Monoidal.v
 `-- Yoneda
     `-- YonedaLemma.v
 ```

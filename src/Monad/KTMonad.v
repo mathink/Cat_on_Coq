@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/9 22:47:22> *)
+(* Time-stamp: <2014/11/29 18:35:23> *)
 (*
   KTMonad.v 
   - mathink : author
@@ -29,18 +29,18 @@ Next Obligation.
   now rewrite <- mu_T_eta.
 Qed.
 Next Obligation.
-  rewrite compose_assoc, <- (naturality (natrans:=monad_eta m) f); simpl.
+  rewrite compose_assoc, <- (naturality (monad_eta m) (f:=f)); simpl.
   rewrite <- compose_assoc, (mu_eta_T (mu:=monad_mu m) (eta:=monad_eta m) Y).
   now rewrite identity_cod.
 Qed.
 Next Obligation.
   simpl.
-  do 2 rewrite fmap_comp; simpl.
+  do 2 rewrite (fmap_comp m); simpl.
   rewrite <-(compose_assoc _ (fmap m _ \o _) _ ).
   rewrite <-(compose_assoc _ (fmap m _) _ ).
   rewrite mu_T_mu.
   rewrite (compose_assoc _ (fmap m _) _), (compose_assoc _ (monad_mu m (m Z))).
-  rewrite (naturality (natrans:=monad_mu m) g).
+  rewrite (naturality (monad_mu m) (f:=g)).
   repeat rewrite compose_assoc.
   reflexivity.
 Qed.

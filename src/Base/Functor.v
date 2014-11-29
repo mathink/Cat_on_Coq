@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/11/21 0:3:18> *)
+(* Time-stamp: <2014/11/29 18:38:6> *)
 (*
   Functor.v 
   - mathink : author
@@ -8,9 +8,9 @@
 Set Implicit Arguments.
 Unset Strict Implicit.
 
-Set Universe Polymorphism.
-
 Require Import Category.
+
+Set Universe Polymorphism.
 
 (** * 函手：圏の間のモルフィズム  *)
 (** 射関数の型を Notation でまとめておく。  *)
@@ -24,12 +24,14 @@ Class isFunctor (C D: Category)(fobj: C -> D)(fmap: Fmap C D fobj): Prop :=
     fmap_ident:
       forall X: C,
         fmap X X (Id X) == Id (fobj X) }.
+Arguments fmap_comp {C D fobj fmap}(F X Y Z f g): rename.
+Arguments fmap_ident {C D fobj fmap}(F X): rename.
 
 Structure Functor (C D: Category) :=
   { fobj: C -> D;
     fmap: Fmap C D fobj;
 
-    prf_Functor: isFunctor fmap }.
+    prf_Functor:> isFunctor fmap }.
 Existing Instance prf_Functor.
 Coercion fobj: Functor >-> Funclass.
 Arguments fmap {C D}(F){X Y}: rename.
@@ -42,8 +44,8 @@ Program Definition compose_Functor (C D E: Category)
   makeFunctor (fun X Y => fmap G \o fmap (X:=X) (Y:=Y) F).
 Next Obligation.
 split; simpl; intros.
-- now do 2 rewrite fmap_comp.
-- now do 2 rewrite fmap_ident.
+- now do 2 rewrite (fmap_comp _).
+- now do 2 rewrite (fmap_ident _).
 Defined.
 
 Program Definition id_Functor (C: Category): Functor C C :=
@@ -51,7 +53,6 @@ Program Definition id_Functor (C: Category): Functor C C :=
 Next Obligation.
   now split; simpl; intros.
 Qed.
-
 
 
 (** *** Equality for Functor *)
@@ -159,13 +160,15 @@ Arguments full {C D} / F.
 Arguments faithful {C D} / F.
 Arguments fullyfaithful {C D}/F.
 
+
 Lemma full_comp (C D E: Category)(F: Functor C D)(G: Functor D E):
   full F -> full G -> full (G \o F).
 Proof.
   simpl; intros HF HG X Y g.
   destruct (HG _ _ g) as [f' Heqf'].
   destruct (HF _ _ f') as [f Heqf].
-  now exists f; rewrite Heqf, Heqf'.
+  exists f; rewrite Heqf, Heqf'.
+  reflexivity.
 Qed.
 
 Lemma faithful_comp (C D E: Category)(F: Functor C D)(G: Functor D E):

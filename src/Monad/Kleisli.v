@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/9 22:44:19> *)
+(* Time-stamp: <2014/11/29 18:35:31> *)
 (*
   Kleisli.v 
   - mathink : author

@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/11/20 23:59:19> *)
+(* Time-stamp: <2014/11/29 18:35:50> *)
 (*
   Monad.v 
   - mathink : author
@@ -37,7 +37,7 @@ Structure Monad (C: Category) :=
     monad_eta: Natrans (Id C) monad_functor;
     monad_mu: Natrans (monad_functor \o monad_functor) monad_functor;
 
-    prf_Monad: isMonad monad_eta monad_mu }.
+    prf_Monad:> isMonad monad_eta monad_mu }.
 Existing Instance prf_Monad.
 
 
@@ -60,19 +60,17 @@ Section KleisliCategory.
   Proof.
     split; intros; simpl.
     - rewrite <- (compose_assoc _ _ (fmap m h)).
-      rewrite <- (naturality (natrans:=monad_mu m)); simpl.
+      rewrite <- (naturality (monad_mu m)); simpl.
       rewrite compose_assoc.
       rewrite <- (compose_assoc f (fmap m g)).
-      rewrite <- fmap_comp. 
+      rewrite <- (fmap_comp m). 
       rewrite <- (compose_assoc _ (monad_mu m (m W)) (monad_mu m W)).
       rewrite <- mu_T_mu, compose_assoc.
-      rewrite (fmap_comp g); simpl.
+      rewrite (fmap_comp m); simpl.
       rewrite <- (compose_assoc _ _ (fmap m (monad_mu m W))).
-      rewrite <- (compose_assoc (fmap m g)).
-      do 2 rewrite <- fmap_comp.
-      rewrite compose_assoc.
+      do 2 rewrite <- (fmap_comp m).
       reflexivity.
-    - rewrite <- (naturality (natrans:=monad_eta m) f).
+    - rewrite <- (naturality (monad_eta m) (f:=f)).
       rewrite <- compose_assoc.
       rewrite mu_eta_T.
       now rewrite identity_cod; simpl.
@@ -85,4 +83,3 @@ Section KleisliCategory.
     Build_Category Kleisli_IsCategory.
   
 End KleisliCategory.
-

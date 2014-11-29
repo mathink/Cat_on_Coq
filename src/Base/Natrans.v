@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/23 15:20:46> *)
+(* Time-stamp: <2014/11/29 14:40:40> *)
 (*
   Natrans.v 
   - mathink : author
@@ -17,11 +17,11 @@ Class isNatrans (C D: Category)(F G: Functor C D)(natrans: forall X, D (F X) (G 
   naturality:
     forall (X Y: C)(f: C X Y),
       natrans Y \o fmap F f == fmap G f \o natrans X.
+Arguments naturality {C D F G natrans}(N){X Y f}: rename.
 
 Structure Natrans (C D: Category)(F G: Functor C D) :=
-  { natrans: forall X, D (F X) (G X);
-    prf_Natrans: isNatrans natrans }.
-Coercion natrans: Natrans >-> Funclass.
+  { natrans:> forall X, D (F X) (G X);
+    prf_Natrans:> isNatrans natrans }.
 Existing Instance prf_Natrans.
 Notation makeNatrans natrans := (@Build_Natrans _ _ _ _ natrans _).
 Notation "[: X .. Y :=> F :]" := 
@@ -41,7 +41,7 @@ Program Definition compose_Natrans (C D: Category)(F G H: Functor C D)
   {| natrans X := T X \o S X |}.
 Next Obligation.
   intros X Y f; simpl.
-  now rewrite compose_assoc, naturality, <-compose_assoc, naturality, compose_assoc.
+  now rewrite compose_assoc, (naturality S), <-compose_assoc, (naturality T), compose_assoc.
 Qed.
  
 Program Definition id_Natrans (C D: Category)(F: Functor C D): Natrans F F :=
@@ -112,7 +112,7 @@ Program Definition dom_comp_Natrans
 : Natrans (F \o E) (G \o E) := [: X :=> S (E X) :].
 Next Obligation.
   intros X Y f; simpl.
-  now rewrite (naturality (natrans:=S) (fmap E f)).
+  now rewrite (naturality S).
 Qed.        
         
 (**
@@ -128,7 +128,7 @@ Program Definition cod_comp_Natrans
 : Natrans (H \o F) (H \o G) := [: X :=> fmap H (S X) :].
 Next Obligation.
   intros X Y f; simpl.
-  now rewrite <- fmap_comp, (naturality (natrans:=S) f), <- fmap_comp.
+  now rewrite <- (fmap_comp H), (naturality S), <- (fmap_comp H).
 Qed.        
 
 (**
@@ -148,15 +148,13 @@ Program Definition h_compose_Natrans_dc
   [: X :=> cod_comp_Natrans S G' X \o dom_comp_Natrans F T X :].
 Next Obligation.
   intros X Y f; simpl.
-  rewrite <- (naturality (natrans:=T) (S X)).
+  rewrite <- (naturality T).
   rewrite <- (compose_assoc _ _ (fmap G' (fmap G f))).
-  rewrite <- (naturality (natrans:=T) (fmap G f)).
+  rewrite <- (fmap_comp G').
+  rewrite <- (naturality T).
   rewrite (compose_assoc _ _ (T (G Y))).
-  rewrite <- fmap_comp.
-  rewrite <- (naturality (natrans:=S) f).
-  rewrite <- (naturality (natrans:=T) (S Y)).
-  rewrite compose_assoc.
-  rewrite <- fmap_comp.
+  rewrite <- (fmap_comp F').
+  rewrite <- (naturality S).
   reflexivity.
 Qed.
 
@@ -170,11 +168,10 @@ Program Definition h_compose_Natrans_cd
   [: X :=> dom_comp_Natrans G T X \o cod_comp_Natrans S F' X :].
 Next Obligation.
   intros X Y f; simpl.
-  rewrite compose_assoc, <- fmap_comp.
-  rewrite (naturality (natrans:=S) f).
-  rewrite <- compose_assoc.
-  rewrite <- (naturality (natrans:=T) (fmap G f)).
-  rewrite compose_assoc, <- fmap_comp.
+  rewrite compose_assoc, <- (fmap_comp F').
+  rewrite (naturality S).
+  rewrite <- compose_assoc, <- (naturality T).
+  rewrite compose_assoc, <- (fmap_comp F').
   reflexivity.
 Qed.
 
@@ -189,7 +186,7 @@ Lemma dc_equiv_cd
   equal_Natrans (h_compose_Natrans_dc S T) (h_compose_Natrans_cd S T).
 Proof.
   simpl; intro X; simpl.
-  now rewrite (naturality (natrans:=T) _).
+  now rewrite (naturality T).
 Qed.
 
 Lemma h_compose_Assoc
@@ -206,12 +203,12 @@ Lemma h_compose_Assoc
 Proof.
   intros X; simpl; apply eq_Hom_def; simpl.
   repeat rewrite <- compose_assoc.
-  repeat rewrite <- (naturality (natrans:=T) _).
-  repeat rewrite <- (naturality (natrans:=S) _).
-  repeat rewrite <- fmap_comp.
-  repeat rewrite compose_assoc.
-  repeat rewrite <- (naturality (natrans:=T) _).
-  repeat rewrite <- (naturality (natrans:=S) _).
+  rewrite <- (naturality T).
+  rewrite <- (naturality S).
+  rewrite <- (fmap_comp G').
+
+  rewrite <- (naturality T).
+  rewrite <- (naturality S).
   reflexivity.
 Qed.
 

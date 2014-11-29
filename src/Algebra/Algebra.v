@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/25 21:46:11> *)
+(* Time-stamp: <2014/11/29 15:22:54> *)
 (*
   Algebra.v 
   - mathink : author
@@ -45,7 +45,7 @@ Program Definition compose_AlgMap `(F: Functor C C)(x y z: Alg F)
   {| alg_map := g \o{C} f |}.
 Next Obligation.
   simpl; unfold isAlgMap.
-  now rewrite fmap_comp, <- compose_assoc, alg_commute, compose_assoc, alg_commute, compose_assoc. 
+  now rewrite (fmap_comp F), <- compose_assoc, alg_commute, compose_assoc, alg_commute, compose_assoc. 
 Defined.
 Arguments compose_AlgMap C F x y z / f g.
 
@@ -53,7 +53,7 @@ Program Definition id_AlgMap `(F: Functor C C)(x: Alg F): AlgMap x x :=
   {| alg_map := Id (x:C) |}.
 Next Obligation.
   simpl; unfold isAlgMap.
-  now rewrite fmap_ident, identity_dom, identity_cod.
+  now rewrite (fmap_ident F), identity_dom, identity_cod.
 Qed.
 
 Definition equal_AlgMap `(F: Functor C C)(x y: Alg F)(f g: AlgMap x y) :=

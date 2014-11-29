@@ -81,6 +81,8 @@ endif
 ######################
 
 VFILES:=src/Yoneda/YonedaLemma.v\
+  src/Monoid/MonoidObj.v\
+  src/Monoid/Monoidal.v\
   src/Monad/Monad.v\
   src/Monad/KTMonad.v\
   src/Monad/Kleisli.v\
