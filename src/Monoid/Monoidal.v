@@ -13,16 +13,17 @@ Generalizable All Variables.
 
 Require Import Category Functor Natrans.
 
+
+Definition BiFunctor (C1 C2 D: Category) := Functor (C1 [*] C2) D.
+Notation biFmap F f1 f2 := (fmap F (f1 [*_,_] f2)).
+
 Section BiComp_1.
   (* (-xY)xZ : C -> C *)
   (* -x(YxZ) : C -> C *)
   Context (C: Category)(F: Functor (C [*] C) C)(Y Z: C).
 
   Program Definition fmap_BC1d: Fmap C C (fun X => F (F (X,Y), Z))
-  := fun X X' =>[ f :->
-                    fmap F
-                    ((fmap F ((f , Id Y): (C [*] C) (X,Y) (X',Y)), Id Z)
-                     : (C [*] C) (F (X,Y), Z) (F (X',Y), Z)) ].
+  := fun X X' =>[ f :-> biFmap F (biFmap F f (Id Y)) (Id Z) ].
   Next Obligation.
     intros f f' Heqf.
     apply eq_arg; simpl; split; [| reflexivity].
@@ -33,23 +34,22 @@ Section BiComp_1.
   Proof.
     split.
     - intros X X' X'' f f'; simpl.
+      rewrite <- (identity_dom (Id Y)) at 1.
       rewrite <- (fmap_comp F).
       apply eq_arg; simpl; split; simpl; [| symmetry; apply identity_dom].
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
+      rewrite <- (fmap_comp F).
+      rewrite identity_dom.
       apply eq_arg; simpl; split; [reflexivity | symmetry; apply identity_dom].
     - intros X; simpl.
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; simpl; [| reflexivity].
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; reflexivity.
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; simpl; [| reflexivity].
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; reflexivity.
   Qed.
 
   Definition BC1d: Functor C C := Build_Functor BC1d_IsFunctor.
 
   
   Program Definition fmap_BC1c: Fmap C C (fun X => F (X, F (Y, Z)))
-    := fun X X' =>[ f :->
-                      fmap F
-                      ((f, fmap F ((Id Y, Id Z): (C [*] C) (Y, Z) (Y, Z)))
-                       : (C [*] C) (X, F (Y, Z)) (X', F (Y, Z))) ].
+    := fun X X' =>[ f :-> biFmap F f (biFmap F (Id Y) (Id Z)) ].
   Next Obligation.
     intros f f' Heqf.
     apply eq_arg; simpl; split; [assumption | reflexivity].
@@ -59,13 +59,13 @@ Section BiComp_1.
   Proof.
     split.
     - intros X X' X'' f f'; simpl.
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
+      rewrite <- (fmap_comp F).
       apply eq_arg; simpl; split; [reflexivity |].
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
+      rewrite <- (fmap_comp F).
       now apply eq_arg; simpl; split; symmetry; apply identity_dom.
     - intros X; simpl.
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; simpl; [reflexivity |].
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; reflexivity.
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; simpl; [reflexivity |].
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; reflexivity.
   Qed.
 
   Definition BC1c: Functor C C := Build_Functor BC1c_IsFunctor.
@@ -78,10 +78,7 @@ Section BiComp_2.
   Context (C: Category)(F: Functor (C [*] C) C)(X Z: C).
 
   Program Definition fmap_BC2d: Fmap C C (fun Y => F (F (X,Y), Z))
-  := fun Y Y' =>[ f :->
-                    fmap F
-                    ((fmap F ((Id X, f): (C [*] C) (X,Y) (X,Y')), Id Z)
-                     : (C [*] C) (F (X,Y), Z) (F (X,Y'), Z)) ].
+  := fun Y Y' =>[ f :-> biFmap F (biFmap F (Id X) f) (Id Z) ].
   Next Obligation.
     intros f f' Heqf.
     apply eq_arg; simpl; split; [| reflexivity].
@@ -92,23 +89,18 @@ Section BiComp_2.
   Proof.
     split.
     - intros Y Y' Y'' f f'; simpl.
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; simpl; [| symmetry; apply identity_dom].
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; [symmetry; apply identity_dom | reflexivity].
+      rewrite <- (fmap_comp F).      apply eq_arg; simpl; split; simpl; [| symmetry; apply identity_dom].
+      rewrite <- (fmap_comp F).      apply eq_arg; simpl; split; [symmetry; apply identity_dom | reflexivity].
     - intros Y; simpl.
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; simpl; [| reflexivity].
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; reflexivity.
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; simpl; [| reflexivity].
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; reflexivity.
   Qed.
 
   Definition BC2d: Functor C C := Build_Functor BC2d_IsFunctor.
 
   
   Program Definition fmap_BC2c: Fmap C C (fun Y => F (X, F (Y, Z)))
-    := fun Y Y' =>[ f :->
-                      fmap F
-                      ((Id X, fmap F ((f, Id Z): (C [*] C) (Y, Z) (Y', Z)))
-                       : (C [*] C) (X, F (Y, Z)) (X, F (Y', Z))) ].
+    := fun Y Y' =>[ f :-> biFmap F (Id X) (biFmap F f (Id Z)) ].
   Next Obligation.
     intros f f' Heqf.
     apply eq_arg; simpl; split; [reflexivity |].
@@ -119,13 +111,11 @@ Section BiComp_2.
   Proof.
     split.
     - intros Y Y' Y'' f f'; simpl.
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; [symmetry; apply identity_dom |].
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; [reflexivity | symmetry; apply identity_dom].
+      rewrite <- (fmap_comp F).      apply eq_arg; simpl; split; [symmetry; apply identity_dom |].
+      rewrite <- (fmap_comp F).      apply eq_arg; simpl; split; [reflexivity | symmetry; apply identity_dom].
     - intros Y; simpl.
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; simpl; [reflexivity |].
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; reflexivity.
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; simpl; [reflexivity |].
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; reflexivity.
   Qed.
 
   Definition BC2c: Functor C C := Build_Functor BC2c_IsFunctor.
@@ -138,10 +128,7 @@ Section BiComp_3.
   Context (C: Category)(F: Functor (C [*] C) C)(X Y: C).
 
   Program Definition fmap_BC3d: Fmap C C (fun Z => F (F (X, Y), Z))
-  := fun Z Z' =>[ f :->
-                    fmap F
-                    ((fmap F ((Id X, Id Y): (C [*] C) (X, Y) (X, Y)), f)
-                     : (C [*] C) (F (X, Y), Z) (F (X, Y), Z')) ].
+  := fun Z Z' =>[ f :-> biFmap F (biFmap F (Id X) (Id Y)) f ].
   Next Obligation.
     intros f f' Heqf.
     apply eq_arg; simpl; split; [reflexivity | assumption].
@@ -151,22 +138,17 @@ Section BiComp_3.
   Proof.
     split.
     - intros Z Z' Z'' f f'; simpl.
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; simpl; [| reflexivity]. 
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; simpl; symmetry; apply identity_dom.
+      rewrite <- (fmap_comp F); apply eq_arg; simpl; split; simpl; [| reflexivity]. 
+      rewrite <- (fmap_comp F); apply eq_arg; simpl; split; simpl; symmetry; apply identity_dom.
     - intros Z; simpl.
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; simpl; [| reflexivity].
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; reflexivity.
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; simpl; [| reflexivity].
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; reflexivity.
   Qed.
 
   Definition BC3d: Functor C C := Build_Functor BC3d_IsFunctor.
   
   Program Definition fmap_BC3c: Fmap C C (fun Z => F (X, F (Y, Z)))
-    := fun Z Z' =>[ f :->
-                      fmap F
-                      ((Id X, fmap F ((Id Y, f): (C [*] C) (Y, Z) (Y, Z')))
-                       : (C [*] C) (X, F (Y, Z)) (X, F (Y, Z'))) ].
+    := fun Z Z' =>[ f :-> biFmap F (Id X) (biFmap F (Id Y) f) ].
   Next Obligation.
     intros f f' Heqf.
     apply eq_arg; simpl; split; [reflexivity |].
@@ -177,13 +159,11 @@ Section BiComp_3.
   Proof.
     split.
     - intros Z Z' Z'' f f'; simpl.
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; [symmetry; apply identity_dom |].
-      rewrite <- (fmap_comp (isFunctor := prf_Functor F)).
-      apply eq_arg; simpl; split; [symmetry; apply identity_dom| reflexivity].
+      rewrite <- (fmap_comp F); apply eq_arg; simpl; split; [symmetry; apply identity_dom |].
+      rewrite <- (fmap_comp F); apply eq_arg; simpl; split; [symmetry; apply identity_dom| reflexivity].
     - intros Z; simpl.
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; simpl; [reflexivity |].
-      rewrite <- fmap_ident; apply eq_arg; simpl; split; reflexivity.
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; simpl; [reflexivity |].
+      rewrite <- (fmap_ident F); apply eq_arg; simpl; split; reflexivity.
   Qed.
 
   Definition BC3c: Functor C C := Build_Functor BC3c_IsFunctor.
@@ -193,12 +173,26 @@ End BiComp_3.
 Definition Assoc (C: Category)(Op: Functor (C [*] C) C) :=
   forall X Y Z, C (Op (Op (X, Y), Z)) (Op (X, Op (Y, Z))).
 
+Definition Assoc_Inv (C: Category)(Op: Functor (C [*] C) C) :=
+  forall X Y Z, C (Op (X, Op (Y, Z))) (Op (Op (X, Y), Z)).
+
 Class isAssoc
       (C: Category)
       (Tensor: Functor (C [*] C) C)
-      (assoc: Assoc Tensor) :=
+      (assoc: Assoc Tensor)
+      (assoc_inv: Assoc_Inv Tensor):=
   {
-    (** naturality of [assoc] *)
+    assoc_naturality:
+      forall (X X' Y Y' Z Z': C)(f: C X X')(g: C Y Y')(h: C Z Z'),
+        assoc X' Y' Z' \o biFmap Tensor (biFmap Tensor f g) h
+        == biFmap Tensor f (biFmap Tensor g h) \o assoc X Y Z;
+
+    assoc_iso:
+      forall (X Y Z: C),
+        Iso (assoc X Y Z) (assoc_inv X Y Z)
+  }.
+
+    (** naturality of [assoc] 
     assoc_naturality_1:
       forall Y Z: C,
         isNatrans (F:=BC1d Tensor Y Z) (G:=BC1c Tensor Y Z)
@@ -225,7 +219,8 @@ Class isAssoc
       Build_Natrans (assoc_naturality_3 X Y);
     assoc_isomorphic_3:
       forall X Y, natural_isomorphism (assoc_3 X Y)
-  }.
+     *)
+
 
 Program Definition fmap_BCL (C: Category)(F: Functor (C [*] C) C)(Y: C)
 : Fmap C C (fun X => F (X,Y)) :=
@@ -240,10 +235,10 @@ Instance BCL_IsFunctor (C: Category)(F: Functor (C [*] C) C)(Y: C)
 Proof.
   split.
   - intros X X' X'' f f'; simpl.
-    rewrite <- (fmap_comp (isFunctor := prf_Functor F)); simpl.
+    rewrite <- (fmap_comp F).
     apply eq_arg; simpl; split; [reflexivity | symmetry; apply identity_dom].
   - intro X; simpl.
-    rewrite <- (fmap_ident (isFunctor := prf_Functor F)); simpl.
+    rewrite <- (fmap_ident F); simpl.
     apply eq_arg; simpl; split; reflexivity.
 Qed.
 
@@ -262,10 +257,10 @@ Instance BCR_IsFunctor (C: Category)(F: Functor (C [*] C) C)(X: C)
 Proof.
   split.
   - intros Y Y' Y'' f f'; simpl.
-    rewrite <- (fmap_comp (isFunctor := prf_Functor F)); simpl.
+    rewrite <- (fmap_comp F); simpl.
     apply eq_arg; simpl; split; [symmetry; apply identity_dom | reflexivity].
   - intro Y; simpl.
-    rewrite <- (fmap_ident (isFunctor := prf_Functor F)); simpl.
+    rewrite <- (fmap_ident F); simpl.
     apply eq_arg; simpl; split; reflexivity.
 Qed.
 
@@ -274,13 +269,14 @@ Definition BCR `(F: Functor (C [*] C) C)(X: C) := Build_Functor (BCR_IsFunctor F
 Class isMonoidal
       `(Tensor: Functor (C [*] C) C)
       (assoc: Assoc Tensor)
+      (assoc_inv: Assoc_Inv Tensor)
       (Unit: C)
       (lam: Natrans (BCR Tensor Unit) (Identity_Functor C))
       (lam_inv: Natrans (Identity_Functor C) (BCR Tensor Unit))
       (raw: Natrans (BCL Tensor Unit) (Identity_Functor C))
       (raw_inv: Natrans (Identity_Functor C) (BCL Tensor Unit)) :=
   {
-    assoc_associative: isAssoc assoc;
+    assoc_associative: isAssoc assoc assoc_inv;
     lam_iso: forall X, Iso (lam X) (lam_inv X);
     raw_iso: forall X, Iso (raw X) (raw_inv X);
 
@@ -288,27 +284,30 @@ Class isMonoidal
     monoidal_coherence_assoc:
       forall (X Y Z W: C),
         assoc X Y (Tensor (Z, W)) \o assoc (Tensor (X, Y)) Z W ==
-        fmap Tensor ((Id X, assoc Y Z W): (C [*] C) (X, _) (X, _))
+        biFmap Tensor (Id X) (assoc Y Z W)
              \o assoc X (Tensor (Y, Z)) W
-             \o fmap Tensor ((assoc X Y Z, Id W): (C [*] C) (_,W) (_, W));
+             \o biFmap Tensor (assoc X Y Z) (Id W);
 
     monoidal_coherence_unit:
       forall X Y: C,
-        fmap Tensor ((raw X, Id Y): (C [*] C) (_,Y) (_,Y)) ==
-        fmap Tensor ((Id X, lam Y): (C [*] C) (X,_) (X,_)) \o assoc X Unit Y
+        biFmap Tensor (raw X) (Id Y) ==
+        biFmap Tensor (Id X) (lam Y) \o assoc X Unit Y
   }.
+Existing Instance assoc_associative.
+Coercion assoc_associative: isMonoidal >-> isAssoc.
 
 Structure MonoidalCategory :=
   {
     mcCat:> Category;
     mcX: Functor (mcCat [*] mcCat) mcCat;
     mcA: Assoc mcX;
+    mcAR: Assoc_Inv mcX;
     mcI: mcCat;
     mc1X: Natrans (BCR mcX mcI) (Identity_Functor mcCat);
     mc1XR: Natrans (Identity_Functor mcCat) (BCR mcX mcI);
     mcX1: Natrans (BCL mcX mcI) (Identity_Functor mcCat);
     mcX1R: Natrans (Identity_Functor mcCat) (BCL mcX mcI);
-    prf_MonoidalCategory:> isMonoidal mcA mc1X mc1XR mcX1 mcX1R
+    prf_MonoidalCategory:> isMonoidal mcA mcAR mc1X mc1XR mcX1 mcX1R
   }.
 Notation "X [x] Y" := (mcX _ (X,Y)) (at level 55, right associativity).
 Notation "g [ 'x' V ] f" := (fmap (mcX V) ((g, f): (V [*] V) (_,_) (_,_))) (at level 55, right associativity).
@@ -320,7 +319,7 @@ Lemma tensor_comp_id `(V: MonoidalCategory):
     g [x V] f == (g [x V] (Id X')) \o ((Id Y) [x V] f).
 Proof.
   intros; simpl.
-  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+  rewrite <- (fmap_comp (mcX V)).
   apply eq_arg; simpl; split; symmetry;
   [apply identity_dom | apply identity_cod].
 Qed.
@@ -331,7 +330,7 @@ Lemma tensor_comp_l `(V: MonoidalCategory):
     (g \o f) [x V] Id X' == g [x V] Id X' \o f [x V] Id X'.
 Proof.
   intros; simpl.
-  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+  rewrite <- (fmap_comp (mcX V)).
   apply eq_arg; simpl; split;
   [reflexivity | symmetry; apply identity_cod].
 Qed.
@@ -342,10 +341,11 @@ Lemma tensor_comp `(V: MonoidalCategory):
     (g \o f) [x V] (g' \o f') == g [x V] g' \o f [x V] f'.
 Proof.
   intros; simpl.
-  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))).
+  rewrite <- (fmap_comp (mcX V)).
   apply eq_arg; simpl; split; reflexivity.
 Qed.
 
+(*
 Lemma assoc_naturality `(V: MonoidalCategory):
   forall (X X' Y Y' Z Z': V)(f: V X X')(g: V Y Y')(h: V Z Z'),
     mcA V \o (h [x V] g) [x V] f == h [x V] (g [x V] f) \o mcA V.
@@ -360,31 +360,31 @@ Proof.
        [apply (tensor_comp_id g h) | reflexivity]).
   rewrite H; clear H; simpl.
 
-  generalize
-    (naturality (isNatrans := assoc_naturality_1 (isAssoc := assoc_associative (isMonoidal:=V)) Y' X') h); simpl.
-  intro H.
   rewrite <- (compose_assoc _ _ (mcA V)); simpl.
   rewrite (tensor_comp_l X' (Id Z [x V] g)(h [x V] Id Y')).
   rewrite <- compose_assoc.
+  generalize
+    (naturality (assoc_1 (isAssoc:=V) Y' X') (f:=h)); simpl; intro H.
   rewrite H; clear H.
   rewrite compose_assoc.
-  rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))); simpl.
+  rewrite <- (fmap_comp (mcX V)); simpl.
   rewrite compose_assoc.
   rewrite (tensor_comp (Id (Z [x] Y)) (Id Z [x V] g)  f (Id X')).
+
   rewrite <- (compose_assoc _ _ (mcA V)).
   generalize
-    (naturality (isNatrans := assoc_naturality_2 (isAssoc := assoc_associative (isMonoidal:=V)) Z X') g); simpl.
-  intro H.
+    (naturality (assoc_2 (isAssoc:=V) Z X') (f:=g)); simpl; intro H.
   rewrite H; clear H.
   rewrite compose_assoc.
+  
   generalize
-    (naturality (isNatrans := assoc_naturality_3 (isAssoc := assoc_associative (isMonoidal:=V)) Z Y) f); simpl; intro H.
+    (naturality (assoc_3 (isAssoc:=V) Z Y) (f:=f)); simpl; intro H.
   assert
     ((Id Z [x V] Id Y)[x V] f
      ==
      Id (Z [x] Y) [x V] f)
     by (apply eq_arg; simpl; split;
-        [rewrite <- fmap_ident |]; reflexivity).
+        [rewrite <- (fmap_ident (mcX V)) |]; reflexivity).
   rewrite H0 in H; clear H0.
   rewrite H; clear H.
   rewrite <- compose_assoc.
@@ -392,27 +392,18 @@ Proof.
   rewrite <- tensor_comp.
   rewrite <- tensor_comp.
 
-  assert
-    (((h \o Id Z) \o Id Z)
-       [x V]
-       (((Id Y'[x V] Id X') \o (g [x V] Id X')) \o (Id Y [x V] f))
-     == h [x V](g [x V] f)).
-  {
-    simpl.
-    apply eq_arg; simpl; split;
-    [do 2 rewrite identity_dom; reflexivity |].
-    rewrite compose_assoc.
-    rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))); simpl.
-    rewrite <- (fmap_comp (isFunctor := prf_Functor (mcX V))); simpl.
-    apply eq_arg; simpl; split.
-    - rewrite identity_dom, identity_cod; reflexivity.
-    - rewrite identity_cod, identity_cod; reflexivity.
-  }
-  rewrite H; clear H.
+  rewrite identity_dom.
+  rewrite identity_dom.
 
-  reflexivity.
-  
+  apply compose_Proper; [reflexivity |].
+  apply eq_arg; simpl; split; [reflexivity |].
+
+  rewrite <- tensor_comp.
+  rewrite <- tensor_comp.
+  apply eq_arg; simpl; split; rewrite identity_dom, identity_cod; reflexivity.
+
 Qed.
+ *)
 
 Class isSymmetricMonoidal (V: MonoidalCategory)
       (comm: forall X Y: V, V (X [x] Y) (Y [x] X)) :=

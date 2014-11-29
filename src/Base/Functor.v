@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/11/28 21:57:11> *)
+(* Time-stamp: <2014/11/29 12:46:47> *)
 (*
   Functor.v 
   - mathink : author
@@ -24,8 +24,8 @@ Class isFunctor (C D: Category)(fobj: C -> D)(fmap: Fmap C D fobj): Prop :=
     fmap_ident:
       forall X: C,
         fmap X X (Id X) == Id (fobj X) }.
-Arguments fmap_comp {C D fobj fmap}(F){X Y Z f g}: rename.
-Arguments fmap_ident {C D fobj fmap}(F){X}: rename.
+Arguments fmap_comp {C D fobj fmap}(F X Y Z f g): rename.
+Arguments fmap_ident {C D fobj fmap}(F X): rename.
 
 Structure Functor (C D: Category) :=
   { fobj: C -> D;

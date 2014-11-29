@@ -32,3 +32,4 @@ Structure Monoid `(V: MonoidalCategory) :=
     prf_Monoid:> isMonoid mon_mul mon_uni
   }.
 
+

@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/11/29 0:59:43> *)
+(* Time-stamp: <2014/11/29 14:40:40> *)
 (*
   Natrans.v 
   - mathink : author

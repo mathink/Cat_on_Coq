@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/11/28 9:37:17> *)
+(* Time-stamp: <2014/11/29 15:21:45> *)
 (*
   Enriched.v
   - mathink : author
@@ -61,11 +61,8 @@ Instance Compose_ECHom `(C: EnrichedCategory V): Compose (@ECHom V C) :=
   }.
 Proof.
   intros X Y Z f f' Heqf g g' Heqg; simpl.
-  assert (g[x V]f == g'[x V]f').
-  - apply eq_arg; simpl; split; assumption.
-  - rewrite H; reflexivity.
+  rewrite Heqf, Heqg; reflexivity.
 Defined.
-
 
 Instance Identity_ECHom `(C: EnrichedCategory V): Identity (@ECHom V C) :=
   {
@@ -79,7 +76,7 @@ Lemma tensor_Iso `(V: MonoidalCategory):
 Proof.
   do 8 intro; simpl;
   intros [HIsof HIsof'] [HIsog HIsog']; simpl; split;
-  rewrite <- tensor_comp; simpl; rewrite <- fmap_ident;
+  rewrite <- tensor_comp; simpl; rewrite <- (fmap_ident (mcX V));
   apply eq_arg; simpl; split; assumption.
 Qed.  
 
@@ -116,6 +113,7 @@ Proof.
   apply identity_dom.
 Qed.    
 
+(*
 Lemma assoc_lam `(V: MonoidalCategory):
   forall X Y: V,
     mc1X V X [x V] Id Y == mc1X V (X [x] Y) \o mcA V.
@@ -130,7 +128,7 @@ Proof.
     
   }
 
-  
+  *)
   
 (*   generalize (assoc_naturality (V:=V) (Id Y) (Id X) (Id X)); simpl. *)
 (*   intro H. *)
@@ -141,7 +139,7 @@ Proof.
 (* Proof. *)
   
 
-  
+  (*
 Instance EC_IsCategory `(C: EnrichedCategory V)
 : isCategory (Compose_ECHom C) (Identity_ECHom C).
 Proof.
@@ -184,3 +182,4 @@ Proof.
     rewrite <- (compose_assoc _ _ (mcA V)).
 
     (* need: lam_I == raw_I  *)
+*)
