@@ -13,6 +13,7 @@ src/Limit/LimProd.v
 src/Monad/Kleisli.v
 src/Monad/KTMonad.v
 src/Monad/Monad.v
+src/Monad/TAlgebra.v
 src/Monoid/Enriched.v
 src/Monoid/Monoidal.v
 src/Monoid/MonoidObj.v
