@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/9/25 21:40:18> *)
+(* Time-stamp: <2015/7/13 15:50:20> *)
 (*
   Setoid.v 
   - mathink : author
@@ -23,7 +23,7 @@ rewrite による書き換えが出来るというのは非常にありがたい
  *)
 (** 以降のファイルでは一々これらのライブラリを入れるのは手間なので、
 ここで Export しておきましょう *)
-Require Export Init Basics Tactics Coq.Setoids.Setoid Morphisms.
+Require Export CMorphisms CEquivalence.
 
 (**
 基本的に、数学的構造の定義は
@@ -38,7 +38,7 @@ Require Export Init Basics Tactics Coq.Setoids.Setoid Morphisms.
  *)
 Structure Setoid :=
   { carrier :> Type;
-    equal : relation carrier;
+    equal : crelation carrier;
     prf_Setoid :> Equivalence equal }.
 Existing Instance prf_Setoid.
 Notation makeSetoid eq := (@Build_Setoid _ eq _).
@@ -77,12 +77,15 @@ Arguments surjective {A B} / f.
 Program Definition compose_Map (X Y Z: Setoid)(f: Map X Y)(g: Map Y Z): Map X Z :=
   [ x :-> g (f x) ].
 Next Obligation.
-  intros x y Heq; rewrite Heq; reflexivity.
+  intros x y Heq.
+  do 2 apply fbody_Proper.
+  assumption.
 Qed.
 
 Program Definition id_Map (X: Setoid): Map X X := [x :-> x].
 Next Obligation.
-  intros x y Heq; rewrite Heq; reflexivity.
+  intros x y Heq.
+  assumption.
 Qed.
 
 (** Map 上の等価性は外延的等価性と同等のもので定義。  *)
@@ -93,10 +96,13 @@ Arguments equal_Map {X Y} / f g.
 Instance equal_Map_Equiv (X Y: Setoid): Equivalence (@equal_Map X Y).
 Proof.
   split.
-  - intros f x; simpl; reflexivity.
-  - intros f g Heq x; simpl; symmetry; now apply Heq.
+  - intros f x; simpl.
+    apply reflexivity.
+  - intros f g Heq x; simpl; apply symmetry; now apply Heq.
   - intros f g h Heqfg Heqgh x; simpl.
-    rewrite (Heqfg x); now apply Heqgh.
+    apply (@transitivity _ _ _ _ (g x)).
+    + apply Heqfg.
+    + apply Heqgh.
 Defined.
 
 (** 同値関係であることが示せれば、Map 自身も Setoid となる。 *)
@@ -106,14 +112,6 @@ Canonical Structure Setoid_Map.
 Notation "(-->)" := Setoid_Map.
 Notation "X --> Y" := (Setoid_Map X Y) (at level 55, right associativity).
 
-(** 時々使う補題です  *)
-Lemma eq_arg:
-  forall (X Y: Setoid)(f: X --> Y)(x y: X),
-    x == y -> f x == f y.
-Proof.
-  intros X Y f x y Heq; rewrite Heq; reflexivity.
-Qed.      
-
 (** ** Unique Existance for Setoid  *)
 Definition Unique (A: Setoid)(P: A -> Prop)(x: A) :=
   P x /\ (forall x': A, P x' -> x == x').
@@ -122,35 +120,4 @@ Notation "'Exists' ! x .. y , p" :=
   (ex (Unique (fun x => .. (ex (Unique (fun y => p))) ..)))
     (at level 200, x binder, right associativity,
      format "'[' 'Exists' ! '/ ' x .. y , '/ ' p ']'").
-
-
-(** ** Operational Type Class 
-    記法のための型クラスです。
-    A Gentle Introduction to Type Classes and Relation on Coq を読みましょう。
- *)
-
-(** *** 「合成」のためのクラス *)
-Class Compose (T: Type)(hom: T -> T -> Setoid): Type :=
-  { compose: forall X Y Z: T, hom X Y -> hom Y Z -> hom X Z;
-    compose_Proper:
-      forall X Y Z: T, Proper ((==) ==> (==) ==> (==)) (@compose X Y Z) }.
-Existing Instance compose_Proper.
-Notation "g \o f" := (compose f g) (at level 60, right associativity).
-
-(** *** 「恒等変換」のためのクラス  *)
-Class Identity (T: Type)(hom: T -> T -> Setoid): Type :=
-  identity: forall X: T, hom X X.
-Coercion identity: Identity >-> Funclass.
-Notation "'Id' X" := (identity X) (at level 30).
-
-
-(** *** Map を登録 *)
-Instance Compose_Map: Compose (-->) := { compose := compose_Map }.
-Proof.
-  intros X Y Z f f' Heqf g g' Heqg x; simpl.
-  rewrite (Heqf x); exact (Heqg (f' x)).
-Defined.
-
-Instance Identity_Map: Identity (-->) := id_Map.
-
 

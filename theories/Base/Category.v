@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2014/11/29 3:32:11> *)
+(* Time-stamp: <2015/7/13 16:4:28> *)
 (*
   Category.v 
   - mathink : author
@@ -13,45 +13,53 @@ Set Universe Polymorphism.
 
 (** * 圏：定義と幾つかの性質たち *)
 
-Require Export Setoid.
+Require Export COC.Base.Setoid. 
 
 (** ** Category *)
 Class isCategory
       {obj: Type}{arr: obj -> obj -> Setoid}
-      (comp: Compose arr)(ident: Identity arr): Prop :=
-  { compose_assoc X Y Z W:
+      (comp: forall {X Y Z: obj}, arr X Y -> arr Y Z -> arr X Z)
+      (ident: forall X: obj, arr X X) :=
+  { compose_Proper:
+      forall X Y Z: obj,
+        Proper ((==) ==> (==) ==> (==)) (@comp X Y Z);
+    compose_assoc X Y Z W:
       forall (f: arr X Y)(g: arr Y Z)(h: arr Z W),
-        (h \o g) \o f == h \o (g \o f);
+        comp f (comp g h) == comp (comp f g) h;
 
-    identity_dom X Y (f: arr X Y): f \o Id X == f;
+    identity_dom X Y (f: arr X Y):
+      comp (ident X) f == f;
 
-    identity_cod X Y (f: arr X Y): Id Y \o f == f }.
+    identity_cod X Y (f: arr X Y):
+      comp f (ident Y) == f }.
 Existing Instance compose_Proper.
 
 Structure Category :=
   { obj: Type;
     arr: obj -> obj -> Setoid;
-    comp: Compose arr;
-    ident: Identity arr;
+    comp: forall {X Y Z: obj},
+        arr X Y -> arr Y Z -> arr X Z;
+    ident: forall {X: obj}, arr X X;
     
-    prf_Category: isCategory comp ident }.
-Existing Instance comp.
-Existing Instance ident.
+    prf_Category:> isCategory (@comp) (@ident) }.
 Existing Instance prf_Category.
 Coercion obj: Category >-> Sortclass.
 Coercion arr: Category >-> Funclass.
 
-Notation "g \o{ C } f" := (compose (Compose:=comp C) f g) (at level 55, right associativity).
+Notation "g \o f" := (comp f g) (at level 60, right associativity).
+Notation "g \o{ C } f" := (@comp C _ _ _ f g) (at level 55, right associativity).
+Notation "'Id' X" := (ident (X:=X)) (at level 30).
 
 (** ** dual  *)
+
+Check @compose_Proper.
 Definition  opposite (C: Category): Category :=
   (Build_Category
      (@Build_isCategory
         (@obj C) (fun X Y: @obj C => @arr C Y X)
-        (Build_Compose 
-           (fun X Y Z f f' Heqf g g' Heqg =>
-              (@compose_Proper _ _ (@comp C) Z Y X g g' Heqg f f' Heqf)))
-        (@ident C)
+        _ (@ident C)
+        (fun X Y Z f f' Heqf g g' Heqg =>
+           (@compose_Proper _ _ (@comp C) _ _ Z Y X g g' Heqg f f' Heqf))
         (fun (X Y Z W: obj C) f g h =>
            Equivalence_Symmetric
              _ _ (@compose_assoc _ _ _ _ (prf_Category C) W Z Y X h g f))
@@ -61,12 +69,19 @@ Notation "'op' C" := (opposite C)
     (at level 7, right associativity).
 
 (** ** Example: Setoids  *)
-Instance Setoids_IsCategory: isCategory Compose_Map Identity_Map.
+Instance Setoids_IsCategory: isCategory compose_Map id_Map.
 Proof.
   split.
-  - now intros X Y Z W f g h x.
-  - now intros X Y f x.
-  - now intros X Y f x.
+  - intros X Y Z f f' Heqf g g' Heqg x; simpl.
+    apply (@transitivity  _ _ _ _ (g (f' x))).
+    + apply fbody_Proper, Heqf.
+    + apply Heqg.
+  - intros X Y Z W f g h x; simpl.
+    apply reflexivity.
+  - intros X Y f x.
+    apply reflexivity.
+  - intros X Y f x.
+    apply reflexivity.
 Defined.
 
 Definition Setoids: Category := Build_Category Setoids_IsCategory.
@@ -86,12 +101,12 @@ Arguments iso {C} / X Y.
     ただ、対象の同型性を [==] で表現することはあまりないと思います。
     証明の際に rewrite タクティックを使えるようにすることが主目的です。
 
-   *)
+ *)
+(*
 Instance iso_Equivalence (C: Category): Equivalence (iso (C:=C)).
 Proof.
   split.
-  - now intros X; exists (Id X), (Id X); split;
-    simpl; rewrite identity_cod.
+  - now intros X; exists (Id X), (Id X); split; apply identity_cod.
   - now intros X Y [f [g [Heql Heqr]]]; exists g, f; split.
   - intros X Y Z [f [f' [Heqf Heqf']]] [g [g' [Heqg Heqg']]].
     exists (g \o f), (f' \o g'); split.
@@ -100,6 +115,8 @@ Proof.
 Qed.
 
 Canonical Structure Setoid_obj (C: Category) := Build_Setoid (iso_Equivalence C).
+ *)
+
 
 (** ** Product *)
 Class isProd (C: Category)(X Y P: C)(pX: C P X)(pY: C P Y)
