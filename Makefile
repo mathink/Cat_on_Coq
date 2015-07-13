@@ -62,6 +62,7 @@ COQDOCLIBS?=\
 
 
 OPT?=
+OTHERFLAGS=-nois
 COQDEP?="$(COQBIN)coqdep" -c
 COQFLAGS?=-q $(OPT) $(COQLIBS) $(OTHERFLAGS) $(COQ_XML)
 COQCHKFLAGS?=-silent -o
@@ -94,24 +95,7 @@ endif
 #                    #
 ######################
 
-VFILES:=theories/Yoneda/YonedaLemma.v\
-  theories/Monoid/MonoidObj.v\
-  theories/Monoid/Monoidal.v\
-  theories/Monoid/Enriched.v\
-  theories/Monad/TAlgebra.v\
-  theories/Monad/Monad.v\
-  theories/Monad/KTMonad.v\
-  theories/Monad/Kleisli.v\
-  theories/Limit/LimProd.v\
-  theories/Limit/Cone.v\
-  theories/Base/Setoid.v\
-  theories/Base/Natrans.v\
-  theories/Base/Functor.v\
-  theories/Base/Discrete.v\
-  theories/Base/Category.v\
-  theories/Algebra/ListFunctor.v\
-  theories/Algebra/Algebra.v\
-  theories/Adjunction/Adjunction.v
+VFILES:=theories/Scratch.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))

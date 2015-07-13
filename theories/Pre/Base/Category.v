@@ -1,5 +1,5 @@
 (* -*- mode: coq -*- *)
-(* Time-stamp: <2015/7/13 16:4:28> *)
+(* Time-stamp: <2015/7/13 23:8:23> *)
 (*
   Category.v 
   - mathink : author
@@ -13,7 +13,7 @@ Set Universe Polymorphism.
 
 (** * 圏：定義と幾つかの性質たち *)
 
-Require Export COC.Base.Setoid. 
+Require Export Coq.Setoids.Setoid  COC.Base.Setoid. 
 
 (** ** Category *)
 Class isCategory
@@ -138,7 +138,7 @@ Structure Prod (C: Category)(X Y: C) :=
     prod_inj_2: C prod Y;
     prod_arr: forall (Q: C)(qX: C Q X)(qY: C Q Y), C Q prod;
 
-    prf_Prod: isProd prod_inj_1 prod_inj_2 prod_arr }.
+    prf_Prod:> isProd prod_inj_1 prod_inj_2 prod_arr }.
 Existing Instance prf_Prod.
 Arguments Prod {C}(X Y).
 Notation pi1 P := (prod_inj_1 P).
@@ -154,18 +154,64 @@ Proof.
   remember (prod_arr Q (pi1 P) (pi2 P)) as pq.
   remember (prod_arr P (pi1 Q) (pi2 Q)) as qp.
   exists pq, qp; simpl; split.
-  - assert (Heq1: pi1 P \o{ C} qp \o{ C} pq == pi1 P) by
-        now rewrite <- compose_assoc, Heqqp1, Heqpq1.
-    assert (Heq2: pi2 P \o{ C} qp \o{ C} pq == pi2 P) by
-        now rewrite <- compose_assoc, Heqqp2, Heqpq2.
-    rewrite (prod_universality (conj Heq1 Heq2)); simpl.
-    now rewrite (prod_universality (conj (identity_dom _) (identity_dom _))).
-  - assert (Heq1: pi1 Q \o{ C} pq \o{ C} qp == pi1 Q) by
-        now rewrite <- compose_assoc, Heqpq1, Heqqp1.
-    assert (Heq2: pi2 Q \o{ C} pq \o{ C} qp == pi2 Q) by
-        now rewrite <- compose_assoc, Heqpq2, Heqqp2.
-    rewrite (prod_universality (conj Heq1 Heq2)); simpl.
-    now rewrite (prod_universality (conj (identity_dom _) (identity_dom _))).
+  - assert (Heq1: pi1 P == pi1 P \o{ C} qp \o{ C} pq).
+    { eapply transitivity;
+        [| apply (compose_assoc pq qp (pi1 P))].
+      eapply transitivity;
+        [| apply compose_Proper].
+      - apply symmetry, Heqpq1.
+      - apply reflexivity.
+      - apply symmetry, Heqqp1. }
+    (* assert (Heq1: pi1 P \o{ C} qp \o{ C} pq == pi1 P) by *)
+    (*     now rewrite <- compose_assoc, Heqqp1, Heqpq1. *)
+    assert (Heq2: pi2 P == pi2 P \o{ C} qp \o{ C} pq).
+    { eapply transitivity;
+      [| apply (compose_assoc pq qp (pi2 P))].
+      eapply transitivity;
+        [| apply compose_Proper].
+      - apply symmetry, Heqpq2.
+      - apply reflexivity.
+      - apply symmetry, Heqqp2. }
+    (* assert (Heq2: pi2 P \o{ C} qp \o{ C} pq == pi2 P) by *)
+    (*     now rewrite <- compose_assoc, Heqqp2, Heqpq2. *)
+    apply symmetry in Heq1.
+    apply symmetry in Heq2.
+    eapply transitivity;
+      [apply (prod_universality (conj Heq1 Heq2)) |]; simpl.
+    apply symmetry.
+    apply prod_universality.
+    split; apply identity_dom.
+    (* rewrite (prod_universality (conj Heq1 Heq2)); simpl. *)
+    (* now rewrite (prod_universality (conj (identity_dom _) (identity_dom _))). *)
+  - assert (Heq1: pi1 Q == pi1 Q \o{ C} pq \o{ C} qp).
+    { eapply transitivity;
+        [| apply compose_assoc].
+      eapply transitivity;
+        [| apply compose_Proper].
+      - apply symmetry, Heqqp1.
+      - apply reflexivity.
+      - apply symmetry, Heqpq1. }
+    assert (Heq2: pi2 Q == pi2 Q \o{ C} pq \o{ C} qp).
+    { eapply transitivity;
+      [| apply compose_assoc].
+      eapply transitivity;
+        [| apply compose_Proper].
+      - apply symmetry, Heqqp2.
+      - apply reflexivity.
+      - apply symmetry, Heqpq2. }
+    apply symmetry in Heq1.
+    apply symmetry in Heq2.
+    eapply transitivity;
+      [apply (prod_universality (conj Heq1 Heq2)) |]; simpl.
+    apply symmetry.
+    apply prod_universality.
+    split; apply identity_dom.
+  (* - assert (Heq1: pi1 Q \o{ C} pq \o{ C} qp == pi1 Q) by *)
+  (*       now rewrite <- compose_assoc, Heqpq1, Heqqp1. *)
+  (*   assert (Heq2: pi2 Q \o{ C} pq \o{ C} qp == pi2 Q) by *)
+  (*       now rewrite <- compose_assoc, Heqpq2, Heqqp2. *)
+  (*   rewrite (prod_universality (conj Heq1 Heq2)); simpl. *)
+  (*   now rewrite (prod_universality (conj (identity_dom _) (identity_dom _))). *)
 Qed.
 
 (** ** Initial *)
@@ -177,7 +223,7 @@ Structure Initial (C: Category) :=
   { init: C;
     initial: forall X, C init X;
 
-    prf_Initial: isInitial initial }.
+    prf_Initial:> isInitial initial }.
 Coercion init: Initial >-> obj.
 Existing Instance prf_Initial.
 
@@ -185,8 +231,13 @@ Lemma Initial_unique (C: Category)(Init Init': Initial C):
   iso Init Init'.
 Proof.
   simpl.
-  exists (initial Init Init'), (initial Init' Init); simpl; split;
-  now rewrite initial_uniqueness, <- (initial_uniqueness (Id _)).
+  exists (initial Init Init'), (initial Init' Init); simpl; split.
+  - eapply transitivity;
+    [| eapply symmetry, (initial_uniqueness (Id _))].
+    apply initial_uniqueness.
+  - eapply transitivity;
+    [| eapply symmetry, (initial_uniqueness (Id _))].
+    apply initial_uniqueness.
 Qed.
 
 
@@ -216,7 +267,7 @@ Structure CoProd (C: Category)(X Y: C) :=
     coprod_intro_1: C X coprod;
     coprod_intro_2: C Y coprod;
 
-    prf_CoProd: isCoProd coprod_intro_1 coprod_intro_2 }.
+    prf_CoProd:> isCoProd coprod_intro_1 coprod_intro_2 }.
 Existing Instance prf_CoProd.
 Notation "X \+ Y" := (CoProd X Y) (at level 65, left associativity).
 Notation tau1 P := (coprod_intro_1 P).
@@ -225,6 +276,8 @@ Notation tau2 P := (coprod_intro_2 P).
 Lemma CoProd_unique (C: Category)(X Y: C)(P Q: X \+ Y):
   iso P Q.
 Proof.
+Abort.
+(*
   destruct (coprod_universality (P:=Q) (tau1 P) (tau2 P)) as [qp [[Heqp1 Heqp2] _]].
   destruct (coprod_universality (P:=P) (tau1 Q) (tau2 Q)) as [pq [[Heqq1 Heqq2] _]].
   simpl.
@@ -242,6 +295,7 @@ Proof.
     rewrite <- (HuniqQ _ (conj Heqq1 Heqq2)).
     reflexivity.
 Qed.
+ *)
 
 (** ** Terminal *)
 Class isTerminal (C: Category)(Term: C)(terminal: forall X, C X Term): Prop :=

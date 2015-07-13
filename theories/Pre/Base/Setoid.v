@@ -1,5 +1,4 @@
-(* -*- mode: coq -*- *)
-(* Time-stamp: <2015/7/13 15:50:20> *)
+(* Time-stamp: <2015/7/13 23:1:17> *)
 (*
   Setoid.v 
   - mathink : author
@@ -55,7 +54,7 @@ Notation "( == x )" := (fun y => y == x).
  *)
 Structure Map (X Y: Setoid) :=
   { fbody:> X -> Y;
-    fbody_Proper: Proper ((==) ==> (==)) fbody }.
+    fbody_Proper:> Proper ((==) ==> (==)) fbody }.
 Existing Instance fbody_Proper.
 Notation makeMap f := (@Build_Map _ _ f _).
 Notation "[ x .. y :-> p ]" := 

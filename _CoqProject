@@ -1,21 +1,6 @@
+-arg -nois
+
 -R theories COC
 -opt
 
-theories/Adjunction/Adjunction.v
-theories/Algebra/Algebra.v
-theories/Algebra/ListFunctor.v
-theories/Base/Category.v
-theories/Base/Discrete.v
-theories/Base/Functor.v
-theories/Base/Natrans.v
-theories/Base/Setoid.v
-theories/Limit/Cone.v
-theories/Limit/LimProd.v
-theories/Monad/Kleisli.v
-theories/Monad/KTMonad.v
-theories/Monad/Monad.v
-theories/Monad/TAlgebra.v
-theories/Monoid/Enriched.v
-theories/Monoid/Monoidal.v
-theories/Monoid/MonoidObj.v
-theories/Yoneda/YonedaLemma.v
+theories/Scratch.v
