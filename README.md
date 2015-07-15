@@ -11,8 +11,10 @@ HoTT とは異なり、 Setoid をベースに圏や他の概念の定義を行�
 
 ## ソフトウェア
 
-Universe Polymorphism を利用しています。
-そのため、利用しているのは Coq-8.5beta2 です。
+HoTT 用の Coq を使っています。
+* Universe Polymorphism を利用
+* heterogeneous equality を使おうとするときのバグ(？)回避
+のためです。
 
 また、ProofGeneral も、プロジェクトファイルの扱いなどを良い感じにするために [開発版](http://proofgeneral.inf.ed.ac.uk/devel) を利用しております。
 
