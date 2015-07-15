@@ -212,7 +212,7 @@ Module Category.
         (id: forall X: obj, arr X X) :=
     {
       comp_subst:
-        forall (X Y Z W: obj)(f f': arr X Y)(g g': arr Y Z),
+        forall (X Y Z: obj)(f f': arr X Y)(g g': arr Y Z),
           f = f' -> g = g' -> comp f g = comp f' g';
           
       comp_assoc:
@@ -378,7 +378,7 @@ Next Obligation.
   apply reflexivity.
 Qed.
 
-Declare ML Module "coretactics".
+(*
 Module FunctorEq.
   Unset Elimination Schemes.
 
@@ -404,13 +404,14 @@ Module FunctorEq.
     apply jmeq_def.
     apply symmetry.
     exact Heq.
+*)
 (* Toplevel input, characters 0-4: *)
 (* > Qed. *)
 (* > ^^^^ *)
 (* Error: *)
 (* Incorrect elimination of "H" in the inductive type "@jmeq": *)
 (* ill-formed elimination predicate. *)
-  Qed.
+(*  Qed.
 
   Lemma eq_arr_refl:
     forall (C: Category)
@@ -423,15 +424,56 @@ Module FunctorEq.
 
   Definition equal {C D: Category}: relation (Functor C D) :=
     fun F G => forall (X Y: C)(f: C X Y), fmap F f = fmap G f.
+ *)
 
 Definition Functor_id (C: Category): Functor C C :=
   {|
     Functor.prf := Functor_id_prf C
   |}.
 
-Program Instance Cat_isCategory
+Require Import Coq.Logic.JMeq.
+
+Variant arrow (C: Category) :=
+| arrow_triple (dom cod: C)(f: C dom cod).
+
+Definition eq_Functor (C D: Category): relation (Functor C D) :=
+  fun F G =>
+    forall (X Y: C)(f: C X Y),
+      JMeq (fmap F f) (fmap G f).
+
+Instance equiv_Functor (C D: Category): Equivalence (@eq_Functor C D).
+Proof.
+  split.
+  - intros F X Y f; apply JMeq_refl.
+  - intros F G Heq X Y f.
+    apply JMeq_sym.
+    apply Heq.
+  - intros F G H HeqFG HeqGH X Y f.
+    apply (JMeq_trans (y:=fmap G f)).
+    + apply HeqFG.
+    + apply HeqGH.
+Qed.
+
+Definition Functor_setoid (C D: Category) :=
+  mkSetoid (@equiv_Functor C D).
+
+Instance Cat_isCategory
   : isCategory
+      (arr:=Functor_setoid)
       (@Functor_compose)
       (@Functor_id).
-Next Obligation.
-  
+Proof.
+  split.
+  - intros C D E F F' G G'.
+    intros HeqF HeqG X Y f; simpl.
+    apply (JMeq_trans (y:= fmap G' (fmap F f))).
+    + simpl.
+      apply (HeqG _ _ (fmap F f)).
+    + simpl.
+      pattern (fmap F f).
+      eapply JMeq_ind. [| apply HeqF].
+      * apply JMeq_refl.
+      generalize (HeqF _ _ f); intro H.
+      
+    Next Obligation.
+  intros .
