@@ -1,13 +1,20 @@
 (* Cat_on_Coq: redefine *)
+Require Import Coq.Init.Prelude.
+Require Coq.Program.Tactics.
+
 Set Implicit Arguments.
 Unset Strict Implicit.
 Set Contextual Implicit.
 Set Reversible Pattern Implicit.
-
-Generalizable All Variables.
+Set Primitive Projections.
 
 Set Universe Polymorphism.
 
+(*  *)
+Unset Nonrecursive Elimination Schemes.
+Obligation Tactic := idtac.
+
+Generalizable All Variables.
 (**
  * 基本となる道具
 Setoid や Setoid 間の写像など、圏を定義する上で必要となる道具を定義する。
@@ -18,18 +25,17 @@ Coq が通常提供する記法も、後々一般化する。
 
 とはいえ何も使えないと不便なので、スコープを定め、 Local に利用する。
  **)
-Delimit Scope base_scope with base.
-Open Scope base_scope.
+(* Delimit Scope base_scope with base. *)
+(* Open Scope base_scope. *)
 
-Local Notation "X -> Y" :=
-  (forall (_: X), Y) (at level 99, right associativity, Y at level 200): base_scope.
+(* Local Notation "X -> Y" := *)
+(*   (forall (_: X), Y) (at level 99, right associativity, Y at level 200): base_scope. *)
 
 (**
  ** 関係と性質
  **)
 
 Definition relation (X: Type) := X -> X -> Prop.
-
 (** 
 同値関係の定義に向けて、性質を表わすクラスを定義していく
  **)
@@ -62,240 +68,215 @@ Existing Instance equiv_Transitive.
 同値関係を伴う型。
  **)
 Module Setoid.
-  Structure t :=
-    {
-      carrier: Type;
-      equal: relation carrier;
+  Structure type :=
+    make {
+        carrier: Type;
+        equal: relation carrier;
+        
+        prf: Equivalence equal
+      }.
 
-      prf: Equivalence equal
-    }.
+  Notation build equal :=
+    (@make _ equal (@Build_Equivalence _ equal _ _ _)).
 
   Module Notations.
-    Notation Setoid := t.
+    Notation Setoid := type.
     Coercion carrier: Setoid >-> Sortclass.
     Coercion prf: Setoid >-> Equivalence.
     Existing Instance prf.
 
-    (** [=] の使い道を Setoid に一般化。 **)
-    Notation "x = y :> X" := (@equal X x y)
+    Notation "x == y :> X" := (@equal X x y)
                                (at level 70,
                                 y at next level, no associativity).
-    Notation "x = y" := (x = y :> _) (at level 70, no associativity).
+    Notation "x == y" := (x == y :> _) (at level 70, no associativity).
 
-    Notation mkSetoid equiv := (Build_t equiv).
+    Notation mkSetoid equiv := (make equiv).
   End Notations.
 End Setoid.
 Export Setoid.Notations.
 
-
-(* eq and example of Equivalence *)
-Module Eq.
-  Variant eq (X: Type): relation X :=
-  | eq_refl: forall x: X, eq x x.
-
-  Lemma eq_ind:
-    forall (X: Type)(P: relation X),
-      (forall x: X, P x x) ->
-      (forall x y: X, eq x y -> P x y).
-  Proof.
-    intros X P IH x y Heq.
-    destruct Heq.
-    exact (IH x).
-  Qed.
-
-  Instance eq_Reflexive (X: Type): Reflexive (@eq X).
-  Proof.
-    intro x.
-    exact eq_refl.
-  Qed.
-
-  Instance eq_Symmetric (X: Type): Symmetric (@eq X).
-  Proof.
-    intros x y Heq.
-    destruct Heq.
-    exact eq_refl.
-  Qed.
-
-  Instance eq_Transitive (X: Type): Transitive (@eq X).
-  Proof.
-    intros x y z Heqxy Heqyz.
-    destruct Heqxy.
-    exact Heqyz.
-  Qed.
-
-  Instance eq_Equivalence (X: Type): Equivalence (@eq X) := {}.
-
-  Definition setoid (X: Type): Setoid :=
-    mkSetoid (@Eq.eq_Equivalence X).
-End Eq.
-
 (**
  ** Map
-Setoid 間の写像
+Setoid 間の "写像"
  **)
-
 Module Map.
   Class spec {X Y: Setoid}(f: X -> Y): Prop :=
     substitute:
-      forall (x y: X), x = y -> f x = f y.
+      forall (x y: X), x == y -> f x == f y.
 
-  Structure t (X Y: Setoid) :=
-    {
-      f: X -> Y;
-      prf: spec f
-    }.
+  Structure type (X Y: Setoid) :=
+    make {
+        f: X -> Y;
+        prf: spec f
+      }.
 
-  Definition dom {X Y}(m: t X Y): Setoid := X.
-  Definition cod {X Y}(m: t X Y): Setoid := Y.
+  Notation build f := (@make _ _ f _).
 
   Module Notations.
     Notation isMap := spec.
-    Notation Map := t.
+    Notation Map := type.
     Coercion f: Map >-> Funclass.
     Coercion prf: Map >-> isMap.
     Existing Instance prf.
 
-    Notation "X --> Y" := (Map X Y)
-                           (at level 99, right associativity): base_scope.
-    Notation mkMap prf := (@Build_t _ _ _ prf).
-    Notation Map_frame f := (@Build_t _ _ f _).
     Notation "[ x .. y :-> p ]" := 
-      (Map_frame (fun x => .. (Map_frame (fun y => p)) ..))
+      (build (fun x => .. (build (fun y => p)) ..))
         (at level 200, x binder, right associativity,
          format "'[' [ x .. y :-> '/ ' p ] ']'").
   End Notations.
+  Import Notations.
+
+  Definition dom {X Y}(m: Map X Y): Setoid := X.
+  Definition cod {X Y}(m: Map X Y): Setoid := Y.
+
+  Program Definition compose
+          {X Y Z: Setoid}(f: Map X Y)(g: Map Y Z): Map X Z :=
+    [ x :-> g (f x)].
+  Next Obligation.
+    intros X Y Z f g x x' Heq.
+    do 2 apply Map.substitute.
+    exact Heq.
+  Qed.
+
+  Program Definition id (X: Setoid): Map X X := [ x :-> x ].
+  Next Obligation.
+    intros X x y Heq; exact Heq.
+  Qed.
+
+  Definition equal {X Y: Setoid}: relation (Map X Y) :=
+    fun f g => forall x: X, f x == g x.
+
+  Program Definition setoid (X Y: Setoid): Setoid :=
+    Setoid.build (@equal X Y).
+  Next Obligation.
+    intros X Y f x; exact reflexivity.
+  Qed.
+  Next Obligation.
+    intros X Y f g Heq x.
+    generalize (Heq x).
+    apply symmetry.
+  Qed.
+  Next Obligation.
+    intros X Y f g h Heqfg Heqgh x.
+    apply transitivity with (g x).
+    - exact (Heqfg x).
+    - exact (Heqgh x).
+  Qed.
 End Map.
 Export Map.Notations.
 
-Module Fun.
-  Instance isMap {X Y: Type}(f: X -> Y)
-  : @isMap (Eq.setoid X) (Eq.setoid Y) f.
-  Proof.
-    intros x y Heq; destruct Heq.
-    exact Eq.eq_refl.
-  Qed.
+(** 
+ ** (Coq 上の)圏
+対象間の等価性は気にしないため、対象の型は [Type]
 
-  Definition map {X Y: Type}(f: X -> Y): Map _ _
-    := mkMap (isMap f).
-End Fun.
-
-Canonical Structure Eq.setoid.
-Check (forall (X Y: Type)(f: X -> Y), forall x, f x = f x).
-
-Module MapSetoid.
-  Definition equal {X Y: Setoid}: relation (X --> Y) :=
-    fun f g => forall x: X, f x = g x.
-
-  Instance equiv (X Y: Setoid): Equivalence (@equal X Y).
-  Proof.
-    apply Build_Equivalence.
-    - intros f x; exact reflexivity.
-    - intros f g Heq x.
-      generalize (Heq x).
-      apply symmetry.
-    - intros f g h Heqfg Heqgh x.
-      apply transitivity with (g x).
-      + exact (Heqfg x).
-      + exact (Heqgh x).
-  Qed.
-
-  Definition setoid (X Y: Setoid): Setoid := mkSetoid (@equiv X Y).
-End MapSetoid.
-Notation "X --> Y" := (MapSetoid.setoid X Y)
-                        (at level 99, right associativity).
-
+射は、各 Hom が Setoid になる
+ **)
 Module Category.
   Class spec
         (obj: Type)
         (arr: obj -> obj -> Setoid)
         (comp: forall {X Y Z: obj}, arr X Y -> arr Y Z -> arr X Z)
         (id: forall X: obj, arr X X) :=
-    {
-      comp_subst:
-        forall (X Y Z: obj)(f f': arr X Y)(g g': arr Y Z),
-          f = f' -> g = g' -> comp f g = comp f' g';
-          
-      comp_assoc:
-        forall (X Y Z W: obj)
-               (f: arr X Y)(g: arr Y Z)(h: arr Z W),
-          comp f (comp g h) = comp (comp f g) h;
+    proof {
+        comp_subst:
+          forall (X Y Z: obj)(f f': arr X Y)(g g': arr Y Z),
+            f == f' -> g == g' -> comp f g == comp f' g';
+        
+        comp_assoc:
+          forall (X Y Z W: obj)
+                 (f: arr X Y)(g: arr Y Z)(h: arr Z W),
+            comp f (comp g h) == comp (comp f g) h;
 
-      comp_id_dom:
-        forall (X Y: obj)(f: arr X Y), comp (id X) f = f;
+        comp_id_dom:
+          forall (X Y: obj)(f: arr X Y), comp (id X) f == f;
 
-      comp_id_cod:
-        forall (X Y: obj)(f: arr X Y), comp f (id Y) = f
-    }.
+        comp_id_cod:
+          forall (X Y: obj)(f: arr X Y), comp f (id Y) == f
+      }.
 
-  Structure t :=
-    {
-      obj: Type;
-      arr: obj -> obj -> Setoid;
-      comp: forall {X Y Z: obj}, arr X Y -> arr Y Z -> arr X Z;
-      id: forall X: obj, arr X X;
+  Structure type :=
+    make {
+        obj: Type;
+        arr: obj -> obj -> Setoid;
+        comp: forall {X Y Z: obj}, arr X Y -> arr Y Z -> arr X Z;
+        id: forall X: obj, arr X X;
 
-      prf: spec (@comp) (@id)
-    }.
+        prf: spec (@comp) (@id)
+      }.
+
+  Notation build arr comp id :=
+    (@make _ arr comp id (@proof _ _ _ _ _ _ _ _)).
 
   Module Notations.
-    Notation Category := t.
+    Notation Category := type.
     Notation isCategory := spec.
     Coercion obj: Category >-> Sortclass.
     Coercion arr: Category >-> Funclass.
+    Coercion prf: Category >-> isCategory.
     Existing Instance prf.
+
     Notation "g \o{ C } f" := (@comp C _ _ _ f g)
                                 (at level 60, right associativity).
     Notation "g \o f" := (g \o{_} f)
                            (at level 60, right associativity).
     Notation "'Id' X" := (@id _ X) (at level 30, right associativity).
   End Notations.
+
+  Import Notations.
+
+  (**
+   *** 圏の双対
+build のおかげで定義しやすい気がする。
+   **)
+  Program Definition op (C: Category): Category :=
+    build (fun X Y: C => C Y X)
+          (fun X Y Z f g => f \o g)
+          (fun X => Id X).
+  Next Obligation.
+    intros; simpl in *.
+    apply comp_subst; assumption.
+  Qed.
+  Next Obligation.
+    intros; simpl in *.
+    apply symmetry, comp_assoc.
+  Qed.
+  Next Obligation.
+    intros; simpl in *.
+    apply comp_id_cod.
+  Qed.
+  Next Obligation.
+    intros; simpl in *.
+    apply comp_id_dom.
+  Qed.
 End Category.
 Export Category.Notations.
 
-
-
-Require Coq.Init.Datatypes Coq.Init.Specif Coq.Program.Tactics.
-Program Definition Map_compose
-        {X Y Z: Setoid}(f: X --> Y)(g: Y --> Z): X --> Z :=
-  [ x :-> g (f x)].
+(** 
+ ** Setoid の圏: Setoids
+例にちょうどよい。
+あと、 Hom 函手を定義する時とかに使うのでここで作っておこう。
+ **)
+Program Definition Setoids: Category :=
+  Category.build (@Map.setoid) (@Map.compose) (@Map.id).
 Next Obligation.
-  intros x x' Heq.
-  do 2 apply Map.substitute.
-  exact Heq.
-Qed.
-
-Program Definition Map_id (X: Setoid): X --> X :=
-  [ x :-> x ].
-Next Obligation.
-  intros x y Heq; exact Heq.
-Qed.
-
-
-Program Instance Setoids_isCategory
-  : isCategory
-      (@Map_compose)
-      (@Map_id).
-Next Obligation.
-  intros x; simpl.
+  intros X Y Z f f' g g' Heqf Heqg x; simpl.
   apply transitivity with (g (f' x)).
-  - apply Map.substitute, H.
-  - apply H0.
+  - apply Map.substitute, Heqf.
+  - apply Heqg.
 Qed.
 Next Obligation.
+  intros; simpl.
   intros x; simpl.
   apply reflexivity.
 Qed.
 Next Obligation.
-  intros x; simpl.
+  intros; simpl; intro x; simpl.
   apply reflexivity.
 Qed.
 Next Obligation.
-  intros x; simpl.
+  intros; simpl; intro x; simpl.
   apply reflexivity.
 Qed.
-
-Definition Setoids: Category := Category.Build_t Setoids_isCategory.
-
 
 (** 
  ** 函手
@@ -303,177 +284,234 @@ Definition Setoids: Category := Category.Build_t Setoids_isCategory.
 Module Functor.
   Class spec (C D: Category)
         (fobj: C -> D)
-        (fmap: forall {X Y: C}, C X Y -> D (fobj X) (fobj Y)) :=
-    {
-      fmap_isMap: forall (X Y: C), isMap (@fmap X Y);
+        (fmap: forall {X Y: C}, Setoids (C X Y) (D (fobj X) (fobj Y))) :=
+    proof {
+        fmap_comp:
+          forall (X Y Z: C)(f: C X Y)(g: C Y Z),
+            fmap (g \o f) == fmap g \o fmap f;
 
-      fmap_comp:
-        forall (X Y Z: C)(f: C X Y)(g: C Y Z),
-          fmap (g \o f) = fmap g \o fmap f;
+        fmap_id:
+          forall (X: C), fmap (Id X) == Id (fobj X)
+      }.
 
-      fmap_id:
-        forall (X: C), fmap (Id X) = Id (fobj X)
-    }.
+  Structure type (C D: Category) :=
+    make {
+        fobj: C -> D;
+        fmap: forall X Y: C, Setoids (C X Y) (D (fobj X) (fobj Y));
 
-  Structure t (C D: Category) :=
-    {
-      fobj: C -> D;
-      fmap: forall X Y: C, C X Y -> D (fobj X) (fobj Y);
+        prf: spec (@fmap)
+      }.
 
-      prf: spec (@fmap)
-    }.
+  Notation build fobj fmap :=
+    (@make _ _ fobj (fun _ _ => fmap) (@proof _ _ _ _ _ _))
+      (only parsing).
 
   Module Notations.
-    Notation Functor := t.
+    Notation Functor := type.
     Notation isFunctor := spec.
     Coercion fobj: Functor >-> Funclass.
-    Existing Instance fmap_isMap.
+    Coercion prf: Functor >-> isFunctor.
+    (* Existing Instance fmap_isMap. *)
     Existing Instance prf.
 
+    Notation fmap F f := (@fmap _ _ F _ _ f).
+   (* Definition fmap {C D: Category}(F: Functor C D){X Y: C}(f: C X Y) *)
+   (*    : D (F X) (F Y) := *)
+   (*    (@fmap _ _ F _ _ f). *)
+   (*  Arguments fmap {C D}(F){X Y}(f). *)
   End Notations.
+
+  Import Notations.
+
+  Program Definition compose (C D E: Category)
+          (F: Functor C D)(G: Functor D E): Functor C E :=
+    build _ ([ f :-> fmap G (fmap F f)]).
+  Next Obligation.
+    intros; intros f g Heq; simpl.
+    do 2 apply (Map.substitute).
+    exact Heq.
+  Qed.
+  Next Obligation.
+    intros; simpl.
+    eapply transitivity.
+    - apply Map.substitute.
+      apply Functor.fmap_comp.
+    - apply Functor.fmap_comp.
+  Qed.
+  Next Obligation.
+    intros; simpl.
+    eapply transitivity.
+    - apply Map.substitute.
+      apply Functor.fmap_id.
+    - apply Functor.fmap_id.
+  Qed.
+
+  Program Definition id (C: Category): Functor C C :=
+    build _ ([ f :-> f ]) .
+  Next Obligation.
+    intros; exact Map.id.
+  Qed.
+  Next Obligation.
+    intros; apply reflexivity.
+  Qed.
+  Next Obligation.
+    intros; apply reflexivity.
+  Qed.
+
+
+  (** 
+   *** 函手の等価性
+いわゆる heterogeneous equality とかいうやつらしい。
+JMeq の仲間(だろう、多分)。
+
+ちなみに、 [eq_Hom] ではなく [JMeq] を使うと、後々示したいものが示せなくなるので注意。
+   **)
+  Inductive eq_Hom (C : Category)(X Y: C)(f: C X Y):
+    forall (Z W: C), C Z W -> Prop :=
+  | eq_Hom_def:
+      forall (g: C X Y), f == g -> eq_Hom f g.
+  Infix "=H" := eq_Hom (at level 70).
+
+  Lemma eq_Hom_refl:
+    forall (C: Category)(df cf: C)(bf: C df cf),
+      bf =H bf.
+  Proof.
+    intros C df cf bf; apply eq_Hom_def, reflexivity.
+  Qed.
+
+  Lemma eq_Hom_symm:
+    forall (C: Category)
+           (df cf: C)(bf: C df cf)
+           (dg cg: C)(bg: C dg cg),
+      bf =H bg -> bg =H bf.
+  Proof.
+    intros C df cf bf dg cg bg [g Heq].
+    apply eq_Hom_def; apply symmetry; assumption.
+  Qed.
+
+  Lemma eq_Hom_trans:
+    forall (C : Category)
+           (df cf: C)(bf: C df cf)
+           (dg cg: C)(bg: C dg cg)
+           (dh ch: C)(bh: C dh ch),
+      bf =H bg -> bg =H bh -> bf =H bh.
+  Proof.
+    intros C df cf bf dg cg bg dh ch bh [g Heqg] [h Heqh].
+    apply eq_Hom_def.
+    apply transitivity with g; assumption.
+  Qed.
+
+  Definition equal {C D: Category}(F G : Functor C D) :=
+    forall (X Y: C)(f: C X Y),
+      fmap F f =H fmap G f.
+  Arguments equal {C D} / F G.
+
+  Program Definition setoid (C D: Category) :=
+    Setoid.build (@equal C D).
+  Next Obligation.
+    intros C D F X Y f; simpl; apply eq_Hom_refl.
+  Qed.
+  Next Obligation.
+    intros C D F G Heq X Y f; simpl; apply eq_Hom_symm; apply Heq.
+  Qed.
+  Next Obligation.
+    intros C D F G H HeqFG HeqGH X Y f; simpl.
+    generalize (HeqGH _ _ f); simpl.
+    apply eq_Hom_trans, HeqFG.
+  Qed.
 End Functor.
 Export Functor.Notations.
 
-Definition fmap {C D: Category}(F: Functor C D){X Y: C}(f: C X Y)
-  : D (F X) (F Y) :=
-  (@Functor.fmap _ _ F _ _ f).
-Arguments fmap {C D}(F){X Y}(f).
-
-Program Instance Functor_compose_prf (C D E: Category)
-        (F: Functor C D)(G: Functor D E)
-  : isFunctor (fun X Y f => fmap G (fmap F f)).
+(** 
+ *** 圏の圏：Cat
+Universe Polymorphism のおかげで定義できる。
+ **)
+Program Definition Cat: Category :=
+  Category.build
+    (Functor.setoid)
+    (@Functor.compose)
+    (@Functor.id).
 Next Obligation.
-  intros f g Heq; simpl.
-  do 2 apply (Map.substitute).
-  exact Heq.
+  intros C D E F F' G G' HeqF HeqG X Y f; simpl.
+  destruct (HeqF _ _ f); simpl.
+  eapply Functor.eq_Hom_trans.
+  - apply Functor.eq_Hom_def.
+    apply Map.substitute, H.
+  - apply HeqG.
 Qed.
 Next Obligation.
-  eapply transitivity.
-  - apply Functor.fmap_isMap.
-    apply Functor.fmap_comp.
-  - apply Functor.fmap_comp.
+  intros C D K L F G H X Y f; simpl in *.
+  apply Functor.eq_Hom_refl.
 Qed.
 Next Obligation.
-  eapply transitivity.
-  - apply Functor.fmap_isMap.
-    apply Functor.fmap_id.
-  - apply Functor.fmap_id.
-Qed.  
-
-Definition Functor_compose (C D E: Category)
-        (F: Functor C D)(G: Functor D E): Functor C E :=
-  {|
-    Functor.prf := Functor_compose_prf C D E F G
-  |}.
-
-Program Instance Functor_id_prf (C: Category)
-  : isFunctor (D:=C)(fun X Y f => f).
-Next Obligation.
-  exact Map_id.
+  intros C D F X Y f; simpl in *.
+  apply Functor.eq_Hom_refl.
 Qed.
 Next Obligation.
+  intros C D F X Y f; simpl in *.
+  apply Functor.eq_Hom_refl.
+Qed.
+
+
+(** 
+ ** Hom 函手たち
+[Hom(X,-)] と [Hom(-,Y)] を作るよ。
+[build] 使うと定義書くのすごく楽。嬉しい。
+ **)
+
+(**
+ *** 共変な方の [Hom]
+ **)
+Program Definition HomFunctor (C: Category)(X: C)
+  : Functor C Setoids :=
+  Functor.build (C X) ([ g f :-> g \o{C} f]).
+Next Obligation.
+  intros C X Y Z g f f' Heq.
+  apply Category.comp_subst; try assumption.
   apply reflexivity.
 Qed.
 Next Obligation.
+  intros C X Y Z g g' Heq f; simpl.
+  apply Category.comp_subst; try assumption.
   apply reflexivity.
 Qed.
-
-(*
-Module FunctorEq.
-  Unset Elimination Schemes.
-
-  Inductive jmeq {X: Setoid}(x: X)
-  : forall (Y: Setoid), Y -> Prop := 
-  | jmeq_def: forall (y: X), x = y -> jmeq x y.
-
-  Set Elimination Schemes.
-
-  Lemma jmeq_refl:
-    forall (X: Setoid)(x: X), jmeq x x.
-  Proof.
-    intros; apply jmeq_def, reflexivity.
-  Qed.
-
-  Lemma eq_arr_symm:
-    forall (X Y: Setoid)
-           (x: X)(y: Y),
-      jmeq x y -> jmeq y x.
-  Proof.
-    intros X Y x y [x' Heq].
-    trivial.
-    apply jmeq_def.
-    apply symmetry.
-    exact Heq.
-*)
-(* Toplevel input, characters 0-4: *)
-(* > Qed. *)
-(* > ^^^^ *)
-(* Error: *)
-(* Incorrect elimination of "H" in the inductive type "@jmeq": *)
-(* ill-formed elimination predicate. *)
-(*  Qed.
-
-  Lemma eq_arr_refl:
-    forall (C: Category)
-           (df cf: C)(f: C df cf)
-           (dg cg: C)(g: C dg cg),
-      eq_arr f g -> eq_arr g f.
-  Proof.
-    intros; apply eq_arr_def.
-  Qed.
-
-  Definition equal {C D: Category}: relation (Functor C D) :=
-    fun F G => forall (X Y: C)(f: C X Y), fmap F f = fmap G f.
- *)
-
-Definition Functor_id (C: Category): Functor C C :=
-  {|
-    Functor.prf := Functor_id_prf C
-  |}.
-
-Require Import Coq.Logic.JMeq.
-
-Variant arrow (C: Category) :=
-| arrow_triple (dom cod: C)(f: C dom cod).
-
-Definition eq_Functor (C D: Category): relation (Functor C D) :=
-  fun F G =>
-    forall (X Y: C)(f: C X Y),
-      JMeq (fmap F f) (fmap G f).
-
-Instance equiv_Functor (C D: Category): Equivalence (@eq_Functor C D).
-Proof.
-  split.
-  - intros F X Y f; apply JMeq_refl.
-  - intros F G Heq X Y f.
-    apply JMeq_sym.
-    apply Heq.
-  - intros F G H HeqFG HeqGH X Y f.
-    apply (JMeq_trans (y:=fmap G f)).
-    + apply HeqFG.
-    + apply HeqGH.
+Next Obligation.
+  intros C X Y Z W g h f; simpl.
+  apply Category.comp_assoc.
+Qed.
+Next Obligation.
+  intros C X Y f; simpl.
+  apply Category.comp_id_cod.
 Qed.
 
-Definition Functor_setoid (C D: Category) :=
-  mkSetoid (@equiv_Functor C D).
 
-Instance Cat_isCategory
-  : isCategory
-      (arr:=Functor_setoid)
-      (@Functor_compose)
-      (@Functor_id).
-Proof.
-  split.
-  - intros C D E F F' G G'.
-    intros HeqF HeqG X Y f; simpl.
-    apply (JMeq_trans (y:= fmap G' (fmap F f))).
-    + simpl.
-      apply (HeqG _ _ (fmap F f)).
-    + simpl.
-      pattern (fmap F f).
-      eapply JMeq_ind. [| apply HeqF].
-      * apply JMeq_refl.
-      generalize (HeqF _ _ f); intro H.
-      
-    Next Obligation.
-  intros .
+(**
+ *** 反変な方の [Hom]
+ **)
+Program Definition OpHomFunctor (C: Category)(Y: C)
+  : Functor (Category.op C) Setoids :=
+  Functor.build (Category.op C Y) ([ f g :-> g \o{C} f]).
+Next Obligation.
+  intros C Z Y X f g g' Heq; simpl in *.
+  apply Category.comp_subst; try assumption.
+  apply reflexivity.
+Qed.
+Next Obligation.
+  intros C Z Y X f g g' Heq; simpl in *.
+  apply Category.comp_subst; try assumption.
+  apply reflexivity.
+Qed.
+Next Obligation.
+  intros C W Z Y X g f h; simpl in *.
+  apply symmetry, Category.comp_assoc.
+Qed.
+Next Obligation.
+  intros C Y X f; simpl in *.
+  apply Category.comp_id_dom.
+Qed.
+
+(**
+ *** 記法の定義
+ **)
+Notation "'Hom' ( X , - )" := (HomFunctor X).
+Notation "'Hom' ( - , Y )" := (OpHomFunctor Y).
