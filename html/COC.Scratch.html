@@ -43,44 +43,20 @@
 <div class="doc">
 <a name="lab1"></a><h1 class="section">基本となる道具</h1>
 
-Setoid や Setoid 間の写像など、圏を定義する上で必要となる道具を定義する。
+Setoid や Setoid 間の写像である Map など、圏を定義する上で必要となる道具を定義する。
  
 <div class="paragraph"> </div>
 
-Coq が通常提供する記法も、後々一般化する。
-そのため、開発においては <span class="inlinecode">-<span class="id" title="var">nois</span></span> オプションを施している。
 
 <div class="paragraph"> </div>
 
-とはいえ何も使えないと不便なので、スコープを定め、 Local に利用する。
- 
-</div>
-<div class="code">
-
-<br/>
-
-<br/>
-</div>
-
-<div class="doc">
 <a name="lab2"></a><h2 class="section">関係と性質</h2>
 
+同値関係の定義に向けて、性質を表すクラスを定義していく
  
 </div>
 <div class="code">
-
-<br/>
 <span class="id" title="keyword">Definition</span> <a name="relation"><span class="id" title="definition">relation</span></a> (<span class="id" title="var">X</span>: <span class="id" title="keyword">Type</span>) := <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta2/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta2/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Prop</span>.<br/>
-</div>
-
-<div class="doc">
-
-<div class="paragraph"> </div>
-
-同値関係の定義に向けて、性質を表わすクラスを定義していく
- 
-</div>
-<div class="code">
 
 <br/>
 <span class="id" title="keyword">Class</span> <a name="Reflexive"><span class="id" title="record">Reflexive</span></a> `(<span class="id" title="var">R</span>: <a class="idref" href="COC.Scratch.html#relation"><span class="id" title="definition">relation</span></a> <span class="id" title="var">X</span>): <span class="id" title="keyword">Prop</span> :=<br/>
@@ -245,13 +221,20 @@ Setoid 間の "写像"
 
 <div class="paragraph"> </div>
 
-<a name="lab5"></a><h2 class="section">(Coq 上の)圏</h2>
+<a name="lab5"></a><h1 class="section">(Coq 上の)圏論</h1>
+
+Coq のシステム上に圏論を展開する、ということ。
+ 
+<div class="paragraph"> </div>
+
+<a name="lab6"></a><h2 class="section">圏</h2>
 
 対象間の等価性は気にしないため、対象の型は <span class="inlinecode"><span class="id" title="keyword">Type</span></span>
 
 <div class="paragraph"> </div>
 
-射は、各 Hom が Setoid になる
+射全体に対する型は定義せず、対象から <span class="inlinecode"><a class="idref" href="COC.Scratch.html#Setoid.Notations.Setoid"><span class="id" title="abbreviation">Setoid</span></a></span> への函数と捉える。
+射の等価性が重要な要素なので、 Hom 集合ではなく Hom Setoid が色々な場面で活躍する(はず)。
  
 </div>
 <div class="code">
@@ -317,9 +300,9 @@ Setoid 間の "写像"
 </div>
 
 <div class="doc">
-<a name="lab6"></a><h3 class="section">圏の双対</h3>
+<a name="lab7"></a><h3 class="section">圏の双対</h3>
 
-build のおかげで定義しやすい気がする。
+<span class="inlinecode"><span class="id" title="var">Category.build</span></span> のおかげで定義しやすい気がする。
    
 </div>
 <div class="code">
@@ -353,7 +336,7 @@ build のおかげで定義しやすい気がする。
 
 <div class="paragraph"> </div>
 
-<a name="lab7"></a><h2 class="section">Setoid の圏: Setoids</h2>
+<a name="lab8"></a><h2 class="section">Setoid の圏: Setoids</h2>
 
 例にちょうどよい。
 あと、 Hom 函手を定義する時とかに使うのでここで作っておこう。
@@ -389,7 +372,7 @@ build のおかげで定義しやすい気がする。
 
 <div class="paragraph"> </div>
 
-<a name="lab8"></a><h2 class="section">函手</h2>
+<a name="lab9"></a><h2 class="section">函手</h2>
 
  
 </div>
@@ -397,7 +380,7 @@ build のおかげで定義しやすい気がする。
 <span class="id" title="keyword">Module</span> <a name="Functor"><span class="id" title="module">Functor</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="Functor.spec"><span class="id" title="record">spec</span></a> (<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <a class="idref" href="COC.Scratch.html#Category.Notations.Category"><span class="id" title="abbreviation">Category</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">fobj</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta2/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Scratch.html#D"><span class="id" title="variable">D</span></a>)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">fmap</span>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a>}, <a class="idref" href="COC.Scratch.html#Functor.Setoids"><span class="id" title="definition">Setoids</span></a> (<a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>) (<a class="idref" href="COC.Scratch.html#D"><span class="id" title="variable">D</span></a> (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="variable">fobj</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a>) (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="variable">fobj</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>))) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">fmap</span>: <span class="id" title="keyword">∀</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a>}, <a class="idref" href="COC.Scratch.html#Map.Notations.Map"><span class="id" title="abbreviation">Map</span></a> (<a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>) (<a class="idref" href="COC.Scratch.html#D"><span class="id" title="variable">D</span></a> (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="variable">fobj</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a>) (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="variable">fobj</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>))) :=<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="Functor.proof"><span class="id" title="constructor">proof</span></a> {<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Functor.fmap_comp"><span class="id" title="projection">fmap_comp</span></a>:<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>)(<span class="id" title="var">g</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Scratch.html#Z"><span class="id" title="variable">Z</span></a>),<br/>
@@ -411,7 +394,7 @@ build のおかげで定義しやすい気がする。
 &nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="Functor.type"><span class="id" title="record">type</span></a> (<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <a class="idref" href="COC.Scratch.html#Category.Notations.Category"><span class="id" title="abbreviation">Category</span></a>) :=<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="Functor.make"><span class="id" title="constructor">make</span></a> {<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Functor.fobj"><span class="id" title="projection">fobj</span></a>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta2/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Scratch.html#D"><span class="id" title="variable">D</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Functor.fmap"><span class="id" title="projection">fmap</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a>, <a class="idref" href="COC.Scratch.html#Functor.Setoids"><span class="id" title="definition">Setoids</span></a> (<a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>) (<a class="idref" href="COC.Scratch.html#D"><span class="id" title="variable">D</span></a> (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="method">fobj</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a>) (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="method">fobj</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Functor.fmap"><span class="id" title="projection">fmap</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a>, <a class="idref" href="COC.Scratch.html#Map.Notations.Map"><span class="id" title="abbreviation">Map</span></a> (<a class="idref" href="COC.Scratch.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>) (<a class="idref" href="COC.Scratch.html#D"><span class="id" title="variable">D</span></a> (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="method">fobj</span></a> <a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a>) (<a class="idref" href="COC.Scratch.html#fobj"><span class="id" title="method">fobj</span></a> <a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>));<br/>
 <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Functor.prf"><span class="id" title="projection">prf</span></a>: <a class="idref" href="COC.Scratch.html#Functor.spec"><span class="id" title="class">spec</span></a> (@<a class="idref" href="COC.Scratch.html#fmap"><span class="id" title="method">fmap</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
@@ -480,7 +463,7 @@ build のおかげで定義しやすい気がする。
 
 <div class="paragraph"> </div>
 
-<a name="lab9"></a><h3 class="section">函手の等価性</h3>
+<a name="lab10"></a><h3 class="section">函手の等価性</h3>
 
 いわゆる heterogeneous equality とかいうやつらしい。
 JMeq の仲間(だろう、多分)。
@@ -559,7 +542,7 @@ JMeq の仲間(だろう、多分)。
 
 <div class="paragraph"> </div>
 
-<a name="lab10"></a><h3 class="section">圏の圏：Cat</h3>
+<a name="lab11"></a><h3 class="section">圏の圏：Cat</h3>
 
 Universe Polymorphism のおかげで定義できる。
  
@@ -598,17 +581,17 @@ Universe Polymorphism のおかげで定義できる。
 
 <div class="paragraph"> </div>
 
-<a name="lab11"></a><h2 class="section">Hom 函手たち</h2>
+<a name="lab12"></a><h2 class="section">Hom 函手たち</h2>
 
 <span class="inlinecode"><span class="id" title="var">Hom</span>(<a class="idref" href="COC.Scratch.html#X"><span class="id" title="variable">X</span></a>,-)</span> と <span class="inlinecode"><span class="id" title="var">Hom</span>(-,<a class="idref" href="COC.Scratch.html#Y"><span class="id" title="variable">Y</span></a>)</span> を作るよ。
-<span class="inlinecode"><a class="idref" href="COC.Scratch.html#Functor.build"><span class="id" title="abbreviation">build</span></a></span> 使うと定義書くのすごく楽。嬉しい。
+<span class="inlinecode"><span class="id" title="var">Functor.build</span></span> 使うと定義書くのすごく楽。嬉しい。
  
 <div class="paragraph"> </div>
 
 
 <div class="paragraph"> </div>
 
-<a name="lab12"></a><h3 class="section">共変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></h3>
+<a name="lab13"></a><h3 class="section">共変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></h3>
 
  
 </div>
@@ -639,7 +622,7 @@ Universe Polymorphism のおかげで定義できる。
 </div>
 
 <div class="doc">
-<a name="lab13"></a><h3 class="section">反変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></h3>
+<a name="lab14"></a><h3 class="section">反変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></h3>
 
  
 </div>
@@ -670,7 +653,7 @@ Universe Polymorphism のおかげで定義できる。
 </div>
 
 <div class="doc">
-<a name="lab14"></a><h3 class="section">記法の定義</h3>
+<a name="lab15"></a><h3 class="section">記法の定義</h3>
 
  
 </div>

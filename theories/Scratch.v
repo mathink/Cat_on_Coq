@@ -17,28 +17,14 @@ Obligation Tactic := idtac.
 Generalizable All Variables.
 (**
  * 基本となる道具
-Setoid や Setoid 間の写像など、圏を定義する上で必要となる道具を定義する。
+Setoid や Setoid 間の写像である Map など、圏を定義する上で必要となる道具を定義する。
  **)
-(** 
-Coq が通常提供する記法も、後々一般化する。
-そのため、開発においては [-nois] オプションを施している。
-
-とはいえ何も使えないと不便なので、スコープを定め、 Local に利用する。
- **)
-(* Delimit Scope base_scope with base. *)
-(* Open Scope base_scope. *)
-
-(* Local Notation "X -> Y" := *)
-(*   (forall (_: X), Y) (at level 99, right associativity, Y at level 200): base_scope. *)
 
 (**
  ** 関係と性質
+同値関係の定義に向けて、性質を表すクラスを定義していく
  **)
-
 Definition relation (X: Type) := X -> X -> Prop.
-(** 
-同値関係の定義に向けて、性質を表わすクラスを定義していく
- **)
 
 Class Reflexive `(R: relation X): Prop :=
   reflexivity:
@@ -166,10 +152,15 @@ End Map.
 Export Map.Notations.
 
 (** 
- ** (Coq 上の)圏
+ * (Coq 上の)圏論
+Coq のシステム上に圏論を展開する、ということ。
+ **)
+(** 
+ ** 圏
 対象間の等価性は気にしないため、対象の型は [Type]
 
-射は、各 Hom が Setoid になる
+射全体に対する型は定義せず、対象から [Setoid] への函数と捉える。
+射の等価性が重要な要素なので、 Hom 集合ではなく Hom Setoid が色々な場面で活躍する(はず)。
  **)
 Module Category.
   Class spec
@@ -226,7 +217,7 @@ Module Category.
 
   (**
    *** 圏の双対
-build のおかげで定義しやすい気がする。
+[Category.build] のおかげで定義しやすい気がする。
    **)
   Program Definition op (C: Category): Category :=
     build (fun X Y: C => C Y X)
@@ -284,7 +275,7 @@ Qed.
 Module Functor.
   Class spec (C D: Category)
         (fobj: C -> D)
-        (fmap: forall {X Y: C}, Setoids (C X Y) (D (fobj X) (fobj Y))) :=
+        (fmap: forall {X Y: C}, Map (C X Y) (D (fobj X) (fobj Y))) :=
     proof {
         fmap_comp:
           forall (X Y Z: C)(f: C X Y)(g: C Y Z),
@@ -297,7 +288,7 @@ Module Functor.
   Structure type (C D: Category) :=
     make {
         fobj: C -> D;
-        fmap: forall X Y: C, Setoids (C X Y) (D (fobj X) (fobj Y));
+        fmap: forall X Y: C, Map (C X Y) (D (fobj X) (fobj Y));
 
         prf: spec (@fmap)
       }.
@@ -456,7 +447,7 @@ Qed.
 (** 
  ** Hom 函手たち
 [Hom(X,-)] と [Hom(-,Y)] を作るよ。
-[build] 使うと定義書くのすごく楽。嬉しい。
+[Functor.build] 使うと定義書くのすごく楽。嬉しい。
  **)
 
 (**
