@@ -1,6 +1,8 @@
 (* Cat_on_Coq: redefine *)
-Require Import Coq.Init.Prelude.
+Require Coq.Init.Prelude.
 Require Coq.Program.Tactics.
+
+Require Import Coq.Init.Notations Coq.Init.Logic.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -15,6 +17,9 @@ Unset Nonrecursive Elimination Schemes.
 Obligation Tactic := idtac.
 
 Generalizable All Variables.
+Delimit Scope cat_scope with cat.
+Open Scope cat_scope.
+
 (**
  * 基本となる道具
 Setoid や Setoid 間の写像である Map など、圏を定義する上で必要となる道具を定義する。
@@ -133,7 +138,7 @@ Module Map.
     fun f g => forall x: X, f x == g x.
 
   Program Definition setoid (X Y: Setoid): Setoid :=
-    Setoid.build (@equal X Y).
+    Setoid.build (fun (f g: Map X Y) => forall x: X, f x == g x).
   Next Obligation.
     intros X Y f x; exact reflexivity.
   Qed.
@@ -215,6 +220,10 @@ Module Category.
 
   Import Ex.
 
+  Definition dom {C: Category}{X Y: C}(f: C X Y): C := X.
+  Definition cod {C: Category}{X Y: C}(f: C X Y): C := Y.
+  Arguments dom {C X Y} f /.
+  Arguments cod {C X Y} f /.
   (**
    *** 圏の双対
 [Category.build] のおかげで定義しやすい気がする。
@@ -586,8 +595,10 @@ Module Natrans.
     Qed.
   End Defs.
 End Natrans.
-
-Check Natrans.setoid.
+Export Natrans.Ex.
+(** 
+ ** 函手圏
+ **)
 Program Definition Fun (C D: Category) :=
   Category.build (@Natrans.setoid C D)
                  (@Natrans.compose C D)
@@ -609,14 +620,24 @@ Next Obligation.
   apply Category.comp_id_cod.
 Qed.
 
-Notation "[ C , D ]" := (Fun C D): cat_scope.
+Notation "[ C :=> D ]" := (Fun C D) (D at level 200): cat_scope.
 
+(** 
+ ** 色々な積
+ **)
 Module Prod.
   Record type (X Y: Type): Type := make { fst: X; snd: Y }.
 
+  Module Ex.
+    Notation Prod := type.
+    Notation "X * Y" := (Prod X Y).
+    Notation "( x , y )" := (@make _ _ x y).
+  End Ex.
+  Import Ex.
+  
   Program Definition setoid (X Y: Setoid) :=
     Setoid.build
-      (fun (p q: type X Y) =>
+      (fun (p q: X * Y) =>
          and (fst p == fst q) (snd p == snd q)).
   Next Obligation.
     intros X Y [x y]; simpl; split; apply reflexivity.
@@ -633,8 +654,10 @@ Module Prod.
     - apply transitivity with y2; assumption.
   Qed.
 
+  Local Infix "[*]" := setoid (at level 40, left associativity).
+
   Program Definition map {X Y Z W: Setoid}(f: Map X Z)(g: Map Y W):
-    Map (setoid X Y) (setoid Z W) :=
+    Map (X [*] Y) (Z [*] W) :=
     [ p :-> make (f (fst p)) (g (snd p))].
   Next Obligation.
     intros; intros [x1 y1] [x2 y2]; simpl.
@@ -642,15 +665,15 @@ Module Prod.
   Qed.
 
   Definition arr {C D: Category}: type C D -> type C D -> Setoid :=
-    fun (P Q: type C D) =>
-      setoid (C (fst P) (fst Q)) (D (snd P) (snd Q)).
+    fun (P Q: C * D) =>
+      (C (fst P) (fst Q)) [*] (D (snd P) (snd Q)).
 
   Definition compose
-          {C D: Category}(P Q R: type C D)
+          {C D: Category}(P Q R: C * D)
           (f: arr P Q)(g: arr Q R): arr P R :=
     make (fst g \o fst f) (snd g \o snd f).
 
-  Definition id {C D: Category}(P: type C D): arr P P :=
+  Definition id {C D: Category}(P: C * D): arr P P :=
     make (Id (fst P)) (Id (snd P)).
 
   Program Definition category (C D: Category) :=
@@ -663,4 +686,152 @@ Module Prod.
     intros [Heqfx Heqfy] [Heqgx Heqgy]; split;
     apply Category.comp_subst; assumption.
   Qed.
-  (* W.I.P *)
+  Next Obligation.
+    intros C D [X1 Y1] [X2 Y2] [X3 Y3] [X4 Y4]; simpl.
+    intros [fx fy] [gx gy] [hx hy]; simpl; split;
+    apply Category.comp_assoc.
+  Qed.
+  Next Obligation.
+    intros C D [X1 Y1] [X2 Y2] [f g]; simpl in *; split;
+    apply Category.comp_id_dom.
+  Qed.
+  Next Obligation.
+    intros C D [X1 Y1] [X2 Y2] [f g]; simpl in *; split;
+    apply Category.comp_id_cod.
+  Qed.
+
+End Prod.
+Infix "[*]" := Prod.setoid (at level 40, left associativity).
+Infix "[x]" := Prod.category (at level 40, left associativity).
+
+
+(** 
+ ** 米田の補題
+有名なアレ
+ **)
+(**
+ *** 評価函手
+ **)
+Program Definition EvalFunctor (C B: Category)
+  : Functor ((Fun C B) [x] C) B :=
+  Functor.build (fun FX => Prod.fst FX (Prod.snd FX))
+                ([ Sf :->
+                      let (S,f) := Sf in
+                      fmap (Category.cod S) f \o S (Category.dom f)]).
+Next Obligation.
+  intros C B [F X] [G Y]; simpl.
+  intros [S f] [T g]; simpl in *.
+  intros [HeqST Heqfg]; apply Category.comp_subst; simpl.
+  - apply HeqST.
+  - apply Map.substitute, Heqfg.
+Qed.
+Next Obligation.
+  intros C B [F X] [G Y] [H Z]; simpl.
+  intros [S f] [T g]; simpl.
+  eapply transitivity.
+  {
+    apply Category.comp_subst; [apply reflexivity |].
+    apply Functor.fmap_comp.
+  }
+  eapply transitivity; [apply Category.comp_assoc |].
+  eapply transitivity.
+  {
+    apply Category.comp_subst; [| apply reflexivity].
+    eapply transitivity; [apply symmetry, Category.comp_assoc |].
+    apply Category.comp_subst; [apply reflexivity |].
+    apply symmetry, Natrans.naturality.
+  }
+  eapply transitivity.
+  {
+    apply Category.comp_subst; [| apply reflexivity].
+    apply Category.comp_assoc.
+  }
+  eapply transitivity; [| apply symmetry, Category.comp_assoc].
+  apply reflexivity.
+Qed.
+Next Obligation.
+  intros C B [F X]; simpl.
+  eapply transitivity; [apply Category.comp_id_dom |].
+  apply Functor.fmap_id.
+Qed.
+
+Program Definition NFunctor (C: Category)
+  : Functor (Fun C Setoids [x] C) Setoids :=
+  Functor.build (fun FX =>
+                   let (F,X) := FX in
+                   (Fun C Setoids) Hom(X,-) F)
+                ([ Sf alpha :->
+                      let (S,f) := Sf in
+                      Natrans.build
+                        (fun X => S X \o alpha X \o fmap Hom(-,X) f )]).
+Next Obligation.
+  intros C [F X] [G Y] [S f] T; simpl in *.
+  intros Z W h g; simpl in *.
+  eapply symmetry, transitivity.
+  {
+    generalize (Natrans.naturality (natrans:=S)(f:=h) (T Z (g \o f))).
+    intro H; apply symmetry, H.
+  }
+  simpl.
+  apply Map.substitute.
+  generalize (Natrans.naturality (natrans:=T)(f:=h) (g \o f)); simpl.
+  intro H; apply symmetry.
+  eapply transitivity; [| apply H].
+  apply Map.substitute; simpl.
+  apply Category.comp_assoc.
+Qed.
+Next Obligation.
+  intros C [F X] [G Y] [S f] T U Heq; simpl in *.
+  intros Z g.
+  apply Map.substitute, Heq.
+Qed.
+Next Obligation.
+  intros C [F X] [G Y] [S f] [S' f'] [HeqS Heqf]; simpl in *.
+  intros T Z g.
+  eapply transitivity; [apply HeqS | apply Map.substitute].
+  apply Map.substitute; simpl.
+  apply Category.comp_subst;
+    [apply Heqf | apply reflexivity].
+Qed.
+Next Obligation.
+  simpl.
+  intros C [F X] [G Y] [H Z]; simpl.
+  intros [S f] [T g]; simpl.
+  intros U W h.
+  do 3 apply Map.substitute; simpl.
+  apply symmetry, Category.comp_assoc.
+Qed.
+Next Obligation.
+  simpl.
+  intros C [F X] S Y f; simpl in *.
+  apply Map.substitute; simpl.
+  apply Category.comp_id_dom.
+Qed.
+
+
+Program Definition yoneda (C: Category)
+  : Natrans (@NFunctor C) (@EvalFunctor C Setoids) :=
+  Natrans.build (fun FX => let (F, X) := FX in
+                           [alpha :-> alpha X (Id X)]).
+Next Obligation.
+  intros C [F X]; simpl.
+  intros S T Heq.
+  apply (Heq X (Id X)).
+Qed.
+Next Obligation.
+  intros C [F X] [G Y] [S f] T; simpl in *.
+  generalize (Natrans.naturality (natrans:=S) (f:=f) (T X (Id X))).
+  simpl; intro Heq.
+  eapply transitivity; [| apply Heq].
+  clear Heq.
+  apply Map.substitute.
+  generalize (Natrans.naturality (natrans:=T) (f:=f) (Id X)).
+  simpl; intro Heq.
+  eapply transitivity; [| apply Heq].
+  clear Heq.
+  apply Map.substitute; simpl.
+  eapply transitivity;
+    [apply Category.comp_id_cod | apply symmetry, Category.comp_id_dom].
+Qed.  
+(* W.I.P *)
+(* Next: Yoneda Functor *)
