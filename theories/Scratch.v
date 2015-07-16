@@ -65,7 +65,7 @@ Module Setoid.
   Notation build equal :=
     (@make _ equal (@Build_Equivalence _ equal _ _ _)).
 
-  Module Notations.
+  Module Ex.
     Notation Setoid := type.
     Coercion carrier: Setoid >-> Sortclass.
     Coercion prf: Setoid >-> Equivalence.
@@ -77,9 +77,9 @@ Module Setoid.
     Notation "x == y" := (x == y :> _) (at level 70, no associativity).
 
     Notation mkSetoid equiv := (make equiv).
-  End Notations.
+  End Ex.
 End Setoid.
-Export Setoid.Notations.
+Export Setoid.Ex.
 
 (**
  ** Map
@@ -98,7 +98,7 @@ Module Map.
 
   Notation build f := (@make _ _ f _).
 
-  Module Notations.
+  Module Ex.
     Notation isMap := spec.
     Notation Map := type.
     Coercion f: Map >-> Funclass.
@@ -109,8 +109,8 @@ Module Map.
       (build (fun x => .. (build (fun y => p)) ..))
         (at level 200, x binder, right associativity,
          format "'[' [ x .. y :-> '/ ' p ] ']'").
-  End Notations.
-  Import Notations.
+  End Ex.
+  Import Ex.
 
   Definition dom {X Y}(m: Map X Y): Setoid := X.
   Definition cod {X Y}(m: Map X Y): Setoid := Y.
@@ -149,7 +149,7 @@ Module Map.
     - exact (Heqgh x).
   Qed.
 End Map.
-Export Map.Notations.
+Export Map.Ex.
 
 (** 
  * (Coq 上の)圏論
@@ -198,7 +198,7 @@ Module Category.
   Notation build arr comp id :=
     (@make _ arr comp id (@proof _ _ _ _ _ _ _ _)).
 
-  Module Notations.
+  Module Ex.
     Notation Category := type.
     Notation isCategory := spec.
     Coercion obj: Category >-> Sortclass.
@@ -211,9 +211,9 @@ Module Category.
     Notation "g \o f" := (g \o{_} f)
                            (at level 60, right associativity).
     Notation "'Id' X" := (@id _ X) (at level 30, right associativity).
-  End Notations.
+  End Ex.
 
-  Import Notations.
+  Import Ex.
 
   (**
    *** 圏の双対
@@ -240,7 +240,7 @@ Module Category.
     apply comp_id_dom.
   Qed.
 End Category.
-Export Category.Notations.
+Export Category.Ex.
 
 (** 
  ** Setoid の圏: Setoids
@@ -297,7 +297,7 @@ Module Functor.
     (@make _ _ fobj (fun _ _ => fmap) (@proof _ _ _ _ _ _))
       (only parsing).
 
-  Module Notations.
+  Module Ex.
     Notation Functor := type.
     Notation isFunctor := spec.
     Coercion fobj: Functor >-> Funclass.
@@ -310,9 +310,9 @@ Module Functor.
    (*    : D (F X) (F Y) := *)
    (*    (@fmap _ _ F _ _ f). *)
    (*  Arguments fmap {C D}(F){X Y}(f). *)
-  End Notations.
+  End Ex.
 
-  Import Notations.
+  Import Ex.
 
   Program Definition compose (C D E: Category)
           (F: Functor C D)(G: Functor D E): Functor C E :=
@@ -411,7 +411,7 @@ JMeq の仲間(だろう、多分)。
     apply eq_Hom_trans, HeqFG.
   Qed.
 End Functor.
-Export Functor.Notations.
+Export Functor.Ex.
 
 (** 
  *** 圏の圏：Cat
@@ -506,3 +506,161 @@ Qed.
  **)
 Notation "'Hom' ( X , - )" := (HomFunctor X).
 Notation "'Hom' ( - , Y )" := (OpHomFunctor Y).
+
+
+(** 
+ ** 自然変換
+流れ的にね。
+ **)
+Module Natrans.
+  Class spec
+        (C D: Category)
+        (F G: Functor C D)
+        (natrans: forall X: C, D (F X) (G X)) :=
+    naturality:
+      forall (X Y: C)(f: C X Y),
+        natrans Y \o fmap F f == fmap G f \o natrans X.
+
+  Structure type {C D}(F G: Functor C D) :=
+    make {
+        natrans (X: C):  D (F X) (G X);
+        prf: spec (@natrans)
+      }.
+
+  Notation build natrans := (@make _ _ _ _ natrans _).
+
+  Module Ex.
+    Notation Natrans := type.
+    Notation isNatrans := spec.
+    Coercion natrans: Natrans >-> Funclass.
+    Coercion prf: Natrans >-> isNatrans.
+    Existing Instance prf.
+
+  End Ex.
+
+  Import Ex.
+
+  Section Defs.
+    Context (C D: Category).
+
+    Program Definition compose {F G H: Functor C D}
+            (S: Natrans F G)(T: Natrans G H): Natrans F H :=
+      build (fun X => T X \o S X).
+    Next Obligation.
+      intros; intros X Y f; simpl.
+      eapply transitivity;
+        [ apply Category.comp_assoc |].
+      eapply transitivity;
+        [ apply Category.comp_subst |].
+      - apply naturality.
+      - apply reflexivity.
+      - eapply transitivity;
+        [ apply symmetry,Category.comp_assoc |].
+        eapply transitivity;
+          [ apply Category.comp_subst |].
+        + apply reflexivity.
+        + apply naturality.
+        + apply Category.comp_assoc.
+    Qed.
+
+    Program Definition id (F: Functor C D): Natrans F F :=
+      build (fun X => Id (F X)).
+    Next Obligation.
+      intros F X Y f; simpl.
+      eapply transitivity;
+        [ apply Category.comp_id_cod
+        | apply symmetry, Category.comp_id_dom ].
+    Qed.
+
+    Program Definition setoid (F G: Functor C D) :=
+      Setoid.build (fun (S T: Natrans F G) => forall X: C, S X == T X).
+    Next Obligation.
+      intros F G S X; apply reflexivity.
+    Qed.
+    Next Obligation.
+      intros F G S T Heq X; generalize (Heq X); apply symmetry.
+    Qed.
+    Next Obligation.
+      intros F G S T U Heq Heq' X;
+      generalize (Heq X) (Heq' X); apply transitivity.
+    Qed.
+  End Defs.
+End Natrans.
+
+Check Natrans.setoid.
+Program Definition Fun (C D: Category) :=
+  Category.build (@Natrans.setoid C D)
+                 (@Natrans.compose C D)
+                 (@Natrans.id C D).
+Next Obligation.
+  intros C D F G H S S' T T' HeqS HeqT X; simpl.
+  apply Category.comp_subst; [apply HeqS | apply HeqT].
+Qed.
+Next Obligation.
+  intros C D F G H I S T U X; simpl in *.
+  apply Category.comp_assoc.
+Qed.
+Next Obligation.
+  intros C D F G S X; simpl in *.
+  apply Category.comp_id_dom.
+Qed.
+Next Obligation.
+  intros C D F G S X; simpl in *.
+  apply Category.comp_id_cod.
+Qed.
+
+Notation "[ C , D ]" := (Fun C D): cat_scope.
+
+Module Prod.
+  Record type (X Y: Type): Type := make { fst: X; snd: Y }.
+
+  Program Definition setoid (X Y: Setoid) :=
+    Setoid.build
+      (fun (p q: type X Y) =>
+         and (fst p == fst q) (snd p == snd q)).
+  Next Obligation.
+    intros X Y [x y]; simpl; split; apply reflexivity.
+  Qed.
+  Next Obligation.
+    intros X Y [x1 y1] [x2 y2]; simpl.
+    intros [Heqx Heqy]; split;
+    apply symmetry; assumption.
+  Qed.
+  Next Obligation.
+    intros X Y [x1 y1] [x2 y2] [x3 y3]; simpl.
+    intros [Heqx12 Heqy12] [Heqx23 Heqy23]; split.
+    - apply transitivity with x2; assumption.
+    - apply transitivity with y2; assumption.
+  Qed.
+
+  Program Definition map {X Y Z W: Setoid}(f: Map X Z)(g: Map Y W):
+    Map (setoid X Y) (setoid Z W) :=
+    [ p :-> make (f (fst p)) (g (snd p))].
+  Next Obligation.
+    intros; intros [x1 y1] [x2 y2]; simpl.
+    intros [Heqx Heqy]; split; apply Map.substitute; assumption.
+  Qed.
+
+  Definition arr {C D: Category}: type C D -> type C D -> Setoid :=
+    fun (P Q: type C D) =>
+      setoid (C (fst P) (fst Q)) (D (snd P) (snd Q)).
+
+  Definition compose
+          {C D: Category}(P Q R: type C D)
+          (f: arr P Q)(g: arr Q R): arr P R :=
+    make (fst g \o fst f) (snd g \o snd f).
+
+  Definition id {C D: Category}(P: type C D): arr P P :=
+    make (Id (fst P)) (Id (snd P)).
+
+  Program Definition category (C D: Category) :=
+    Category.build (@arr C D)
+                   (@compose C D)
+                   (@id C D).
+  Next Obligation.
+    intros C D [X1 Y1] [X2 Y2] [X3 Y3]; simpl.
+    intros [fx fy] [fx' fy'] [gx gy] [gx' gy']; simpl in *.
+    intros [Heqfx Heqfy] [Heqgx Heqgy]; split;
+    apply Category.comp_subst; assumption.
+  Qed.
+  (* W.I.P *)
