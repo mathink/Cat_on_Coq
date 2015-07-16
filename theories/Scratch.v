@@ -701,6 +701,7 @@ Module Prod.
   Qed.
 
 End Prod.
+Export Prod.Ex.
 Infix "[*]" := Prod.setoid (at level 40, left associativity).
 Infix "[x]" := Prod.category (at level 40, left associativity).
 
@@ -714,10 +715,8 @@ Infix "[x]" := Prod.category (at level 40, left associativity).
  **)
 Program Definition EvalFunctor (C B: Category)
   : Functor ((Fun C B) [x] C) B :=
-  Functor.build (fun FX => Prod.fst FX (Prod.snd FX))
-                ([ Sf :->
-                      let (S,f) := Sf in
-                      fmap (Category.cod S) f \o S (Category.dom f)]).
+  Functor.build (fun FX => let (F,X) := FX in F X)
+                ([ Sf :-> let (S,f) := Sf in fmap (Category.cod S) f \o S (Category.dom f)]).
 Next Obligation.
   intros C B [F X] [G Y]; simpl.
   intros [S f] [T g]; simpl in *.
@@ -757,13 +756,9 @@ Qed.
 
 Program Definition NFunctor (C: Category)
   : Functor (Fun C Setoids [x] C) Setoids :=
-  Functor.build (fun FX =>
-                   let (F,X) := FX in
-                   (Fun C Setoids) Hom(X,-) F)
-                ([ Sf alpha :->
-                      let (S,f) := Sf in
-                      Natrans.build
-                        (fun X => S X \o alpha X \o fmap Hom(-,X) f )]).
+  Functor.build (fun FX => let (F,X) := FX in (Fun C Setoids) Hom(X,-) F)
+                ([ Sf alpha :-> let (S,f) := Sf in
+                                Natrans.build (fun X => S X \o alpha X \o fmap Hom(-,X) f )]).
 Next Obligation.
   intros C [F X] [G Y] [S f] T; simpl in *.
   intros Z W h g; simpl in *.
@@ -811,8 +806,7 @@ Qed.
 
 Program Definition yoneda (C: Category)
   : Natrans (@NFunctor C) (@EvalFunctor C Setoids) :=
-  Natrans.build (fun FX => let (F, X) := FX in
-                           [alpha :-> alpha X (Id X)]).
+  Natrans.build (fun FX => let (F, X) := FX in [alpha :-> alpha X (Id X)]).
 Next Obligation.
   intros C [F X]; simpl.
   intros S T Heq.
@@ -832,6 +826,72 @@ Next Obligation.
   apply Map.substitute; simpl.
   eapply transitivity;
     [apply Category.comp_id_cod | apply symmetry, Category.comp_id_dom].
-Qed.  
-(* W.I.P *)
+Qed.
+
+Program Definition inv_yoneda (C: Category):
+  Natrans (@EvalFunctor C Setoids) (@NFunctor C) :=
+  Natrans.build
+    (fun FX => let (F,X) := FX in
+               [ x :-> Natrans.build (fun Y => [f :-> fmap F f x])]).
+Next Obligation.
+  intros C [F X]; simpl.
+  intros x Y f g Heq.
+  assert (HeqF: fmap F f == fmap F g).
+  {
+    apply Map.substitute, Heq.
+  }
+  apply (HeqF x).
+Qed.
+Next Obligation.
+  intros C [F X]; simpl.
+  intros x Y Z g; simpl.
+  intro f.
+  apply (Functor.fmap_comp (fobj:=F)(f:=f)(g:=g) x).
+Qed.
+Next Obligation.
+  intros C [F X]; simpl.
+  intros x y Heq Y f; simpl.
+  apply Map.substitute, Heq.
+Qed.
+Next Obligation.
+  intros C [F X] [G Y] [S f]; simpl in *.
+  intros x Z g.
+  assert (Heq: fmap G g \o fmap G f \o S X == S Z \o fmap F (g \o f)).
+  {
+    eapply transitivity; [apply symmetry,Category.comp_assoc |].
+    eapply transitivity; [apply symmetry,Category.comp_subst |].
+    - apply reflexivity.
+    - apply Functor.fmap_comp.
+    - apply symmetry,Natrans.naturality.
+  }
+  apply (Heq x).
+Qed.
+
+(** 
+ ** 射の同型とか
+ **)
+Variant Iso (C: Category)(X Y: C): C X Y -> C Y X -> Prop :=
+| Iso_def: forall f g, g \o f == Id X -> f \o g == Id Y -> Iso f g.
+
+Definition NaturalIso {C D: Category}{F G: Functor C D}
+           (S: Natrans F G): Prop :=
+  forall X: C, exists g, Iso (S X) g.
+
+Lemma yoneda_lemma:
+  forall (C: Category), NaturalIso (@yoneda C).
+Proof.
+  intros C [F X]; simpl.
+  exists (@inv_yoneda C (F,X)); simpl.
+  apply Iso_def; simpl.
+  - intros S Y f.
+    apply symmetry.
+    generalize (Natrans.naturality (natrans:=S)(f:=f)); simpl.
+    intro Heq.
+    eapply transitivity; [| apply (Heq (Id X))].
+    apply Map.substitute, symmetry; simpl.
+    apply Category.comp_id_dom.
+  - apply (Functor.fmap_id (fobj:=F)).
+Qed.
+
 (* Next: Yoneda Functor *)
+(* W.I.P *)
