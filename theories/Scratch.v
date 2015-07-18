@@ -3,7 +3,7 @@ Require Coq.Init.Prelude.
 Require Coq.Program.Tactics.
 
 Require Import Coq.Init.Notations Coq.Init.Logic.
-
+Print LoadPath.
 Set Implicit Arguments.
 Unset Strict Implicit.
 Set Contextual Implicit.
@@ -53,6 +53,21 @@ Class Equivalence `(R: relation X): Prop :=
 Existing Instance equiv_Reflexive.
 Existing Instance equiv_Symmetric.
 Existing Instance equiv_Transitive.
+
+Variant and (A B: Prop): Prop :=
+| conj: A -> B -> and A B.
+Infix "/\" := and.
+
+Notation "P <-> Q" := ((P -> Q)/\(Q -> P)).
+
+Inductive ex (A: Type)(P: A -> Prop): Prop :=
+| ex_intro: forall x: A, P x -> ex (A:=A) P.
+
+Notation "'exists' x .. y , p" :=
+  (ex (fun x => .. (ex (fun y => p)) ..))
+    (at level 200, x binder, right associativity,
+     format "'[' 'exists' '/ ' x .. y , '/ ' p ']'"): type_scope.
+
 
 
 (** 
@@ -139,7 +154,7 @@ Module Map.
     fun f g => forall x: X, f x == g x.
 
   Program Definition setoid (X Y: Setoid): Setoid :=
-    Setoid.build (fun (f g: Map X Y) => forall x: X, f x == g x).
+    Setoid.build (@equal X Y).
   Next Obligation.
     intros X Y f x; exact reflexivity.
   Qed.
@@ -280,6 +295,49 @@ Next Obligation.
   apply reflexivity.
 Qed.
 
+
+(** 
+ ** 射の等価性
+いわゆる heterogeneous equality とかいうやつらしい。
+JMeq の仲間(だろう、多分)。
+
+ちなみに、 [eq_Hom] ではなく [JMeq] を使うと、後々示したいものが示せなくなるので注意。
+ **)
+Inductive eq_Hom (C : Category)(X Y: C)(f: C X Y):
+  forall (Z W: C), C Z W -> Prop :=
+| eq_Hom_def:
+    forall (g: C X Y), f == g -> eq_Hom f g.
+Infix "=H" := eq_Hom (at level 70).
+
+Lemma eq_Hom_refl:
+  forall (C: Category)(df cf: C)(bf: C df cf),
+    bf =H bf.
+Proof.
+  intros C df cf bf; apply eq_Hom_def, reflexivity.
+Qed.
+
+Lemma eq_Hom_symm:
+  forall (C: Category)
+         (df cf: C)(bf: C df cf)
+         (dg cg: C)(bg: C dg cg),
+    bf =H bg -> bg =H bf.
+Proof.
+  intros C df cf bf dg cg bg [g Heq].
+  apply eq_Hom_def; apply symmetry; assumption.
+Qed.
+
+Lemma eq_Hom_trans:
+  forall (C : Category)
+         (df cf: C)(bf: C df cf)
+         (dg cg: C)(bg: C dg cg)
+         (dh ch: C)(bh: C dh ch),
+    bf =H bg -> bg =H bh -> bf =H bh.
+Proof.
+  intros C df cf bf dg cg bg dh ch bh [g Heqg] [h Heqh].
+  apply eq_Hom_def.
+  apply transitivity with g; assumption.
+Qed.
+
 (** 
  ** 函手
  **)
@@ -361,47 +419,6 @@ Module Functor.
   Qed.
 
 
-  (** 
-   *** 函手の等価性
-いわゆる heterogeneous equality とかいうやつらしい。
-JMeq の仲間(だろう、多分)。
-
-ちなみに、 [eq_Hom] ではなく [JMeq] を使うと、後々示したいものが示せなくなるので注意。
-   **)
-  Inductive eq_Hom (C : Category)(X Y: C)(f: C X Y):
-    forall (Z W: C), C Z W -> Prop :=
-  | eq_Hom_def:
-      forall (g: C X Y), f == g -> eq_Hom f g.
-  Infix "=H" := eq_Hom (at level 70).
-
-  Lemma eq_Hom_refl:
-    forall (C: Category)(df cf: C)(bf: C df cf),
-      bf =H bf.
-  Proof.
-    intros C df cf bf; apply eq_Hom_def, reflexivity.
-  Qed.
-
-  Lemma eq_Hom_symm:
-    forall (C: Category)
-           (df cf: C)(bf: C df cf)
-           (dg cg: C)(bg: C dg cg),
-      bf =H bg -> bg =H bf.
-  Proof.
-    intros C df cf bf dg cg bg [g Heq].
-    apply eq_Hom_def; apply symmetry; assumption.
-  Qed.
-
-  Lemma eq_Hom_trans:
-    forall (C : Category)
-           (df cf: C)(bf: C df cf)
-           (dg cg: C)(bg: C dg cg)
-           (dh ch: C)(bh: C dh ch),
-      bf =H bg -> bg =H bh -> bf =H bh.
-  Proof.
-    intros C df cf bf dg cg bg dh ch bh [g Heqg] [h Heqh].
-    apply eq_Hom_def.
-    apply transitivity with g; assumption.
-  Qed.
 
   Definition equal {C D: Category}(F G : Functor C D) :=
     forall (X Y: C)(f: C X Y),
@@ -453,22 +470,22 @@ Program Definition Cat: Category :=
 Next Obligation.
   intros C D E F F' G G' HeqF HeqG X Y f; simpl.
   destruct (HeqF _ _ f); simpl.
-  eapply Functor.eq_Hom_trans.
-  - apply Functor.eq_Hom_def.
+  eapply eq_Hom_trans.
+  - apply eq_Hom_def.
     apply Map.substitute, H.
   - apply HeqG.
 Qed.
 Next Obligation.
   intros C D K L F G H X Y f; simpl in *.
-  apply Functor.eq_Hom_refl.
+  apply eq_Hom_refl.
 Qed.
 Next Obligation.
   intros C D F X Y f; simpl in *.
-  apply Functor.eq_Hom_refl.
+  apply eq_Hom_refl.
 Qed.
 Next Obligation.
   intros C D F X Y f; simpl in *.
-  apply Functor.eq_Hom_refl.
+  apply eq_Hom_refl.
 Qed.
 
 
@@ -657,7 +674,7 @@ Module Prod.
   Program Definition setoid (X Y: Setoid) :=
     Setoid.build
       (fun (p q: X * Y) =>
-         and (fst p == fst q) (snd p == snd q)).
+         (fst p == fst q)/\(snd p == snd q)).
   Next Obligation.
     intros X Y [x y]; simpl; split; apply reflexivity.
   Qed.
@@ -822,12 +839,12 @@ Next Obligation.
 Qed.
 Next Obligation.
   intros C [F X] [G Y] [S f] T U Heq; simpl in *.
-  intros Z g.
+  intros Z g; simpl.
   apply Map.substitute, Heq.
 Qed.
 Next Obligation.
   intros C [F X] [G Y] [S f] [S' f'] [HeqS Heqf]; simpl in *.
-  intros T Z g.
+  intros T Z g; simpl.
   eapply transitivity; [apply HeqS | apply Map.substitute].
   apply Map.substitute; simpl.
   apply Category.comp_subst;
@@ -837,7 +854,7 @@ Next Obligation.
   simpl.
   intros C [F X] [G Y] [H Z]; simpl.
   intros [S f] [T g]; simpl.
-  intros U W h.
+  intros U W h; simpl.
   do 3 apply Map.substitute; simpl.
   apply symmetry, Category.comp_assoc.
 Qed.
@@ -932,7 +949,7 @@ Proof.
     apply symmetry.
     generalize (Natrans.naturality (natrans:=S)(f:=f)); simpl.
     intro Heq.
-    eapply transitivity; [| apply (Heq (Id X))].
+    eapply transitivity; [| apply (Heq (Id X))]; simpl.
     apply Map.substitute, symmetry; simpl.
     apply Category.comp_id_dom.
   - apply (Functor.fmap_id (fobj:=F)).
@@ -1024,8 +1041,8 @@ Module Monad.
   Structure type (C: Category) :=
     make {
         T: Functor C C;
-        eta: Natrans (Id_ Cat C) T;
-        mu: Natrans (T \o{Cat} T) T;
+        eta: Natrans (Functor.id (C:=C)) T;
+        mu: Natrans (Functor.compose T T) T;
 
         prf: spec eta mu
       }.
@@ -1410,14 +1427,16 @@ Module Pred.
   Program Definition setoid (X: Setoid) :=
     Setoid.build (fun (P Q: Pred X) => forall x, P x <-> Q x).
   Next Obligation.
-    intros X P x; tauto.
+    intros X P x.
+    split; auto.
   Qed.  
   Next Obligation.
-    intros X P Q H x; generalize (H x); tauto.
+    intros X P Q H x; split; apply H.
   Qed.  
   Next Obligation.
-    intros X P Q R HPQ HRQ x.
-    generalize (HPQ x) (HRQ x); tauto.
+    intros X P Q R Hpq Hqr x; split.
+    - intro Hp; apply Hqr, Hpq, Hp.
+    - intro Hr; apply Hpq, Hqr, Hr.
   Qed.  
 
   Definition rel {X: Setoid}(P Q: setoid X) :=
@@ -1470,13 +1489,11 @@ Module Pred.
   Qed.
   Next Obligation.
     simpl.
-    intros Z Y X g f R x; simpl.
-    tauto.
+    intros Z Y X g f R x; simpl; split; auto.
   Qed.
   Next Obligation.
     simpl.
-    intros X P x; simpl.
-    tauto.
+    intros X P x; simpl; split; auto.
   Qed.
 End Pred.
 Export Pred.Ex.
@@ -1491,39 +1508,27 @@ Module Maybe.
   End Ex.
   Import Ex.
 
+  Definition equal (X: Setoid)(mx my: option X) :=
+    match mx, my with
+    | some x, some y => x == y
+    | none, none => True
+    | _, _ => False
+    end.
   Program Definition setoid (X: Setoid) :=
-    Setoid.build (fun (mx my: option X) =>
-                    match mx, my with
-                    | some x, some y => x == y
-                    | none, none => True
-                    | _, _ => False
-                    end).
-  Next Obligation.
-    simpl; intros.
-    split.
-    - intros [Heq Heq']; discriminate.
-    - intros x y [Heq Heq']; discriminate.
-  Qed.
-  Next Obligation.
-    simpl; intros.
-    split.
-    - intros [Heq Heq']; discriminate.
-    - intros x y [Heq Heq']; discriminate.
-  Qed.
+    Setoid.build (@equal X).
   Next Obligation.
     intros X [x|]; simpl; auto.
     apply reflexivity.
   Qed.
   Next Obligation.
     intros X [x|] [y|] Heq; simpl in *; auto.
-    revert Heq; apply symmetry.
+    apply symmetry, Heq.
   Qed.
   Next Obligation.
-    intros X [x|] [y|] [z|] Heqxy Heqyz; simpl in *; auto.
-    revert Heqxy Heqyz; apply transitivity.
-    elim Heqxy.
+    intros X [x|] [y|] [z|]; simpl in *; auto.
+    - apply transitivity.
+    - intro H; elim H.
   Qed.
-
   
   Program Definition map (X: Setoid): Map X (setoid X) :=
     [ x :-> some x ].
@@ -1531,14 +1536,16 @@ Module Maybe.
     intros X x y Heq; simpl; auto.
   Qed.
 
+  Definition fmap {X Y: Type}
+    : (X -> Y) -> (option X) -> (option Y) :=
+    fun f mx => match mx with
+                | some x => some (f x)
+                | none => none
+                end.
+
   Program Definition functor
     : Functor Setoids Setoids :=
-    Functor.build setoid
-                  ([f mx :->
-                      match mx with
-                      | some x => some (f x)
-                      | none => none
-                      end]).
+    Functor.build setoid ([ f mx :-> fmap f mx]).
   Next Obligation.
     intros X Y f [x|] [y|]; simpl; auto.
     apply Map.substitute.
@@ -1555,13 +1562,15 @@ Module Maybe.
     apply reflexivity.
   Qed.
 
+  Definition mu (X: Type)(mmx: option (option X)): option X :=
+    match mmx with
+    | some mx => mx
+    | none => none
+    end.
   Program Definition monad :=
     Monad.build functor
                 (Natrans.build (fun X => map))
-                (Natrans.build (fun X => [mmx :-> match mmx with
-                                                  | some mx => mx
-                                                  | none => none
-                                                  end])).
+                (Natrans.build (fun X => [mmx :-> mu mmx])).
   Next Obligation.
     intros X Y f x; simpl.
     apply reflexivity.
@@ -1575,35 +1584,37 @@ Module Maybe.
   Qed.
   Next Obligation.
     simpl.
-    intros X [[[x|]|]|]; auto.
+    intros X [[[x|]|]|]; simpl; auto.
     apply reflexivity.
   Qed.
   Next Obligation.
     simpl.
-    intros X [x|]; auto.
+    intros X [x|]; simpl; auto.
     apply reflexivity.
   Qed.
   Next Obligation.
     simpl.
-    intros X [x|]; auto.
+    intros X [x|]; simpl; auto.
     apply reflexivity.
   Qed.
 
+  Definition pred (X: Type)(P: predicate X): predicate (option X) :=
+    fun mx => match mx with
+              | some x => P x
+              | none => False
+              end.
   Program Definition natrans
     : Natrans Pred.functor
               (Functor.compose (Functor.op monad) Pred.functor) :=
     Natrans.build (fun (X: Setoids) =>
                      Monomap.build
-                       ([ P :->
-                            Pred.build (fun mp => match mp with
-                                                  | some p => P p
-                                                  | none => False
-                                                  end)])).
+                       ([ P :-> { mp | pred P mp }])).
   Next Obligation.
     intros X P; simpl in *.
     intros [x|] [y|]; simpl; auto.
     - apply Pred.substitute.
-    - intros; tauto.
+    - intros.
+      elim H.
   Qed.
   Next Obligation.
     intros X P Q Hpq [x|]; simpl in *; auto.
@@ -1615,7 +1626,7 @@ Module Maybe.
   Next Obligation.
     simpl.
     intros Y X f; simpl in *; auto.
-    intros Q [x |]; simpl; try tauto.
+    intros Q [x |]; simpl; split; auto.
   Qed.
   Check (MPL.make (C:=Setoids)(D:=Posets)
                   (pred:=Pred.functor)).
@@ -1625,10 +1636,10 @@ Module Maybe.
   Next Obligation.
     simpl.
     intros X P x; simpl.
-    tauto.
+    split; auto.
   Qed.
   Next Obligation.
-    intros X P [[x|]|]; simpl; tauto.
+    intros X P [[x|]|]; simpl; split; auto.
   Qed.
 
 End Maybe.
@@ -1668,11 +1679,11 @@ Module Pointed.
   Next Obligation.
     intros S Z Y X g f; simpl in *.
     intros R [x s]; simpl.
-    tauto.
+    split; auto.
   Qed.
   Next Obligation.
     intros S X P [x s]; simpl in *.
-    tauto.
+    split; auto.
   Qed.
 
 End Pointed.
@@ -1824,7 +1835,7 @@ Module State.
     simpl.
     intros S Y X f Q [k s]; simpl in *.
     destruct (k s) as [x s']; simpl.
-    tauto.
+    split; auto.
   Qed.
   
   Program Definition mpl (S: PSetoid)
@@ -1835,38 +1846,15 @@ Module State.
   Next Obligation.
     simpl.
     intros S X P [x s]; simpl.
-    tauto.
+    split; auto.
   Qed.
   Next Obligation.
     simpl.
     intros S X P [kk s]; simpl.
-    tauto.
+    split; auto.
   Qed.
 End State.
 Export State.Ex.
-
-Variant unit := tt.
-Check Pointed.carrier.
-
-Module Eq.
-
-  Program Definition setoid (X: Type) := Setoid.build (@eq X).
-  Next Obligation.
-    intros X x; auto.
-  Qed.
-  Next Obligation.
-    intros X x y; auto.
-  Qed.
-  Next Obligation.
-    intros X x y z; auto.
-    intros; subst.
-    auto.
-  Qed.
-End Eq.
-
-Variant bool := true | false.
-  
-Check(fun s: (Functor.fobj (Monad.T (MPL.monad (@State.mpl (@Pointed.make (Eq.setoid unit) tt)))) (Eq.setoid bool)) => Prod.fst (s tt)).
 
 
 Module KT.
@@ -1954,16 +1942,19 @@ Module KPL.
 End KPL.
 Export KPL.Ex.
 
+Definition Maybebind (X Y: Type)(f: X -> option Y)(mx: option X) :=
+  match mx with
+  | Maybe.some x => f x
+  | Maybe.none => Maybe.none
+  end.
+
 Program Definition MaybeKT: KT Setoids :=
   KT.build Maybe.setoid
            (fun X => Maybe.map (X:=X))
-           (fun X Y f => [ mx :-> match mx with
-                                  | Maybe.some x => f x
-                                  | Maybe.none => Maybe.none (X:=Y)
-                                  end]).
+           (fun X Y f => [ mx :-> Maybebind f mx]).
 Next Obligation.
   simpl.
-  intros X Y f [x|] [x'|] Heq; simpl in *; try tauto.
+  intros X Y f [x|] [x'|] Heq; simpl in *; try elim Heq; auto.
   assert (Heqf: f x == f x') by apply Map.substitute, Heq.
   destruct (f x) as [y|], (f x') as [y'|]; simpl; auto.
 Qed.
@@ -1985,7 +1976,7 @@ Qed.
 Next Obligation.
   simpl.
   intros X Y Z f g [x|]; simpl; auto.
-  destruct (f x) as [y|]; auto.
+  destruct (f x) as [y|]; simpl; auto.
   destruct (g y) as [z|]; simpl; auto.
   apply reflexivity.
 Qed.
@@ -1994,45 +1985,43 @@ Program Definition MaybeKPL: KPL Setoids Posets :=
   KPL.build MaybeKT
             (fun X => Pred.poset X)
             (fun X Y (f: Map X (Maybe.setoid Y)) =>
-               Monomap.build ([Q :-> { x | match f x with
-                                           | Maybe.some y => Q y
-                                           | Maybe.none => False
-                                           end}])).
+               Monomap.build ([Q :-> { x | Maybe.pred Q (f x)}])).
 Next Obligation.
   simpl.
   intros X Y f Q x x' Heq.
   assert (Heqf: f x == f x') by apply Map.substitute, Heq.
-  destruct (f x) as [y|], (f x') as [y'|]; simpl in *; try tauto.
-  apply Pred.substitute, Heqf.
+  destruct (f x) as [y|], (f x') as [y'|]; simpl in *; try auto.
+  - apply Pred.substitute, Heqf.
+  - elim Heqf.
 Qed.
 Next Obligation.
   simpl.
   intros X Y f Q Q' Heq x; simpl.
-  destruct (f x) as [y|]; try tauto.
-  split; apply Heq.
+  destruct (f x) as [y|]; simpl; split; auto; apply Heq.
 Qed.
 Next Obligation.
   simpl.
   intros X Y f Q Q' Hpord x; simpl in *.
-  destruct (f x) as [y|]; auto.
+  destruct (f x) as [y|]; simpl; auto.
 Qed.
 Next Obligation.
   simpl.
   intros X Y f g Heq Q x; simpl.
   assert (Heqf: f x == g x) by apply Heq.
   clear Heq.
-  destruct (f x) as [y|], (g x) as [y'|]; simpl in *; split; try tauto.
+  destruct (f x) as [y|], (g x) as [y'|]; simpl in *; split;
+  try elim Heqf; auto.
   - apply Pred.substitute, Heqf.
   - apply Pred.substitute, symmetry, Heqf.
 Qed.
 Next Obligation.
   simpl.
-  intros X P x; simpl; tauto.
+  intros X P x; simpl; split; auto.
 Qed.
 Next Obligation.
   simpl.
   intros X Y Z f g R x; simpl.
-  destruct (f x) as [y|]; simpl; try tauto.
+  destruct (f x) as [y|]; simpl; split; auto.
 Qed.
 
 
@@ -2314,10 +2303,151 @@ Module MonadKT.
 End MonadKT.
 Export MonadKT.
 
-(* W.I.P *)
-(* Monad,KT,MPL,KPL について等価性を定義してから。 *)
-Goal (forall (C D: Category)(mpl: MPL C D),
-         KPL.mpl (MPL.kpl mpl) = mpl).
-Proof.
-Abort.
-  
+Module Equalities.
+  Module Natrans.
+    Definition equal2
+               {C D: Category}
+               {F G: Functor C D}(S: Natrans F G)
+               {F' G': Functor C D}(T: Natrans F' G') :=
+      forall X: C, S X =H T X.
+  End Natrans.
+
+  Module Monad.
+    Definition equal {C: Category}(m1 m2: Monad C) :=
+      (Monad.T m1 == Monad.T m2 :> Functor.setoid C C)/\
+      (Natrans.equal2 (η m1) (η m2))/\
+      (Natrans.equal2 (μ m1) (μ m2)).
+    Arguments equal {C} m1 m2 /.
+
+    Program Definition setoid (C: Category) :=
+      Setoid.build (@equal C).
+    Next Obligation.
+      intros C mpl; simpl; repeat split;
+      apply reflexivity.
+    Qed.
+    Next Obligation.
+      intros C m1 m2 [HeqT [HeqEta HeqMu]]; simpl; repeat split.
+      - intros X Y f; apply eq_Hom_symm, HeqT.
+      - intros X; apply eq_Hom_symm, HeqEta.
+      - intros X; apply eq_Hom_symm, HeqMu.
+    Qed.
+    Next Obligation.
+      intros C m1 m2 m3
+             [HeqT12 [HeqEta12 HeqMu12]]
+             [HeqT23 [HeqEta23 HeqMu23]]; simpl; repeat split.
+      - intros X Y f; eapply eq_Hom_trans; [apply HeqT12 | apply HeqT23].
+      - intros X; eapply eq_Hom_trans; [apply HeqEta12 | apply HeqEta23].
+      - intros X; eapply eq_Hom_trans; [apply HeqMu12 | apply HeqMu23].
+    Qed.
+
+  End Monad.
+
+  Variant jmeq {X: Setoid}(x: X):
+    forall {Y: Setoid}, Y -> Prop :=
+  | jmeq_def: forall (x': X), x == x' :> X -> jmeq x x'.
+    
+  Module KT.
+    Definition equal {C: Category}(kt1 kt2: KT C) :=
+      (forall (X: C), KT.ret (t:=kt1)(X:=X) =H KT.ret (t:=kt2) (X:=X))/\
+      (forall (X Y: C),
+          jmeq (X:=Map.setoid _ _) (Y:=Map.setoid _ _)
+               (Map.make (KT.bind_isMap (spec:=kt1)(X:=X)(Y:=Y)))
+               (Map.make (KT.bind_isMap (spec:=kt2)(X:=X)(Y:=Y)))).
+    Arguments equal {C} kt1 kt2 /.
+
+    Program Definition setoid (C: Category) :=
+      Setoid.build (@equal C).
+    Next Obligation.
+      intros C kt; split.
+      - intros; apply eq_Hom_refl.
+      - intros X Y.
+        apply jmeq_def; simpl.
+        intros f.
+        apply Map.substitute.
+        apply reflexivity.
+    Qed.
+    Next Obligation.
+      intros C kt1 kt2 [Heqret Heqbind]; split.
+      - intros X.
+        apply eq_Hom_symm, Heqret.
+      - intros X Y.
+        destruct (Heqbind X Y).
+        apply jmeq_def.
+        apply symmetry, H.
+    Qed.
+    Next Obligation.
+      intros C kt1 kt2 kt3
+             [Heqret12 Heqbind12] [Heqret23 Heqbind23]; split.
+      - intros X.
+        eapply eq_Hom_trans; [apply Heqret12 | apply Heqret23].
+      - intros X Y.
+        generalize (Heqbind23 X Y). 
+        destruct (Heqbind12 X Y); simpl in *.
+        intro H'; destruct H'.
+        apply jmeq_def.
+        eapply transitivity; [apply H | apply H0].
+    Qed.
+  End KT.
+
+  (* Monad -> KT -> Monad で復元 *)
+  Lemma monad_kt_monad_eq:
+    forall (C: Category)(m: Monad C),
+      KT.monad (Monad.kt m) == m :> Monad.setoid C.
+  Proof.
+    intros C m; simpl.
+    split; [| split].
+    {
+      intros X Y f; apply eq_Hom_def.
+      eapply transitivity;
+        [apply Category.comp_subst |].
+      + apply Functor.fmap_comp.
+      + apply reflexivity.
+      + eapply transitivity;
+        [apply symmetry, Category.comp_assoc |].
+        eapply transitivity;
+          [apply Category.comp_subst | apply Category.comp_id_cod].
+        * apply reflexivity.
+        * apply Monad.Teta_mu.
+    }
+    {
+      intros X; simpl; apply eq_Hom_refl.
+    }
+    {
+      intros X; simpl; apply eq_Hom_def.
+      eapply transitivity; [| apply Category.comp_id_dom].
+      apply Category.comp_subst; [| apply reflexivity].
+      apply Functor.fmap_id.
+    }
+  Qed.
+
+  (* KT -> Monad -> KT で復元 *)
+  Lemma kt_monad_kt_eq:
+    forall (C: Category)(kt: KT C),
+      Monad.kt (KT.monad kt) == kt :> KT.setoid C.
+  Proof.
+    intros C kt; split; simpl.
+    {
+      intros X; apply eq_Hom_refl.
+    }
+    {
+      intros X Y; apply jmeq_def; simpl.
+      intros f; simpl.
+      eapply transitivity; [apply KT.bind_comp |].
+      apply Map.substitute.
+      eapply transitivity; [| apply Category.comp_id_cod].
+      eapply transitivity; [apply symmetry,Category.comp_assoc |].
+      apply Category.comp_subst; [apply reflexivity |].
+      apply KT.ret_comp_bind.
+    }
+  Qed.
+
+  (* W.I.P *)
+  Fail Lemma mpl_kpl_mpl_eq:
+    forall (C D: Category)(mpl: MPL C D),
+      KPL.mpl (MPL.kpl mpl) == mpl :> MPL.setoid C D.
+        
+  Fail Lemma mpl_kpl_mpl_eq:
+    forall (C D: Category)(kpl: KPL C D),
+      MPL.kpl (KPL.mpl kpl) == kpl :> KPL.setoid C D.
+
+End Equalities.
