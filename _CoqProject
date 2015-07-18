@@ -1,4 +1,4 @@
--arg -nois
+-arg -noinit
 
 -R theories COC
 -opt

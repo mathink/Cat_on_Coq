@@ -1920,7 +1920,9 @@ Module KPL.
         (pred: C -> D)
         (modal: forall {X Y: C}, C X (kt Y) -> D (pred Y) (pred X)) :=
     proof {
-        modal_eta:
+        modal_isMap: forall X Y: C, isMap (@modal X Y);
+
+        modal_ret:
           forall (X: C), modal (KT.ret (X:=X)) == Id (pred X);
         modal_bind:
           forall (X Y Z: C)(f: C X (kt Y))(g: C Y (kt Z)),
@@ -1937,7 +1939,7 @@ Module KPL.
       }.
 
   Notation build kt pred modal :=
-    (@make _ _ kt pred modal (@proof _ _ _ _ _ _ _)).
+    (@make _ _ kt pred modal (@proof _ _ _ _ _ _ _ _)).
 
   Module Ex.
     Notation isKPL := spec.
@@ -1945,7 +1947,9 @@ Module KPL.
 
     Coercion kt: KPL >-> KT.
     Coercion prf: KPL >-> isKPL.
+    Notation "[]" := modal.
     Existing Instance prf.
+    Existing Instance modal_isMap.
   End Ex.
 End KPL.
 Export KPL.Ex.
@@ -2011,6 +2015,15 @@ Next Obligation.
   simpl.
   intros X Y f Q Q' Hpord x; simpl in *.
   destruct (f x) as [y|]; auto.
+Qed.
+Next Obligation.
+  simpl.
+  intros X Y f g Heq Q x; simpl.
+  assert (Heqf: f x == g x) by apply Heq.
+  clear Heq.
+  destruct (f x) as [y|], (g x) as [y'|]; simpl in *; split; try tauto.
+  - apply Pred.substitute, Heqf.
+  - apply Pred.substitute, symmetry, Heqf.
 Qed.
 Next Obligation.
   simpl.
@@ -2174,4 +2187,137 @@ Module MonadKT.
     Qed.
   End KT.
   (* W.I.P *)
+
+  Module MPL.
+    Program Definition kpl {C D: Category}(mpl: MPL C D): KPL C D :=
+      KPL.build (Monad.kt mpl)
+                (MPL.pred mpl)
+                (fun X Y f => fmap (MPL.pred mpl) f \o MPL.tau mpl Y).
+    Next Obligation.
+      intros C D mpl X Y f g Heq.
+      apply Category.comp_subst;
+        [apply reflexivity | apply Map.substitute, Heq].
+    Qed.
+    Next Obligation.
+      simpl.
+      intros C D mpl X.
+      apply MPL.tau_pred_eta.
+    Qed.
+    Next Obligation.
+      simpl; intros C D mpl X Y Z f g.
+      assert (H: fmap (Φ mpl) f \o fmap (Φ mpl) (fmap mpl g) \o τ mpl (mpl Z) \o τ mpl Z
+                 ==
+                 (fmap (Φ mpl) f \o τ mpl Y) \o fmap (Φ mpl) g \o τ mpl Z
+             ).
+      {
+        apply symmetry.
+        eapply transitivity.
+        - eapply transitivity; [apply Category.comp_assoc |].
+          apply Category.comp_subst; [| apply reflexivity].
+          eapply transitivity; [apply symmetry, Category.comp_assoc |].
+          apply Category.comp_subst; [apply reflexivity |].
+          apply (Natrans.naturality (natrans:=MPL.tau mpl)).
+        - simpl.
+          apply Category.comp_subst; [| apply reflexivity].
+          apply Category.comp_assoc.
+      }
+      eapply transitivity; [| apply H]; clear H.
+      assert
+        (H: fmap (Φ mpl) f \o fmap (Φ mpl) (fmap mpl g) \o fmap (Φ mpl) (μ mpl Z) \o τ mpl Z
+            == 
+            fmap (Φ mpl) f \o fmap (Φ mpl) (fmap mpl g) \o τ mpl (mpl Z) \o τ mpl Z).
+      {
+        apply Category.comp_subst; [| apply reflexivity].
+        apply Category.comp_subst; [| apply reflexivity].
+        apply MPL.tau_pred_mu.
+      }
+      eapply transitivity; [| apply H]; clear H.
+      eapply transitivity; [| apply Category.comp_assoc].
+      eapply transitivity; [| apply Category.comp_assoc].
+      apply Category.comp_subst; [apply reflexivity |].
+      eapply transitivity; [apply (Functor.fmap_comp (fobj:=Φ mpl)) |].
+      eapply transitivity; [apply Category.comp_subst |].
+      - apply (Functor.fmap_comp (fobj:=Φ mpl)).
+      - apply reflexivity.
+      - apply symmetry,Category.comp_assoc.
+    Qed.
+  End MPL.
+
+  Module KPL.
+    Program Definition mpl {C D: Category}(kpl: KPL C D): MPL C D :=
+      MPL.build (KT.monad kpl)
+                (Functor.build
+                   (fun X => KPL.pred kpl X)
+                   ([f :-> KPL.modal (t:=kpl) (KT.ret \o{C} f)]))
+                (Natrans.build
+                   (fun X => KPL.modal (t:=kpl) (Id (kpl X)))).
+    Next Obligation.
+      simpl.
+      intros C D kpl Y X f g Heq.
+      apply Map.substitute, Category.comp_subst;
+        [apply Heq | apply reflexivity].
+    Qed.      
+    Next Obligation.
+      simpl.
+      intros C D kpl Z Y X g f; simpl.
+      eapply transitivity; [apply Map.substitute | apply KPL.modal_bind].
+      eapply transitivity; [apply symmetry, Category.comp_assoc |].
+      eapply transitivity; [| apply Category.comp_assoc].
+      apply Category.comp_subst; [apply reflexivity |].
+      apply symmetry, KT.ret_comp_bind.
+    Qed.      
+    Next Obligation.
+      simpl.
+      intros C D kpl X.
+      eapply transitivity; [apply Map.substitute | apply KPL.modal_ret].
+      apply Category.comp_id_dom.
+    Qed.      
+    Next Obligation.
+      simpl.
+      intros C D kpl Y X f; simpl in *.
+      eapply transitivity; [apply symmetry, KPL.modal_bind |].
+      eapply transitivity; [apply Map.substitute | apply KPL.modal_bind].
+      eapply transitivity; [apply Category.comp_id_dom |].
+      eapply transitivity; [apply symmetry,Category.comp_id_cod |].
+      eapply transitivity; [apply Category.comp_subst |].
+      - apply reflexivity.
+      - apply symmetry, KT.ret_comp_bind.
+      - apply Category.comp_assoc.
+    Qed.      
+    Next Obligation.
+      simpl.
+      intros C D kpl X.
+      eapply transitivity; [apply symmetry, KPL.modal_bind |].
+      eapply transitivity; [| apply KPL.modal_ret].
+      apply Map.substitute.
+      eapply transitivity; [apply symmetry,Category.comp_assoc |].
+      eapply transitivity;
+        [apply Category.comp_subst |apply Category.comp_id_cod].
+      - apply reflexivity.
+      - apply KT.ret_comp_bind.
+    Qed.      
+    Next Obligation.
+      simpl.
+      intros C D kpl X.
+      eapply transitivity; [apply symmetry, KPL.modal_bind |].
+      eapply transitivity; [| apply KPL.modal_bind].
+      apply Map.substitute.
+      eapply transitivity; [apply symmetry,Category.comp_assoc |].
+      eapply transitivity; [apply Category.comp_subst |].
+      - apply reflexivity.
+      - apply KT.ret_comp_bind.
+      - eapply transitivity;
+        [apply Category.comp_id_cod
+        |apply symmetry, Category.comp_id_dom].
+    Qed.      
+  End KPL.      
 End MonadKT.
+Export MonadKT.
+
+(* W.I.P *)
+(* Monad,KT,MPL,KPL について等価性を定義してから。 *)
+Goal (forall (C D: Category)(mpl: MPL C D),
+         KPL.mpl (MPL.kpl mpl) = mpl).
+Proof.
+Abort.
+  
