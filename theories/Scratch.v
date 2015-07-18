@@ -2345,7 +2345,25 @@ Module Equalities.
   Variant jmeq {X: Setoid}(x: X):
     forall {Y: Setoid}, Y -> Prop :=
   | jmeq_def: forall (x': X), x == x' :> X -> jmeq x x'.
-    
+
+  Lemma jmeq_refl (X: Setoid)(x: X): jmeq x x.
+  Proof.
+    apply jmeq_def, reflexivity.
+  Qed.
+
+  Lemma jmeq_symm (X Y: Setoid)(x: X)(y: Y)
+    : jmeq x y -> jmeq y x.
+  Proof.
+    intros H; destruct H; apply jmeq_def, symmetry, H.
+  Qed.
+
+  Lemma jmeq_trans (X Y Z: Setoid)(x: X)(y: Y)(z: Z)
+    : jmeq x y -> jmeq y z -> jmeq x z.
+  Proof.
+    intros H H'; destruct H, H'.
+    apply jmeq_def, transitivity with x'; assumption.
+  Qed.
+  
   Module KT.
     Definition equal {C: Category}(kt1 kt2: KT C) :=
       (forall (X: C), KT.ret (t:=kt1)(X:=X) =H KT.ret (t:=kt2) (X:=X))/\
@@ -2361,19 +2379,14 @@ Module Equalities.
       intros C kt; split.
       - intros; apply eq_Hom_refl.
       - intros X Y.
-        apply jmeq_def; simpl.
-        intros f.
-        apply Map.substitute.
-        apply reflexivity.
+        apply jmeq_refl.
     Qed.
     Next Obligation.
       intros C kt1 kt2 [Heqret Heqbind]; split.
       - intros X.
         apply eq_Hom_symm, Heqret.
       - intros X Y.
-        destruct (Heqbind X Y).
-        apply jmeq_def.
-        apply symmetry, H.
+        apply jmeq_symm, Heqbind.
     Qed.
     Next Obligation.
       intros C kt1 kt2 kt3
@@ -2381,11 +2394,8 @@ Module Equalities.
       - intros X.
         eapply eq_Hom_trans; [apply Heqret12 | apply Heqret23].
       - intros X Y.
-        generalize (Heqbind23 X Y). 
-        destruct (Heqbind12 X Y); simpl in *.
-        intro H'; destruct H'.
-        apply jmeq_def.
-        eapply transitivity; [apply H | apply H0].
+        generalize (Heqbind12 X Y) (Heqbind23 X Y).
+        apply jmeq_trans.
     Qed.
   End KT.
 
@@ -2441,13 +2451,100 @@ Module Equalities.
     }
   Qed.
 
-  (* W.I.P *)
-  Fail Lemma mpl_kpl_mpl_eq:
+  Module MPL.
+    Definition equal {C D: Category}(mpl1 mpl2: MPL C D) :=
+      (MPL.monad mpl1 == MPL.monad mpl2 :> Monad.setoid C)/\
+      (MPL.pred mpl1 == MPL.pred mpl2 :> Functor.setoid _ _ )/\
+      (Natrans.equal2 (MPL.tau mpl1) (MPL.tau mpl2)).
+
+    Program Definition setoid (C D: Category) :=
+      Setoid.build (@equal C D).
+    Next Obligation.
+      intros C D mpl; split; [| split]; try apply reflexivity.
+      intro X; simpl; apply eq_Hom_refl.
+    Qed.
+    Next Obligation.
+      intros C D mpl1 mpl2 [HeqM [HeqP HeqT]]; split; [| split];
+      try (apply symmetry; assumption).
+      intro X; simpl; apply eq_Hom_symm, HeqT.
+    Qed.
+    Next Obligation.
+      intros C D mpl1 mpl2 mpl3
+             [HeqM12 [HeqP12 HeqT12]] [HeqM23 [HeqP23 HeqT23]];
+      split; [| split].
+      - eapply transitivity; [apply HeqM12 | apply HeqM23].
+      - eapply transitivity; [apply HeqP12 | apply HeqP23].
+      - intro X; eapply eq_Hom_trans; [apply HeqT12 | apply HeqT23].
+    Qed.
+  End MPL.
+
+  Module KPL.
+    Check KPL.modal.
+    Definition equal {C D: Category}(kpl1 kpl2: KPL C D) :=
+      (KPL.kt kpl1 == KPL.kt kpl2 :> KT.setoid C)/\
+      (forall (X Y: C),
+          jmeq (X:=Map.setoid _ _) (Y:=Map.setoid _ _)
+               (Map.make (KPL.modal_isMap (spec:=kpl1)(X:=X)(Y:=Y)))
+               (Map.make (KPL.modal_isMap (spec:=kpl2)(X:=X)(Y:=Y)))).
+
+    Program Definition setoid (C D: Category) :=
+      Setoid.build (@equal C D).
+    Next Obligation.
+      intros C D kpl; split.
+      - apply reflexivity.
+      - intros X Y; apply jmeq_refl.
+    Qed.
+    Next Obligation.
+      intros C D kpl1 kpl2 [HeqK HeqM]; split; [apply symmetry,HeqK |].
+      intros X Y; apply jmeq_symm, HeqM.
+    Qed.
+    Next Obligation.
+      intros C D kpl1 kpl2 kpl3 [HeqK12 HeqM12] [HeqK23 HeqM23]; split.
+      - apply transitivity with (KPL.kt kpl2: KT.setoid C); assumption.
+      - intros X Y; eapply jmeq_trans; [apply HeqM12 | apply HeqM23].
+    Qed.
+  End KPL.
+
+  (* MPL -> KPL -> MPL で復元 *)
+  Lemma mpl_kpl_mpl_eq:
     forall (C D: Category)(mpl: MPL C D),
       KPL.mpl (MPL.kpl mpl) == mpl :> MPL.setoid C D.
-        
-  Fail Lemma mpl_kpl_mpl_eq:
+  Proof.
+    intros C D mpl; simpl; split; [apply monad_kt_monad_eq | split].
+    {
+      simpl.
+      intros X Y f; apply eq_Hom_def.
+      eapply transitivity; [apply Category.comp_subst |].
+      - apply reflexivity.
+      - apply (Functor.fmap_comp (fobj:=MPL.pred mpl)).
+      - eapply transitivity; [apply Category.comp_assoc |].
+        eapply transitivity; [| apply Category.comp_id_dom].
+        apply Category.comp_subst; [| apply reflexivity].
+        apply MPL.tau_pred_eta.
+    }
+    {
+      intros X; simpl in *.
+      apply eq_Hom_def.
+      eapply transitivity; [| apply Category.comp_id_cod].
+      apply Category.comp_subst.
+      - apply reflexivity.
+      - apply (Functor.fmap_id (fobj:=MPL.pred mpl)).
+    } 
+  Qed.
+
+  (* KPL -> MPL -> KPL で復元 *)
+  Lemma kpl_mpl_kpl_eq:
     forall (C D: Category)(kpl: KPL C D),
       MPL.kpl (KPL.mpl kpl) == kpl :> KPL.setoid C D.
-
+  Proof.
+    intros C D kpl; split; [apply kt_monad_kt_eq |].
+    intros X Y; apply jmeq_def; intro f; simpl in *.
+    eapply transitivity; [apply symmetry, KPL.modal_bind |].
+    apply Map.substitute.
+    eapply transitivity; [apply symmetry, Category.comp_assoc |].
+    eapply transitivity; [| apply Category.comp_id_cod].
+    apply Category.comp_subst; [apply reflexivity |].
+    apply KT.ret_comp_bind.
+  Qed.  
 End Equalities.
+Export Equalities.
