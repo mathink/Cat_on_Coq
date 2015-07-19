@@ -68,7 +68,18 @@ Notation "'exists' x .. y , p" :=
     (at level 200, x binder, right associativity,
      format "'[' 'exists' '/ ' x .. y , '/ ' p ']'"): type_scope.
 
+Inductive eq (X: Type)(x: X): predicate X :=
+| eq_refl: eq x x.
 
+Lemma eq_symm (X: Type)(x y: X): eq x y -> eq y x.
+Proof.
+  intro H; destruct H; apply eq_refl.
+Qed.
+
+Lemma eq_trans (X: Type)(x y z: X): eq x y -> eq y z -> eq x z.
+Proof.
+  intro H; destruct H; auto.
+Qed.
 
 (** 
  ** Setoid
@@ -419,10 +430,9 @@ Module Functor.
   Qed.
 
 
-
   Definition equal {C D: Category}(F G : Functor C D) :=
-    forall (X Y: C)(f: C X Y),
-      fmap F f =H fmap G f.
+    (forall (X Y: C)(f: C X Y),
+      fmap F f =H fmap G f).
   Arguments equal {C D} / F G.
 
   Program Definition setoid (C D: Category) :=
@@ -437,6 +447,16 @@ Module Functor.
     intros C D F G H HeqFG HeqGH X Y f; simpl.
     generalize (HeqGH _ _ f); simpl.
     apply eq_Hom_trans, HeqFG.
+  Qed.
+
+  Lemma eq_fobj:
+    forall {C D: Category}(F G: Functor C D),
+      equal F G -> (forall X: C, eq (fobj F X) (fobj G X)).
+  Proof.
+    simpl.
+    intros C D F G H X.
+    destruct (H _ _ (Id X)).
+    apply eq_refl.
   Qed.
 
   Program Definition op (C D: Category)(F: Functor C D):
@@ -2030,7 +2050,7 @@ Module MonadKT.
     Program Definition kt {C: Category}(monad: Monad C): KT C :=
       KT.build (Functor.fobj monad)
                (fun X => Monad.eta monad X)
-               (fun X Y f => Monad.mu monad _ \o fmap monad f).
+               (fun X Y f => Monad.mu monad _ \o{C} fmap monad f).
     Next Obligation.
       simpl.
       intros C m X Y f g Heq.
@@ -2364,13 +2384,52 @@ Module Equalities.
     apply jmeq_def, transitivity with x'; assumption.
   Qed.
   
+  Variant dep_equal {X Y: Setoid}(f: X -> Y)
+    : forall {Z W: Setoid}, (Z -> W) -> Prop :=
+  | dep_equal_def:
+      forall (g: X -> Y),
+        (forall x, f x == g x) ->
+        dep_equal f g.
+
+  Lemma dep_equal_refl (X Y: Setoid)(f: X -> Y)
+    : dep_equal f f.
+  Proof.
+    apply dep_equal_def.
+    intros x. apply reflexivity.
+  Qed.
+
+  Lemma dep_equal_symm
+        (X Y: Setoid)(f: X -> Y)
+        (Z W: Setoid)(g: Z -> W)
+    : dep_equal f g -> dep_equal g f.
+  Proof.
+    intros H; destruct H.
+    apply dep_equal_def.
+    intros x; apply symmetry,H.
+  Qed.
+
+  Lemma dep_equal_trans
+        (X Y: Setoid)(f: X -> Y)
+        (Z W: Setoid)(g: Z -> W)
+        (U V: Setoid)(h: U -> V)
+    : dep_equal f g -> dep_equal g h -> dep_equal f h.
+  Proof.
+    intros Heqxz Heqzu; destruct Heqxz as [g], Heqzu as [h].
+    apply dep_equal_def.
+    intros x; eapply transitivity.
+    - apply H.
+    - apply H0.
+  Qed.
+    
   Module KT.
+      
     Definition equal {C: Category}(kt1 kt2: KT C) :=
       (forall (X: C), KT.ret (t:=kt1)(X:=X) =H KT.ret (t:=kt2) (X:=X))/\
-      (forall (X Y: C),
-          jmeq (X:=Map.setoid _ _) (Y:=Map.setoid _ _)
-               (Map.make (KT.bind_isMap (spec:=kt1)(X:=X)(Y:=Y)))
-               (Map.make (KT.bind_isMap (spec:=kt2)(X:=X)(Y:=Y)))).
+      (forall (X Y : C),
+          (* f =H g -> *)
+          (* KT.bind (t:=kt1) f =H KT.bind (t:=kt2) g). *)
+          dep_equal (KT.bind (t:=kt1)(X:=X)(Y:=Y))
+                    (KT.bind (t:=kt2)(X:=X)(Y:=Y))).
     Arguments equal {C} kt1 kt2 /.
 
     Program Definition setoid (C: Category) :=
@@ -2379,23 +2438,22 @@ Module Equalities.
       intros C kt; split.
       - intros; apply eq_Hom_refl.
       - intros X Y.
-        apply jmeq_refl.
+        apply dep_equal_refl.
     Qed.
     Next Obligation.
       intros C kt1 kt2 [Heqret Heqbind]; split.
       - intros X.
         apply eq_Hom_symm, Heqret.
       - intros X Y.
-        apply jmeq_symm, Heqbind.
+        apply dep_equal_symm, Heqbind.
     Qed.
     Next Obligation.
       intros C kt1 kt2 kt3
              [Heqret12 Heqbind12] [Heqret23 Heqbind23]; split.
       - intros X.
         eapply eq_Hom_trans; [apply Heqret12 | apply Heqret23].
-      - intros X Y.
-        generalize (Heqbind12 X Y) (Heqbind23 X Y).
-        apply jmeq_trans.
+      - intros X Y; eapply dep_equal_trans;
+        [apply Heqbind12 | apply Heqbind23].
     Qed.
   End KT.
 
@@ -2440,7 +2498,7 @@ Module Equalities.
       intros X; apply eq_Hom_refl.
     }
     {
-      intros X Y; apply jmeq_def; simpl.
+      intros X Y; apply dep_equal_def; simpl.
       intros f; simpl.
       eapply transitivity; [apply KT.bind_comp |].
       apply Map.substitute.
@@ -2477,8 +2535,10 @@ Module Equalities.
       - intro X; eapply eq_Hom_trans; [apply HeqT12 | apply HeqT23].
     Qed.
   End MPL.
-
+  
   Module KPL.
+    
+        
     Check KPL.modal.
     Definition equal {C D: Category}(kpl1 kpl2: KPL C D) :=
       (KPL.kt kpl1 == KPL.kt kpl2 :> KT.setoid C)/\
@@ -2548,3 +2608,71 @@ Module Equalities.
   Qed.  
 End Equalities.
 Export Equalities.
+
+
+(* DEAD *)
+Module Translator.
+  Module Monad.
+    Program Definition to_kt {C: Category}
+    : Map (Monad.setoid C) (KT.setoid C) :=
+      Map.build Monad.kt.
+    Next Obligation.
+      intros C m1 m2 [HeqT [HeqE HeqM]]; simpl; split.
+      - intro X; apply (HeqE X).
+      - intros X Y.
+        simpl in *.
+        set (fun f : C X (m1 Y) => μ m1 Y \o fmap m1 f) as f1.
+        set (fun f : C X (m2 Y) => μ m2 Y \o fmap m2 f) as f2.
+        assert (H: forall (x1: C X (m1 Y))(x2: C X (m2 Y)),
+                   x1 =H x2 -> f1 x1 =H f2 x2
+               ).
+        {
+          intros g1 g2 Heq.
+          destruct Heq.
+        }
+        destruct (HeqM Y).
+        eapply dep_equal_trans.
+        { destruct (HeqM Y).
+          apply dep_equal_def.
+          intros f f' Heq.
+          set (f'':=([f0 : C X (m1 Y):->g \o fmap m1 f0])).
+          instantiate (1:=([f0 : C X (m1 Y):->g \o fmap m1 f0])).
+          eapply transitivity; [apply Category.comp_subst |].
+          - apply Map.substitute, Heq.
+          - apply H.
+          - apply reflexivity.
+        generalize (@HeqT X Y).
+ 
+        generalize (Functor.eq_fobj HeqT (X:=Y)).
+        intro H; destruct H.
+      
+  Module MPL.
+    Program Definition to_kpl {C D: Category}
+
+Goal (MPL.kpl Maybe.mpl == MaybeKPL :> KPL.setoid _ _).
+Proof.
+  simpl; split.
+  - simpl; split.
+    + intros X; apply eq_Hom_refl.
+    + intros X Y; apply jmeq_def; simpl.
+      intros f [x|]; simpl; auto.
+      apply (reflexivity (R:=Setoid.equal (Maybe.setoid Y))).
+  - intros X Y; apply jmeq_def; simpl.
+    intros f P x; simpl.
+    split; auto.
+Save Maybe_mpl_kpl.
+
+Goal (KPL.mpl MaybeKPL == Maybe.mpl :> MPL.setoid _ _).
+Proof.
+  eapply transitivity; [| apply mpl_kpl_mpl_eq].
+
+  simpl; split.
+  - simpl; split.
+    + intros X; apply eq_Hom_refl.
+    + intros X Y; apply jmeq_def; simpl.
+      intros f [x|]; simpl; auto.
+      apply (reflexivity (R:=Setoid.equal (Maybe.setoid Y))).
+  - intros X Y; apply jmeq_def; simpl.
+    intros f P x; simpl.
+    split; auto.
+Save Maybe_mpl_kpl.
