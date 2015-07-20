@@ -68,19 +68,6 @@ Notation "'exists' x .. y , p" :=
     (at level 200, x binder, right associativity,
      format "'[' 'exists' '/ ' x .. y , '/ ' p ']'"): type_scope.
 
-Inductive eq (X: Type)(x: X): predicate X :=
-| eq_refl: eq x x.
-
-Lemma eq_symm (X: Type)(x y: X): eq x y -> eq y x.
-Proof.
-  intro H; destruct H; apply eq_refl.
-Qed.
-
-Lemma eq_trans (X: Type)(x y z: X): eq x y -> eq y z -> eq x z.
-Proof.
-  intro H; destruct H; auto.
-Qed.
-
 (** 
  ** Setoid
 同値関係を伴う型。
@@ -447,16 +434,6 @@ Module Functor.
     intros C D F G H HeqFG HeqGH X Y f; simpl.
     generalize (HeqGH _ _ f); simpl.
     apply eq_Hom_trans, HeqFG.
-  Qed.
-
-  Lemma eq_fobj:
-    forall {C D: Category}(F G: Functor C D),
-      equal F G -> (forall X: C, eq (fobj F X) (fobj G X)).
-  Proof.
-    simpl.
-    intros C D F G H X.
-    destruct (H _ _ (Id X)).
-    apply eq_refl.
   Qed.
 
   Program Definition op (C D: Category)(F: Functor C D):
@@ -2610,13 +2587,118 @@ End Equalities.
 Export Equalities.
 
 
+Section MHT.
+  Context {C: Category}(mpl: MPL C Posets).
+
+  (* ホーアトリプルの一般化 *)
+  (* P が成り立つならば f を通して Q も成立 *)
+  Definition MHT {X Y: C}(P: Φ mpl X)(f: C X Y)(Q: Φ mpl Y) := 
+    P <= (fmap (Φ mpl) f Q).
+End MHT.
+Notation "{: P -- f --> Q :}" := (@MHT _ _ _ _ f P Q) (f at next level, Q at next level, only parsing).
+
+(* Example *)
+Module Eq.
+  Inductive eq (X: Type)(x: X): predicate X :=
+  | eq_refl: eq x x.
+
+  Lemma eq_symm (X: Type)(x y: X): eq x y -> eq y x.
+  Proof.
+    intro H; destruct H; apply eq_refl.
+  Qed.
+
+  Lemma eq_trans (X: Type)(x y z: X): eq x y -> eq y z -> eq x z.
+  Proof.
+    intro H; destruct H; auto.
+  Qed.
+
+  Program Definition setoid (A: Type) := Setoid.build (@eq A).
+  Next Obligation.
+    intros A x; apply eq_refl.
+  Qed.
+  Next Obligation.
+    intros A x y; apply eq_symm.
+  Qed.
+  Next Obligation.
+    intros A x y z; apply eq_trans.
+  Qed.
+
+  Program Definition pred {A: Type}(P: predicate A): Pred (Eq.setoid A) :=
+    Pred.build P.
+  Next Obligation.
+    intros A P x y Heq; simpl in *.
+    destruct Heq; auto.
+  Qed.
+End Eq.
+
+Inductive list (A: Type) :=
+| nil | cons: A -> list A -> list A.
+
+Definition head {A: Type}(l: list A): Maybe.type A :=
+  match l with
+  | nil => Maybe.none (X:=A)
+  | cons x _ => Maybe.some x
+  end.
+
+Definition not_nil {A: Type}(l: list A): Prop := not (Eq.eq l nil).
+
+Definition not_none {A: Type}(mx: Maybe.type A) :=
+  match mx with Maybe.some _ => True | _ => False end.
+
+Program Definition Maybe_MHT {A B: Type}(P: predicate A)(f: A -> Maybe.type B)(Q: predicate B) :=
+  MHT (mpl:=Maybe.mpl)(X:=Eq.setoid A)(Y:=Maybe.setoid (Eq.setoid B))
+      (@Pred.make (Eq.setoid A) P (Eq.pred P))
+      (@Map.make (Eq.setoid A)(Maybe.setoid (Eq.setoid B)) f _)
+      (@Pred.make (Maybe.setoid (Eq.setoid B)) (Maybe.pred Q) _).
+Next Obligation.
+  intros A B _ f _ x y Heq; simpl in *; destruct Heq; simpl.
+  destruct (f x); simpl; auto.
+  apply Eq.eq_refl.
+Qed.  
+Next Obligation.
+  intros A B _ _ Q [x|] [y|] Heq; simpl in *; auto; try elim Heq.
+  destruct Heq; auto.
+Qed.
+Arguments Maybe_MHT /.
+
+
+(* めっちゃ具体化したやつ *)
+(* 通常の述語を Maybe に持ち上げる時、失敗する計算については False となるようにしている。 *)
+(* 以下の命題の意味は「空でないリストに対する head は必ず成功する」 *)
+Goal (forall (A: Type), Maybe_MHT (@not_nil A) (@head A) (fun _ => True)).
+Proof.
+  simpl.
+  intros A l.
+  destruct l as [| x xs]; simpl; auto.
+  intros H; apply H.
+  apply Eq.eq_refl.
+Qed.
+
+
 (* DEAD *)
 Module Translator.
+  Module KT.
+    Program Definition to_monad {C: Category}
+    : Map (KT.setoid C) (Monad.setoid C) :=
+      Map.build KT.monad.
+    Next Obligation.
+      intros C kt1 kt2; simpl.
+      intros [HeqR HeqB]; split.
+      - intros X Y f.
+        destruct (HeqB X Y).
   Module Monad.
     Program Definition to_kt {C: Category}
     : Map (Monad.setoid C) (KT.setoid C) :=
       Map.build Monad.kt.
     Next Obligation.
+      intros C m1 m2 Heq.
+      assert (H: KT.monad (Monad.kt m1) == KT.monad (Monad.kt m2) :> Monad.setoid C).
+      {
+        eapply transitivity; [apply monad_kt_monad_eq |].
+        eapply transitivity; [| apply symmetry, monad_kt_monad_eq].
+        apply Heq.
+      }
+      destruct H.
       intros C m1 m2 [HeqT [HeqE HeqM]]; simpl; split.
       - intro X; apply (HeqE X).
       - intros X Y.
