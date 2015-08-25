@@ -1,8 +1,15 @@
 (* Cat_on_Coq: redefine *)
 Require Coq.Init.Prelude.
 Require Coq.Program.Tactics.
+Declare ML Module "coretactics".
+Declare ML Module "extratactics".
+Declare ML Module "eauto".
+Declare ML Module "g_class".
+Declare ML Module "g_eqdecide".
+Declare ML Module "g_rewrite".
+Declare ML Module "tauto".
 
-Require Import Coq.Init.Notations Coq.Init.Logic.
+Require Import Coq.Init.Logic.
 Print LoadPath.
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -29,6 +36,7 @@ Setoid や Setoid 間の写像である Map など、圏を定義する上で必
  ** 関係と性質
 同値関係の定義に向けて、性質を表すクラスを定義していく
  **)
+Notation "X -> Y" := (forall _: X, Y) (at level 99, right associativity, Y at level 200).
 Notation predicate X := (X -> Prop).
 Notation relation X := (X -> predicate X).
 
@@ -63,10 +71,10 @@ Notation "P <-> Q" := ((P -> Q)/\(Q -> P)).
 Inductive ex (A: Type)(P: A -> Prop): Prop :=
 | ex_intro: forall x: A, P x -> ex (A:=A) P.
 
-Notation "'exists' x .. y , p" :=
+Notation "'exists_' x .. y , p" :=
   (ex (fun x => .. (ex (fun y => p)) ..))
     (at level 200, x binder, right associativity,
-     format "'[' 'exists' '/ ' x .. y , '/ ' p ']'"): type_scope.
+     format "'[' 'exists_' '/ ' x .. y , '/ ' p ']'"): type_scope.
 
 (** 
  ** Setoid
@@ -670,7 +678,7 @@ Module Prod.
   
   Program Definition setoid (X Y: Setoid) :=
     Setoid.build
-      (fun (p q: X * Y) =>
+      (fun (p q: Prod X Y) =>
          (fst p == fst q)/\(snd p == snd q)).
   Next Obligation.
     intros X Y [x y]; simpl; split; apply reflexivity.
@@ -724,15 +732,15 @@ Module Prod.
   Qed.
 
   Definition arr {C D: Category}: type C D -> type C D -> Setoid :=
-    fun (P Q: C * D) =>
+    fun (P Q: Prod C D) =>
       (C (fst P) (fst Q)) [*] (D (snd P) (snd Q)).
 
   Definition compose
-          {C D: Category}(P Q R: C * D)
+          {C D: Category}(P Q R: Prod C D)
           (f: arr P Q)(g: arr Q R): arr P R :=
     make (fst g \o fst f) (snd g \o snd f).
 
-  Definition id {C D: Category}(P: C * D): arr P P :=
+  Definition id {C D: Category}(P: Prod C D): arr P P :=
     make (Id (fst P)) (Id (snd P)).
 
   Program Definition category (C D: Category) :=
@@ -934,7 +942,7 @@ Variant Iso (C: Category)(X Y: C): C X Y -> C Y X -> Prop :=
 
 Definition NaturalIso {C D: Category}{F G: Functor C D}
            (S: Natrans F G): Prop :=
-  forall X: C, exists g, Iso (S X) g.
+  forall X: C, exists_ g, Iso (S X) g.
 
 Lemma yoneda_lemma:
   forall (C: Category), NaturalIso (@yoneda C).
@@ -997,11 +1005,11 @@ Module NatransCompose.
     Qed.
 
     Program Definition cod_compose {C D E: Category}
-            {F G: Functor C D}(H: Functor D E)(S: Natrans F G)
+            {F G: Functor C D}(S: Natrans F G)(H: Functor D E)
       : Natrans (H \o{Cat} F) (H \o{Cat} G) :=
       Natrans.build (fun X => fmap H (S X) ).
     Next Obligation.
-      intros C D E F G H S X Y f; simpl.
+      intros C D E F G S H X Y f; simpl.
       eapply transitivity; 
         [| apply Functor.fmap_comp].
       eapply transitivity; 
@@ -1010,10 +1018,31 @@ Module NatransCompose.
     Qed.
 
     Module Ex.
-      Notation "N \oF F" := (dom_compose F N) (at level 55, left associativity).
-      Notation "F \Fo N" := (cod_compose F N) (at level 55, left associativity).
+      Notation "N \oF F" := (@dom_compose _ _ _ F _ _ N) (at level 55, left associativity).
+      Notation "F \Fo N" := (@cod_compose _ _ _ _ _ N F) (at level 55, left associativity).
     End Ex.
+    Import Ex.
+
+    Check
+      fun {C D E K: Category}
+             (F: Functor C D){G H: Functor D E}(S: Natrans G H)(I: Functor E K) =>
+        I \Fo (S \oF F).
+
+    Check
+      fun {C D E K: Category}
+             (F: Functor C D){G H: Functor D E}(S: Natrans G H)(I: Functor E K) =>
+        (I \Fo S) \oF F.
+    Lemma are:
+      forall {C D E K: Category}
+             (F: Functor C D){G H: Functor D E}(S: Natrans G H)(I: Functor E K),
+        I \Fo (S \oF F) == (I \Fo S) \oF F :> Natrans.setoid _ _.
+    Proof.
+      simpl; intros.
+      intros X; simpl.
+      apply reflexivity.
+    Qed.
   End Natrans.
+  
 End NatransCompose.
 Export NatransCompose.
 Export NatransCompose.Natrans.Ex.
@@ -2594,8 +2623,22 @@ Section MHT.
   (* P が成り立つならば f を通して Q も成立 *)
   Definition MHT {X Y: C}(P: Φ mpl X)(f: C X Y)(Q: Φ mpl Y) := 
     P <= (fmap (Φ mpl) f Q).
+  Notation "{: P -- f --> Q :}" := (@MHT _ _ P f Q) (f at next level, Q at next level, only parsing).
+
+  Lemma MHT_concat {X Y Z: C}(P: Φ mpl X)(f: C X Y)(Q: Φ mpl Y)(g: C Y Z)(R: Φ mpl Z):
+    {: P -- f --> Q :} -> {: Q -- g --> R :} -> {: P -- g \o f --> R :}.
+  Proof.
+    unfold MHT.
+    simpl.
+    intros.
+    eapply transitivity.
+    - apply H.
+    - 
+      + apply Monomap.monotone.
+        apply H0.
+      + 
 End MHT.
-Notation "{: P -- f --> Q :}" := (@MHT _ _ _ _ f P Q) (f at next level, Q at next level, only parsing).
+
 
 (* Example *)
 Module Eq.

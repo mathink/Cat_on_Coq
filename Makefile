@@ -19,6 +19,7 @@
 
 .DEFAULT_GOAL := all
 
+# 
 # This Makefile may take arguments passed as environment variables:
 # COQBIN to specify the directory where Coq binaries resides;
 # TIMECMD set a command to log .v compilation time;
@@ -62,7 +63,7 @@ COQDOCLIBS?=\
 
 
 OPT?=
-OTHERFLAGS=-nois
+OTHERFLAGS=-noinit
 COQDEP?="$(COQBIN)coqdep" -c
 COQFLAGS?=-q $(OPT) $(COQLIBS) $(OTHERFLAGS) $(COQ_XML)
 COQCHKFLAGS?=-silent -o
@@ -95,16 +96,28 @@ endif
 #                    #
 ######################
 
-VFILES:=theories/Scratch.v
+VFILES:=theories/Construction.v\
+  theories/Construction/Yoneda.v\
+  theories/Structure.v\
+  theories/Structure/Product.v\
+  theories/Structure/Fun.v\
+  theories/Structure/Hom.v\
+  theories/Structure/Hcomp.v\
+  theories/Structure/Cat.v\
+  theories/Category.v\
+  theories/Category/Natrans.v\
+  theories/Category/Functor.v\
+  theories/Category/Morphism.v\
+  theories/Category/Object.v\
+  theories/Category/Core.v\
+  theories/Setoid.v\
+  theories/Setoid/Map.v\
+  theories/Setoid/Core.v\
+  theories/Init.v\
+  theories/Init/Relations.v\
+  theories/Init/Prelude.v
 
-ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))
-else
-ifeq ($(MAKECMDGOALS),)
--include $(addsuffix .d,$(VFILES))
-endif
-endif
-
 .SECONDARY: $(addsuffix .d,$(VFILES))
 
 VO=vo
@@ -198,7 +211,7 @@ install-doc:
 	done
 
 uninstall_me.sh: Makefile
-	echo '#!/bin/sh' > $@
+	echo '#!/bin/sh' > $@ 
 	printf 'cd "$${DSTROOT}"$(COQLIBINSTALL)/COC && rm -f $(NATIVEFILES1) $(GLOBFILES1) $(VFILES1) $(VOFILES1) && find . -type d -and -empty -delete\ncd "$${DSTROOT}"$(COQLIBINSTALL) && find "COC" -maxdepth 0 -and -empty -exec rmdir -p \{\} \;\n' >> "$@"
 	printf 'cd "$${DSTROOT}"$(COQDOCINSTALL)/COC \\\n' >> "$@"
 	printf '&& rm -f $(shell find "html" -maxdepth 1 -and -type f -print)\n' >> "$@"

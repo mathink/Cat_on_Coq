@@ -1,6 +1,28 @@
 -arg -noinit
-
 -R theories COC
 -opt
 
-theories/Scratch.v
+theories/Init/Prelude.v
+theories/Init/Relations.v
+theories/Init.v
+
+theories/Setoid/Core.v
+theories/Setoid/Map.v
+theories/Setoid.v
+
+theories/Category/Core.v
+theories/Category/Object.v
+theories/Category/Morphism.v
+theories/Category/Functor.v
+theories/Category/Natrans.v
+theories/Category.v
+
+theories/Structure/Cat.v
+theories/Structure/Hcomp.v
+theories/Structure/Hom.v
+theories/Structure/Fun.v
+theories/Structure/Product.v
+theories/Structure.v
+
+theories/Construction/Yoneda.v
+theories/Construction.v
