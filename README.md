@@ -29,5 +29,31 @@ HoTT 用の Coq を使っています。
 |   |-- coqdoc.css
 |   `-- dependency.svg
 `-- theories
-    `-- Scratch.v
+    |-- Init
+    |   |-- Prelude.v
+    |   `-- Relations.v
+    |-- Init.v
+    |-- Setoid
+    |   |-- Core.v
+    |   `-- Map.v
+    |-- Setoid.v
+    |-- Category
+    |   |-- Core.v
+    |   |-- Functor.v
+    |   |-- Morphism.v
+    |   |-- Natrans.v
+    |   `-- Object.v
+    |-- Category.v
+    |-- Structure
+    |   |-- Cat.v
+    |   |-- Comma.v
+    |   |-- Fun.v
+    |   |-- Hcomp.v
+    |   |-- Hom.v
+    |   `-- Product.v
+    |-- Structure.v
+    |-- Construction
+    |   |-- Universal.v
+    |   `-- Yoneda.v
+    `-- Construction.v
 ```
