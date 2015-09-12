@@ -46,5 +46,5 @@ Inductive ex (A: Type)(P: A -> Prop): Prop :=
 Notation "'exists_' x .. y , p" :=
   (ex (fun x => .. (ex (fun y => p)) ..))
     (at level 200, x binder, right associativity,
-     format "'[' 'exists_' '/ ' x .. y , '/ ' p ']'"): type_scope.
+     format "'[' 'exists_'  '/ ' x .. y , '/ ' p ']'"): type_scope.
 

@@ -97,8 +97,10 @@ endif
 ######################
 
 VFILES:=theories/Construction.v\
+  theories/Construction/Universal.v\
   theories/Construction/Yoneda.v\
   theories/Structure.v\
+  theories/Structure/Comma.v\
   theories/Structure/Product.v\
   theories/Structure/Fun.v\
   theories/Structure/Hom.v\

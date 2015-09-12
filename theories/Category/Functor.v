@@ -75,7 +75,7 @@ Module Functor.
       }.
 
   Notation build fobj fmap :=
-    (@make _ _ fobj fmap (@proof _ _ _ _ _ _ _))
+    (@make _ _ fobj fmap (@proof _ _ fobj fmap _ _ _))
       (only parsing).
 
   Module Ex.
@@ -181,6 +181,20 @@ Module Functor.
 
 End Functor.
 Export Functor.Ex.
+
+Program Definition ConstFunctor (C: Category)(X: C): Functor C C :=
+  Functor.build (fun _ => X)
+                (fun (a b: C)(f: C a b) => Id_ C X).
+Next Obligation.
+  intros C X ? ? ? ? ?; apply reflexivity.
+Qed.
+Next Obligation.
+  intros C X ? ? ? ? ?; simpl.
+  apply symmetry, Category.comp_id_dom.
+Qed.
+Next Obligation.
+  intros C X ?; apply reflexivity.
+Qed.
 
 Definition full (C D: Category)(F: Functor C D) :=
   forall (X Y: C)(g: D (F X) (F Y)),

@@ -15,6 +15,8 @@ Module Comma.
     triple { dom: E; cod: D; morph: C (T dom) (S cod)}.
 
   Module Ex.
+    Arguments morph: clear implicits.
+    Arguments morph {E C D T S}(o).
     Coercion morph: obj >-> Setoid.carrier.
   End Ex.    
   Import Ex.
@@ -66,3 +68,57 @@ Module Comma.
         apply symmetry, comm.
       + apply reflexivity.
   Qed.
+
+  Program Definition id {E C D: Category}(T: Functor E C)(S: Functor D C)(f: obj T S): type f f :=
+    build (Id (dom f)) (Id (cod f)).
+  Next Obligation.
+    intros.
+    eapply transitivity.
+    - apply Category.comp_subst.
+      + now  apply Functor.fmap_id.
+      + now apply reflexivity.
+    - eapply transitivity; [apply Category.comp_id_dom |].
+      eapply transitivity; [apply symmetry, Category.comp_id_cod |].
+      apply Category.comp_subst; [apply reflexivity | apply symmetry, Functor.fmap_id].
+  Qed.
+
+  Definition equal {E C D: Category}(T: Functor E C)(S: Functor D C)(f g: obj T S): relation (type f g) :=
+    fun kh1 kh2 =>
+       (dmorph kh1) == (dmorph kh2) /\ (cmorph kh1) == (cmorph kh2).
+  Arguments equal E C D T S f g kh1 kh2 /.
+
+  Program Definition setoid {E C D: Category}(T: Functor E C)(S: Functor D C)(f g: obj T S) :=
+    Setoid.build (@equal _ _ _ T S f g).
+  Next Obligation.
+    intros; split; apply reflexivity.
+  Qed.
+  Next Obligation.
+    intros; split; apply symmetry; apply H.
+  Qed.
+  Next Obligation.
+    intros; split; eapply transitivity; try (apply H || apply H0).
+  Qed.
+  
+  Program Definition category {E C D: Category}(T: Functor E C)(S: Functor D C): Category :=
+    Category.build (@setoid _ _ _ T S)
+                   (@compose _ _ _ T S)
+                   (@id _ _ _ T S).
+  Next Obligation.
+    intros; simpl in *.
+    destruct H as [Heqdf Heqcf], H0 as [Heqdg Heqcg].
+    split; apply Category.comp_subst; assumption.
+  Qed.
+  Next Obligation.
+    intros; simpl in *.
+    split; apply Category.comp_assoc.
+  Qed.
+  Next Obligation.
+    intros; simpl in *.
+    split; apply Category.comp_id_dom.
+  Qed.
+  Next Obligation.
+    intros; simpl in *.
+    split; apply Category.comp_id_cod.
+  Qed.
+End Comma.
+Export Comma.MorphEx.
