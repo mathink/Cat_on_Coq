@@ -43,3 +43,12 @@ Module Setoid.
   End Ex.
 End Setoid.
 Export Setoid.Ex.
+
+
+Definition unique {X : Setoid}(P: X -> Prop)(x: X) :=
+  P x /\ forall (x': X), P x' -> x == x'.
+
+Notation "'exists!_' x .. y , p" :=
+  (ex (unique (fun x => .. (ex (unique (fun y => p))) ..)))
+    (at level 200, x binder, right associativity,
+     format "'[' 'exists!_' '/ ' x .. y , '/ ' p ']'").

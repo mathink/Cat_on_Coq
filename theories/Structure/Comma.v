@@ -122,3 +122,9 @@ Module Comma.
   Qed.
 End Comma.
 Export Comma.MorphEx.
+
+Definition CommaTo (C D: Category)(c: C)(S: Functor D C): Category :=
+  Comma.category (ConstFunctor c) S.
+
+Definition CommaFrom (C D: Category)(S: Functor D C)(c: C): Category :=
+  Comma.category S (ConstFunctor c).

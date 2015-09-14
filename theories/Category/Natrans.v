@@ -57,7 +57,7 @@ Module Natrans.
                 (@Functor.fobj _ _ G) (@Functor.fmap _ _ G)).
 
   Notation build F G natrans :=
-    (@make _ _ _ _ _ _ natrans (@proof _ _ _ _ _ _ _ F G _)).
+    (@make _ _ _ _ _ _ natrans (@proof _ _ _ _ _ _ natrans F G _)).
 
   Module Ex.
     Notation Natrans := type.

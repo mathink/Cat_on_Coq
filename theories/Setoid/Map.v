@@ -79,3 +79,12 @@ Module Map.
   Qed.
 End Map.
 Export Map.Ex.
+
+Definition injective (X Y: Setoid)(f: Map X Y) :=
+  forall (x x': X), f x == f x' -> x == x'.
+
+Definition surjective (X Y: Setoid)(f: Map X Y) :=
+  forall (y: Y), exists_ x: X, f x == y.
+
+Definition bijective (X Y: Setoid)(f: Map X Y) :=
+  injective f /\ surjective f.

@@ -5,8 +5,95 @@ Set Primitive Projections.
 Set Universe Polymorphism.
 
 Require Import COC.Structure.
+Require Import COC.Construction.Universal.
 
+Program Definition UATo_map
+        (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r))(d: D)
+  : Map (D r d) (C c (S d)) :=
+  [ f' :-> fmap S f' \o u].
+Next Obligation.
+  intros.
+  intros f g Heq; apply Category.comp_subst; [apply reflexivity |].
+  apply Map.substitute, Heq.
+Qed.
+Arguments UATo_map: clear implicits.
+Arguments UATo_map {D C c S r}(u d).
 
+Lemma UATo_bijective:
+  forall (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r)),
+    UniversalArrow.To.spec u <-> forall d: D, bijective (UATo_map u d).
+Proof.
+  intros; split.
+  {
+    intros [H] d; split.
+    - intros f g; simpl in *.
+      destruct (H d (fmap S f \o u)) as [f' [Hf Hfu]].
+      intros Heq.
+      apply symmetry in Heq.
+      generalize (Hfu _ Heq).
+      apply transitivity.
+      apply symmetry, Hfu, reflexivity.
+    - intros f.
+      destruct (H d f) as [f' [Hf Hfu]].
+      exists f'; simpl.
+      apply Hf.
+  }
+  {
+    intros H; split.
+    intros d f.
+    destruct (H d) as [Hi Hs].
+    destruct (Hs f) as [f' Hf']; simpl in *.
+    exists f'; split.
+    - apply Hf'.
+    - intros g' Heq.
+      apply Hi; simpl.
+      apply transitivity with f.
+      + apply Hf'.
+      + apply symmetry, Heq.
+  }
+Qed.
+
+(*  *)
+Program Definition UATo_natrans
+        {D C: Category}{c: C}{S: Functor D C}{r: D}(u: C c (S r))
+  : Natrans Hom(r,-) (Hom(c,-) \o{Cat} S) :=
+  Natrans.build _ _ (fun d: D => UATo_map u d).
+Next Obligation.
+  simpl; intros.
+  intros h; simpl.
+  eapply transitivity; [| apply Category.comp_assoc].
+  apply Category.comp_subst; [apply reflexivity |].
+  apply Functor.fmap_comp.
+Qed.
+
+Module Representation.
+  Class spec (D: Category)(K: Functor D Setoids)(r: D)(phi: Natrans Hom(r,-) K)(psi: Natrans K Hom(r,-)) :=
+    proof {
+        iso_rd: forall d: D, psi d \o phi d == Id_ Setoids (D r d);
+        iso_dr: forall d: D, phi d \o psi d == Id_ Setoids (K d)
+      }.
+
+  Structure type (D: Category)(K: Functor D Setoids) :=
+    make {
+        object: D;
+        phi: Natrans Hom(object,-) K;
+        psi: Natrans K Hom(object,-);
+
+        prf: spec phi psi
+      }.
+
+  Notation build phi psi := (@make _ _ _ phi psi (@proof _ _ _ _ _ _ _)).
+
+  Module Ex.
+    Notation isRepresentation := spec.
+    Notation Representation := type.
+    Coercion object: type >-> Category.obj.
+    Coercion prf: type >-> spec.
+    Existing Instance prf.
+  End Ex.
+
+End Representation.
+  
 (** 
  ** 米田の補題
 有名なアレ

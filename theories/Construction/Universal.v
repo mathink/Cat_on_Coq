@@ -19,14 +19,13 @@ Module UniversalArrow.
       proof {
           universality:
             forall (d: D)(f: C c (S d)),
-              exists_ f': D r d, fmap S f' \o u == f
+              exists!_ (f': D r d), fmap S f' \o u == f
         }.
 
     Structure type {C D: Category}(c: C)(S: Functor D C) :=
       make {
           obj: D;
           arrow: C c (S obj);
-
           prf: spec arrow
         }.
 
@@ -50,7 +49,7 @@ Module UniversalArrow.
       proof {
           universality:
             forall (d: D)(f: C (S d) c),
-              exists_ f': D d r, v \o fmap S f' == f
+              exists!_ f': D d r, v \o fmap S f' == f
         }.
 
     Structure type {C D: Category}(S: Functor D C)(c: C) :=
@@ -72,36 +71,56 @@ End UniversalArrow.
 Export UniversalArrow.To.Ex.
 Export UniversalArrow.From.Ex.
 
+Module UATo := UniversalArrow.To.
+Module UAFrom := UniversalArrow.From.
+
 Require Import COC.Structure.
 
-Program Definition CommaInitUA 
-        (C D: Category)(S: Functor D C)(c: C)
-        (i: Initial (Comma.category (ConstFunctor c) S)): [UA c :=> S] :=
-  UniversalArrow.To.build (Comma.morph (@Initial.object _ i)).
+Program Definition CommaInitUA (C D: Category)(S: Functor D C)(c: C)(i: Initial (CommaTo c S)): [UA c :=> S] :=
+  let r := (Comma.cod (@Initial.object _ i)) in
+  let u := (Comma.morph (@Initial.object _ i)) in
+  UATo.build u.
 Next Obligation.
-  intros; simpl.
+  intros; simpl in *.
   set (df := (Comma.triple (T:=ConstFunctor c)(dom:=c) f)).
   set (m:=(@Initial.morphism _ i df)).
-  generalize (@Comma.comm _ _ _ _ _ _ _ _ _ m); intro H.
-  simpl in *.
-  set (f':=(Comma.cmorph m)) in *.
-  exists f'; simpl in *.
-  eapply transitivity; [| apply Category.comp_id_dom].
-  apply symmetry, H.
+  generalize (@Comma.comm _ _ _ _ _ _ _ _ _ m).
+  set (f':= Comma.cmorph m).
+  intros H; simpl in *.
+  exists f'; split.
+  - eapply transitivity; [| apply Category.comp_id_dom].
+    apply symmetry, H.
+  - intros g' Heq.
+    assert (H': f \o Id c == fmap S g' \o Comma.morph (Initial.object i)).
+    {
+      eapply transitivity; [apply Category.comp_id_dom |].
+      apply symmetry, Heq.
+    }
+    set (spec := @Comma.proof _ _ _ (ConstFunctor c) S (Initial.object i) df (Comma.dmorph m) g' H').
+    set (dg' := Comma.make spec); simpl in *.
+    apply  (@Initial.initiality _ _ _ i _ dg'); simpl.
 Qed.
 
-Program Definition CommaTermUA
-        (C D: Category)(c: C)(S: Functor D C)
-        (t: Terminal (Comma.category S (ConstFunctor c))): [UA c <=: S] :=
-  UniversalArrow.From.build (Comma.morph (@Terminal.object _ t)).
+Program Definition CommaTermUA (C D: Category)(c: C)(S: Functor D C)(t: Terminal (CommaFrom S c)): [UA c <=: S] :=
+  let r := (Comma.cod (Terminal.object t)) in
+  let u := (Comma.morph (Terminal.object t)) in
+  UAFrom.build u.
 Next Obligation.
-  intros; simpl.
+  intros; simpl in *.
   set (df := (Comma.triple (S:=ConstFunctor c)(cod:=c) f)).
   set (m:=(@Terminal.morphism _ t df)).
-  generalize (@Comma.comm _ _ _ _ _ _ _ _ _ m); intro H.
-  simpl in *.
+  generalize (@Comma.comm _ _ _ _ _ _ _ _ _ m).
   set (f':=(Comma.dmorph m)) in *.
-  exists f'; simpl in *.
-  eapply transitivity; [| apply Category.comp_id_cod].
-  apply H.
+  intros H; simpl in *.
+  exists f'; split.
+  - eapply transitivity; [| apply Category.comp_id_cod].
+    apply H.
+  - intros g' Heq.
+    assert (H': Comma.morph (Terminal.object t) \o fmap S g' == Id c \o f).
+    {
+      eapply transitivity; [apply Heq | apply symmetry, Category.comp_id_cod ].
+    }
+    set (spec := Comma.proof (T:=S)(S:=ConstFunctor c)(f:=df)(k:=g')(h:=Comma.cmorph m) H'). 
+    set (dg' := Comma.make spec); simpl in *.
+    apply  (@Terminal.terminality _ _ _ t _ dg'); simpl.
 Qed.
