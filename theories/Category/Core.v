@@ -98,6 +98,19 @@ Module Category.
   Definition cod {C: Category}{X Y: C}(f: C X Y): C := Y.
   Arguments dom {C X Y} f /.
   Arguments cod {C X Y} f /.
+
+  Lemma comp_subst_dom {C: Category}(X Y Z: C)(f f': C X Y)(g: C Y Z):
+    f == f' -> g \o f == g \o f'.
+  Proof.
+    intros Heq; apply Category.comp_subst; [apply Heq | apply reflexivity].
+  Qed.
+
+  Lemma comp_subst_cod {C: Category}(X Y Z: C)(f: C X Y)(g g': C Y Z):
+    g == g' -> g \o f == g' \o f.
+  Proof.
+    intros Heq; apply Category.comp_subst; [apply reflexivity | apply Heq].
+  Qed.
+  
   (**
    *** 圏の双対
 [Category.build] のおかげで定義しやすい気がする。

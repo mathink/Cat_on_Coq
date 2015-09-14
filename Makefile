@@ -96,7 +96,9 @@ endif
 #                    #
 ######################
 
-VFILES:=theories/Construction.v\
+VFILES:=theories/Adjunction.v\
+  theories/Adjunction/Core.v\
+  theories/Construction.v\
   theories/Construction/Universal.v\
   theories/Construction/Yoneda.v\
   theories/Structure.v\

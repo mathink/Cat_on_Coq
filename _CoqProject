@@ -28,3 +28,6 @@ theories/Structure.v
 theories/Construction/Yoneda.v
 theories/Construction/Universal.v
 theories/Construction.v
+
+theories/Adjunction/Core.v
+theories/Adjunction.v

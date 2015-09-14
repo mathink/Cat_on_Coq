@@ -114,8 +114,25 @@ Module Prod.
     apply Category.comp_id_cod.
   Qed.
 
+  Instance isFunctor (C C' D D': Category)(F: Functor C D)(G: Functor C' D')
+    : @isFunctor (category C C') (category D D')
+                 (fun XY => let (X,Y) := XY in (F X, G Y))
+                 (fun XY XY' fg => let (f,g) := fg in (fmap F f, fmap G g)).
+  Proof.
+    split; simpl.
+    - intros [X Y] [X' Y'] [f g] [f' g'] [Heqf Heqg]; simpl in *.
+      split; apply Map.substitute; assumption.
+    - intros [X1 Y1] [X2 Y2] [X3 Y3] [f1 g1] [f2 g2]; simpl in *.
+      split; apply Functor.fmap_comp.
+    - intros [X Y]; simpl; split; apply Functor.fmap_id.
+  Qed.
+
+  Program Definition functor (C C' D D': Category)(F: Functor C D)(G: Functor C' D')
+    : Functor (category C C') (category D D') :=
+    Functor.make (@isFunctor _ _ _ _ F G).
 End Prod.
 Export Prod.Ex.
 Infix "[*]" := Prod.setoid (at level 40, left associativity).
 Infix "[x]" := Prod.category (at level 40, left associativity).
 
+Notation Bifunctor B C D := (Functor (B [x] C) D).
