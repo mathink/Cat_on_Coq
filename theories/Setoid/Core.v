@@ -8,6 +8,7 @@ Set Universe Polymorphism.
 
 Generalizable All Variables.
 
+Delimit Scope category_scope with category.
 Delimit Scope cat_scope with cat.
 Open Scope cat_scope.
 
@@ -38,7 +39,7 @@ Module Setoid.
                                 (at level 70,
                                  y at next level, no associativity): cat_scope.
     (* Notation "x == y" := (x == y :> _) (at level 70, no associativity): cat_scope. *)
-    Notation "x == y" := (x == y :> _) (at level 70, only parsing): cat_scope.
+    Notation "x == y" := ((x == y :> _)%category) (at level 70): cat_scope.
 
   End Ex.
 End Setoid.

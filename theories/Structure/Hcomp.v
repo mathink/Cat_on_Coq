@@ -117,7 +117,7 @@ Module Hcomp.
   Lemma dom_compose_cod:
     forall {C D E K: Category}
            (F: Functor C D){G H: Functor D E}(S: Natrans G H)(I: Functor E K),
-      I \Fo (S \oF F) == (I \Fo S) \oF F :> Natrans.setoid _ _.
+      (I \Fo (S \oF F) == (I \Fo S) \oF F :> Natrans.setoid _ _)%category.
   Proof.
     simpl; intros.
     intros X; simpl.
@@ -127,7 +127,7 @@ Module Hcomp.
   Lemma dom_compose_v:
     forall {C D E: Category}
            (F: Functor C D){G H: Functor D E}(S: Natrans G H),
-      S \oF F == S \vo (Natrans.id F) :> Natrans.setoid _ _.
+      (S \oF F == S \vo (Natrans.id F) :> Natrans.setoid _ _)%category.
   Proof.
     simpl; intros.
     intros X; simpl.
@@ -139,7 +139,7 @@ Module Hcomp.
   Lemma cod_compose_v:
     forall {C D E: Category}
            {F G: Functor C D}(S: Natrans F G)(H: Functor D E),
-      H \Fo S == (Natrans.id H) \vo S :> Natrans.setoid _ _.
+      (H \Fo S == (Natrans.id H) \vo S :> Natrans.setoid _ _)%category.
   Proof.
     simpl; intros.
     intros X; simpl.

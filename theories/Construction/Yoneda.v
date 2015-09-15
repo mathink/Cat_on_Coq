@@ -288,11 +288,10 @@ Qed.
 (** 
  ** 射の同型とか
  **)
-Lemma yoneda_lemma:
-  forall (C: Category), NaturalIso (@yoneda C).
+Instance yoneda_lemma:
+  forall (C: Category), isNaturalIso (@yoneda C) (@inv_yoneda C).
 Proof.
   intros C [F X]; simpl.
-  exists (@inv_yoneda C (F,X)); simpl.
   apply Iso_def; simpl.
   - intros S Y f.
     apply symmetry.

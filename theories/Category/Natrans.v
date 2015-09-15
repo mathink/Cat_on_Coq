@@ -29,7 +29,7 @@ Module Natrans.
         cod_isFunctor: isFunctor Ga;
         naturality:
           forall (X Y: C)(f: C X Y),
-            natrans Y \o Fa _ _ f == Ga _ _ f \o natrans X :> D _ _
+            (natrans Y \o Fa _ _ f == Ga _ _ f \o natrans X :> D _ _)%category
       }.
 
   Structure canonical {C D: Category}
@@ -131,10 +131,30 @@ Module Natrans.
     intros C D F G S T U Heq Heq' X;
     generalize (Heq X) (Heq' X); apply transitivity.
   Qed.
-
 End Natrans.
 Export Natrans.Ex.
 
-Definition NaturalIso {C D: Category}{F G: Functor C D}
-           (S: Natrans F G): Prop :=
-  forall X: C, exists_ g, Iso (S X) g.
+Module NaturalIso.
+  
+  Class spec {C D: Category}{F G: Functor C D}
+        (S: Natrans F G)(T: Natrans G F) :=
+    iso: forall X: C, Iso (S X) (T X).
+
+  Structure type {C D: Category}(F G: Functor C D) :=
+    make {
+        natrans: Natrans F G;
+        inv: Natrans G F;
+
+        prf: spec natrans inv
+      }.
+
+  Module Ex.
+    Notation isNaturalIso := spec.
+    Notation NaturalIso := type.
+    Existing Instance prf.
+    Coercion natrans: type >-> Natrans.
+    Coercion prf: type >-> spec.
+  End Ex.
+
+End NaturalIso.
+Export NaturalIso.Ex.
