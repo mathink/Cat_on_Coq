@@ -62,10 +62,7 @@ Module Monoidal.
 
       unit_law:
         forall (a c: B),
-          (rho a [Bi mult] Id c) \o assoc a unit c == (Id a [Bi mult] lambda c);
-
-      lambda_rho_unit:
-        lambda unit == rho unit
+          (rho a [Bi mult] Id c) \o assoc a unit c == (Id a [Bi mult] lambda c)
     }.
 
   Structure type :=
@@ -162,30 +159,6 @@ Module Monoidal.
     apply reflexivity.
   Qed.
 
-
-  Instance left_id_functor_isF (B: Monoidal)
-    : @isFunctor B B
-                 (fun X => (unit B • X))
-                 (fun X Y f => Id (unit B) [] f).
-  Proof.
-    split; simpl.
-    - intros a b f g Heq; simpl.
-      apply Map.substitute; simpl.
-      split; [apply reflexivity | apply Heq].
-    - intros.
-      etrans; [| apply fnC].
-      apply Map.substitute; simpl; split.
-      + apply symmetry, catC1f.
-      + apply reflexivity.
-    - intros.
-      etrans; [| apply fn1].
-      apply Map.substitute; simpl; split; apply reflexivity.
-  Qed.
-
-  Definition left_id_functor (B: Monoidal) :=
-    Functor.make (left_id_functor_isF B).
-
-  Check @fmap.
   Lemma left_id_functor_injective (B: Monoidal):
     forall (a b: B)(f g: B a b),
       Id (unit B) [] f == Id (unit B) [] g -> f == g.
@@ -206,7 +179,7 @@ Module Monoidal.
     apply catCsc, H.
   Qed.    
       
-  Lemma lambda_reduce {B: Monoidal}:
+  Lemma kelly_lambda {B: Monoidal}:
     forall (b c: B),
       lambda (b•c) == (lambda b [] Id c) \o assoc (unit B) b c.
   Proof.
@@ -268,6 +241,115 @@ Module Monoidal.
     apply H''.
   Qed.    
     
+
+  Lemma right_id_functor_injective (B: Monoidal):
+    forall (a b: B)(f g: B a b),
+      f [] Id (unit B) == g [] Id (unit B) -> f == g.
+  Proof.
+    simpl; intros a b f g Heq.
+    assert (H: f \o rho a == g \o rho a).
+    {
+      etrans; [apply rho_naturality |].
+      etrans; [| apply symmetry, rho_naturality].
+      apply catCsd, Heq.
+    }
+    etrans; [| apply catC1f].
+    etrans; [apply symmetry, catC1f |].
+    etrans; [apply catCsd, symmetry, rho_iso_inv |].
+    etrans; [| apply symmetry, catCsd, symmetry, rho_iso_inv].
+    etrans; [| apply catCa].
+    etrans; [apply symmetry, catCa |].
+    apply catCsc, H.
+  Qed.    
+      
+  Lemma kelly_rho {B: Monoidal}:
+    forall (a b: B),
+      (Id a [] rho b) ==  rho (a•b) \o assoc a b (unit B).
+  Proof.
+    intros a b; set (e := unit B).
+    assert (H: (Id a [] rho b) [] Id e \o assoc a (b•e) e \o Id a [] assoc b e e
+               ==
+               (rho (a•b) \o assoc a b (unit B)) [] Id e \o assoc a (b•e) e \o Id a [] assoc b e e ).
+    {
+      etrans; [apply symmetry, catCa |].
+      etrans; [apply catCsc, assoc_naturality |].
+      etrans; [apply catCa |].
+      etrans; [apply catCsd, symmetry, fnC |]; simpl; unfold Prod.compose; simpl.
+      etrans; [apply catCsd, Map.substitute |].
+      - instantiate (1 := (Id a, (Id b [] lambda e))); simpl.
+        split; [apply catCf1 | apply unit_law].
+      - etrans; [apply symmetry, assoc_naturality |].
+        etrans; [apply catCsc |].
+        + instantiate (1 := Id (a•b) [] lambda e).
+          apply Map.substitute; split; [| apply reflexivity]; simpl.
+          etrans; [| apply fn1]; simpl.
+          apply Map.substitute; simpl; split; apply reflexivity.
+        + etrans; [apply catCsc, symmetry, unit_law |].
+          etrans; [apply catCa |].
+          etrans; [apply catCsd, associativity |].
+          etrans; [apply symmetry, catCa |].
+          etrans; [apply symmetry, catCa |].
+          etrans; [| apply catCa ].
+          apply catCsc, catCsc.
+          etrans; [apply symmetry, fnC |].
+          apply Map.substitute; simpl; split; [apply reflexivity | apply catC1f].
+    }
+    apply right_id_functor_injective.
+    assert (H': (assoc a (b•e) e \o Id a [] assoc b e e) \o (Id a [] assoc_inv b e e \o assoc_inv a (b•e) e) == Id _).
+    {
+      etrans; [apply catCa |].
+      etrans; [apply catCsd, symmetry, catCa |].
+      etrans; [apply catCsd, catCsc; instantiate (1 := Id _) |].
+      - etrans; [apply symmetry, fnC |].
+        etrans; [| apply fn1].
+        apply Map.substitute; simpl; split; [apply catCf1 | apply assoc_iso_inv].
+      - etrans; [apply catCsd, catCf1 | apply assoc_iso_inv].
+    }
+    etrans; [apply symmetry, catC1f |].
+    etrans; [apply catCsd, symmetry, H' |].
+    etrans; [apply symmetry, catCa |].
+    etrans; [apply catCsc, H |].
+    etrans; [apply catCa |].
+    etrans; [apply catCsd, H' |].
+    apply catC1f.
+  Qed.    
+
+  Lemma kelly_unit (B: Monoidal):
+    let e := unit B in lambda e == rho e.
+  Proof.
+    intros.
+    apply right_id_functor_injective.
+    assert (Hl: lambda e [] Id e == lambda (e•e) \o assoc_inv e e e).
+    {
+      etrans; [apply symmetry, catC1f |].
+      etrans; [apply catCsd, symmetry, assoc_iso_inv |].
+      etrans; [apply symmetry, catCa |].
+      apply catCsc, symmetry, (kelly_lambda e e).
+    }
+    assert (Hr: rho e [] Id e == (Id e [] lambda e) \o assoc_inv e e e).
+    {
+      etrans; [apply symmetry, catC1f |].
+      etrans; [apply catCsd, symmetry, assoc_iso_inv |].
+      etrans; [apply symmetry, catCa |].
+      apply catCsc, unit_law.
+    }
+    etrans; [apply Hl |].
+    etrans; [| apply symmetry, Hr].
+    apply catCsc.
+    etrans; [apply symmetry, catC1f |].
+    assert (H: Id e [] lambda_inv e \o Id e [] lambda e == Id _).
+    {
+      etrans; [apply symmetry, fnC |].
+      etrans; [| apply fn1].
+      apply Map.substitute; simpl; split; [apply catC1f | apply lambda_iso].
+    }
+    etrans; [apply catCsd, symmetry, H |].
+    etrans; [apply symmetry, catCa |].
+    etrans; [apply catCsc, symmetry, lambda_naturality |].
+    etrans; [apply catCsc, lambda_iso | apply catCf1].
+  Qed.
+
+  
 End Monoidal.
 Export Monoidal.Ex.
 
