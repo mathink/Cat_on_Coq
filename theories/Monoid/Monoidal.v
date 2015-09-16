@@ -5,10 +5,10 @@ Set Universe Polymorphism.
 
 Require Import COC.Structure.
 
-Module Monoidal.
-  Notation bifmap F p := (fmap F (X:=(_,_))(Y:=(_,_)) p) (only parsing).
-  Notation "x '[Bi' F ] y" := (fmap F (X:=(_,_))(Y:=(_,_)) (x,y)) (only parsing, at level 60, no associativity).
+Notation bifmap F p := (fmap F (X:=(_,_))(Y:=(_,_)) p) (only parsing).
+Notation "x '[Bi' F ] y" := (fmap F (X:=(_,_))(Y:=(_,_)) (x,y)) (at level 60, no associativity, format "x  [Bi  F  ]  y").
 
+Module Monoidal.
   Class spec (B: Category)(mult: Bifunctor B B B)(unit: B)
         (assoc: forall (a b c: B), B (mult (a, mult (b, c))) (mult (mult (a, b), c)))
         (assoc_inv: forall (a b c: B), B (mult (mult (a, b), c)) (mult (a, mult (b, c))))
@@ -18,6 +18,13 @@ Module Monoidal.
         (rho_inv: forall (a: B), B a (mult (a, unit))) :=
     {
       assoc_naturality:
+        (* 
+          a(bc)  -- assoc ->  (ab)c
+            |                   |
+          f(gh)               (fg)h
+            V                   V
+        a'(b'c') -- assoc -> (a'b')c'
+         *)
         forall (a a' b b' c c': B)(f: B a a')(g: B b b')(h: B c c'),
           (f [Bi mult] g)[Bi mult] h \o assoc a b c ==
           assoc a' b' c' \o f [Bi mult] (g [Bi mult] h);
@@ -57,7 +64,7 @@ Module Monoidal.
         forall (a c: B),
           (rho a [Bi mult] Id c) \o assoc a unit c == (Id a [Bi mult] lambda c);
 
-      lambda_rho:
+      lambda_rho_unit:
         lambda unit == rho unit
     }.
 
@@ -91,8 +98,7 @@ Module Monoidal.
     Notation isMonoidal := spec.
     Notation Monoidal := type.
     Coercion cat: Monoidal >-> Category.
-    Coercion mult: Monoidal >-> Functor.
-    Coercion prf: type >-> spec.
+     Coercion prf: type >-> spec.
     Existing Instance prf.
 
     Notation Munit B := (unit B).
@@ -113,14 +119,14 @@ Module Monoidal.
        assoc_inv a' b' c' \o (f [] g) [] h.
   Proof.
     intros.
-    eapply transitivity; [apply symmetry, Category.comp_id_cod |].
-    eapply transitivity; [apply Category.comp_subst_cod, symmetry, assoc_iso |].
-    eapply transitivity; [apply Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, symmetry, Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_subst_cod, symmetry, assoc_naturality |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_subst_dom, assoc_iso_inv |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_id_dom |].
+    etrans; [apply symmetry, catCf1 |].
+    etrans; [apply catCsc, symmetry, assoc_iso |].
+    etrans; [apply catCa |].
+    etrans; [apply catCsd, symmetry, catCa |].
+    etrans; [apply catCsd, catCsc, symmetry, assoc_naturality |].
+    etrans; [apply catCsd, catCa |].
+    etrans; [apply catCsd, catCsd, assoc_iso_inv |].
+    etrans; [apply catCsd, catC1f |].
     apply reflexivity.
   Qed.    
 
@@ -129,14 +135,14 @@ Module Monoidal.
       (Id (unit B) [] f) \o lambda_inv a == lambda_inv a' \o f.
   Proof.
     intros.
-    eapply transitivity; [apply symmetry, Category.comp_id_cod |].
-    eapply transitivity; [apply Category.comp_subst_cod, symmetry, lambda_iso |].
-    eapply transitivity; [apply Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, symmetry, Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_subst_cod, symmetry, lambda_naturality |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_subst_dom, lambda_iso_inv |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_id_dom |].
+    etrans; [apply symmetry, catCf1 |].
+    etrans; [apply catCsc, symmetry, lambda_iso |].
+    etrans; [apply catCa |].
+    etrans; [apply catCsd, symmetry, catCa |].
+    etrans; [apply catCsd, catCsc, symmetry, lambda_naturality |].
+    etrans; [apply catCsd, catCa |].
+    etrans; [apply catCsd, catCsd, lambda_iso_inv |].
+    etrans; [apply catCsd, catC1f |].
     apply reflexivity.
   Qed.
 
@@ -145,17 +151,123 @@ Module Monoidal.
       (f [] Id (unit B)) \o rho_inv a == rho_inv a' \o f.
   Proof.
     intros.
-    eapply transitivity; [apply symmetry, Category.comp_id_cod |].
-    eapply transitivity; [apply Category.comp_subst_cod, symmetry, rho_iso |].
-    eapply transitivity; [apply Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, symmetry, Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_subst_cod, symmetry, rho_naturality |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_assoc |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_subst_dom, rho_iso_inv |].
-    eapply transitivity; [apply Category.comp_subst_dom, Category.comp_id_dom |].
+    etrans; [apply symmetry, catCf1 |].
+    etrans; [apply catCsc, symmetry, rho_iso |].
+    etrans; [apply catCa |].
+    etrans; [apply catCsd, symmetry, catCa |].
+    etrans; [apply catCsd, catCsc, symmetry, rho_naturality |].
+    etrans; [apply catCsd, catCa |].
+    etrans; [apply catCsd, catCsd, rho_iso_inv |].
+    etrans; [apply catCsd, catC1f |].
     apply reflexivity.
   Qed.
 
+
+  Instance left_id_functor_isF (B: Monoidal)
+    : @isFunctor B B
+                 (fun X => (unit B • X))
+                 (fun X Y f => Id (unit B) [] f).
+  Proof.
+    split; simpl.
+    - intros a b f g Heq; simpl.
+      apply Map.substitute; simpl.
+      split; [apply reflexivity | apply Heq].
+    - intros.
+      etrans; [| apply fnC].
+      apply Map.substitute; simpl; split.
+      + apply symmetry, catC1f.
+      + apply reflexivity.
+    - intros.
+      etrans; [| apply fn1].
+      apply Map.substitute; simpl; split; apply reflexivity.
+  Qed.
+
+  Definition left_id_functor (B: Monoidal) :=
+    Functor.make (left_id_functor_isF B).
+
+  Check @fmap.
+  Lemma left_id_functor_injective (B: Monoidal):
+    forall (a b: B)(f g: B a b),
+      Id (unit B) [] f == Id (unit B) [] g -> f == g.
+  Proof.
+    simpl; intros a b f g Heq.
+    assert (H: f \o lambda a == g \o lambda a).
+    {
+      etrans; [apply lambda_naturality |].
+      etrans; [| apply symmetry, lambda_naturality].
+      apply catCsd, Heq.
+    }
+    etrans; [| apply catC1f].
+    etrans; [apply symmetry, catC1f |].
+    etrans; [apply catCsd, symmetry, lambda_iso_inv |].
+    etrans; [| apply symmetry, catCsd, symmetry, lambda_iso_inv].
+    etrans; [| apply catCa].
+    etrans; [apply symmetry, catCa |].
+    apply catCsc, H.
+  Qed.    
+      
+  Lemma lambda_reduce {B: Monoidal}:
+    forall (b c: B),
+      lambda (b•c) == (lambda b [] Id c) \o assoc (unit B) b c.
+  Proof.
+    intros b c; set (e := unit B).
+    assert (H: assoc e b c \o Id e [] lambda(b•c)
+               == assoc e b c \o Id e [] (lambda b [] Id c) \o  Id e [] assoc e b c).
+    {
+      apply symmetry.
+      etrans; [apply symmetry, catCa |].
+      etrans; [apply catCsc, symmetry, assoc_naturality |].
+      etrans; [(do 2 apply catCsc) |].
+      - instantiate (1 := (rho e [] Id b) [] Id c \o assoc e e b [] Id c).
+        etrans; [| apply fnC].
+        simpl; apply Map.substitute; simpl.
+        split; [| apply symmetry, catC1f].
+        apply symmetry, unit_law.
+      - apply symmetry.
+        etrans; [apply catCsd, symmetry, unit_law |].
+        etrans; [apply symmetry, catCa |].
+        etrans; [apply catCsc |].
+        simpl.
+        + etrans; [apply catCsd |]; simpl.
+          * instantiate (1 := ρ (t:=B) e [] (Id b [] Id c)).
+            simpl; apply Map.substitute; simpl.
+            split; [apply reflexivity |]; simpl.
+            etrans; [apply symmetry, fn1 | apply Map.substitute].
+            simpl; split; apply reflexivity.
+          * apply symmetry, assoc_naturality.
+        + etrans; [apply catCa |].
+          etrans; [apply catCsd, associativity |].
+          etrans; [apply symmetry, catCa |].
+          etrans; [apply symmetry, catCa |].
+          apply reflexivity.
+    }
+    assert (H': Id e [] lambda (b•c) ==
+                (Id e [] (lambda b [] Id c)) \o Id e [] assoc e b c).
+    {
+      etrans; [apply symmetry, catCf1 |].
+      etrans; [apply catCsc, symmetry, assoc_iso |].
+      etrans; [apply catCa |].
+      etrans; [apply catCsd, H |].
+      etrans; [apply symmetry, catCa |].
+      etrans; [apply catCsc, assoc_iso |].
+      apply catCf1.
+    }
+    simpl in H'.
+    assert (H'': Id e [] lambda (b•c) ==
+                 (Id e [] (lambda b [] Id c \o assoc e b c))).
+    {
+      etrans; [apply H' |].
+      etrans; [apply symmetry, fnC |].
+      simpl; unfold Prod.compose; simpl.
+      apply Map.substitute; simpl.
+      split; [apply catC1f |].
+      apply reflexivity.
+    }
+    simpl in H''.
+    apply left_id_functor_injective in H''.
+    apply H''.
+  Qed.    
+    
 End Monoidal.
 Export Monoidal.Ex.
 
@@ -220,19 +332,19 @@ Module Monoid.
       build (g \o f).
     Next Obligation.
       intros; simpl.
-      eapply transitivity; [apply Category.comp_assoc |].
-      eapply transitivity; [apply Category.comp_subst_dom, mu_law |].
-      eapply transitivity; [apply symmetry, Category.comp_assoc |].
-      eapply transitivity; [apply Category.comp_subst_cod, mu_law |].
-      eapply transitivity; [apply Category.comp_assoc |]; simpl.
-      eapply transitivity; [apply Category.comp_subst_dom, symmetry, Functor.fmap_comp |]; simpl.
+      etrans; [apply catCa |].
+      etrans; [apply catCsd, mu_law |].
+      etrans; [apply symmetry, catCa |].
+      etrans; [apply catCsc, mu_law |].
+      etrans; [apply catCa |]; simpl.
+      etrans; [apply catCsd, symmetry, fnC |]; simpl.
       unfold Prod.compose; simpl.
       apply reflexivity.
     Qed.
     Next Obligation.
       intros; simpl.
-      eapply transitivity; [apply Category.comp_assoc |].
-      eapply transitivity; [apply Category.comp_subst_dom, eta_law |].
+      etrans; [apply catCa |].
+      etrans; [apply catCsd, eta_law |].
       apply eta_law.
     Qed.
 
@@ -240,14 +352,14 @@ Module Monoid.
       build (Id c).
     Next Obligation.
       simpl; intros.
-      eapply transitivity; [apply Category.comp_id_cod |].
-      generalize (Functor.fmap_id (spec:=Monoidal.mult B) (X:=(obj c,obj c))); simpl.
+      etrans; [apply catCf1 |].
+      generalize (fn1 (spec:=Monoidal.mult B) (X:=(obj c,obj c))); simpl.
       unfold Prod.id; simpl; intros H.
-      eapply transitivity; [| apply Category.comp_subst_dom, symmetry, H].
-      apply symmetry, Category.comp_id_dom.
+      etrans; [| apply catCsd, symmetry, H].
+      apply symmetry, catC1f.
     Qed.
     Next Obligation.
-      intros; apply Category.comp_id_cod.
+      intros; apply catCf1.
     Qed.
 
     Definition equal (B: Monoidal)(c d: Monoid B)(f g: morph c d) := f == g.
@@ -273,16 +385,16 @@ Module Monoid.
                    (@compose B)
                    (@id B).
   Next Obligation.
-    simpl; intros; apply Category.comp_subst; assumption.
+    simpl; intros; apply catCs; assumption.
   Qed.
   Next Obligation.
-    simpl; intros; apply Category.comp_assoc.
+    simpl; intros; apply catCa.
   Qed.
   Next Obligation.
-    simpl; intros; apply Category.comp_id_dom.
+    simpl; intros; apply catC1f.
   Qed.
   Next Obligation.
-    simpl; intros; apply Category.comp_id_cod.
+    simpl; intros; apply catCf1.
   Qed.
 
 
@@ -299,7 +411,6 @@ Module Monoid.
 
   Definition forgetful (B: Monoidal) := Functor.make (forgetful_isF B).
   
-
   Module mEx.
     Module Monoid := morphism.Ex.
   End mEx.

@@ -182,6 +182,10 @@ Module Functor.
 End Functor.
 Export Functor.Ex.
 
+(*  *)
+Notation fnC := Functor.fmap_comp.
+Notation fn1 := Functor.fmap_id.
+
 Program Definition ConstFunctor (C: Category)(X: C): Functor C C :=
   Functor.build (fun _ => X)
                 (fun (a b: C)(f: C a b) => Id_ C X).

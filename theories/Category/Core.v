@@ -139,6 +139,14 @@ Module Category.
 End Category.
 Export Category.Ex.
 
+(* *)
+Notation catCa := Category.comp_assoc.
+Notation catC1f := Category.comp_id_dom.
+Notation catCf1 := Category.comp_id_cod.
+Notation catCs := Category.comp_subst.
+Notation catCsd := Category.comp_subst_dom.
+Notation catCsc := Category.comp_subst_cod.
+
 Variant Iso (C: Category)(X Y: C): C X Y -> C Y X -> Prop :=
 | Iso_def: forall f g, g \o f == Id X -> f \o g == Id Y -> Iso f g.
 
