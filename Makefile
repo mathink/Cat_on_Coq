@@ -95,7 +95,8 @@ endif
 #                    #
 ######################
 
-VFILES:=theories/Monoid.v\
+VFILES:=theories/Enrich/Core.v\
+  theories/Monoid.v\
   theories/Monoid/Monoidal.v\
   theories/Adjunction.v\
   theories/Adjunction/Core.v\
