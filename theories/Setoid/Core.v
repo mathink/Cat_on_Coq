@@ -35,6 +35,9 @@ Module Setoid.
     Coercion prf: Setoid >-> Equivalence.
     Existing Instance prf.
 
+    Notation "(== :> A )" := (@equal A).
+    Notation "(==)" := (==:> _).
+  
     Notation "x == y :> X" := (@equal X x y)
                                 (at level 70,
                                  y at next level, no associativity): cat_scope.

@@ -9,7 +9,6 @@ Set Universe Polymorphism.
 Generalizable All Variables.
 
 Require Import COC.Setoid.Core.
-
 Open Scope cat_scope.
 
 Module Map.

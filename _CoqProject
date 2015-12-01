@@ -1,6 +1,5 @@
 -arg -noinit
 -R theories COC
--opt
 
 theories/Init/Prelude.v
 theories/Init/Relations.v
@@ -31,3 +30,8 @@ theories/Construction.v
 
 theories/Adjunction/Core.v
 theories/Adjunction.v
+
+theories/Monoid/Monoidal.v
+theories/Monoid.v
+
+theories/Enrich/Core.v
