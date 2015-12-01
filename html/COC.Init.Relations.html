@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>COC.Init.Relations</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Init.Relations</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Init.Prelude.html#"><span class="id" title="library">COC.Init.Prelude</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Unset</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Contextual</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Primitive</span> <span class="id" title="var">Projections</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Generalizable</span> <span class="id" title="keyword">All</span> <span class="id" title="keyword">Variables</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab18"></a><h2 class="section">関係と性質</h2>
+
+同値関係の定義に向けて、性質を表すクラスを定義していく
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Class</span> <a name="Reflexive"><span class="id" title="record">Reflexive</span></a> `(<span class="id" title="var">R</span>: <a class="idref" href="COC.Init.Prelude.html#relation"><span class="id" title="abbreviation">relation</span></a> <span class="id" title="var">X</span>): <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<a name="reflexivity"><span class="id" title="projection">reflexivity</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>: <a class="idref" href="COC.Init.Relations.html#X"><span class="id" title="variable">X</span></a>, <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="COC.Init.Relations.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Init.Relations.html#x"><span class="id" title="variable">x</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="Symmetric"><span class="id" title="record">Symmetric</span></a> `(<span class="id" title="var">R</span>: <a class="idref" href="COC.Init.Prelude.html#relation"><span class="id" title="abbreviation">relation</span></a> <span class="id" title="var">X</span>): <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<a name="symmetry"><span class="id" title="projection">symmetry</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="COC.Init.Relations.html#X"><span class="id" title="variable">X</span></a>, <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="COC.Init.Relations.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Init.Relations.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="COC.Init.Relations.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="COC.Init.Relations.html#x"><span class="id" title="variable">x</span></a>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Class</span> <a name="Transitive"><span class="id" title="record">Transitive</span></a> `(<span class="id" title="var">R</span>: <a class="idref" href="COC.Init.Prelude.html#relation"><span class="id" title="abbreviation">relation</span></a> <span class="id" title="var">X</span>): <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<a name="transitivity"><span class="id" title="projection">transitivity</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>: <a class="idref" href="COC.Init.Relations.html#X"><span class="id" title="variable">X</span></a>, <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="COC.Init.Relations.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Init.Relations.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="COC.Init.Relations.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="COC.Init.Relations.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a> <a class="idref" href="COC.Init.Relations.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Init.Relations.html#z"><span class="id" title="variable">z</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="Equivalence"><span class="id" title="record">Equivalence</span></a> `(<span class="id" title="var">R</span>: <a class="idref" href="COC.Init.Prelude.html#relation"><span class="id" title="abbreviation">relation</span></a> <span class="id" title="var">X</span>): <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="equiv_Reflexive"><span class="id" title="projection">equiv_Reflexive</span></a>:&gt; <a class="idref" href="COC.Init.Relations.html#Reflexive"><span class="id" title="class">Reflexive</span></a> <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="equiv_Symmetric"><span class="id" title="projection">equiv_Symmetric</span></a>:&gt; <a class="idref" href="COC.Init.Relations.html#Symmetric"><span class="id" title="class">Symmetric</span></a> <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="equiv_Transitive"><span class="id" title="projection">equiv_Transitive</span></a>:&gt; <a class="idref" href="COC.Init.Relations.html#Transitive"><span class="id" title="class">Transitive</span></a> <a class="idref" href="COC.Init.Relations.html#R"><span class="id" title="variable">R</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">equiv_Reflexive</span>.<br/>
+<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">equiv_Symmetric</span>.<br/>
+<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">equiv_Transitive</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

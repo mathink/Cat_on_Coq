@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>COC.Setoid.Map</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Setoid.Map</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Init.Prelude.html#"><span class="id" title="library">COC.Init.Prelude</span></a> <a class="idref" href="COC.Init.Relations.html#"><span class="id" title="library">COC.Init.Relations</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Unset</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Contextual</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Primitive</span> <span class="id" title="var">Projections</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Generalizable</span> <span class="id" title="keyword">All</span> <span class="id" title="keyword">Variables</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Setoid.Core.html#"><span class="id" title="library">COC.Setoid.Core</span></a>.<br/>
+<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="Map"><span class="id" title="module">Map</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="Map.spec"><span class="id" title="record">spec</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>}(<span class="id" title="var">f</span>: <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>): <span class="id" title="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Map.substitute"><span class="id" title="projection">substitute</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a>), <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Setoid.Map.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Map.html#y"><span class="id" title="variable">y</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="Map.type"><span class="id" title="record">type</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Map.make"><span class="id" title="constructor">make</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Map.f"><span class="id" title="projection">f</span></a>: <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Map.prf"><span class="id" title="projection">prf</span></a>: <a class="idref" href="COC.Setoid.Map.html#Map.spec"><span class="id" title="class">spec</span></a> <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="method">f</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Map.build"><span class="id" title="abbreviation">build</span></a> <span class="id" title="var">f</span> := (@<a class="idref" href="COC.Setoid.Map.html#Map.make"><span class="id" title="constructor">make</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">_</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="Map.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Map.Ex.isMap"><span class="id" title="abbreviation">isMap</span></a> := <a class="idref" href="COC.Setoid.Map.html#Map.Ex.spec"><span class="id" title="class">spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> := <a class="idref" href="COC.Setoid.Map.html#Map.Ex.type"><span class="id" title="record">type</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Setoid.Map.html#Map.Ex.f"><span class="id" title="projection">f</span></a>: <span class="id" title="var">Map</span> &gt;-&gt; <span class="id" title="var">Funclass</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Setoid.Map.html#Map.Ex.prf"><span class="id" title="projection">prf</span></a>: <span class="id" title="var">Map</span> &gt;-&gt; <span class="id" title="var">isMap</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">prf</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">&quot;</span></a>[ x .. y :-&gt; p ]" := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="COC.Setoid.Map.html#Map.Ex.build"><span class="id" title="abbreviation">build</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> ⇒ .. (<a class="idref" href="COC.Setoid.Map.html#Map.Ex.build"><span class="id" title="abbreviation">build</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">y</span> ⇒ <span class="id" title="var">p</span>)) ..))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 200, <span class="id" title="var">x</span> <span class="id" title="var">binder</span>, <span class="id" title="tactic">right</span> <span class="id" title="keyword">associativity</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">format</span> "'[' [ x .. y :-&gt; '/ ' p ] ']'"): <span class="id" title="var">cat_scope</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="COC.Setoid.Map.html#Map.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Import</span> <span class="id" title="var">Ex</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Map.dom"><span class="id" title="definition">dom</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>}(<span class="id" title="var">m</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>): <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a> := <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Map.cod"><span class="id" title="definition">cod</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>}(<span class="id" title="var">m</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>): <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a> := <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="Map.compose"><span class="id" title="definition">compose</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>}(<span class="id" title="var">f</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>)(<span class="id" title="var">g</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Setoid.Map.html#Z"><span class="id" title="variable">Z</span></a>): <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Z"><span class="id" title="variable">Z</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">x</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Setoid.Map.html#g"><span class="id" title="variable">g</span></a> (<a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a>)<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <a class="idref" href="COC.Setoid.Map.html#Map.substitute"><span class="id" title="definition">substitute</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global</span> <span class="id" title="var">Arguments</span> <a class="idref" href="COC.Setoid.Map.html#Map.compose"><span class="id" title="definition">compose</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>} <span class="id" title="var">f</span> <span class="id" title="var">g</span> /.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="Map.id"><span class="id" title="definition">id</span></a> (<span class="id" title="var">X</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>): <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> := <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">x</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Heq</span>; <span class="id" title="tactic">exact</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global</span> <span class="id" title="var">Arguments</span> <a class="idref" href="COC.Setoid.Map.html#Map.id"><span class="id" title="definition">id</span></a> <span class="id" title="var">X</span> /.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Map.equal"><span class="id" title="definition">equal</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>}: <a class="idref" href="COC.Init.Prelude.html#relation"><span class="id" title="abbreviation">relation</span></a> (<a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> ⇒ <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>: <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a>, <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Setoid.Map.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="Map.setoid"><span class="id" title="definition">setoid</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>): <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Core.html#Setoid.build"><span class="id" title="abbreviation">Setoid.build</span></a> (@<a class="idref" href="COC.Setoid.Map.html#Map.equal"><span class="id" title="definition">equal</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">exact</span> <a class="idref" href="COC.Init.Relations.html#reflexivity"><span class="id" title="definition">reflexivity</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">Heq</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">Heq</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Init.Relations.html#symmetry"><span class="id" title="definition">symmetry</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">Heqfg</span> <span class="id" title="var">Heqgh</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Init.Relations.html#transitivity"><span class="id" title="definition">transitivity</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">g</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">Heqfg</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">Heqgh</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="COC.Setoid.Map.html#Map"><span class="id" title="module">Map</span></a>.<br/>
+<span class="id" title="keyword">Export</span> <span class="id" title="var">Map.Ex</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="injective"><span class="id" title="definition">injective</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">x</span> <span class="id" title="var">x'</span>: <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a>), <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Map.html#x'"><span class="id" title="variable">x'</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Setoid.Map.html#x'"><span class="id" title="variable">x'</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="surjective"><span class="id" title="definition">surjective</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">y</span>: <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>), <a class="idref" href="COC.Init.Prelude.html#57ee7cd45dd8daab09653e18265ee9b3"><span class="id" title="notation">exists_</span></a> <span class="id" title="var">x</span>: <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a><a class="idref" href="COC.Init.Prelude.html#57ee7cd45dd8daab09653e18265ee9b3"><span class="id" title="notation">,</span></a> <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Map.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Setoid.Map.html#y"><span class="id" title="variable">y</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="bijective"><span class="id" title="definition">bijective</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Setoid.Map.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Setoid.Map.html#Y"><span class="id" title="variable">Y</span></a>) :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#injective"><span class="id" title="definition">injective</span></a> <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Init.Prelude.html#403cece4b067d80e5c5fea339128a8a8"><span class="id" title="notation">∧</span></a> <a class="idref" href="COC.Setoid.Map.html#surjective"><span class="id" title="definition">surjective</span></a> <a class="idref" href="COC.Setoid.Map.html#f"><span class="id" title="variable">f</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

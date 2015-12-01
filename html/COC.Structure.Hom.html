@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>COC.Structure.Hom</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Structure.Hom</h1>
+
+<div class="code">
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Unset</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Contextual</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Primitive</span> <span class="id" title="var">Projections</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Category.html#"><span class="id" title="library">COC.Category</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<a name="lab6"></a><h2 class="section">Hom 函手たち</h2>
+
+<span class="inlinecode"><span class="id" title="library">Hom</span>(<a class="idref" href="COC.Enrich.Core.html#X"><span class="id" title="variable">X</span></a>,-)</span> と <span class="inlinecode"><span class="id" title="library">Hom</span>(-,<a class="idref" href="COC.Enrich.Core.html#Y"><span class="id" title="variable">Y</span></a>)</span> を作るよ。
+<span class="inlinecode"><span class="id" title="var">Functor.build</span></span> 使うと定義書くのすごく楽。嬉しい。
+ 
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<a name="lab7"></a><h3 class="section">共変な方の <span class="inlinecode"><span class="id" title="library">Hom</span></span></h3>
+
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Program Definition</span> <a name="HomFunctor"><span class="id" title="definition">HomFunctor</span></a> (<span class="id" title="var">C</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>)(<span class="id" title="var">X</span>: <a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Functor.html#Functor.build"><span class="id" title="abbreviation">Functor.build</span></a> (<a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Structure.Hom.html#X"><span class="id" title="variable">X</span></a>) (<span class="id" title="keyword">fun</span> <span class="id" title="var">Y</span> <span class="id" title="var">X</span> <span class="id" title="var">g</span> ⇒ <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a><span class="id" title="var">f</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Structure.Hom.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">o</span></a><a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">{</span></a><a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a><a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">}</span></a> <a class="idref" href="COC.Structure.Hom.html#f"><span class="id" title="variable">f</span></a><a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>).<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_subst"><span class="id" title="projection">Category.comp_subst</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Init.Relations.html#reflexivity"><span class="id" title="definition">reflexivity</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span> <span class="id" title="var">Heq</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_subst"><span class="id" title="projection">Category.comp_subst</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Init.Relations.html#reflexivity"><span class="id" title="definition">reflexivity</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">W</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_assoc"><span class="id" title="projection">Category.comp_assoc</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_id_cod"><span class="id" title="projection">Category.comp_id_cod</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab8"></a><h3 class="section">反変な方の <span class="inlinecode"><span class="id" title="library">Hom</span></span></h3>
+
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Program Definition</span> <a name="OpHomFunctor"><span class="id" title="definition">OpHomFunctor</span></a> (<span class="id" title="var">C</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>)(<span class="id" title="var">Y</span>: <a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> (<a class="idref" href="COC.Category.Core.html#Category.op"><span class="id" title="definition">Category.op</span></a> <a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a>) <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Functor.html#Functor.build"><span class="id" title="abbreviation">Functor.build</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">X</span> ⇒ <a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Structure.Hom.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Structure.Hom.html#Y"><span class="id" title="variable">Y</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> ⇒ <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a><span class="id" title="var">g</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Structure.Hom.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">o</span></a><a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">{</span></a><a class="idref" href="COC.Structure.Hom.html#C"><span class="id" title="variable">C</span></a><a class="idref" href="COC.Category.Core.html#46d3e3dd40d2d7a082435b5dc1e5ad55"><span class="id" title="notation">}</span></a> <a class="idref" href="COC.Structure.Hom.html#f"><span class="id" title="variable">f</span></a><a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>).<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">Z</span> <span class="id" title="var">Y</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span> <span class="id" title="var">Heq</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_subst"><span class="id" title="projection">Category.comp_subst</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Init.Relations.html#reflexivity"><span class="id" title="definition">reflexivity</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">Z</span> <span class="id" title="var">Y</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span> <span class="id" title="var">Heq</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_subst"><span class="id" title="projection">Category.comp_subst</span></a>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Init.Relations.html#reflexivity"><span class="id" title="definition">reflexivity</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">W</span> <span class="id" title="var">Z</span> <span class="id" title="var">Y</span> <span class="id" title="var">X</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">h</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Init.Relations.html#symmetry"><span class="id" title="definition">symmetry</span></a>, <a class="idref" href="COC.Category.Core.html#Category.comp_assoc"><span class="id" title="projection">Category.comp_assoc</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">Y</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_id_dom"><span class="id" title="projection">Category.comp_id_dom</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab9"></a><h3 class="section">記法の定義</h3>
+
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="c6279f8b0d6c610acf50aacba16babca"><span class="id" title="notation">&quot;</span></a>'Hom' ( X , - )" := (<a class="idref" href="COC.Structure.Hom.html#HomFunctor"><span class="id" title="definition">HomFunctor</span></a> <span class="id" title="var">X</span>): <span class="id" title="var">cat_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="71a787099362ba40ecfa83148a31d03b"><span class="id" title="notation">&quot;</span></a>'Hom' ( - , Y )" := (<a class="idref" href="COC.Structure.Hom.html#OpHomFunctor"><span class="id" title="definition">OpHomFunctor</span></a> <span class="id" title="var">Y</span>): <span class="id" title="var">cat_scope</span>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

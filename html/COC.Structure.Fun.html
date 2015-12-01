@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>COC.Structure.Fun</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library COC.Structure.Fun</h1>
+
+<div class="code">
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" title="keyword">Unset</span> <span class="id" title="keyword">Strict</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Contextual</span> <span class="id" title="keyword">Implicit</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Primitive</span> <span class="id" title="var">Projections</span>.<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="var">Universe</span> <span class="id" title="var">Polymorphism</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Category.html#"><span class="id" title="library">COC.Category</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<a name="lab5"></a><h2 class="section">函手圏</h2>
+
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Program Definition</span> <a name="Fun"><span class="id" title="definition">Fun</span></a> (<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>) :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Core.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.Category.Natrans.html#Natrans.setoid"><span class="id" title="definition">Natrans.setoid</span></a> <a class="idref" href="COC.Structure.Fun.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Structure.Fun.html#D"><span class="id" title="variable">D</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.Category.Natrans.html#Natrans.compose"><span class="id" title="definition">Natrans.compose</span></a> <a class="idref" href="COC.Structure.Fun.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Structure.Fun.html#D"><span class="id" title="variable">D</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.Category.Natrans.html#Natrans.id"><span class="id" title="definition">Natrans.id</span></a> <a class="idref" href="COC.Structure.Fun.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Structure.Fun.html#D"><span class="id" title="variable">D</span></a>).<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> <span class="id" title="var">H</span> <span class="id" title="var">S</span> <span class="id" title="var">S'</span> <span class="id" title="var">T</span> <span class="id" title="var">T'</span> <span class="id" title="var">HeqS</span> <span class="id" title="var">HeqT</span> <span class="id" title="var">X</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_subst"><span class="id" title="projection">Category.comp_subst</span></a>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">HeqS</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">HeqT</span>].<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> <span class="id" title="var">H</span> <span class="id" title="var">I</span> <span class="id" title="var">S</span> <span class="id" title="var">T</span> <span class="id" title="var">U</span> <span class="id" title="var">X</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_assoc"><span class="id" title="projection">Category.comp_assoc</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> <span class="id" title="var">S</span> <span class="id" title="var">X</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_id_dom"><span class="id" title="projection">Category.comp_id_dom</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> <span class="id" title="var">S</span> <span class="id" title="var">X</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="COC.Category.Core.html#Category.comp_id_cod"><span class="id" title="projection">Category.comp_id_cod</span></a>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="957c191379ba92beb463b467bd48870b"><span class="id" title="notation">&quot;</span></a>[ C :=&gt; D ]" := (<a class="idref" href="COC.Structure.Fun.html#Fun"><span class="id" title="definition">Fun</span></a> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) (<span class="id" title="var">D</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 200): <span class="id" title="var">cat_scope</span>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
