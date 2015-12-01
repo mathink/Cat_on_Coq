@@ -9,34 +9,20 @@ HoTT とは異なり、 Setoid をベースに圏や他の概念の定義を行�
 
 # 用法
 
-## ソフトウェア
-
-HoTT 用の Coq を使っています。
-* Universe Polymorphism を利用
-* heterogeneous equality を使おうとするときのバグ(？)回避
-のためです。
-
-また、ProofGeneral も、プロジェクトファイルの扱いなどを良い感じにするために [開発版](http://proofgeneral.inf.ed.ac.uk/devel) を利用しております。
+* Universe Polymorphism を利用するため、 coq-8.5beta3 を使用。
+* ProofGeneral も、プロジェクトファイルの扱いなどを良い感じにするために [開発版](http://proofgeneral.inf.ed.ac.uk/devel) を利用。
 
 # 構成
 
 ```
 .
 |-- Makefile
-|-- README.md
 |-- _CoqProject
 |-- doc
-|   |-- coqdoc.css
-|   `-- dependency.svg
 `-- theories
-    |-- Init
-    |   |-- Prelude.v
-    |   `-- Relations.v
-    |-- Init.v
-    |-- Setoid
-    |   |-- Core.v
-    |   `-- Map.v
-    |-- Setoid.v
+    |-- Adjunction
+    |   `-- Core.v
+    |-- Adjunction.v
     |-- Category
     |   |-- Core.v
     |   |-- Functor.v
@@ -44,6 +30,24 @@ HoTT 用の Coq を使っています。
     |   |-- Natrans.v
     |   `-- Object.v
     |-- Category.v
+    |-- Construction
+    |   |-- Universal.v
+    |   `-- Yoneda.v
+    |-- Construction.v
+    |-- Enrich
+    |   `-- Core.v
+    |-- Init
+    |   |-- Prelude.v
+    |   `-- Relations.v
+    |-- Init.v
+    |-- Monoid
+    |   `-- Monoidal.v
+    |-- Monoid.v
+    |-- Scratch.v
+    |-- Setoid
+    |   |-- Core.v
+    |   `-- Map.v
+    |-- Setoid.v
     |-- Structure
     |   |-- Cat.v
     |   |-- Comma.v
@@ -51,9 +55,5 @@ HoTT 用の Coq を使っています。
     |   |-- Hcomp.v
     |   |-- Hom.v
     |   `-- Product.v
-    |-- Structure.v
-    |-- Construction
-    |   |-- Universal.v
-    |   `-- Yoneda.v
-    `-- Construction.v
+    `-- Structure.v
 ```
