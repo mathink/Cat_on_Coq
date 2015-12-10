@@ -41,9 +41,9 @@ Section Setoids_as_Monoidal.
       now apply H.
     + destruct x as [f f'], y as [g g'], H as [H H']; simpl in *.
       now apply H'.
-  - intros [x x']; destruct X as [X X'], Y as [Y Y'], Z as [Z Z'], f as [f f'], g as [g g']; simpl in *.
+  - destruct x as [x x'], X as [X X'], Y as [Y Y'], Z as [Z Z'], f as [f f'], g as [g g']; simpl in *.
     split; apply reflexivity.
-  - intros [x x']; destruct X as [X X']; simpl; split; apply reflexivity.
+  - destruct x as [x x'], X as [X X']; simpl; split; apply reflexivity.
   Defined.
 
   Inductive unit := tt.
@@ -63,11 +63,11 @@ Section Setoids_as_Monoidal.
       Monoidal.cat := Setoids;
       Monoidal.mult := Product_Bifunctor;
       Monoidal.unit := unit_setoid;
-      Monoidal.assoc X Y Z := [P:-> ((Prod.fst P, Prod.fst (Prod.snd P)), Prod.snd (Prod.snd P))];
-      Monoidal.assoc_inv X Y Z := [P:-> (Prod.fst (Prod.fst P), ((Prod.snd (Prod.fst P)), Prod.snd P))];
-      Monoidal.lambda X := [P :-> Prod.snd P];
+      Monoidal.assoc X Y Z := [x_yz:-> ((x_yz.1, x_yz.2.1), x_yz.2.2)];
+      Monoidal.assoc_inv X Y Z := [xy_z:-> (xy_z.1.1, (xy_z.1.2, xy_z.2))];
+      Monoidal.lambda X := [p :-> p.2];
       Monoidal.lambda_inv X := [x :-> (tt,x)];
-      Monoidal.rho X := [P :-> Prod.fst P];
+      Monoidal.rho X := [p :-> p.1];
       Monoidal.rho_inv X := [x :-> (x,tt)]
     |}.
   Next Obligation.
@@ -94,8 +94,7 @@ Section Setoids_as_Monoidal.
   Qed.
   Next Obligation.
     split; simpl.
-    - intros.
-      intros [x [y z]]; simpl.
+    - intros; destruct x as [x [y z]]; simpl.
       repeat split; apply reflexivity.
     - intros a b c [x [y z]]; simpl.
       repeat split; apply reflexivity.

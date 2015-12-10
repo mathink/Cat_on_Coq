@@ -55,6 +55,6 @@ Definition unique {X : Setoid}(P: X -> Prop)(x: X) :=
 Notation "'exists!_' x .. y , p" :=
   (ex (unique (fun x => .. (ex (unique (fun y => p))) ..)))
     (at level 200, x binder, right associativity,
-     format "'[' 'exists!_' '/ ' x .. y , '/ ' p ']'").
+     format "'[' 'exists!_'  '/ ' x .. y ,  '/ ' p ']'").
 
 Ltac etrans := eapply transitivity.

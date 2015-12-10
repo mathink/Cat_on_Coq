@@ -60,7 +60,6 @@ Program Definition UATo_natrans
   Natrans.build _ _ (fun d: D => UATo_map u d).
 Next Obligation.
   simpl; intros.
-  intros h; simpl.
   eapply transitivity; [| apply Category.comp_assoc].
   apply Category.comp_subst; [apply reflexivity |].
   apply Functor.fmap_comp.

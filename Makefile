@@ -95,13 +95,15 @@ endif
 #                    #
 ######################
 
-VFILES:=theories/Enrich/Core.v\
+VFILES:=theories/Abel.v\
+  theories/Enrich/Core.v\
   theories/Monoid.v\
   theories/Monoid/Monoidal.v\
   theories/Adjunction.v\
   theories/Adjunction/Core.v\
   theories/Construction.v\
-  theories/Construction/Universal.v\
+  theories/Construction/Limit.v\
+  theories/Construction/Equalizer.v\
   theories/Construction/Yoneda.v\
   theories/Structure.v\
   theories/Structure/Comma.v\

@@ -25,7 +25,8 @@ theories/Structure/Comma.v
 theories/Structure.v
 
 theories/Construction/Yoneda.v
-theories/Construction/Universal.v
+theories/Construction/Equalizer.v
+theories/Construction/Limit.v
 theories/Construction.v
 
 theories/Adjunction/Core.v
@@ -35,3 +36,5 @@ theories/Monoid/Monoidal.v
 theories/Monoid.v
 
 theories/Enrich/Core.v
+
+theories/Abel.v

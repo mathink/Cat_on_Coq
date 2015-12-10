@@ -14,7 +14,10 @@ Module Prod.
 
   Module Ex.
     Notation Prod := type.
+    Notation "X * Y" := (Prod X Y) (at level 40, left associativity): cat_scope.
     Notation "( x , y )" := (@make _ _ x y): cat_scope.
+    Notation "p '.1'" := (@fst _ _ p) (at level 40, left associativity, format "p .1"): cat_scope.
+    Notation "p '.2'" := (@snd _ _ p) (at level 40, left associativity, format "p .2"): cat_scope.
   End Ex.
   Import Ex.
 

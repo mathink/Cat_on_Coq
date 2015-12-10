@@ -84,3 +84,4 @@ Proof.
     eapply transitivity; [apply Category.comp_subst; [apply reflexivity |apply H] |].
     apply Category.comp_id_cod.
 Qed.
+

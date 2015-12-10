@@ -84,8 +84,7 @@ Module Functor.
     Coercion fobj: Functor >-> Funclass.
     Coercion prf: Functor >-> isFunctor.
     Definition fmap := fmap.
-    Arguments fmap: clear implicits.
-    Arguments fmap {C D}(F){X Y} _: rename.
+    Arguments fmap {C D}(F){X Y} _: rename, clear implicits.
 
     Existing Instances prf fmap_isMap.
 

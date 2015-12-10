@@ -34,7 +34,7 @@ Module Map.
     Notation "[ x .. y :-> p ]" := 
       (build (fun x => .. (build (fun y => p)) ..))
         (at level 200, x binder, right associativity,
-         format "'[' [ x .. y :-> '/ ' p ] ']'"): cat_scope.
+         format "'[' [ x .. y  :->  '/ ' p ] ']'"): cat_scope.
   End Ex.
   Import Ex.
 
@@ -59,6 +59,7 @@ Module Map.
 
   Definition equal {X Y: Setoid}: relation (Map X Y) :=
     fun f g => forall x: X, f x == g x.
+  Arguments equal {X Y} f g /.
 
   Program Definition setoid (X Y: Setoid): Setoid :=
     Setoid.build (@equal X Y).
