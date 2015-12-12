@@ -23,7 +23,9 @@ Generalizable All Variables.
 Delimit Scope base_scope with base.
 Open Scope base_scope.
 
-
+(** * ユーティリティ **)
+(** coq に付属する Init を利用しないため、必要になるものをここで定義する。 **)
+(** 特に、 [ex] を universe polymorphic に記述するのが目的である。 **)
 Definition dom {X Y: Type}(f: X -> Y) := X.
 Definition cod {X Y: Type}(f: X -> Y) := X.
 
@@ -36,10 +38,6 @@ Infix "/\" := and.
 
 Notation "P <-> Q" := ((P -> Q)/\(Q -> P)).
 
-(*
- Specif にある sig は Universe Polymorphic ではない。
- Polymorphic な sig が必要になるので、ここで定義する。
- *)
 Inductive ex (A: Type)(P: A -> Prop): Prop :=
 | ex_intro: forall x: A, P x -> ex (A:=A) P.
 

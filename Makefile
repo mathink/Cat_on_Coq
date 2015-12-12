@@ -103,11 +103,13 @@ VFILES:=theories/Abel.v\
   theories/Adjunction/Core.v\
   theories/Construction.v\
   theories/Construction/Limit.v\
+  theories/Construction/Product.v\
   theories/Construction/Equalizer.v\
+  theories/Construction/Universal.v\
   theories/Construction/Yoneda.v\
   theories/Structure.v\
   theories/Structure/Comma.v\
-  theories/Structure/Product.v\
+  theories/Structure/Prod.v\
   theories/Structure/Fun.v\
   theories/Structure/Hom.v\
   theories/Structure/Hcomp.v\

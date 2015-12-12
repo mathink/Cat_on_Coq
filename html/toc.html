@@ -1,21 +1,30 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link href="coqdoc.css" rel="stylesheet" type="text/css" />
-<title>Table of contents</title>
-</head>
-
-<body>
-
-<div id="page">
-
-<div id="header">
-</div>
-
-<div id="main">
-
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
 <div id="toc">
 <a href="COC.Abel.html"><h2>Library COC.Abel</h2></a>
 <a href="COC.Enrich.Core.html"><h2>Library COC.Enrich.Core</h2></a>
@@ -34,19 +43,29 @@
 
 </li>
 </ul>
+<a href="COC.Construction.Product.html"><h2>Library COC.Construction.Product</h2></a>
 <a href="COC.Construction.Equalizer.html"><h2>Library COC.Construction.Equalizer</h2></a>
+<ul class="doclist">
+<li><a href="COC.Construction.Equalizer.html#lab2">イコライザ(Equalizer)</a>
+
+</li>
+<li><a href="COC.Construction.Equalizer.html#lab3">コイコライザ(Coequalizer)</a>
+
+</li>
+</ul>
+<a href="COC.Construction.Universal.html"><h2>Library COC.Construction.Universal</h2></a>
 <a href="COC.Construction.Yoneda.html"><h2>Library COC.Construction.Yoneda</h2></a>
 <ul class="doclist">
 <li><ul class="doclist">
-<li><a href="COC.Construction.Yoneda.html#lab2">米田の補題</a>
+<li><a href="COC.Construction.Yoneda.html#lab4">米田の補題</a>
 <ul class="doclist">
-<li><a href="COC.Construction.Yoneda.html#lab3">評価函手</a>
+<li><a href="COC.Construction.Yoneda.html#lab5">評価函手</a>
 
 </li>
 </ul>
 
 </li>
-<li><a href="COC.Construction.Yoneda.html#lab4">射の同型とか</a>
+<li><a href="COC.Construction.Yoneda.html#lab6">射の同型とか</a>
 
 </li>
 </ul>
@@ -55,10 +74,10 @@
 </ul>
 <a href="COC.Structure.html"><h2>Library COC.Structure</h2></a>
 <a href="COC.Structure.Comma.html"><h2>Library COC.Structure.Comma</h2></a>
-<a href="COC.Structure.Product.html"><h2>Library COC.Structure.Product</h2></a>
+<a href="COC.Structure.Prod.html"><h2>Library COC.Structure.Prod</h2></a>
 <ul class="doclist">
 <li><ul class="doclist">
-<li><a href="COC.Structure.Product.html#lab5">色々な積</a>
+<li><a href="COC.Structure.Prod.html#lab7">色々な積</a>
 
 </li>
 </ul>
@@ -68,7 +87,7 @@
 <a href="COC.Structure.Fun.html"><h2>Library COC.Structure.Fun</h2></a>
 <ul class="doclist">
 <li><ul class="doclist">
-<li><a href="COC.Structure.Fun.html#lab6">函手圏</a>
+<li><a href="COC.Structure.Fun.html#lab8">函手圏</a>
 
 </li>
 </ul>
@@ -78,15 +97,15 @@
 <a href="COC.Structure.Hom.html"><h2>Library COC.Structure.Hom</h2></a>
 <ul class="doclist">
 <li><ul class="doclist">
-<li><a href="COC.Structure.Hom.html#lab7">Hom 函手たち</a>
+<li><a href="COC.Structure.Hom.html#lab9">Hom 函手たち</a>
 <ul class="doclist">
-<li><a href="COC.Structure.Hom.html#lab8">共変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></a>
+<li><a href="COC.Structure.Hom.html#lab10">共変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></a>
 
 </li>
-<li><a href="COC.Structure.Hom.html#lab9">反変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></a>
+<li><a href="COC.Structure.Hom.html#lab11">反変な方の <span class="inlinecode"><span class="id" title="var">Hom</span></span></a>
 
 </li>
-<li><a href="COC.Structure.Hom.html#lab10">記法の定義</a>
+<li><a href="COC.Structure.Hom.html#lab12">記法の定義</a>
 
 </li>
 </ul>
@@ -101,7 +120,7 @@
 <ul class="doclist">
 <li><ul class="doclist">
 <li><ul class="doclist">
-<li><a href="COC.Structure.Cat.html#lab11">圏の圏：Cat</a>
+<li><a href="COC.Structure.Cat.html#lab13">圏の圏：Cat</a>
 
 </li>
 </ul>
@@ -115,7 +134,7 @@
 <a href="COC.Category.Natrans.html"><h2>Library COC.Category.Natrans</h2></a>
 <ul class="doclist">
 <li><ul class="doclist">
-<li><a href="COC.Category.Natrans.html#lab12">自然変換</a>
+<li><a href="COC.Category.Natrans.html#lab14">自然変換</a>
 
 </li>
 </ul>
@@ -125,10 +144,10 @@
 <a href="COC.Category.Functor.html"><h2>Library COC.Category.Functor</h2></a>
 <ul class="doclist">
 <li><ul class="doclist">
-<li><a href="COC.Category.Functor.html#lab13">射の等価性</a>
+<li><a href="COC.Category.Functor.html#lab15">射の等価性</a>
 
 </li>
-<li><a href="COC.Category.Functor.html#lab14">函手</a>
+<li><a href="COC.Category.Functor.html#lab16">函手</a>
 
 </li>
 </ul>
@@ -139,17 +158,17 @@
 <a href="COC.Category.Object.html"><h2>Library COC.Category.Object</h2></a>
 <a href="COC.Category.Core.html"><h2>Library COC.Category.Core</h2></a>
 <ul class="doclist">
-<li><a href="COC.Category.Core.html#lab15">(Coq 上の)圏論</a>
+<li><a href="COC.Category.Core.html#lab17">(Coq 上の)圏論</a>
 <ul class="doclist">
-<li><a href="COC.Category.Core.html#lab16">圏</a>
+<li><a href="COC.Category.Core.html#lab18">圏</a>
 <ul class="doclist">
-<li><a href="COC.Category.Core.html#lab17">圏の双対</a>
+<li><a href="COC.Category.Core.html#lab19">圏の双対</a>
 
 </li>
 </ul>
 
 </li>
-<li><a href="COC.Category.Core.html#lab18">Setoid の圏: Setoids</a>
+<li><a href="COC.Category.Core.html#lab20">Setoid の圏: Setoids</a>
 
 </li>
 </ul>
@@ -158,24 +177,38 @@
 </ul>
 <a href="COC.Setoid.html"><h2>Library COC.Setoid</h2></a>
 <a href="COC.Setoid.Map.html"><h2>Library COC.Setoid.Map</h2></a>
-<a href="COC.Setoid.Core.html"><h2>Library COC.Setoid.Core</h2></a>
-<a href="COC.Init.html"><h2>Library COC.Init</h2></a>
-<a href="COC.Init.Relations.html"><h2>Library COC.Init.Relations</h2></a>
 <ul class="doclist">
-<li><ul class="doclist">
-<li><a href="COC.Init.Relations.html#lab19">関係と性質</a>
+<li><a href="COC.Setoid.Map.html#lab21">Map</a>
 
 </li>
 </ul>
+<a href="COC.Setoid.Core.html"><h2>Library COC.Setoid.Core</h2></a>
+<ul class="doclist">
+<li><a href="COC.Setoid.Core.html#lab22">スコープの設定</a>
+
+</li>
+<li><a href="COC.Setoid.Core.html#lab23">Setoid</a>
+
+</li>
+<li><a href="COC.Setoid.Core.html#lab24">「一意に存在」</a>
+
+</li>
+</ul>
+<a href="COC.Init.html"><h2>Library COC.Init</h2></a>
+<a href="COC.Init.Relations.html"><h2>Library COC.Init.Relations</h2></a>
+<ul class="doclist">
+<li><a href="COC.Init.Relations.html#lab25">関係と性質</a>
 
 </li>
 </ul>
 <a href="COC.Init.Prelude.html"><h2>Library COC.Init.Prelude</h2></a>
-</div>
-<hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
-</div>
+<ul class="doclist">
+<li><a href="COC.Init.Prelude.html#lab26">ユーティリティ</a>
 
+</li>
+</ul>
 </div>
-
+</div>
+</div
 </body>
 </html>

@@ -9,8 +9,11 @@ Set Universe Polymorphism.
 Generalizable All Variables.
 
 (**
- ** 関係と性質
-同値関係の定義に向けて、性質を表すクラスを定義していく
+ * 関係と性質
+[Setoid] に必要な同値関係を定義するため、型クラスとしてこれらを定義する。
+同値関係を一度に定義するのではなく、反射律などを経由して行なう。
+これは、後に別の関係を記述するときに再利用が可能なようにするためである。
+
  **)
 Class Reflexive `(R: relation X): Prop :=
   reflexivity:

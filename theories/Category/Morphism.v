@@ -1,6 +1,5 @@
 Set Implicit Arguments.
 Unset Strict Implicit.
-Set Contextual Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
@@ -10,7 +9,7 @@ Require Import COC.Category.Core.
 Definition invertible (C: Category)(X Y: C)(f: C X Y) :=
   exists_ f': C Y X, (f' \o f == Id X) /\ (f \o f' == Id Y).
 
-Definition ismorphic (C: Category)(X Y: C) :=
+Definition isomorphic (C: Category)(X Y: C) :=
   exists_ f: C X Y, invertible f.
 
 Definition monic (C: Category)(X Y: C)(f: C X Y) :=

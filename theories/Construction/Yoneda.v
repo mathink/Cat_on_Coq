@@ -100,8 +100,7 @@ End Representation.
 (**
  *** 評価函手
  **)
-Definition EvalFunctor_fobj (C B: Category)
-  : (Fun C B) [x] C -> B :=
+Definition EvalFunctor_fobj (C B: Category): (Fun C B) [x] C -> B :=
   (fun FX: (Fun C B) [x] C => let (F,X) := FX in F X).
 Arguments EvalFunctor_fobj C B / _.
 
@@ -125,7 +124,6 @@ Proof.
     intros [F X] [G Y]; simpl.
     intros [S f] [T g]; simpl in *.
     intros [HeqST Heqfg]; simpl in *.
-    unfold EvalFunctor_fmap.
     apply Category.comp_subst; simpl.
     - apply HeqST.
     - apply Map.substitute, Heqfg.
@@ -163,8 +161,7 @@ Proof.
   }
 Qed.
 
-Definition EvalFunctor (C B: Category)
-  : Functor ((Fun C B) [x] C) B :=
+Definition EvalFunctor (C B: Category): Functor ((Fun C B) [x] C) B :=
   Functor.make (@Eval_isFunctor C B).
 
 Program Definition NFunctor (C: Category)

@@ -1,21 +1,30 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link href="coqdoc.css" rel="stylesheet" type="text/css" />
-<title>COC.Abel</title>
-</head>
-
-<body>
-
-<div id="page">
-
-<div id="header">
-</div>
-
-<div id="main">
-
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
 <h1 class="libtitle">Library COC.Abel</h1>
 
 <div class="code">
@@ -34,8 +43,8 @@
 &nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="Kernel.spec"><span class="id" title="record">spec</span></a> (<span class="id" title="var">C</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>)(<span class="id" title="var">z</span>: <a class="idref" href="COC.Category.Object.html#Zero.Ex.Zero"><span class="id" title="abbreviation">Zero</span></a> <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a>)(<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Abel.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Abel.html#Y"><span class="id" title="variable">Y</span></a>)(<span class="id" title="var">Kerf</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a>)(<span class="id" title="var">kerf</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Abel.html#Kerf"><span class="id" title="variable">Kerf</span></a> <a class="idref" href="COC.Abel.html#X"><span class="id" title="variable">X</span></a>) :=<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="Kernel.proof"><span class="id" title="constructor">proof</span></a> {<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Kernel.null"><span class="id" title="projection">null</span></a>: <a class="idref" href="COC.Abel.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Abel.html#kerf"><span class="id" title="variable">kerf</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Category.Object.html#zero"><span class="id" title="definition">zero</span></a> <a class="idref" href="COC.Abel.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="COC.Abel.html#Kerf"><span class="id" title="variable">Kerf</span></a> <a class="idref" href="COC.Abel.html#Y"><span class="id" title="variable">Y</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Kernel.ump"><span class="id" title="projection">ump</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">K</span> (<span class="id" title="var">k</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Abel.html#K"><span class="id" title="variable">K</span></a> <a class="idref" href="COC.Abel.html#X"><span class="id" title="variable">X</span></a>), <a class="idref" href="COC.Abel.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Abel.html#k"><span class="id" title="variable">k</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Category.Object.html#zero"><span class="id" title="definition">zero</span></a> <a class="idref" href="COC.Abel.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="COC.Abel.html#K"><span class="id" title="variable">K</span></a> <a class="idref" href="COC.Abel.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Core.html#2e740f82ae67c251c0f03a884375a70a"><span class="id" title="notation">∃</span></a><a class="idref" href="COC.Setoid.Core.html#2e740f82ae67c251c0f03a884375a70a"><span class="id" title="notation">!</span></a><a class="idref" href="COC.Setoid.Core.html#2e740f82ae67c251c0f03a884375a70a"><span class="id" title="notation">_</span></a> <span class="id" title="var">k'</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Abel.html#K"><span class="id" title="variable">K</span></a> <a class="idref" href="COC.Abel.html#Kerf"><span class="id" title="variable">Kerf</span></a><a class="idref" href="COC.Setoid.Core.html#2e740f82ae67c251c0f03a884375a70a"><span class="id" title="notation">,</span></a> <a class="idref" href="COC.Abel.html#kerf"><span class="id" title="variable">kerf</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Abel.html#k'"><span class="id" title="variable">k'</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Abel.html#k"><span class="id" title="variable">k</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Kernel.ump"><span class="id" title="projection">ump</span></a>: <span class="id" title="keyword">forall</span> <span class="id" title="var">K</span> (<span class="id" title="var">k</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Abel.html#K"><span class="id" title="variable">K</span></a> <a class="idref" href="COC.Abel.html#X"><span class="id" title="variable">X</span></a>), <a class="idref" href="COC.Abel.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Abel.html#k"><span class="id" title="variable">k</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Category.Object.html#zero"><span class="id" title="definition">zero</span></a> <a class="idref" href="COC.Abel.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="COC.Abel.html#K"><span class="id" title="variable">K</span></a> <a class="idref" href="COC.Abel.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5beta3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Core.html#01183b9189b1ad4087b1438e52d6d05d"><span class="id" title="notation">exists</span></a><a class="idref" href="COC.Setoid.Core.html#01183b9189b1ad4087b1438e52d6d05d"><span class="id" title="notation">!</span></a><a class="idref" href="COC.Setoid.Core.html#01183b9189b1ad4087b1438e52d6d05d"><span class="id" title="notation">_</span></a> <span class="id" title="var">k'</span>: <a class="idref" href="COC.Abel.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Abel.html#K"><span class="id" title="variable">K</span></a> <a class="idref" href="COC.Abel.html#Kerf"><span class="id" title="variable">Kerf</span></a><a class="idref" href="COC.Setoid.Core.html#01183b9189b1ad4087b1438e52d6d05d"><span class="id" title="notation">,</span></a> <a class="idref" href="COC.Abel.html#kerf"><span class="id" title="variable">kerf</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Abel.html#k'"><span class="id" title="variable">k'</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Abel.html#k"><span class="id" title="variable">k</span></a><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
 
 <br/>
@@ -69,12 +78,6 @@
 &nbsp;&nbsp;<a class="idref" href="COC.Construction.Equalizer.html#Equalizer.Ex.isEqualizer"><span class="id" title="abbreviation">isEqualizer</span></a> <a class="idref" href="COC.Abel.html#f"><span class="id" title="variable">f</span></a> (<a class="idref" href="COC.Category.Object.html#zero"><span class="id" title="definition">zero</span></a> <a class="idref" href="COC.Abel.html#z"><span class="id" title="variable">z</span></a> <a class="idref" href="COC.Abel.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Abel.html#Y"><span class="id" title="variable">Y</span></a>) <a class="idref" href="COC.Abel.html#kerf"><span class="id" title="variable">kerf</span></a>.<br/>
 </div>
 </div>
-
-<div id="footer">
-<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
-</div>
-
-</div>
-
+</div
 </body>
 </html>

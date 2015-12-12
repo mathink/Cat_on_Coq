@@ -1,5 +1,3 @@
-Require Import COC.Init.Prelude COC.Init.Relations.
-
 Set Implicit Arguments.
 Unset Strict Implicit.
 Set Contextual Implicit.
@@ -8,9 +6,14 @@ Set Universe Polymorphism.
 
 Generalizable All Variables.
 
+Require Import COC.Init.
 Require Import COC.Setoid.Core.
-Open Scope cat_scope.
 
+(** * Map
+[Setoid] の間のモルフィズム。
+
+[X Y: Setoid] について、その carrier type 間の函数のうち、同値関係を保存するもの。
+ **)
 Module Map.
   Class spec {X Y: Setoid}(f: X -> Y): Prop :=
     substitute:

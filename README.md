@@ -16,13 +16,14 @@ HoTT とは異なり、 Setoid をベースに圏や他の概念の定義を行�
 
 ```
 .
-|-- Makefile
-|-- _CoqProject
-|-- doc
+|-- html
 `-- theories
+    |-- Abel.v
     |-- Adjunction
     |   `-- Core.v
     |-- Adjunction.v
+    |-- Appendix
+    |   `-- length.v
     |-- Category
     |   |-- Core.v
     |   |-- Functor.v
@@ -31,11 +32,16 @@ HoTT とは異なり、 Setoid をベースに圏や他の概念の定義を行�
     |   `-- Object.v
     |-- Category.v
     |-- Construction
+    |   |-- Equalizer.v
+    |   |-- Limit.v
+    |   |-- Product.v
     |   |-- Universal.v
     |   `-- Yoneda.v
     |-- Construction.v
     |-- Enrich
     |   `-- Core.v
+    |-- Equalities.v
+    |-- Example.v
     |-- Init
     |   |-- Prelude.v
     |   `-- Relations.v
@@ -43,7 +49,6 @@ HoTT とは異なり、 Setoid をベースに圏や他の概念の定義を行�
     |-- Monoid
     |   `-- Monoidal.v
     |-- Monoid.v
-    |-- Scratch.v
     |-- Setoid
     |   |-- Core.v
     |   `-- Map.v
@@ -54,6 +59,6 @@ HoTT とは異なり、 Setoid をベースに圏や他の概念の定義を行�
     |   |-- Fun.v
     |   |-- Hcomp.v
     |   |-- Hom.v
-    |   `-- Product.v
+    |   `-- Prod.v
     `-- Structure.v
 ```

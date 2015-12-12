@@ -6,6 +6,7 @@ Set Universe Polymorphism.
 
 Require Import COC.Setoid.
 Require Import COC.Category.Core.
+Require Import COC.Category.Morphism.
 
 Module Initial.
   Class spec (C: Category)(i: C)(u: forall c, C i c) :=
@@ -30,9 +31,24 @@ Module Initial.
 
     Existing Instance prf.
 
+    Arguments ump {C i u}(spec){c}(f): clear implicits.
     Arguments univ {C}(t c): clear implicits.
   End Ex.
 
+  Import Ex.
+
+  Lemma uniqueness (C: Category)(i j: Initial C):
+    isomorphic C i j.
+  Proof.
+    unfold isomorphic, invertible.
+    set (univ i j) as ij; set (univ j i) as ji.
+    exists ij, ji.
+    split.
+    - generalize (ump i (Id i)) (ump i (ji \o ij)); intros.
+      now eapply transitivity; [apply H0 | apply symmetry, H].
+    - generalize (ump j (Id j)) (ump j (ij \o ji)); intros.
+      now eapply transitivity; [apply H0 | apply symmetry, H].
+  Qed.
 End Initial.
 Export Initial.Ex.
 
@@ -59,9 +75,24 @@ Module Terminal.
 
     Existing Instance prf.
 
+    Arguments ump {C t u}(spec){c}(f): clear implicits.
     Arguments univ {C}(t c): clear implicits.
   End Ex.
 
+  Import Ex.
+
+  Lemma uniqueness (C: Category)(t u: Terminal C):
+    isomorphic C t u.
+  Proof.
+    unfold isomorphic, invertible.
+    set (univ t u) as tu; set (univ u t) as ut.
+    exists ut, tu.
+    split.
+    - generalize (ump t (Id t)) (ump t (tu \o ut)); intros.
+      now eapply transitivity; [apply H0 | apply symmetry, H].
+    - generalize (ump u (Id u)) (ump u (ut \o tu)); intros.
+      now eapply transitivity; [apply H0 | apply symmetry, H].
+  Qed.
 End Terminal.
 Export Terminal.Ex.
 
@@ -112,7 +143,7 @@ Proof.
   intros; unfold zero.
   eapply transitivity; [apply catCa |].
   apply catCsd.
-  apply Terminal.ump.
+  apply (Terminal.ump z).
 Qed.
 
 Lemma zero_comp_zero_cod:
@@ -122,5 +153,5 @@ Proof.
   intros; unfold zero.
   eapply transitivity; [apply symmetry, catCa |].
   apply catCsc.
-  apply Initial.ump.
+  apply (Initial.ump z).
 Qed.

@@ -5,7 +5,7 @@ Set Universe Polymorphism.
 
 Require Import COC.Construction.
 
-Program Definition HomF (C: Category): Functor (Category.op C [x] C) Setoids :=
+Program Definition HomF (C: Category): Bifunctor (Category.op C) C Setoids :=
   Functor.build 
     (fun XY => let (X,Y) := XY in C X Y)
     (fun XY XY' fg => let (f,g) := fg in [ h :-> g \o{C} h \o{C} f]).
@@ -71,9 +71,15 @@ Module Adjunction.
 
   Import Ex.
 
+  (** 
+#$Hom_D(-,-)\circ F\times Id_D$#
+ **)
   Definition phiF (C D: Category)(F: Functor C D) :=
     (HomF D \o{Cat} (Prod.functor (Functor.op F) (@Functor.id D))).
 
+  (** 
+#$Hom_C(-,-)\circ Id_{C^op}\times G$#
+ **)
   Definition psiF (C D: Category)(G: Functor D C) :=
     (HomF C \o{Cat} (Prod.functor (@Functor.id (Category.op C)) G)).
 

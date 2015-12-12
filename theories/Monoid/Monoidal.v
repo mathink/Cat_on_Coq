@@ -441,7 +441,7 @@ Module Monoid.
       apply symmetry, catC1f.
     Qed.
     Next Obligation.
-      intros; apply catCf1.
+      intros; simpl; apply catCf1.
     Qed.
 
     Definition equal (B: Monoidal)(c d: Monoid B)(f g: morph c d) := f == g.

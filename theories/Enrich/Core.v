@@ -28,7 +28,7 @@ Structure Enriched (V: Monoidal) :=
   }.
 
 Section Setoids_as_Monoidal.
-  Program Definition Product_Bifunctor: Bifunctor Setoids Setoids Setoids.
+  Program Definition Prod_Bifunctor: Bifunctor Setoids Setoids Setoids.
   eapply
     (Functor.make (C:=Setoids[x]Setoids)(D:=Setoids)
                   (fobj := fun P => let (X,Y) := P in X [*] Y)
@@ -61,7 +61,7 @@ Section Setoids_as_Monoidal.
   Program Definition Setoids_Monoidal: Monoidal :=
     {|
       Monoidal.cat := Setoids;
-      Monoidal.mult := Product_Bifunctor;
+      Monoidal.mult := Prod_Bifunctor;
       Monoidal.unit := unit_setoid;
       Monoidal.assoc X Y Z := [x_yz:-> ((x_yz.1, x_yz.2.1), x_yz.2.2)];
       Monoidal.assoc_inv X Y Z := [xy_z:-> (xy_z.1.1, (xy_z.1.2, xy_z.2))];
