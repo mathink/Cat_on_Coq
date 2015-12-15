@@ -11,7 +11,14 @@ Structure Enriched (V: Monoidal) :=
     hom: forall (X Y: obj), V;
     comp: forall X Y Z, V ((hom X Y) • (hom Y Z)) (hom X Z);
     id: forall X, V (Monoidal.unit V) (hom X X);
-
+    (** 
+#\[
+\xymatrix{
+Hom(X,Y)\otimes(Hom(Y,Z)\otimes Hom(Z,W)) \ar[rr]^{\alpha} \ar[d]_{Id \otimes \circ_{Y,Z,W}}& & (Hom(X,Y)\otimes Hom(Y,Z))\otimes Hom(Z,W) \ar[d]^{\circ_{X,Y,Z} \circ Id}\\
+Hom(X,Y)\otimes Hom(Y,W) \ar[r]_{\circ_{X,Y,W}}& Hom(X,W) & Hom(X,Z)\otimes Hom(Z,W) \ar[l]^{\circ_{X,Z,W}}
+}
+\]#
+     **)
     comp_assoc:
       forall (X Y Z W: obj),
         comp X Z W \o (comp X Y Z [] Id (hom Z W))\o Monoidal.assoc (hom X Y) (hom Y Z) (hom Z W)
