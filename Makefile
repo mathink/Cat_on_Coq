@@ -62,7 +62,6 @@ COQDOCLIBS?=\
 
 
 OPT?=
-OTHERFLAGS=-noinit
 COQDEP?="$(COQBIN)coqdep" -c
 COQFLAGS?=-q $(OPT) $(COQLIBS) $(OTHERFLAGS) $(COQ_XML)
 COQCHKFLAGS?=-silent -o
@@ -122,10 +121,7 @@ VFILES:=theories/Abel.v\
   theories/Category/Core.v\
   theories/Setoid.v\
   theories/Setoid/Map.v\
-  theories/Setoid/Core.v\
-  theories/Init.v\
-  theories/Init/Relations.v\
-  theories/Init/Prelude.v
+  theories/Setoid/Core.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))

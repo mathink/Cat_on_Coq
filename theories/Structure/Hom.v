@@ -19,22 +19,16 @@ Program Definition HomFunctor (C: Category)(X: C)
   : Functor C Setoids :=
   Functor.build (C X) (fun Y X g => [f :-> g \o{C} f]).
 Next Obligation.
-  intros C X Y Z g f f' Heq.
-  apply Category.comp_subst; try assumption.
-  apply reflexivity.
+  now intros f f' Heq; rewrite Heq.
 Qed.
 Next Obligation.
-  intros C X Y Z g g' Heq f; simpl.
-  apply Category.comp_subst; try assumption.
-  apply reflexivity.
+  now intros g g' Heq f; simpl; rewrite Heq.
 Qed.
 Next Obligation.
-  intros C X Y Z W g h f; simpl.
-  apply Category.comp_assoc.
+  now rewrite catCa.
 Qed.
 Next Obligation.
-  intros C X Y f; simpl.
-  apply Category.comp_id_cod.
+  now rewrite catCf1.
 Qed.
 
 
@@ -46,22 +40,16 @@ Program Definition OpHomFunctor (C: Category)(Y: C)
   Functor.build (fun X => C X Y)
                 (fun X Y f => [g :-> g \o{C} f]).
 Next Obligation.
-  intros C Z Y X f g g' Heq; simpl in *.
-  apply Category.comp_subst; try assumption.
-  apply reflexivity.
+  now intros g g' Heq; rewrite Heq.
 Qed.
 Next Obligation.
-  intros C Z Y X f g g' Heq; simpl in *.
-  apply Category.comp_subst; try assumption.
-  apply reflexivity.
+  now intros g g' Heq f; simpl; rewrite Heq.
 Qed.
 Next Obligation.
-  intros C W Z Y X g f h; simpl in *.
-  apply symmetry, Category.comp_assoc.
+  now rewrite catCa.
 Qed.
 Next Obligation.
-  intros C Y X f; simpl in *.
-  apply Category.comp_id_dom.
+  now rewrite catC1f.
 Qed.
 
 (**

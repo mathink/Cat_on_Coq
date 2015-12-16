@@ -29,18 +29,17 @@ Module Prod.
   Program Definition setoid (X Y: Setoid) :=
     Setoid.build (@equal X Y).
   Next Obligation.
-    intros X Y [x y]; simpl; split; apply reflexivity.
+    intros [x y]; simpl; split; reflexivity.
   Qed.
   Next Obligation.
-    intros X Y [x1 y1] [x2 y2]; simpl.
-    intros [Heqx Heqy]; split;
-    apply symmetry; assumption.
+    intros [x1 y1] [x2 y2] [Heqx Heqy]; split;
+    symmetry; assumption.
   Qed.
   Next Obligation.
-    intros X Y [x1 y1] [x2 y2] [x3 y3]; simpl.
+    intros [x1 y1] [x2 y2] [x3 y3]; simpl.
     intros [Heqx12 Heqy12] [Heqx23 Heqy23]; split.
-    - apply transitivity with x2; assumption.
-    - apply transitivity with y2; assumption.
+    - transitivity x2; assumption.
+    - transitivity y2; assumption.
   Qed.
 
   Local Infix "[*]" := setoid (at level 40, left associativity).
@@ -98,23 +97,27 @@ Module Prod.
                    (@compose C D)
                    (@id C D).
   Next Obligation.
-    intros C D [X1 Y1] [X2 Y2] [X3 Y3]; simpl.
-    intros [fx fy] [fx' fy'] [gx gy] [gx' gy']; simpl in *.
-    intros [Heqfx Heqfy] [Heqgx Heqgy]; split;
+    revert X Y Z.
+    intros [X1 Y1] [X2 Y2] [X3 Y3]; simpl.
+    intros [fx fy] [fx' fy'] [Heqfx Heqfy]; simpl in *.
+    intros [gx gy] [gx' gy'] [Heqgx Heqgy]; simpl in *; split;
     apply Category.comp_subst; assumption.
   Qed.
   Next Obligation.
-    intros C D [X1 Y1] [X2 Y2] [X3 Y3] [X4 Y4]; simpl.
+    revert X Y Z W f g h.
+    intros [X1 Y1] [X2 Y2] [X3 Y3] [X4 Y4]; simpl.
     intros [fx fy] [gx gy] [hx hy]; simpl; split;
-    apply Category.comp_assoc.
+    now rewrite Category.comp_assoc.
   Qed.
   Next Obligation.
-    intros C D [X1 Y1] [X2 Y2] [f g]; simpl in *; split;
-    apply Category.comp_id_dom.
+    revert X Y f.
+    now intros [X1 Y1] [X2 Y2] [f g]; simpl in *; split;
+    rewrite catC1f.
   Qed.
   Next Obligation.
-    intros C D [X1 Y1] [X2 Y2] [f g]; simpl in *; split;
-    apply Category.comp_id_cod.
+    revert X Y f.
+    now intros [X1 Y1] [X2 Y2] [f g]; simpl in *; split;
+    rewrite catCf1.
   Qed.
 
   Instance isFunctor (C C' D D': Category)(F: Functor C D)(G: Functor C' D')
@@ -124,10 +127,10 @@ Module Prod.
   Proof.
     split; simpl.
     - intros [X Y] [X' Y'] [f g] [f' g'] [Heqf Heqg]; simpl in *.
-      split; apply Map.substitute; assumption.
+      now rewrite Heqf, Heqg.
     - intros [X1 Y1] [X2 Y2] [X3 Y3] [f1 g1] [f2 g2]; simpl in *.
-      split; apply Functor.fmap_comp.
-    - intros [X Y]; simpl; split; apply Functor.fmap_id.
+      now rewrite !fnC.
+    - now intros [X Y]; simpl; split; rewrite fn1.
   Qed.
 
   Program Definition functor (C C' D D': Category)(F: Functor C D)(G: Functor C' D')

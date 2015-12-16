@@ -55,15 +55,6 @@ Section Setoids_as_Monoidal.
 
   Inductive unit := tt.
   Program Definition unit_setoid: Setoid := Setoid.build (@eq unit).
-  Next Obligation.
-    intros x; auto.
-  Qed.
-  Next Obligation.
-    intros x; auto.
-  Qed.
-  Next Obligation.
-    intros x y z; intros; subst; auto.
-  Qed.
 
   Program Definition Setoids_Monoidal: Monoidal :=
     {|
@@ -78,26 +69,26 @@ Section Setoids_as_Monoidal.
       Monoidal.rho_inv X := [x :-> (x,tt)]
     |}.
   Next Obligation.
-    intros X Y Z; simpl; intros x x' H. 
+    simpl; intros x x' H. 
     destruct x as [x [y z]], x' as [x' [y' z']], H as [Hx [Hy Hz]]; simpl in *.
     repeat split; auto.
   Qed.
   Next Obligation.
-    intros X Y Z; simpl; intros x x' H. 
+    intros x x' H. 
     destruct x as [[x y] z], x' as [[x' y'] z'], H as [[Hx Hy] Hz]; simpl in *.
     repeat split; auto.
   Qed.
   Next Obligation.
-    simpl; intros X [t x] [t' y] [Ht Hxy]; simpl in *; auto.
+    simpl; intros [t x] [t' y] [Ht Hxy]; simpl in *; auto.
   Qed.
   Next Obligation.
-    simpl; intros X x y Hxy; simpl; split; auto.
+    simpl; intros x y Hxy; simpl; split; auto.
   Qed.
   Next Obligation.
-    simpl; intros X [x t] [y t'] [Hxy Ht]; simpl in *; auto.
+    simpl; intros [x t] [y t'] [Hxy Ht]; simpl in *; auto.
   Qed.
   Next Obligation.
-    simpl; intros X x y Hxy; simpl; split; auto.
+    simpl; intros x y Hxy; simpl; split; auto.
   Qed.
   Next Obligation.
     split; simpl.
@@ -131,25 +122,22 @@ Program Definition Setoids_Enriched (C: Category): Enriched Setoids_Monoidal :=
     id X := [U :-> Id X]
   |}.
 Next Obligation.
-  intros C X Y Z [f g] [f' g'] [Hf Hg]; simpl in *.
-  apply catCs; auto.
+  intros [f g] [f' g'] [Hf Hg]; simpl in *.
+  now rewrite Hf, Hg.
 Qed.
 Next Obligation.
-  intros C X f g H; apply reflexivity.
+  intros f g H; reflexivity.
 Qed.
 Next Obligation.
-  simpl.
-  intros C X Y Z W [f [g h]]; simpl.
-  apply symmetry, catCa.
+  destruct x as [f [g h]]; simpl.
+  now rewrite catCa.
 Qed.
 Next Obligation.
-  simpl.
-  intros C X Y [u f]; simpl.
-  apply symmetry, catC1f.
+  destruct x as [u f]; simpl.
+  now rewrite catC1f.
 Qed.
 Next Obligation.
-  simpl.
-  intros C X Y [f u]; simpl.
-  apply symmetry, catCf1.
+  destruct x as [f u]; simpl.
+  now rewrite catCf1.
 Qed.
 

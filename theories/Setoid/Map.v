@@ -6,7 +6,6 @@ Set Universe Polymorphism.
 
 Generalizable All Variables.
 
-Require Import COC.Init.
 Require Import COC.Setoid.Core.
 
 (** * Map
@@ -16,8 +15,7 @@ Require Import COC.Setoid.Core.
  **)
 Module Map.
   Class spec {X Y: Setoid}(f: X -> Y): Prop :=
-    substitute:
-      forall (x y: X), x == y -> f x == f y.
+    substitute:> Proper ((==) ==> (==)) f.
 
   Structure type (X Y: Setoid) :=
     make {
@@ -48,15 +46,13 @@ Module Map.
           {X Y Z: Setoid}(f: Map X Y)(g: Map Y Z): Map X Z :=
     [ x :-> g (f x)].
   Next Obligation.
-    intros X Y Z f g x x' Heq.
-    do 2 apply substitute.
-    exact Heq.
+    now intros x x' Heq; simpl in *; rewrite Heq.
   Qed.
   Global Arguments compose {X Y Z} f g /.
 
   Program Definition id (X: Setoid): Map X X := [ x :-> x ].
   Next Obligation.
-    intros X x y Heq; exact Heq.
+    now intros x y.
   Qed.
   Global Arguments id X /.
 
@@ -67,18 +63,16 @@ Module Map.
   Program Definition setoid (X Y: Setoid): Setoid :=
     Setoid.build (@equal X Y).
   Next Obligation.
-    intros X Y f x; exact reflexivity.
+    intros f x;  reflexivity.
   Qed.
   Next Obligation.
-    intros X Y f g Heq x.
+    intros f g Heq x.
     generalize (Heq x).
-    apply symmetry.
+    now symmetry.
   Qed.
   Next Obligation.
-    intros X Y f g h Heqfg Heqgh x.
-    apply transitivity with (g x).
-    - exact (Heqfg x).
-    - exact (Heqgh x).
+    intros f g h Hfg Hgh x.
+    rewrite (Hfg x); apply Hgh.
   Qed.
 End Map.
 Export Map.Ex.
@@ -87,7 +81,7 @@ Definition injective (X Y: Setoid)(f: Map X Y) :=
   forall (x x': X), f x == f x' -> x == x'.
 
 Definition surjective (X Y: Setoid)(f: Map X Y) :=
-  forall (y: Y), exists_ x: X, f x == y.
+  forall (y: Y), exists x: X, f x == y.
 
 Definition bijective (X Y: Setoid)(f: Map X Y) :=
   injective f /\ surjective f.

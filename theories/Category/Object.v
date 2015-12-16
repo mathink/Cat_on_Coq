@@ -151,7 +151,5 @@ Lemma zero_comp_zero_cod:
     g \o zero z X Y == zero z X Z.
 Proof.
   intros; unfold zero.
-  eapply transitivity; [apply symmetry, catCa |].
-  apply catCsc.
-  apply (Initial.ump z).
+  now rewrite <- catCa, (Initial.ump z).
 Qed.

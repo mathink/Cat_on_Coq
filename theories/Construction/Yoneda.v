@@ -7,63 +7,63 @@ Set Universe Polymorphism.
 Require Import COC.Structure.
 Require Import COC.Construction.Universal.
 
-Program Definition UATo_map
-        (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r))(d: D)
-  : Map (D r d) (C c (S d)) :=
-  [ f' :-> fmap S f' \o u].
-Next Obligation.
-  intros.
-  intros f g Heq; apply Category.comp_subst; [apply reflexivity |].
-  apply Map.substitute, Heq.
-Qed.
-Arguments UATo_map: clear implicits.
-Arguments UATo_map {D C c S r}(u d).
+(* Program Definition UATo_map *)
+(*         (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r))(d: D) *)
+(*   : Map (D r d) (C c (S d)) := *)
+(*   [ f' :-> fmap S f' \o u]. *)
+(* Next Obligation. *)
+(*   intros. *)
+(*   intros f g Heq; apply Category.comp_subst; [apply reflexivity |]. *)
+(*   apply Map.substitute, Heq. *)
+(* Qed. *)
+(* Arguments UATo_map: clear implicits. *)
+(* Arguments UATo_map {D C c S r}(u d). *)
 
-Lemma UATo_bijective:
-  forall (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r)),
-    UniversalArrow.To.spec u <-> forall d: D, bijective (UATo_map u d).
-Proof.
-  intros; split.
-  {
-    intros [H] d; split.
-    - intros f g; simpl in *.
-      destruct (H d (fmap S f \o u)) as [f' [Hf Hfu]].
-      intros Heq.
-      apply symmetry in Heq.
-      generalize (Hfu _ Heq).
-      apply transitivity.
-      apply symmetry, Hfu, reflexivity.
-    - intros f.
-      destruct (H d f) as [f' [Hf Hfu]].
-      exists f'; simpl.
-      apply Hf.
-  }
-  {
-    intros H; split.
-    intros d f.
-    destruct (H d) as [Hi Hs].
-    destruct (Hs f) as [f' Hf']; simpl in *.
-    exists f'; split.
-    - apply Hf'.
-    - intros g' Heq.
-      apply Hi; simpl.
-      apply transitivity with f.
-      + apply Hf'.
-      + apply symmetry, Heq.
-  }
-Qed.
+(* Lemma UATo_bijective: *)
+(*   forall (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r)), *)
+(*     UniversalArrow.To.spec u <-> forall d: D, bijective (UATo_map u d). *)
+(* Proof. *)
+(*   intros; split. *)
+(*   { *)
+(*     intros [H] d; split. *)
+(*     - intros f g; simpl in *. *)
+(*       destruct (H d (fmap S f \o u)) as [f' [Hf Hfu]]. *)
+(*       intros Heq. *)
+(*       apply symmetry in Heq. *)
+(*       generalize (Hfu _ Heq). *)
+(*       apply transitivity. *)
+(*       apply symmetry, Hfu, reflexivity. *)
+(*     - intros f. *)
+(*       destruct (H d f) as [f' [Hf Hfu]]. *)
+(*       exists f'; simpl. *)
+(*       apply Hf. *)
+(*   } *)
+(*   { *)
+(*     intros H; split. *)
+(*     intros d f. *)
+(*     destruct (H d) as [Hi Hs]. *)
+(*     destruct (Hs f) as [f' Hf']; simpl in *. *)
+(*     exists f'; split. *)
+(*     - apply Hf'. *)
+(*     - intros g' Heq. *)
+(*       apply Hi; simpl. *)
+(*       apply transitivity with f. *)
+(*       + apply Hf'. *)
+(*       + apply symmetry, Heq. *)
+(*   } *)
+(* Qed. *)
 
-(*  *)
-Program Definition UATo_natrans
-        {D C: Category}{c: C}{S: Functor D C}{r: D}(u: C c (S r))
-  : Natrans Hom(r,-) (Hom(c,-) \o{Cat} S) :=
-  Natrans.build _ _ (fun d: D => UATo_map u d).
-Next Obligation.
-  simpl; intros.
-  eapply transitivity; [| apply Category.comp_assoc].
-  apply Category.comp_subst; [apply reflexivity |].
-  apply Functor.fmap_comp.
-Qed.
+(* (*  *) *)
+(* Program Definition UATo_natrans *)
+(*         {D C: Category}{c: C}{S: Functor D C}{r: D}(u: C c (S r)) *)
+(*   : Natrans Hom(r,-) (Hom(c,-) \o{Cat} S) := *)
+(*   Natrans.build _ _ (fun d: D => UATo_map u d). *)
+(* Next Obligation. *)
+(*   simpl; intros. *)
+(*   eapply transitivity; [| apply Category.comp_assoc]. *)
+(*   apply Category.comp_subst; [apply reflexivity |]. *)
+(*   apply Functor.fmap_comp. *)
+(* Qed. *)
 
 Module Representation.
   Class spec (D: Category)(K: Functor D Setoids)(r: D)(phi: Natrans Hom(r,-) K)(psi: Natrans K Hom(r,-)) :=
@@ -124,40 +124,17 @@ Proof.
     intros [F X] [G Y]; simpl.
     intros [S f] [T g]; simpl in *.
     intros [HeqST Heqfg]; simpl in *.
-    apply Category.comp_subst; simpl.
-    - apply HeqST.
-    - apply Map.substitute, Heqfg.
+    now rewrite Heqfg, (HeqST X).
   }
   {
     intros [F X] [G Y] [H Z]; simpl.
     intros [S f] [T g]; simpl.
-    unfold EvalFunctor_fmap; simpl.
-    eapply transitivity.
-    {
-      apply Category.comp_subst; [apply reflexivity |].
-      apply Functor.fmap_comp.
-    }
-    eapply transitivity; [apply Category.comp_assoc |].
-    eapply transitivity.
-    {
-      apply Category.comp_subst; [| apply reflexivity].
-      eapply transitivity; [apply symmetry, Category.comp_assoc |].
-      apply Category.comp_subst; [apply reflexivity |].
-      apply symmetry, Natrans.naturality.
-    }
-    eapply transitivity.
-    {
-      apply Category.comp_subst; [| apply reflexivity].
-      apply Category.comp_assoc.
-    }
-    eapply transitivity; [| apply symmetry, Category.comp_assoc].
-    apply reflexivity.
+    rewrite catCa, fnC, catCa.
+    now rewrite <- (catCa (h:=fmap H f)), <- Natrans.naturality, catCa.
   }  
   {
     intros [F X]; simpl.
-    unfold EvalFunctor_fobj, EvalFunctor_fmap; simpl.
-    eapply transitivity; [apply Category.comp_id_dom |].
-    apply Functor.fmap_id.
+    now rewrite catC1f, fn1.
   }
 Qed.
 
@@ -173,48 +150,39 @@ Program Definition NFunctor (C: Category)
                                  [alpha :->
                                         Natrans.build Hom(Y,-) G (fun X => S X \o alpha X \o fmap Hom(-,X) f )]).
 Next Obligation.
+  revert C FX GY Sf alpha X Y f x.
   intros C [F X] [G Y] [S f]; simpl in *.
   intros T Z W h g; simpl in *.
-  eapply symmetry, transitivity.
-  {
-    generalize (Natrans.naturality (natrans:=S)(f:=h) (T Z (g \o f))).
-    intro H; apply symmetry, H.
-  }
-  simpl.
+  generalize (Natrans.naturality (natrans:=S)(f:=h)(T Z (g \o f))); simpl.
+  intros H; rewrite <- H; clear H.
   apply Map.substitute.
+  rewrite catCa.
   generalize (Natrans.naturality (natrans:=T)(f:=h) (g \o f)); simpl.
-  intro H; apply symmetry.
-  eapply transitivity; [| apply H].
-  apply Map.substitute; simpl.
-  apply Category.comp_assoc.
+  now intros H; rewrite H.
 Qed.
 Next Obligation.
-  intros C [F X] [G Y] [S f]; simpl in *.
+  revert FX GY Sf.
+  intros [F X] [G Y] [S f]; simpl in *.
   intros T U Heq Z g; simpl in *.
-  apply Map.substitute.
-  apply (Heq Z (g \o f)).
+  now rewrite (Heq Z (g \o f)).
 Qed.
 Next Obligation.
-  intros C [F X] [G Y] [S f] [S' f'] [HeqS Heqf]; simpl in *.
+  revert X Y.
+  intros [F X] [G Y] [S f] [S' f'] [HeqS Heqf]; simpl in *.
   intros T Z g; simpl in *.
-  eapply transitivity; [apply (HeqS Z _) | apply Map.substitute].
-  apply Map.substitute; simpl.
-  apply Category.comp_subst;
-    [apply Heqf | apply reflexivity].
+  now rewrite (HeqS Z _), Heqf.
 Qed.
 Next Obligation.
-  simpl.
-  intros C [F X] [G Y] [H Z]; simpl.
+  revert X Y Z f g x.
+  intros [F X] [G Y] [H Z]; simpl.
   intros [S f] [T g]; simpl.
   intros U W h; simpl.
-  do 3 apply Map.substitute; simpl.
-  apply symmetry, Category.comp_assoc.
+  now rewrite catCa.
 Qed.
 Next Obligation.
-  simpl.
-  intros C [F X] S Y f; simpl in *.
-  apply Map.substitute; simpl.
-  apply Category.comp_id_dom.
+  revert X x.
+  intros [F X] S Y f; simpl in *.
+  now rewrite catC1f.
 Qed.
 
 
@@ -222,24 +190,19 @@ Program Definition yoneda (C: Category)
   : Natrans (@NFunctor C) (@EvalFunctor C Setoids) :=
   Natrans.build _ _ (fun FX => let (F, X) := FX in [alpha :-> alpha X (Id X)]).
 Next Obligation.
-  intros C [F X]; simpl.
+  destruct FX as [F X]; simpl.
   intros S T Heq.
-  apply (Heq X (Id X)).
+  now rewrite (Heq _ _).
 Qed.
 Next Obligation.
-  intros C [F X] [G Y] [S f] T; simpl in *.
+  revert X Y f x.
+  intros [F X] [G Y] [S f] T; simpl in *.
+  rewrite catCf1.
   generalize (Natrans.naturality (natrans:=S) (f:=f) (T X (Id X))).
-  simpl; intro Heq.
-  eapply transitivity; [| apply Heq].
-  clear Heq.
-  apply Map.substitute.
+  simpl; intro Heq; rewrite <- Heq; clear Heq.
   generalize (Natrans.naturality (natrans:=T) (f:=f) (Id X)).
-  simpl; intro Heq.
-  eapply transitivity; [| apply Heq].
-  clear Heq.
-  apply Map.substitute; simpl.
-  eapply transitivity;
-    [apply Category.comp_id_cod | apply symmetry, Category.comp_id_dom].
+  simpl; intro Heq; rewrite <- Heq; clear Heq.
+  now rewrite catC1f.
 Qed.
 
 Program Definition inv_yoneda (C: Category):
@@ -248,37 +211,32 @@ Program Definition inv_yoneda (C: Category):
     (fun FX => let (F,X) := FX in
                [ x :-> Natrans.build Hom(X,-) F (fun Y => [f :-> fmap F f x])]).
 Next Obligation.
-  intros C [F X]; simpl.
-  intros x Y f g Heq.
+  revert FX x Y.
+  intros [F X] x Y f g Heq.
   assert (HeqF: fmap F f == fmap F g).
   {
-    apply Map.substitute, Heq.
+    now rewrite Heq.
   }
-  apply (HeqF x).
+  now rewrite (HeqF x).
 Qed.
 Next Obligation.
-  intros C [F X]; simpl.
-  intros x Y Z g; simpl.
-  intro f.
-  apply (Functor.fmap_comp (fobj:=F)(f:=f)(g:=g) x).
+  revert C FX x X Y f x0.
+  intros C [F X] x Y Z g f; simpl.
+  now rewrite (Functor.fmap_comp (fobj:=F) f g x).
 Qed.
 Next Obligation.
-  intros C [F X]; simpl.
+  destruct FX as [F X]; simpl.
   intros x y Heq Y f; simpl.
-  apply Map.substitute, Heq.
+  now apply Map.substitute.
 Qed.
 Next Obligation.
-  intros C [F X] [G Y] [S f]; simpl in *.
-  intros x Z g.
+  revert X Y f x.
+  intros [F X] [G Y] [S f] x Z g; simpl.
   assert (Heq: fmap G g \o fmap G f \o S X == S Z \o fmap F (g \o f)).
   {
-    eapply transitivity; [apply symmetry,Category.comp_assoc |].
-    eapply transitivity; [apply symmetry,Category.comp_subst |].
-    - apply reflexivity.
-    - apply Functor.fmap_comp.
-    - apply symmetry,Natrans.naturality.
+    now rewrite <- catCa, <- fnC, <- Natrans.naturality.
   }
-  apply (Heq x).
+  now rewrite (Heq x).
 Qed.
 
 (** 
@@ -289,13 +247,10 @@ Instance yoneda_lemma:
 Proof.
   intros C [F X]; simpl.
   apply Iso_def; simpl.
-  - intros S Y f.
-    apply symmetry.
+  - intros S Y f; simpl.
     generalize (Natrans.naturality (natrans:=S)(f:=f)); simpl.
     intro Heq.
-    eapply transitivity; [| apply (Heq (Id X))]; simpl.
-    apply Map.substitute, symmetry; simpl.
-    apply Category.comp_id_dom.
+    now rewrite <- (Heq (Id X)), catC1f.
   - apply (Functor.fmap_id (fobj:=F)).
 Qed.
 
@@ -304,12 +259,11 @@ Program Definition HomNat {C: Category}(X Y: C)(f: C X Y)
   : Natrans Hom(Y,-) Hom(X,-) :=
   Natrans.build _ _ (fun Z => [ g :-> g \o f ]).
 Next Obligation.
-  intros C X Y f Z g g' Heq; simpl in *.
-  apply Category.comp_subst; [apply reflexivity | apply Heq].
+  intros g g' Heq; simpl in *.
+  now rewrite Heq.
 Qed.
 Next Obligation.
-  intros C X Y f Z W h g; simpl in *.
-  apply Category.comp_assoc.
+  now rewrite catCa.
 Qed.
 
 Instance Grothendieck_isFunctor (C: Category)

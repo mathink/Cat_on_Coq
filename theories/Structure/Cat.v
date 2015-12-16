@@ -16,7 +16,8 @@ Program Definition Cat: Category :=
     (@Functor.compose)
     (@Functor.id).
 Next Obligation.
-  intros C D E F F' G G' HeqF HeqG X Y f; simpl.
+  revert X Y Z.
+  intros C D E F F' HeqF G G' HeqG X Y f; simpl.
   destruct (HeqF _ _ f); simpl.
   eapply eq_Hom_trans.
   - apply eq_Hom_def.
@@ -24,14 +25,12 @@ Next Obligation.
   - apply HeqG.
 Qed.
 Next Obligation.
-  intros C D K L F G H X Y f; simpl in *.
   apply eq_Hom_refl.
 Qed.
 Next Obligation.
-  intros C D F X Y f; simpl in *.
   apply eq_Hom_refl.
 Qed.
 Next Obligation.
-  intros C D F X Y f; simpl in *.
   apply eq_Hom_refl.
 Qed.
+

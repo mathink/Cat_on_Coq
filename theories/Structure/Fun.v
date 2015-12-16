@@ -14,22 +14,18 @@ Program Definition Fun (C D: Category) :=
                  (@Natrans.compose C D)
                  (@Natrans.id C D).
 Next Obligation.
-  intros C D F G H S S' T T' HeqS HeqT X; simpl.
-  apply Category.comp_subst; [apply HeqS | apply HeqT].
+  revert X Y Z; intros F G H.
+  intros S S' HeqS T T' HeqT X; simpl.
+  now rewrite (HeqS X), (HeqT X).
 Qed.
 Next Obligation.
-  intros C D F G H I S T U X; simpl in *.
-  apply Category.comp_assoc.
+  now intros x; simpl; rewrite catCa.
 Qed.
 Next Obligation.
-  intros C D F G S X; simpl in *.
-  apply Category.comp_id_dom.
+  now intros x; simpl in *; rewrite catC1f.
 Qed.
 Next Obligation.
-  intros C D F G S X; simpl in *.
-  apply Category.comp_id_cod.
+  now intros x; simpl in *; rewrite catCf1.
 Qed.
 
 Notation "[ C :=> D ]" := (Fun C D) (D at level 200): cat_scope.
-
-

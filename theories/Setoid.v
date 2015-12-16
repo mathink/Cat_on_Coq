@@ -1,5 +1,3 @@
-Require Export COC.Init.
-
 Require Export COC.Setoid.Core.
 Require Export COC.Setoid.Map.
 

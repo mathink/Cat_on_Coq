@@ -49,37 +49,13 @@ Module Comma.
     build (dmorph kh2 \o dmorph kh1) (cmorph kh2 \o cmorph kh1).
   Next Obligation.
     intros.
-    eapply transitivity.
-    - eapply transitivity; [apply Category.comp_subst |].
-      + apply Functor.fmap_comp.
-      + apply reflexivity.
-      + eapply transitivity.
-        * apply symmetry, Category.comp_assoc.
-        * apply Category.comp_subst; [apply reflexivity |].
-          apply comm.
-    - eapply transitivity; [apply Category.comp_assoc |].
-      apply symmetry.
-      eapply transitivity.
-      eapply transitivity; [apply Category.comp_subst |].
-      + apply reflexivity.
-      + apply Functor.fmap_comp.
-      + eapply transitivity; [apply Category.comp_assoc |].
-        apply Category.comp_subst; [| apply reflexivity].
-        apply symmetry, comm.
-      + apply reflexivity.
+    now rewrite fnC, <- catCa, comm, catCa, comm, fnC, catCa.
   Qed.
 
   Program Definition id {E C D: Category}(T: Functor E C)(S: Functor D C)(f: obj T S): type f f :=
     build (Id (dom f)) (Id (cod f)).
   Next Obligation.
-    intros.
-    eapply transitivity.
-    - apply Category.comp_subst.
-      + now  apply Functor.fmap_id.
-      + now apply reflexivity.
-    - eapply transitivity; [apply Category.comp_id_dom |].
-      eapply transitivity; [apply symmetry, Category.comp_id_cod |].
-      apply Category.comp_subst; [apply reflexivity | apply symmetry, Functor.fmap_id].
+    now rewrite !fn1, catCf1, catC1f.
   Qed.
 
   Definition equal {E C D: Category}(T: Functor E C)(S: Functor D C)(f g: obj T S): relation (type f g) :=
@@ -104,27 +80,23 @@ Module Comma.
                    (@compose _ _ _ T S)
                    (@id _ _ _ T S).
   Next Obligation.
-    intros; simpl in *.
-    destruct H as [Heqdf Heqcf], H0 as [Heqdg Heqcg].
-    split; apply Category.comp_subst; assumption.
+    intros f f' [Hfd Hfc] g g' [Hgd Hgc]; simpl in *.
+    now rewrite Hfd, Hfc, Hgd, Hgc.
   Qed.
   Next Obligation.
-    intros; simpl in *.
-    split; apply Category.comp_assoc.
+    now rewrite !catCa.
   Qed.
   Next Obligation.
-    intros; simpl in *.
-    split; apply Category.comp_id_dom.
+    now rewrite !catC1f.
   Qed.
   Next Obligation.
-    intros; simpl in *.
-    split; apply Category.comp_id_cod.
+    now rewrite !catCf1.
   Qed.
 End Comma.
 Export Comma.MorphEx.
 
 Definition CommaTo (C D: Category)(c: C)(S: Functor D C): Category :=
-  Comma.category (ConstFunctor c) S.
+  Comma.category (ConstFunctor C c) S.
 
 Definition CommaFrom (C D: Category)(S: Functor D C)(c: C): Category :=
-  Comma.category S (ConstFunctor c).
+  Comma.category S (ConstFunctor C c).

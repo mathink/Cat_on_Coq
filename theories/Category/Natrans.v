@@ -29,7 +29,7 @@ Module Natrans.
         cod_isFunctor: isFunctor Ga;
         naturality:
           forall (X Y: C)(f: C X Y),
-            (natrans Y \o Fa _ _ f == Ga _ _ f \o natrans X :> D _ _)%category
+            (natrans Y \o Fa _ _ f == Ga _ _ f \o natrans X :> D _ _)
       }.
 
   Structure canonical {C D: Category}
@@ -85,35 +85,21 @@ Module Natrans.
   Next Obligation.
     intros; split; [apply S | apply T |].
     intros X Y f; simpl.
-    eapply transitivity;
-      [ apply Category.comp_assoc |].
-    eapply transitivity;
-      [ apply Category.comp_subst |].
-    - apply naturality.
-    - apply reflexivity.
-    - eapply transitivity;
-      [ apply symmetry,Category.comp_assoc |].
-      eapply transitivity;
-        [ apply Category.comp_subst |].
-      + apply reflexivity.
-      + apply naturality.
-      + apply Category.comp_assoc.
+    rewrite catCa, naturality.
+    now rewrite <- catCa, naturality, catCa.
   Qed.
 
   Program Definition compose {C D: Category}{F G H: Functor C D}(S: Natrans F G)(T: Natrans G H): Natrans F H :=
     build F H (canonical_compose S T).
   Next Obligation.
-    intros.
-    apply naturality.
+    rewrite catCa, naturality, <- catCa.
+    now rewrite <- catCa, <- naturality.
   Qed.
 
   Program Definition id {C D: Category}(F: Functor C D): Natrans F F :=
     build F F (fun X => Id (F X)).
   Next Obligation.
-    intros C D F X Y f; simpl.
-    eapply transitivity;
-      [ apply Category.comp_id_cod
-      | apply symmetry, Category.comp_id_dom ].
+    now rewrite catCf1, catC1f.
   Qed.
 
   Definition equal {C D: Category}(F G: Functor C D): relation (Natrans F G)
@@ -122,14 +108,13 @@ Module Natrans.
   Program Definition setoid {C D: Category}(F G: Functor C D) :=
     Setoid.build (@equal C D F G).
   Next Obligation.
-    intros C D F G S X; apply reflexivity.
+    intros S X; reflexivity.
   Qed.
   Next Obligation.
-    intros C D F G S T Heq X; generalize (Heq X); apply symmetry.
+    intros S T Heq X; symmetry; apply Heq. 
   Qed.
   Next Obligation.
-    intros C D F G S T U Heq Heq' X;
-    generalize (Heq X) (Heq' X); apply transitivity.
+    intros S T U Heq Heq' X; rewrite (Heq X), (Heq' X); reflexivity.
   Qed.
 End Natrans.
 Export Natrans.Ex.
@@ -158,3 +143,6 @@ Module NaturalIso.
 
 End NaturalIso.
 Export NaturalIso.Ex.
+
+
+

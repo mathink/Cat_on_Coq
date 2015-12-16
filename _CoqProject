@@ -1,9 +1,4 @@
--arg -noinit
 -R theories COC
-
-theories/Init/Prelude.v
-theories/Init/Relations.v
-theories/Init.v
 
 theories/Setoid/Core.v
 theories/Setoid/Map.v

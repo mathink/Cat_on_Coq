@@ -6,7 +6,7 @@ Set Universe Polymorphism.
 
 Generalizable All Variables.
 
-Require Import COC.Init.
+Require Export Coq.Program.Basics Coq.Program.Tactics Coq.Setoids.Setoid Coq.Classes.Morphisms.
 
 (** * スコープの設定
 大きなライブラリになるので、定義する記法を二つのスコープに纏める。
@@ -51,19 +51,3 @@ Module Setoid.
   End Ex.
 End Setoid.
 Export Setoid.Ex.
-
-
-(** * 「一意に存在」 **)
-(**
-あらゆる場面に出てくる普遍性の記述には欠かせない。
-uniqueness の記述には [Setoid] が必要だったため、ここで定義する。
- **)
-Definition unique {X : Setoid}(P: X -> Prop)(x: X) :=
-  P x /\ forall (x': X), P x' -> x == x'.
-
-Notation "'exists!_' x .. y , p" :=
-  (ex (unique (fun x => .. (ex (unique (fun y => p))) ..)))
-    (at level 200, x binder, right associativity,
-     format "'[' 'exists!_'  '/ ' x .. y ,  '/ ' p ']'"): cat_scope.
-
-Ltac etrans := eapply transitivity.

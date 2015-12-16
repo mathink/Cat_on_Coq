@@ -28,8 +28,7 @@ Module Hcomp.
   : Natrans (G \o{Cat} F) (H \o{Cat} F) :=
     Natrans.build _ _ (fun X => S (F X)).
   Next Obligation.
-    intros C D E F G H S X Y f; simpl.
-    apply Natrans.naturality.
+    now rewrite Natrans.naturality; simpl.
   Qed.
 
   (* 
@@ -52,12 +51,7 @@ Module Hcomp.
     : Natrans (H \o{Cat} F) (H \o{Cat} G) :=
     Natrans.build _ _ (fun X => fmap H (S X) ).
   Next Obligation.
-    intros C D E F G H S X Y f; simpl.
-    eapply transitivity; 
-      [| apply Functor.fmap_comp].
-    eapply transitivity; 
-      [apply symmetry, Functor.fmap_comp |].
-    apply Map.substitute, Natrans.naturality.
+    now rewrite <- !fnC, Natrans.naturality.
   Qed.
 
   (* 
@@ -81,34 +75,15 @@ Module Hcomp.
     : Natrans (G \o{Cat} F) (G' \o{Cat} F') :=
     Natrans.build _ _ (fun X => T (F' X) \o fmap G (S X) ).
   Next Obligation.
-    simpl; intros.
-    eapply transitivity; [apply Category.comp_assoc |].
-    apply symmetry; eapply transitivity.
-    {
-      apply Category.comp_subst; [| apply reflexivity].
-      apply Natrans.naturality.
-    }
-    eapply transitivity; [apply symmetry, Category.comp_assoc |].
-    eapply transitivity.
-    {
-      apply Category.comp_subst; [ apply reflexivity |].
-      apply symmetry, Functor.fmap_comp.
-    }
-    eapply transitivity.
-    {
-      apply symmetry, Natrans.naturality.
-    }
-    apply Category.comp_subst; [| apply reflexivity].
-    eapply transitivity; [| apply Functor.fmap_comp].
-    apply Map.substitute.
-    apply symmetry, Natrans.naturality.
+    rewrite catCa, <- fnC, !Natrans.naturality.
+    now rewrite <- catCa, <- !fnC.
   Qed.
     
 
   Module Ex.
-    Notation "S \oF F" := (@dom _ _ _ F _ _ S) (at level 55, left associativity).
-    Notation "F \Fo S" := (@cod _ _ _ _ _ S F) (at level 55, left associativity).
-    Notation "T \vo S" := (@both _ _ _ _ _ S _ _ T) (at level 55, left associativity).
+    Notation "S \oF F" := (@dom _ _ _ F _ _ S) (at level 50, left associativity).
+    Notation "F \Fo S" := (@cod _ _ _ _ _ S F) (at level 50, left associativity).
+    Notation "T \vo S" := (@both _ _ _ _ _ S _ _ T) (at level 50, left associativity).
   End Ex.
   Import Ex.
 

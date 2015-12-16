@@ -31,9 +31,7 @@ Module Category.
         (id: forall X: obj, arr X X) :=
     proof {
         (* arr_isSetoid: forall {X Y: obj}, isSetoid (@arr_eq X Y) where "f == g" := (@Setoid.equal (@Setoid.make _ _ (@arr_isSetoid _ _)) f g); *)
-        comp_subst:
-          forall (X Y Z: obj)(f f': arr X Y)(g g': arr Y Z),
-            f == f' -> g == g' -> (comp f g) == (comp f' g');
+        comp_subst:> forall (X Y Z: obj), Proper ((==) ==> (==) ==> (==)) (@comp X Y Z);
         
         comp_assoc:
           forall (X Y Z W: obj)
@@ -120,20 +118,19 @@ Module Category.
           (fun X Y Z f g => f \o g)
           (fun X => Id X).
   Next Obligation.
-    intros; simpl in *.
-    apply comp_subst; assumption.
+    now intros f f' Hf g g' Hg; rewrite Hf, Hg.
   Qed.
   Next Obligation.
     intros; simpl in *.
-    apply symmetry, comp_assoc.
+    now rewrite comp_assoc.
   Qed.
   Next Obligation.
     intros; simpl in *.
-    apply comp_id_cod.
+    now rewrite comp_id_cod.
   Qed.
   Next Obligation.
     intros; simpl in *.
-    apply comp_id_dom.
+    now rewrite comp_id_dom.
   Qed.
   
 End Category.
@@ -158,21 +155,15 @@ Variant Iso (C: Category)(X Y: C): C X Y -> C Y X -> Prop :=
 Program Definition Setoids: Category :=
   Category.build (@Map.setoid) (@Map.compose) (@Map.id).
 Next Obligation.
-  intros X Y Z f f' g g' Heqf Heqg x; simpl in *.
-  apply transitivity with (g' (f x)).
-  - apply Heqg.
-  - apply Map.substitute, Heqf.
+  intros f f' Hf g g' Hg x; simpl.
+  rewrite (Hf x); apply Hg.
 Qed.
 Next Obligation.
-  intros; simpl.
-  intros x; simpl.
-  apply reflexivity.
+  reflexivity.
 Qed.
 Next Obligation.
-  intros; simpl; intro x; simpl.
-  apply reflexivity.
+  reflexivity.
 Qed.
 Next Obligation.
-  intros; simpl; intro x; simpl.
-  apply reflexivity.
+  reflexivity.
 Qed.

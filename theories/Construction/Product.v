@@ -3,13 +3,18 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
+Generalizable All Variables.
 Require Import COC.Category.
 
 Module Product.
-  Class spec (C: Category)(X Y: C)(P: C)(pi1: C P X)(pi2: C P Y) :=
+  Class spec (C: Category)(X Y: C)(P: C)(pi1: C P X)(pi2: C P Y)(univ: forall {Z}, C Z X -> C Z Y -> C Z P) :=
     proof {
+        univ_subst:> forall Z, Proper ((==) ==> (==) ==> (==)) (@univ Z);
         ump: forall Z (f: C Z X)(g: C Z Y),
-          exists!_ fg: C Z P, pi1 \o fg == f /\ pi2 \o fg == g
+               pi1 \o (univ f g) == f /\ pi2 \o (univ f g) == g;
+        uniq: forall Z (f: C Z X)(g: C Z Y)(fg: C Z P),
+                pi1 \o fg == f /\ pi2 \o fg == g ->
+                fg == univ f g
       }.
 
   Structure type {C: Category}(X Y: C) :=
@@ -17,8 +22,9 @@ Module Product.
         obj: C;
         p1: C obj X;
         p2: C obj Y;
+        univ: forall {Z}, C Z X -> C Z Y -> C Z obj;
 
-        prf: spec p1 p2
+        prf: spec p1 p2 (@univ)
       }.
 
   Module Ex.
@@ -33,7 +39,9 @@ Module Product.
 
     Existing Instance prf.
 
-    Arguments ump {C X Y P pi1 pi2}(spec){Z}(f g): clear implicits.
+    Notation "< f , g >" := (univ _ f g).
+    Arguments ump {C X Y P pi1 pi2 univ}(spec){Z}(f g): clear implicits.
+    Arguments uniq {C X Y P pi1 pi2 univ}(spec){Z}(f g fg _): clear implicits.
   End Ex.
 
   Import Ex.
@@ -43,34 +51,39 @@ Module Product.
       isomorphic C P Q.
   Proof.
     intros; unfold isomorphic, invertible.
-    destruct (Product.ump Q (pi1 P)(pi2 P)) as [f [[Heqf1 Heqf2] _]]; exists f.
-    destruct (Product.ump P (pi1 Q)(pi2 Q)) as [g [[Heqg1 Heqg2] _]]; exists g.
-    split.
-    - destruct (Product.ump P (pi1 P)(pi2 P)) as [h [_ H]].
-      eapply transitivity; [apply symmetry, H | apply H].
-      + split.
-        * eapply transitivity; [apply symmetry, catCa |].
-          eapply transitivity; [apply catCsc, Heqg1 | apply Heqf1].
-        * eapply transitivity; [apply symmetry, catCa |].
-          eapply transitivity; [apply catCsc, Heqg2 | apply Heqf2].
-      + split; apply catC1f.
-    - destruct (Product.ump Q (pi1 Q)(pi2 Q)) as [h [_ H]].
-      eapply transitivity; [apply symmetry, H | apply H].
-      + split.
-        * eapply transitivity; [apply symmetry, catCa |].
-          eapply transitivity; [apply catCsc, Heqf1 | apply Heqg1].
-        * eapply transitivity; [apply symmetry, catCa |].
-          eapply transitivity; [apply catCsc, Heqf2 | apply Heqg2].
-      + split; apply catC1f.
-  Qed.
+    set (univ Q (pi1 P) (pi2 P)) as f.
+    set (univ P (pi1 Q) (pi2 Q)) as g.
+    generalize (ump Q (pi1 P) (pi2 P)); intros [Hf1 Hf2].
+    generalize (ump P (pi1 Q) (pi2 Q)); intros [Hg1 Hg2].
+    exists f, g; split.
+    - rewrite (uniq P (pi1 P) (pi2 P) (Id P)).
+      + apply (uniq P (pi1 P) (pi2 P) (g \o f)).
+        split.
+        * subst f g.
+          now rewrite <- catCa, Hg1.
+        * subst f g.
+          now rewrite <- catCa, Hg2.
+      + now split; rewrite catC1f.
+    - rewrite (uniq Q (pi1 Q) (pi2 Q) (Id Q)).
+      + apply (uniq Q (pi1 Q) (pi2 Q) (f \o g)).
+        split.
+        * subst f g.
+          now rewrite <- catCa, Hf1.
+        * subst f g.
+          now rewrite <- catCa, Hf2.
+      + now split; rewrite catC1f.
+  Qed.        
 End Product.
 Export Product.Ex.
 
 Module Coproduct.
-  Class spec (C: Category)(X Y: C)(Cp: C)(inj1: C X Cp)(inj2: C Y Cp) :=
+  Class spec (C: Category)(X Y: C)(Cp: C)(inj1: C X Cp)(inj2: C Y Cp)(univ: forall {Z}, C X Z -> C Y Z -> C Cp Z) :=
     proof {
+        univ_subst:> forall Z, Proper ((==) ==> (==) ==> (==)) (@univ Z);
         ump: forall Z (f: C X Z)(g: C Y Z),
-          exists!_ f_g: C Cp Z, f_g \o inj1 == f /\ f_g \o inj2 == g
+            univ f g \o inj1 == f /\ univ f g \o inj2 == g;
+        uniq: forall Z (f: C X Z)(g: C Y Z)(f_g: C Cp Z),
+            f_g \o inj1 == f /\ f_g \o inj2 == g -> f_g == univ f g
       }.
 
   Structure type {C: Category}(X Y: C) :=
@@ -78,8 +91,9 @@ Module Coproduct.
         obj: C;
         i1: C X obj;
         i2: C Y obj;
+        univ: forall {Z}, C X Z -> C Y Z -> C obj Z;
 
-        prf: spec i1 i2
+        prf: spec i1 i2 (@univ)
       }.
 
   Module Ex.
@@ -94,7 +108,9 @@ Module Coproduct.
     Notation inj1 := i1.
     Notation inj2 := i2.
 
-    Arguments ump {C X Y Cp inj1 inj2}(spec){Z}(f g): clear implicits.
+    Arguments ump {C X Y Cp inj1 inj2 univ}(spec){Z}(f g): clear implicits.
+    Arguments uniq {C X Y Cp inj1 inj2 univ}(spec){Z}(f g) _ _: clear implicits.
+    Arguments univ {C X Y}(t){Z}(f g): clear implicits.
   End Ex.
 
   Import Ex.
@@ -103,24 +119,44 @@ Module Coproduct.
     isomorphic C P Q.
   Proof.
     intros; unfold isomorphic, invertible.
-    destruct (ump P (inj1 Q) (inj2 Q)) as [f [[Heqf1 Heqf2] _]]; exists f.
-    destruct (ump Q (inj1 P) (inj2 P)) as [g [[Heqg1 Heqg2] _]]; exists g.
-    split.
-    - destruct (ump P (inj1 P) (inj2 P)) as [h [_ H]].
-      eapply transitivity; [apply symmetry, H | apply H].
-      + split.
-        * eapply transitivity; [apply catCa |].
-          eapply transitivity; [apply catCsd, Heqf1 | apply Heqg1].
-        * eapply transitivity; [apply catCa |].
-          eapply transitivity; [apply catCsd, Heqf2 | apply Heqg2].
-      + split; apply catCf1.
-    - destruct (ump Q (inj1 Q) (inj2 Q)) as [h [_ H]].
-      eapply transitivity; [apply symmetry, H | apply H].
-      + split.
-        * eapply transitivity; [apply catCa |].
-          eapply transitivity; [apply catCsd, Heqg1 | apply Heqf1].
-        * eapply transitivity; [apply catCa |].
-          eapply transitivity; [apply catCsd, Heqg2 | apply Heqf2].
-      + split; apply catCf1.
-  Qed.
+    set (univ P (inj1 Q) (inj2 Q)) as f.
+    set (univ Q (inj1 P) (inj2 P)) as g.
+    generalize (ump Q (inj1 P) (inj2 P)); intros [Hf1 Hf2].
+    generalize (ump P (inj1 Q) (inj2 Q)); intros [Hg1 Hg2].
+    exists f, g; split.
+    - rewrite (uniq P (inj1 P) (inj2 P) (Id P)).
+      + apply (uniq P (inj1 P) (inj2 P) (g \o f)).
+        split.
+        * subst f g.
+          now rewrite catCa, Hg1.
+        * subst f g.
+          now rewrite catCa, Hg2.
+      + now split; rewrite catCf1.
+    - rewrite (uniq Q (inj1 Q) (inj2 Q) (Id Q)).
+      + apply (uniq Q (inj1 Q) (inj2 Q) (f \o g)).
+        split.
+        * subst f g.
+          now rewrite catCa, Hf1.
+        * subst f g.
+          now rewrite catCa, Hf2.
+      + now split; rewrite catCf1.
+  Qed.        
 End Coproduct.
+Export Coproduct.Ex.
+
+(* duality *)
+Instance product_op_coproduct (C: Category)(X Y: C)(P: Product X Y): isCoproduct (C:=Category.op C) (Product.p1 P) (Product.p2 P) (@Product.univ _ _ _ P).
+Proof.
+  split; simpl.
+  - now apply (Product.univ_subst).
+  - now intros; apply (Product.ump P).
+  - now simpl; intros; apply (Product.uniq P).
+Qed.
+
+Instance coproduct_op_product (C: Category)(X Y: C)(P: Coproduct X Y): isProduct (C:=Category.op C) (Coproduct.i1 P) (Coproduct.i2 P) (@Coproduct.univ _ _ _ P).
+Proof.
+  split; simpl.
+  - now apply (Coproduct.univ_subst).
+  - now intros; apply (Coproduct.ump P).
+  - now simpl; intros; apply (Coproduct.uniq P).
+Qed.
