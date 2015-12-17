@@ -116,31 +116,28 @@ Module Adjunction.
     now rewrite fn1, !catC1f.
   Qed.
 
-  (* Program Definition eta_UATo *)
-  (*         (C D: Category)(F: Functor C D)(G: Functor D C)(adj: Adjunction F G)(c: C) *)
-  (*   : [UA c :=> G ] := *)
-  (*   UATo.build (eta adj c). *)
-  (* Next Obligation. *)
-  (*   intros; simpl. *)
-  (*   exists (psi adj f); split. *)
-  (*   - eapply transitivity; [apply symmetry, Category.comp_id_dom |]. *)
-  (*     eapply transitivity; [apply Category.comp_assoc |]. *)
-  (*     eapply transitivity; [apply symmetry, phi_naturality |]. *)
-  (*     eapply transitivity; [apply Map.substitute, Category.comp_subst_dom, Category.comp_id_cod |]. *)
-  (*     eapply transitivity; [apply Map.substitute, Category.comp_subst_dom, Functor.fmap_id |]. *)
-  (*     eapply transitivity; [apply Map.substitute, Category.comp_id_dom |]. *)
-  (*     apply iso_psi_phi. *)
-  (*   - intros g Heq; simpl. *)
-  (*     eapply transitivity; [| apply (iso_phi_psi (spec:=adj))]. *)
-  (*     apply Map.substitute. *)
-  (*     eapply transitivity; [apply symmetry, Heq |]. *)
-  (*     eapply transitivity; [apply symmetry, Category.comp_id_dom |]. *)
-  (*     eapply transitivity; [apply Category.comp_assoc |]. *)
-  (*     eapply transitivity; [apply symmetry, phi_naturality |]. *)
-  (*     apply Map.substitute. *)
-  (*     eapply transitivity; [apply Category.comp_subst_dom, Category.comp_id_cod |]. *)
-  (*     eapply transitivity; [apply Category.comp_subst_dom, Functor.fmap_id | apply Category.comp_id_dom]. *)
-  (* Qed. *)
+  Program Definition eta_UATo
+          (C D: Category)(F: Functor C D)(G: Functor D C)(adj: Adjunction F G)(c: C)
+    : [UA c :=> G ] :=
+    UATo.build (eta adj c) (fun d f => psi adj f).
+  Next Obligation.
+    intros f g H.
+    now rewrite H.
+  Qed.
+  Next Obligation.
+    rewrite <- catC1f, catCa.
+    rewrite <- phi_naturality.
+    rewrite fn1, !catC1f.
+    now rewrite iso_psi_phi.
+  Qed.
+  Next Obligation.
+    rewrite <- H.
+    rewrite <- (catC1f (f:=(fmap G f' \o (phi adj) (Id F c)))).
+    rewrite catCa.
+    rewrite <- phi_naturality.
+    rewrite fn1, !catC1f.
+    now rewrite iso_phi_psi.
+  Qed.
 
   Program Definition epsilon
           (C D: Category)(F: Functor C D)(G: Functor D C)(adj: Adjunction F G):
@@ -157,31 +154,26 @@ Module Adjunction.
     now rewrite !catC1f.
   Qed.
 
-  (* Program Definition epsilon_UAFrom *)
-  (*         (C D: Category)(F: Functor C D)(G: Functor D C)(adj: Adjunction F G)(d: D) *)
-  (*   : [UA d <=: F ] := *)
-  (*   UAFrom.build (epsilon adj d). *)
-  (* Next Obligation. *)
-  (*   intros. *)
-  (*   rename d0 into c. *)
-  (*   exists (phi adj f); split; simpl. *)
-  (*   - eapply transitivity; [apply symmetry, Category.comp_id_cod |]. *)
-  (*     eapply transitivity; [apply symmetry, psi_naturality |]. *)
-  (*     eapply transitivity; [| apply (iso_phi_psi (spec:=adj))]. *)
-  (*     apply Map.substitute. *)
-  (*     eapply transitivity; [apply Category.comp_subst_cod, Functor.fmap_id |]. *)
-  (*     eapply transitivity; [apply Category.comp_id_cod |]. *)
-  (*     apply Category.comp_id_cod. *)
-  (*   - intros g Heq; simpl. *)
-  (*     eapply transitivity; [| apply (iso_psi_phi (spec:=adj))]. *)
-  (*     apply Map.substitute. *)
-  (*     eapply transitivity; [apply symmetry, Heq |]. *)
-  (*     eapply transitivity; [apply symmetry, Category.comp_id_cod |]. *)
-  (*     eapply transitivity; [apply symmetry, psi_naturality |]. *)
-  (*     apply Map.substitute. *)
-  (*     eapply transitivity; [apply Category.comp_subst_cod, Functor.fmap_id |]. *)
-  (*     eapply transitivity; [apply Category.comp_id_cod |]. *)
-  (*     apply Category.comp_id_cod. *)
-  (* Qed. *)
+  Program Definition epsilon_UAFrom
+          (C D: Category)(F: Functor C D)(G: Functor D C)(adj: Adjunction F G)(d: D)
+    : [UA d <=: F ] :=
+    UAFrom.build (epsilon adj d) (fun d f => phi adj f).
+  Next Obligation.
+    intros f g H.
+    now rewrite H.
+  Qed.
+  Next Obligation.
+    rewrite <- catCf1.
+    rewrite <- psi_naturality.
+    rewrite fn1, !catCf1.
+    now rewrite iso_phi_psi.
+  Qed.
+  Next Obligation.
+    rewrite <- H.
+    rewrite <- (catCf1 (f:=((psi adj) (Id G d) \o fmap F f'))).
+    rewrite <- psi_naturality.
+    rewrite fn1, !catCf1.
+    now rewrite iso_psi_phi.
+  Qed.
 
 End Adjunction.

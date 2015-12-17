@@ -74,6 +74,16 @@ Module Comma.
   Next Obligation.
     intros; split; eapply transitivity; try (apply H || apply H0).
   Qed.
+
+  Instance dmorph_proper (E C D: Category)(T: Functor E C)(S: Functor D C)(f g: obj T S): Proper ((==:>setoid f g) ==> (==)) (@dmorph E C D T S f g).
+  Proof.
+    now intros h h' [H H'].
+  Qed. 
+  
+  Instance cmorph_proper (E C D: Category)(T: Functor E C)(S: Functor D C)(f g: obj T S): Proper ((==:>setoid f g) ==> (==)) (@cmorph E C D T S f g).
+  Proof.
+    now intros h h' [H H'].
+  Qed. 
   
   Program Definition category {E C D: Category}(T: Functor E C)(S: Functor D C): Category :=
     Category.build (@setoid _ _ _ T S)

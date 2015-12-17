@@ -16,24 +16,25 @@ Module UniversalArrow.
           Sd    d
      *)
     (* TODO *)
-    Class spec {C D: Category}(c: C)(S: Functor D C)(r: D)(u: C c (S r))(univ: forall d, Map (C c (S d)) (D r d)): Prop :=
+    Class spec {C D: Category}(c: C)(S: Functor D C)(r: D)(u: C c (S r))(univ: forall {d}, (C c (S d)) -> (D r d)): Prop :=
       proof {
+          univ_subst:> forall d, Proper ((==) ==> (==)) (@univ d);
           ump: forall d (f: C c (S d)),
-            fmap S (univ _ f) \o u == f;
+            fmap S (univ f) \o u == f;
           uniq:
             forall (d: D)(f: C c (S d))(f': D r d),
-              fmap S f' \o u == f -> f' == univ _ f
+              fmap S f' \o u == f -> f' == univ f
         }.
 
     Structure type {C D: Category}(c: C)(S: Functor D C) :=
       make {
           obj: D;
           arrow: C c (S obj);
-          univ: forall d, Map (C c (S d)) (D obj d);
+          univ: forall {d}, (C c (S d)) -> (D obj d);
           prf: spec arrow (@univ)
         }.
 
-    Notation build arrow univ := (@make _ _ _ _ _ arrow univ (@proof _ _ _ _ _ _ _ _ _)).
+    Notation build arrow univ := (@make _ _ _ _ _ arrow univ (@proof _ _ _ _ _ _ _ _ _ _)).
 
     Module Ex.
       Notation "'[UA' c ':=>' F ]" := (type c F) (no associativity).
@@ -49,24 +50,25 @@ Module UniversalArrow.
       r    Sr
      *)
 
-    Class spec {C D: Category}(S: Functor D C)(c: C)(r: D)(v: C (S r) c)(univ: forall d, Map (C (S d) c) (D d r)): Prop :=
+    Class spec {C D: Category}(S: Functor D C)(c: C)(r: D)(v: C (S r) c)(univ: forall {d}, (C (S d) c) -> (D d r)): Prop :=
       proof {
-          ump: forall d (f: C (S d) c), v \o fmap S (univ _ f) == f;
+          univ_subst:> forall d, Proper ((==) ==> (==)) (@univ d);
+          ump: forall d (f: C (S d) c), v \o fmap S (univ f) == f;
           universality:
             forall (d: D)(f: C (S d) c)(f': D d r),
-              v \o fmap S f' == f -> f' == univ _ f
+              v \o fmap S f' == f -> f' == univ f
         }.
 
     Structure type {C D: Category}(S: Functor D C)(c: C) :=
       make {
           obj: D;
           arrow: C (S obj) c;
-          univ: forall d, Map (C (S d) c) (D d obj);
+          univ: forall {d}, (C (S d) c) -> (D d obj);
 
           prf: spec arrow (@univ)
         }.
 
-    Notation build arrow univ := (@make _ _ _ _ _ arrow univ (@proof _ _ _ _ _ _ _ _ _)).
+    Notation build arrow univ := (@make _ _ _ _ _ arrow univ (@proof _ _ _ _ _ _ _ _ _ _)).
 
     Module Ex.
       Notation "'[UA' c '<=:' F ]" := (type F c) (no associativity).
@@ -85,8 +87,17 @@ Require Import COC.Structure.
 (* Program Definition CommaInitUA (C D: Category)(S: Functor D C)(c: C)(i: Initial (CommaTo c S)): [UA c :=> S] := *)
 (*   let r := (Comma.cod (@Initial.obj _ i)) in *)
 (*   let u := (Comma.morph (@Initial.obj _ i)) in *)
-(*   UATo.build u. *)
+(*   UATo.build u (fun d (f: C c (S d)) => *)
+(*                   Comma.cmorph (Initial.univ i (Comma.triple (T:=ConstFunctor C c)(dom:=c) f))). *)
 (* Next Obligation. *)
+(*   intros f f' Heq; simpl. *)
+(*   generalize (@Initial.ump _ _ _ i ); simpl; intro. *)
+
+(*   destruct Setoid.equal. *)
+(*   Check (H0 ). *)
+(*   apply  *)
+(* Next Obligation. *)
+  
 (*   intros; simpl in *. *)
 (*   set (df := (Comma.triple (T:=ConstFunctor c)(dom:=c) f)). *)
 (*   set (m:=(@Initial.univ _ i df)). *)
