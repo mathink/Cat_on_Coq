@@ -9,8 +9,8 @@ HoTT とは異なり、 Setoid をベースに圏や他の概念の定義を行�
 
 # 用法
 
-* Universe Polymorphism を利用するため、 coq-8.5beta3 を使用。
-* ProofGeneral も、プロジェクトファイルの扱いなどを良い感じにするために [開発版](http://proofgeneral.inf.ed.ac.uk/devel) を利用。
+* Universe Polymorphism を利用するため、 coq-8.5rc1 を使用。
+* ProofGeneral は、プロジェクトファイルの扱いなどを良い感じにするために [開発版](http://proofgeneral.inf.ed.ac.uk/devel) を利用。
 
 # 構成
 
