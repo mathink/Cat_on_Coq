@@ -43,6 +43,8 @@ Qed.
 
 (** 
  ** 函手
+対象函数と射函数を構成要素として持ち、射函数は well-defined(つまり Map)。
+さらに、合成と恒等射を保存。
  **)
 Module Functor.
   Class spec (C D: Category)

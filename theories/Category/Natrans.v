@@ -11,12 +11,12 @@ Require Import COC.Category.Core COC.Category.Functor.
  ** 自然変換
 流れ的にね。
  **)
-(*
+(**
  NOTE:
  自然変換の型パラメータは、カノニカルなものを利用する。
- すなわち、 Coq の Eq で解決できるものを使うということ。
-  Natrans 型パラメータに 函数のみを取ることで、例えば合成の順序などの違いを無視できるようになる
- *)
+ すなわち、 Coq の eq で解決できるものを使うということ。
+ 型パラメータに 函数のみを取ることで、例えば合成の順序の違いなどを無視できるようになる
+ **)
 
 Module Natrans.
   Class canonical_spec
