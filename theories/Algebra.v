@@ -354,8 +354,8 @@ Module Ring.
     Notation "x + y" := (add _ x y): ring_scope.
     Notation "x * y" := (mul _ x y): ring_scope.
     Notation "'0'" := (z _): ring_scope.
-    Notation "x ^-1" := (inv _ x) (at level 20, left associativity): ring_scope.
-    Notation "x - y" := (add _ x (y^-1)%rng): ring_scope.
+    Notation "- x" := (inv _ x): ring_scope.
+    Notation "x - y" := (add _ x (- y)%rng): ring_scope.
     Notation "'1'" := (e _): ring_scope.
   End Ex.
   Import Ex.
@@ -369,7 +369,7 @@ Module Ring.
   Definition add_inv_r {R: Ring}(x: R) := (@right_invertible R (add R) (z R) (is_add_group (spec:=R)) (inv R) (is_add_group (spec:=R)) x).
   Definition add_inv_op {R: Ring}(x y: R) :=
     (Group.inv_op (G:=(Ring.add_group R)) x y).
-  Definition add_inv_id (R: Ring): (0^-1 == 0)%rng
+  Definition add_inv_id (R: Ring): (- 0 == 0)%rng
     := (Group.inv_id (add_group R)).
   Definition add_inv_inv {R: Ring}(x: R)
     := (Group.inv_inv (G:=add_group R) x).
@@ -394,7 +394,7 @@ Module Ring.
         now rewrite (distributive_r).
       }
       apply symmetry.
-      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) ((0*x)^-1) H); simpl.
+      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) (-(0*x)) H); simpl.
       now rewrite Ring.add_inv_l, associative, Ring.add_inv_l, Ring.add_id_l.
     Qed.
     
@@ -410,12 +410,12 @@ Module Ring.
         now rewrite (distributive_l).
       }
       apply symmetry.
-      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) ((x*0)^-1) H); simpl.
+      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) (-(x*0)) H); simpl.
       now rewrite Ring.add_inv_l, associative, Ring.add_inv_l, Ring.add_id_l.
     Qed.
 
     Lemma minus_mul_l:
-      forall x: R, 1^-1 * x == x^-1.
+      forall x: R, (- 1%rng) * x == - x.
     Proof.
       intros x.
       rewrite <- (Ring.add_id_l).
@@ -425,7 +425,7 @@ Module Ring.
     Qed.
 
     Lemma minus_mul_r:
-      forall x: R, x * 1^-1 == x^-1.
+      forall x: R, x * - 1%rng == - x.
     Proof.
       intros x.
       rewrite <- (Ring.add_id_r).
@@ -436,7 +436,7 @@ Module Ring.
 
     Lemma mul_inv_l:
       forall x y: R,
-        (x^-1) * y == (x * y)^-1.
+        (- x) * y == - (x * y).
     Proof.
       intros.
       rewrite <- (Ring.add_id_l).
@@ -446,7 +446,7 @@ Module Ring.
 
     Lemma mul_inv_r:
       forall x y: R,
-        x * (y^-1) == (x * y)^-1.
+        x * (- y) == - (x * y).
     Proof.
       intros.
       rewrite <- (Ring.add_id_l).
@@ -456,7 +456,7 @@ Module Ring.
 
     Lemma mul_inv_inv:
       forall x y: R,
-        (x^-1) * (y^-1) == x * y.
+        (- x) * (- y) == x * y.
     Proof.
       intros.
       now rewrite mul_inv_l, mul_inv_r, (Ring.add_inv_inv (x*y)).
@@ -605,10 +605,10 @@ Module Field.
     Notation "x * y" := (mul _ x y): field_scope.
     Notation "'0'" := (z _): field_scope.
     Notation "'1'" := (e _): field_scope.
-    Notation  "- x" := (minus _ x): field_scope.
-    Notation  "x ^-1" := (inv _ x) (at level 20, left associativity): field_scope.
+    Notation "- x" := (minus _ x): field_scope.
+    Notation "x ^-1" := (inv _ x) (at level 20, left associativity): field_scope.
     Notation "x - y" := (add _ x (- y)%fld): field_scope.
-    Notation "x / y" := (mul _ x y^-1): field_scope.
+    Notation "x / y" := (mul _ x (y^-1)%fld): field_scope.
   End Ex.
 
   Import Ex.
@@ -721,7 +721,7 @@ Module Ideal.
 
         inv_close:
           forall x,
-            P x -> P (x^-1);
+            P x -> P (- x);
 
         z_close:
           P 0;
@@ -966,7 +966,7 @@ Module RingHom.
     := (MonoidHom.op (f:=GroupHom.monoid_hom (add_group_hom f)) x y).
   Definition add_ident `(f: RingHom R R'): f 0 == 0
     := (MonoidHom.ident (f:=GroupHom.monoid_hom (add_group_hom f))).
-  Definition add_inv `(f: RingHom R R')(x: R): f (x^-1) == f x^-1
+  Definition add_inv `(f: RingHom R R')(x: R): f (- x) == - f x
     := (GroupHom.inv (f:=add_group_hom f) x).
   Definition mul_op `(f: RingHom R R')(x y: R): f (x * y) == f x * f y
     := (MonoidHom.op (f:=mul_monoid_hom f) x y).
@@ -1044,15 +1044,15 @@ Section FromZ.
 
   Lemma rep_aux_pred_double:
     forall p,
-      rep_aux (Pos.pred_double p) == rep_aux p + rep_aux p + 1 ^-1.
+      rep_aux (Pos.pred_double p) == rep_aux p + rep_aux p + - 1%rng.
   Proof.
     induction p; simpl; intros.
     - repeat rewrite <- associative.
-      rewrite (Ring.add_commute _ (1^-1)).
-      rewrite (Ring.add_commute_l (rep_aux p) (1^-1)); simpl.
-      now rewrite (associative _ (1^-1)), Ring.add_inv_r, Ring.add_id_l.
+      rewrite (Ring.add_commute _ (- 1%rng)).
+      rewrite (Ring.add_commute_l (rep_aux p) (- 1%rng)); simpl.
+      now rewrite (associative _ (- 1%rng)), Ring.add_inv_r, Ring.add_id_l.
     - rewrite IHp.
-      rewrite (Ring.add_commute _ (1^-1)) at 1.
+      rewrite (Ring.add_commute _ (- 1%rng)) at 1.
       now rewrite (associative 1), Ring.add_inv_r, Ring.add_id_l, associative.
     - now rewrite <- associative, Ring.add_inv_r, Ring.add_id_r.
   Qed.
@@ -1066,7 +1066,7 @@ Section FromZ.
     match z with
     | Z0 => 0
     | Zpos p => rep_aux p
-    | Zneg p => (rep_aux p)^-1
+    | Zneg p => - (rep_aux p)
     end.
   Arguments rep _%Z.
 
@@ -1099,48 +1099,48 @@ Section FromZ.
 
   Lemma rep_pred_double:
     forall p,
-      rep (Z.pred_double p) == 1^-1 + rep p + rep p.
+      rep (Z.pred_double p) == - 1%rng + rep p + rep p.
   Proof.
     destruct p; simpl.
     - now repeat rewrite Ring.add_id_r.
     - now rewrite rep_aux_pred_double, commute, <- associative.
     - repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
-      now rewrite (commute), (commute _ (1^-1)).
+      now rewrite (commute), (commute _ (- 1%rng)).
   Qed.
 
   Lemma rep_pos_sub:
     forall p q,
-      rep (Z.pos_sub p q) == rep_aux p + (rep_aux q)^-1.
+      rep (Z.pos_sub p q) == rep_aux p - (rep_aux q).
   Proof.
     induction p, q; simpl.
     - rewrite rep_double, IHp.
       repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
       repeat rewrite <- associative.
-      rewrite (Ring.add_commute _ (1^-1)).
-      rewrite (Ring.add_commute_l (rep_aux q ^-1) (1^-1)); simpl.
-      do 2 rewrite (Ring.add_commute_l (rep_aux p) (1^-1)); simpl.
+      rewrite (Ring.add_commute _ (- 1%rng)).
+      rewrite (Ring.add_commute_l (- rep_aux q) (- 1%rng)); simpl.
+      do 2 rewrite (Ring.add_commute_l (rep_aux p) (- 1%rng)); simpl.
       rewrite (associative 1 _).
       rewrite Ring.add_inv_r, Ring.add_id_l.
       now rewrite (Ring.add_commute_l _ (rep_aux p)).
     - rewrite rep_succ_double, IHp.
       rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
       repeat rewrite <- associative.
-      now rewrite (Ring.add_commute_l (rep_aux q^-1) (rep_aux p)).
-    - rewrite (Ring.add_commute _ (1^-1)), <- associative, (associative _ 1).
+      now rewrite (Ring.add_commute_l (- rep_aux q) (rep_aux p)).
+    - rewrite (Ring.add_commute _ (- 1%rng)), <- associative, (associative _ 1).
       now rewrite Ring.add_inv_l, Ring.add_id_l.
     - rewrite rep_pred_double, IHp, !(Group.inv_op (G:=Ring.add_group R)); simpl.
       repeat rewrite <- associative.
       repeat rewrite (Ring.add_commute_l _ (rep_aux p)).
-      rewrite (Ring.add_commute_l _ (rep_aux q^-1)); simpl.
-      now rewrite (Ring.add_commute (1^-1)).
+      rewrite (Ring.add_commute_l _ (- rep_aux q)); simpl.
+      now rewrite (Ring.add_commute (- 1%rng)).
     - rewrite rep_double, IHp.
       repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
       repeat rewrite <- associative.
       now rewrite (Ring.add_commute_l _ (rep_aux p)).
     - apply rep_aux_pred_double.
     - repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
-      rewrite (commute _ (1^-1)).
-      rewrite !(Ring.add_commute_l (R:=R) _ (1^-1)), associative; simpl.
+      rewrite (commute _ (- 1%rng)).
+      rewrite !(Ring.add_commute_l (R:=R) _ (- 1%rng)), associative; simpl.
       now rewrite Ring.add_inv_l, Ring.add_id_l.
     - now rewrite rep_aux_pred_double, (Group.inv_op (G:=Ring.add_group R)), (Group.inv_inv (G:=Ring.add_group R)); simpl.
     - now rewrite Ring.add_inv_r.
@@ -1319,23 +1319,195 @@ Section IdealQuotient.
   Qed.
   Next Obligation.
     intros x y Heq; simpl in *.
-    rewrite <- (Ring.add_inv_inv (y + x^-1)); simpl.
+    rewrite <- (Ring.add_inv_inv (y - x)); simpl.
     apply Ideal.inv_close.
     now rewrite (Ring.add_inv_op y), (Ring.add_inv_inv x); simpl.
   Qed.
   Next Obligation.
     intros x y z Hxy Hyz.
     simpl in *.
-    rewrite <- (Ring.add_id_l (z^-1)).
+    rewrite <- (Ring.add_id_l (- z)).
     rewrite <- (Ring.add_inv_l y).
     rewrite !associative.
-    rewrite <- (associative (x + y^-1)).
+    rewrite <- (associative (x - y)).
     now apply Ideal.add_close; auto.
   Qed.
 
   Definition IdealQuotient `(I: Ideal R) := Setoid.make (Ideal_equiv I).
-
 End IdealQuotient.
+Arguments Ideal_equal R I x y /.
+
+(** 
+Z/2Z は 0 と 1 (の同値類)からなる剰余環
+ **)
+Definition Z_2Z := IdealQuotient (Zn_ideal 2).
+Lemma Z_2Z_has_only_two_elements:
+  forall x: Z_2Z,
+    x == 0 \/ x == 1.
+Proof.
+  simpl; intros [ | p | p]; simpl.
+  - now left; exists 0.
+  - destruct p; simpl.
+    + right.
+      exists (Zpos p).
+      rewrite Zmult_comm.
+      now apply Pos2Z.inj_xO.
+    + left.
+      exists (Zpos p).
+      rewrite Zmult_comm.
+      now apply Pos2Z.inj_xO.
+    + now right; exists 0.
+  - induction p; simpl.
+    + right.
+      exists (Zneg (Pos.succ p)).
+      rewrite Zmult_comm.
+      now apply Pos2Z.neg_xO.
+    + left.
+      exists (Zneg p).
+      rewrite Zmult_comm.
+      now apply Pos2Z.neg_xO.
+    + now right; exists (-1).
+Qed.
+
+(** 剰余環を構成する **)
+Section QuotientRing.
+  Open Scope ring_scope.
+  Context `(I: Ideal R).
+
+  (* 演算とかの定義 *)
+  Definition IQ_add (x y: IdealQuotient I): IdealQuotient I := x + y.
+  Definition IQ_O : IdealQuotient I := 0.
+  Definition IQ_minus (x: IdealQuotient I): IdealQuotient I := - x.
+  Definition IQ_mul (x y: IdealQuotient I): IdealQuotient I := x * y.
+  Definition IQ_I : IdealQuotient I := 1.
+    
+  Program Instance IQ_add_is_binop: isBinop IQ_add.
+  Next Obligation.
+    intros x x' Heqx y y' Heqy; simpl in *.
+    unfold IQ_add.
+    rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+    rewrite (commute (- y')), !associative.
+    rewrite <- (associative x), (commute y), !associative, <- !associative.
+    rewrite associative.
+    now apply Ideal.add_close.
+  Qed.
+  Canonical Structure IQ_add_binop := Binop.make IQ_add_is_binop.
+
+  Program Instance IQ_add_is_monoid: isMonoid IQ_add_binop IQ_O.
+  Next Obligation.
+    intros x y z; simpl.
+    unfold IQ_add.
+    rewrite associative, right_invertible.
+    now apply Ideal.z_close.
+  Qed.
+  Next Obligation.
+    repeat split.
+    - intros x; simpl.
+      unfold IQ_add, IQ_O; simpl.
+      rewrite left_identical, right_invertible.
+      now apply Ideal.z_close.
+    - intros x; simpl.
+      unfold IQ_add, IQ_O; simpl.
+      rewrite right_identical, right_invertible.
+      now apply Ideal.z_close.
+  Qed.
+  Canonical Structure IQ_add_monoid := Monoid.make IQ_add_is_monoid.
+
+  Program Instance IQ_minus_is_map: isMap (X:=IdealQuotient I) IQ_minus.
+  Next Obligation.
+    intros x y Heq; simpl in *.
+    unfold IQ_minus.
+    rewrite <- (Group.inv_op (G:=Ring.add_group R)); simpl.
+    apply Ideal.inv_close.
+    now rewrite commute.
+  Qed.    
+  Canonical Structure IQ_minus_map := Map.make IQ_minus_is_map.
+
+  Program Instance IQ_add_is_group: isGroup IQ_add_binop IQ_O IQ_minus_map.
+  Next Obligation.
+    repeat split.
+    - intros x; simpl.
+      unfold IQ_add, IQ_minus, IQ_O.
+      rewrite left_invertible, right_invertible.
+      now apply Ideal.z_close.
+    - intros x; simpl.
+      unfold IQ_add, IQ_minus, IQ_O.
+      rewrite right_invertible, right_invertible.
+      now apply Ideal.z_close.
+  Qed.
+  Canonical Structure IQ_add_group := Group.make IQ_add_is_group.
+
+  Program Instance IQ_add_commute: Commute IQ_add_binop.
+  Next Obligation.
+    unfold IQ_add.
+    rewrite (commute b), right_invertible.
+    now apply Ideal.z_close.
+  Qed.
+
+  (* Monoid of '*' *)
+  Program Instance IQ_mul_is_binop: isBinop IQ_mul.
+  Next Obligation.
+    intros x x' Heqx y y' Heqy.
+    unfold IQ_mul; simpl in *.
+    assert (H: x*y - x'*y' == (x - x')*(y - y') + (x - x')*y' + x'*(y - y')).
+    {
+      rewrite !distributive_l, !distributive_r.
+      rewrite Ring.mul_inv_inv, !Ring.mul_inv_r, !Ring.mul_inv_l.
+      rewrite <- !associative.
+      rewrite 5!(Ring.add_commute_l _ (x'*y)); simpl.
+      rewrite (associative (x'*y)).
+      rewrite right_invertible, left_identical.
+      rewrite 2!(Ring.add_commute_l _ (x*y')); simpl.
+      rewrite (associative (x*y')).
+      rewrite right_invertible, left_identical.
+      rewrite (associative (x'*y')).
+      rewrite right_invertible, left_identical.
+      reflexivity.
+    }
+    rewrite H; clear H.
+    repeat apply Ideal.add_close; auto.
+    - now apply Ideal.mul_close.
+    - now apply Ideal.right_mul.
+    - now apply Ideal.left_mul.
+  Qed.
+  Canonical Structure IQ_mul_binop := Binop.make IQ_mul_is_binop.
+
+  Program Instance IQ_mul_is_monoid: isMonoid IQ_mul_binop IQ_I.
+  Next Obligation.
+    intros x y z; simpl.
+    unfold IQ_mul.
+    rewrite associative, right_invertible.
+    now apply Ideal.z_close.
+  Qed.
+  Next Obligation.
+    repeat split.
+    - intros x; simpl.
+      unfold IQ_mul, IQ_I; simpl.
+      rewrite left_identical, right_invertible.
+      now apply Ideal.z_close.
+    - intros x; simpl.
+      unfold IQ_mul, IQ_I; simpl.
+      rewrite right_identical, right_invertible.
+      now apply Ideal.z_close.
+  Qed.
+  Canonical Structure IQ_mul_monoid := Monoid.make IQ_mul_is_monoid.
+
+  (* Ring of '+' & '*' *)
+  Program Instance IQ_is_ring: isRing IQ_add_binop IQ_O IQ_minus_map IQ_mul_binop IQ_I.
+  Next Obligation.
+    split; simpl; intros.
+    - unfold IQ_add, IQ_mul.
+      rewrite distributive_l.
+      rewrite right_invertible.
+      now apply Ideal.z_close.
+    - unfold IQ_add, IQ_mul.
+      rewrite distributive_r.
+      rewrite right_invertible.
+      now apply Ideal.z_close.
+  Qed.
+  (* 剰余環の完成 *)
+  Canonical Structure IQ_ring := Ring.make IQ_is_ring.
+End QuotientRing.
 
 (** * おまけ(ハイティング代数)
 途中。
