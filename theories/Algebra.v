@@ -169,6 +169,8 @@ Module Monoid.
         prf: spec op e
       }.
 
+  Definition magma (M: type) := Magma.make (op M).
+
   Module Ex.
     Existing Instance associative.
     Existing Instance identical.
@@ -181,14 +183,46 @@ Module Monoid.
     Coercion identical: isMonoid >-> Identical.
     Coercion carrier: Monoid >-> Setoid.
     Coercion prf: Monoid >-> isMonoid.
+    Coercion magma: Monoid >-> Magma.
 
     Delimit Scope monoid_scope with monoid.
     Notation "x * y" := (op _ x y) (at level 40, left associativity): monoid_scope.
     Notation "'1'" := (e _): monoid_scope.
   End Ex.
 
+  Import Ex.
+  
+  Section MonoidProps.
+    Variable (M: Monoid).
+    Open Scope monoid_scope.
+
+    Lemma left_op:
+      forall x y z: M,
+        y == z -> x * y == x * z.
+    Proof.
+      intros.
+      now rewrite H.
+    Qed.
+
+    Lemma right_op:
+      forall x y z: M,
+        x == y -> x * z == y * z.
+    Proof.
+      intros.
+      now rewrite H.
+    Qed.
+
+    Lemma commute_l:
+      forall `{Commute M (Monoid.op M)}(x y z: M), x * (y * z) == y * (x * z).
+    Proof.
+      intros; repeat rewrite associative.
+      now rewrite (commute x y).
+    Qed.
+  End MonoidProps.
+
 End Monoid.
 Export Monoid.Ex.
+
 
 (** * 群(Group)
 逆元付きのモノイド、として定義。
@@ -197,7 +231,7 @@ Export Monoid.Ex.
 Module Group.
   Class spec (G: Setoid)(op: Binop G)(e: G)(inv: Map G G) :=
     proof {
-        monoid:> isMonoid op e;
+        is_monoid:> isMonoid op e;
         invertible:> Invertible inv
       }.
 
@@ -211,15 +245,16 @@ Module Group.
         prf: spec op e inv
       }.
 
+
   Module Ex.
-    Existing Instance monoid.
+    Existing Instance is_monoid.
     Existing Instance invertible.
     Existing Instance prf.
 
     Notation isGroup := spec.
     Notation Group := type.
 
-    Coercion monoid: isGroup >-> isMonoid.
+    Coercion is_monoid: isGroup >-> isMonoid.
     Coercion invertible: isGroup >-> Invertible.
     Coercion carrier: Group >-> Setoid.
     Coercion prf: Group >-> isGroup.
@@ -230,9 +265,44 @@ Module Group.
     Notation "'1'" := (e _): group_scope.
     Notation "x ^-1" := (inv _ x) (at level 20, left associativity): group_scope.
   End Ex.
+
+  Import Ex.
+  
+  Definition monoid (G: Group) := Monoid.make G.
+
+  Section GroupProps.
+
+    Variable (G: Group).
+    Open Scope group_scope.
+    
+    Lemma inv_op:
+      forall (x y: G),
+        (x * y)^-1 == y^-1 * x^-1.
+    Proof.
+      intros.
+      rewrite <- (left_identical ((y^-1 * x^-1))).
+      rewrite <- (left_invertible (x * y)).
+      repeat rewrite <- associative.
+      rewrite (associative y).
+      now rewrite right_invertible, left_identical, right_invertible, right_identical.
+    Qed.
+
+    Lemma inv_id:
+      (1^-1 == 1 :> G)%group.
+    Proof.
+      intros.
+      now rewrite <- (left_identical (1^-1)), right_invertible.
+    Qed.  
+
+    Lemma inv_inv:
+      forall (x: G), x ^-1 ^-1 == x.
+    Proof.
+      intros.
+      now rewrite <- (left_identical (x^-1^-1)), <- (right_invertible x), <- associative, right_invertible, right_identical.
+    Qed.
+  End GroupProps.
 End Group.
 Export Group.Ex.
-
 
 (** * 環(Ring)
 加法と乗法、二つの演算からなる構造。
@@ -241,9 +311,9 @@ Export Group.Ex.
 Module Ring.
   Class spec (R: Setoid)(add: Binop R)(z: R)(inv: Map R R)(mul: Binop R)(e: R) :=
     proof {
-        add_group:> isGroup add z inv;
+        is_add_group:> isGroup add z inv;
         add_commute:> Commute add;
-        mul_monoid:> isMonoid mul e;
+        is_mul_monoid:> isMonoid mul e;
 
         distributive:> Distributive add mul
       }.
@@ -263,18 +333,18 @@ Module Ring.
       }.
 
   Module Ex.
-    Existing Instance add_group.
+    Existing Instance is_add_group.
     Existing Instance add_commute.
-    Existing Instance mul_monoid.
+    Existing Instance is_mul_monoid.
     Existing Instance distributive.
     Existing Instance prf.
 
     Notation isRing := spec.
     Notation Ring := type.
 
-    Coercion add_group: isRing >-> isGroup.
+    Coercion is_add_group: isRing >-> isGroup.
     Coercion add_commute: isRing >-> Commute.
-    Coercion mul_monoid: isRing >-> isMonoid.
+    Coercion is_mul_monoid: isRing >-> isMonoid.
     Coercion distributive: isRing >-> Distributive.
     Coercion carrier: Ring >-> Setoid.
     Coercion prf: Ring >-> isRing.
@@ -285,17 +355,113 @@ Module Ring.
     Notation "x * y" := (mul _ x y): ring_scope.
     Notation "'0'" := (z _): ring_scope.
     Notation "x ^-1" := (inv _ x) (at level 20, left associativity): ring_scope.
+    Notation "x - y" := (add _ x (y^-1)%rng): ring_scope.
     Notation "'1'" := (e _): ring_scope.
   End Ex.
   Import Ex.
 
-  Definition add_id_l {R: Ring}(x: R) := (@left_identical R (add R) (z R) (add_group (spec:=R)) x).
-  Definition add_id_r {R: Ring}(x: R) := (@right_identical R (add R) (z R) (add_group (spec:=R)) x).
-  Definition add_inv_l {R: Ring}(x: R) := (@left_invertible R (add R) (z R) (add_group (spec:=R)) (inv R) (add_group (spec:=R)) x).
-  Definition add_inv_r {R: Ring}(x: R) := (@right_invertible R (add R) (z R) (add_group (spec:=R)) (inv R) (add_group (spec:=R)) x).
-  Definition mul_id_l {R: Ring}(x: R) := (@left_identical R (mul R) (e R) (mul_monoid (spec:=R)) x).
-  Definition mul_id_r {R: Ring}(x: R) := (@right_identical R (mul R) (e R) (mul_monoid (spec:=R)) x).
+  Definition add_group (R: Ring): Group := Group.make R.
+  Definition mul_monoid (R: Ring): Monoid := Monoid.make (is_mul_monoid (spec:=R)).
   
+  Definition add_id_l {R: Ring}(x: R) := (@left_identical R (add R) (z R) (is_add_group (spec:=R)) x).
+  Definition add_id_r {R: Ring}(x: R) := (@right_identical R (add R) (z R) (is_add_group (spec:=R)) x).
+  Definition add_inv_l {R: Ring}(x: R) := (@left_invertible R (add R) (z R) (is_add_group (spec:=R)) (inv R) (is_add_group (spec:=R)) x).
+  Definition add_inv_r {R: Ring}(x: R) := (@right_invertible R (add R) (z R) (is_add_group (spec:=R)) (inv R) (is_add_group (spec:=R)) x).
+  Definition add_inv_op {R: Ring}(x y: R) :=
+    (Group.inv_op (G:=(Ring.add_group R)) x y).
+  Definition add_inv_id (R: Ring): (0^-1 == 0)%rng
+    := (Group.inv_id (add_group R)).
+  Definition add_inv_inv {R: Ring}(x: R)
+    := (Group.inv_inv (G:=add_group R) x).
+  Definition add_commute_l {R: Ring}(x y z: R) := (Monoid.commute_l (M:=Group.monoid (add_group R)) x y z).
+  Definition mul_id_l {R: Ring}(x: R) := (@left_identical R (mul R) (e R) (is_mul_monoid (spec:=R)) x).
+  Definition mul_id_r {R: Ring}(x: R) := (@right_identical R (mul R) (e R) (is_mul_monoid (spec:=R)) x).
+
+  Section RingProps.
+    Variable (R: Ring).
+    Open Scope ring_scope.
+
+
+    Lemma mul_0_l:
+      forall (x: R),
+        (0 * x == 0)%rng.
+    Proof.
+      intros.
+      assert (H: 0 * x == 0 * x + 0 * x :> R).
+      {
+        rewrite <- (Ring.add_inv_l 0) at 1.
+        rewrite (Ring.add_inv_id R); simpl.
+        now rewrite (distributive_r).
+      }
+      apply symmetry.
+      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) ((0*x)^-1) H); simpl.
+      now rewrite Ring.add_inv_l, associative, Ring.add_inv_l, Ring.add_id_l.
+    Qed.
+    
+    Lemma mul_0_r:
+      forall (x: R),
+        (x * 0 == 0)%rng.
+    Proof.
+      intros.
+      assert (H: x * 0 == x * 0 + x * 0 :> R).
+      {
+        rewrite <- (Ring.add_inv_l 0) at 1.
+        rewrite (Ring.add_inv_id R); simpl.
+        now rewrite (distributive_l).
+      }
+      apply symmetry.
+      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) ((x*0)^-1) H); simpl.
+      now rewrite Ring.add_inv_l, associative, Ring.add_inv_l, Ring.add_id_l.
+    Qed.
+
+    Lemma minus_mul_l:
+      forall x: R, 1^-1 * x == x^-1.
+    Proof.
+      intros x.
+      rewrite <- (Ring.add_id_l).
+      rewrite <- (Ring.add_inv_l x), <- associative.
+      rewrite <- (Ring.mul_id_l x) at 2.
+      now rewrite <- distributive_r, Ring.add_inv_r, mul_0_l, Ring.add_id_r.
+    Qed.
+
+    Lemma minus_mul_r:
+      forall x: R, x * 1^-1 == x^-1.
+    Proof.
+      intros x.
+      rewrite <- (Ring.add_id_r).
+      rewrite <- (Ring.add_inv_r x), associative.
+      rewrite <- (Ring.mul_id_r x) at 2.
+      now rewrite <- distributive_l, Ring.add_inv_l, mul_0_r, Ring.add_id_l.
+    Qed.
+
+    Lemma mul_inv_l:
+      forall x y: R,
+        (x^-1) * y == (x * y)^-1.
+    Proof.
+      intros.
+      rewrite <- (Ring.add_id_l).
+      rewrite <- (Ring.add_inv_l (x*y)), <- associative.
+      now rewrite <- distributive_r, Ring.add_inv_r, mul_0_l, Ring.add_id_r.
+    Qed.
+
+    Lemma mul_inv_r:
+      forall x y: R,
+        x * (y^-1) == (x * y)^-1.
+    Proof.
+      intros.
+      rewrite <- (Ring.add_id_l).
+      rewrite <- (Ring.add_inv_l (x*y)), <- associative.
+      now rewrite <- distributive_l, Ring.add_inv_r, mul_0_r, Ring.add_id_r.
+    Qed.
+
+    Lemma mul_inv_inv:
+      forall x y: R,
+        (x^-1) * (y^-1) == x * y.
+    Proof.
+      intros.
+      now rewrite mul_inv_l, mul_inv_r, (Ring.add_inv_inv (x*y)).
+    Qed.
+  End RingProps.
 End Ring.
 Export Ring.Ex.
 
@@ -661,6 +827,515 @@ Qed.
 各代数構造について準同型を定義する。
  **)
 
+(** * マグマ準同型
+二項演算の保存
+ **)
+Module MagmaHom.
+  Open Scope magma_scope.
+  
+  Class spec (X Y: Magma)(f: Map X Y) :=
+    proof {
+        sp: forall x y: X, f (x * y) == f x * f y
+      }.
+
+  Structure type (X Y: Magma) :=
+    make {
+        map: Map X Y;
+        prf: spec X Y map
+      }.
+
+  Module Ex.
+    Notation isMagmaHom := spec.
+    Notation MagmaHom := type.
+
+    Coercion map: MagmaHom >-> Map.
+    Coercion prf: MagmaHom >-> isMagmaHom.
+
+    Existing Instance prf.
+  End Ex.
+End MagmaHom.
+Export MagmaHom.Ex.
+
+(** * モノイド準同型
+単位元の保存
+ **)
+Module MonoidHom.
+  Open Scope monoid_scope.
+  
+  Class spec (M N: Monoid)(f: Map M N) :=
+    proof {
+        op: forall x y, f (x * y) == f x * f y;
+        ident: f 1 == 1
+      }.
+  
+  Class type (M N: Monoid) :=
+    make {
+        map: Map M N;
+        prf: spec M N map
+      }.
+
+  Module Ex.
+    Notation isMonoidHom := spec.
+    Notation MonoidHom := type.
+
+    Coercion map: MonoidHom >-> Map.
+    Coercion prf: MonoidHom >-> isMonoidHom.
+
+    Existing Instance prf.
+  End Ex.
+End MonoidHom.
+Export MonoidHom.Ex.
+
+
+(** * 群準同型
+逆元の保存
+ **)
+Module GroupHom.
+  Open Scope group_scope.
+
+  Class spec (G H: Group)(f: Map G H) :=
+    proof {
+        is_monoid_hom:> isMonoidHom (Group.monoid G) (Group.monoid H) f;
+        inv: forall x, f(x^-1) == (f x)^-1
+      }.
+
+  Class type (G H: Group) :=
+    make {
+        map: Map G H;
+        prf: spec G H map
+      }.
+
+  Module Ex.
+    Existing Instance is_monoid_hom.
+    Existing Instance prf.
+
+    Notation isGroupHom := spec.
+    Notation GroupHom := type.
+
+    Coercion is_monoid_hom: isGroupHom >-> isMonoidHom.
+    Coercion map: GroupHom >-> Map.
+    Coercion prf: GroupHom >-> isGroupHom.
+  End Ex.
+
+  Import Ex.
+
+  Definition monoid_hom `(f: GroupHom G H) := MonoidHom.make f.
+
+End GroupHom.
+Export GroupHom.Ex.
+
+(** * 環準同型
+加法と乗法それぞれについて準同型
+ **)
+Module RingHom.
+  Open Scope ring_scope.
+
+  Class spec (R S: Ring)(f: Map R S) :=
+    proof {
+        is_add_group_hom:> isGroupHom (Ring.add_group R) (Ring.add_group S) f;
+        is_mul_monoid_hom:> isMonoidHom (Ring.mul_monoid R) (Ring.mul_monoid S) f
+      }.
+
+  Class type (R S: Ring) :=
+    make {
+        map: Map R S;
+        prf: spec R S map
+      }.
+
+  Module Ex.
+    Existing Instance is_add_group_hom.
+    Existing Instance is_mul_monoid_hom.
+    Existing Instance prf.
+
+    Notation isRingHom := spec.
+    Notation RingHom := type.
+
+    Coercion map: RingHom >-> Map.
+    Coercion prf: RingHom >-> isRingHom.
+    Coercion is_add_group_hom: isRingHom >-> isGroupHom.
+    Coercion is_mul_monoid_hom: isRingHom >-> isMonoidHom.
+  End Ex.
+  Import Ex.
+  
+  Definition add_group_hom `(f: RingHom R R') := GroupHom.make f.
+  Definition mul_monoid_hom `(f: RingHom R R') :=
+    MonoidHom.make (is_mul_monoid_hom (spec:=f)).
+
+  Open Scope ring_scope.
+  Definition add_op `(f: RingHom R R')(x y: R): f (x + y) == f x + f y
+    := (MonoidHom.op (f:=GroupHom.monoid_hom (add_group_hom f)) x y).
+  Definition add_ident `(f: RingHom R R'): f 0 == 0
+    := (MonoidHom.ident (f:=GroupHom.monoid_hom (add_group_hom f))).
+  Definition add_inv `(f: RingHom R R')(x: R): f (x^-1) == f x^-1
+    := (GroupHom.inv (f:=add_group_hom f) x).
+  Definition mul_op `(f: RingHom R R')(x y: R): f (x * y) == f x * f y
+    := (MonoidHom.op (f:=mul_monoid_hom f) x y).
+  Definition mul_ident `(f: RingHom R R'): f 1 == 1
+    := (MonoidHom.ident (f:=mul_monoid_hom f)).
+
+  Definition equal {R S: Ring}(f g: RingHom R S) := forall x, f x == g x.
+End RingHom.
+Export RingHom.Ex.
+
+(** ** 具体例：整数から任意の環への準同型 **)
+Section FromZ.
+  Variable (R: Ring).
+  Existing Instance Ring.prf.
+  Open Scope ring_scope.
+
+  Fixpoint rep_aux (p: positive): R :=
+    match p with
+    | xH => Ring.e R
+    | xO p' => let x := rep_aux p' in x + x
+    | xI p' => let x := rep_aux p' in 1 + x + x
+    end.
+  Arguments rep_aux _%positive.
+
+  Lemma rep_aux_succ:
+    forall p: positive,
+      rep_aux (Pos.succ p) == 1 + rep_aux p.
+  Proof.
+    induction p; simpl in *.
+    - rewrite IHp.
+      rewrite associative.
+      rewrite (commute (1 + rep_aux p)).
+      now rewrite <- associative.
+    - now rewrite associative.
+    - reflexivity.
+  Qed.
+
+  Lemma rep_aux_add:
+    forall p q,
+      rep_aux (p + q) == rep_aux p + rep_aux q.
+  Proof.
+    induction p; simpl; destruct q; simpl.
+    - simpl.
+      rewrite Pos.add_carry_spec.
+      rewrite (rep_aux_succ (p + q)).
+      rewrite IHp.
+      repeat rewrite <- associative.
+      rewrite (Ring.add_commute_l (rep_aux q) 1 _).
+      rewrite (Ring.add_commute_l (rep_aux q) (rep_aux p) _).
+      now rewrite (Ring.add_commute_l 1 (rep_aux p) (rep_aux q + _)).
+    - simpl.
+      rewrite IHp.
+      repeat rewrite <- associative.
+      now rewrite (Ring.add_commute_l (rep_aux q)).
+    - simpl.
+      rewrite rep_aux_succ.
+      repeat rewrite <- associative.
+      now rewrite (Ring.add_commute (_ p) 1).
+    - rewrite IHp.
+      rewrite <- (associative 1 (rep_aux q) _).
+      rewrite (Ring.add_commute_l (rep_aux p + rep_aux p) 1).
+      repeat rewrite <- associative.
+      now rewrite (Ring.add_commute_l (rep_aux q)).
+    - rewrite IHp.
+      repeat rewrite <- associative.
+      now rewrite (Ring.add_commute_l (rep_aux q)).
+    - now rewrite (Ring.add_commute _ 1), associative.
+    - rewrite (rep_aux_succ q).
+      rewrite <- associative.
+      rewrite (Ring.add_commute_l (rep_aux q)).
+      now rewrite <- associative.
+    - now rewrite associative.
+    - reflexivity.
+  Qed.
+
+  Lemma rep_aux_pred_double:
+    forall p,
+      rep_aux (Pos.pred_double p) == rep_aux p + rep_aux p + 1 ^-1.
+  Proof.
+    induction p; simpl; intros.
+    - repeat rewrite <- associative.
+      rewrite (Ring.add_commute _ (1^-1)).
+      rewrite (Ring.add_commute_l (rep_aux p) (1^-1)); simpl.
+      now rewrite (associative _ (1^-1)), Ring.add_inv_r, Ring.add_id_l.
+    - rewrite IHp.
+      rewrite (Ring.add_commute _ (1^-1)) at 1.
+      now rewrite (associative 1), Ring.add_inv_r, Ring.add_id_l, associative.
+    - now rewrite <- associative, Ring.add_inv_r, Ring.add_id_r.
+  Qed.
+  
+  Program Canonical Structure rep_aux_map: Map positive_setoid R := Map.build rep_aux.
+  Next Obligation.
+    now intros p q Heq; simpl in *; subst.
+  Qed.
+  
+  Definition rep (z: Z): R :=
+    match z with
+    | Z0 => 0
+    | Zpos p => rep_aux p
+    | Zneg p => (rep_aux p)^-1
+    end.
+  Arguments rep _%Z.
+
+  Program Canonical Structure rep_map: Map Z_ring R := Map.build rep.
+  Next Obligation.
+    now intros p q Heq; simpl in *; subst.
+  Qed.
+
+  Lemma rep_double:
+    forall p,
+      rep (Z.double p) == rep p + rep p.
+  Proof.
+    destruct p; simpl.
+    - now rewrite Ring.add_id_l.
+    - reflexivity.
+    - now rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+  Qed.
+  
+  Lemma rep_succ_double:
+    forall p,
+      rep (Z.succ_double p) == 1 + rep p + rep p.
+  Proof.
+    destruct p; simpl.
+    - now repeat rewrite Ring.add_id_r.
+    - reflexivity.
+    - rewrite rep_aux_pred_double.
+      repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      now rewrite (Group.inv_inv (G:=Ring.add_group R)), associative.
+  Qed.
+
+  Lemma rep_pred_double:
+    forall p,
+      rep (Z.pred_double p) == 1^-1 + rep p + rep p.
+  Proof.
+    destruct p; simpl.
+    - now repeat rewrite Ring.add_id_r.
+    - now rewrite rep_aux_pred_double, commute, <- associative.
+    - repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      now rewrite (commute), (commute _ (1^-1)).
+  Qed.
+
+  Lemma rep_pos_sub:
+    forall p q,
+      rep (Z.pos_sub p q) == rep_aux p + (rep_aux q)^-1.
+  Proof.
+    induction p, q; simpl.
+    - rewrite rep_double, IHp.
+      repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      repeat rewrite <- associative.
+      rewrite (Ring.add_commute _ (1^-1)).
+      rewrite (Ring.add_commute_l (rep_aux q ^-1) (1^-1)); simpl.
+      do 2 rewrite (Ring.add_commute_l (rep_aux p) (1^-1)); simpl.
+      rewrite (associative 1 _).
+      rewrite Ring.add_inv_r, Ring.add_id_l.
+      now rewrite (Ring.add_commute_l _ (rep_aux p)).
+    - rewrite rep_succ_double, IHp.
+      rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      repeat rewrite <- associative.
+      now rewrite (Ring.add_commute_l (rep_aux q^-1) (rep_aux p)).
+    - rewrite (Ring.add_commute _ (1^-1)), <- associative, (associative _ 1).
+      now rewrite Ring.add_inv_l, Ring.add_id_l.
+    - rewrite rep_pred_double, IHp, !(Group.inv_op (G:=Ring.add_group R)); simpl.
+      repeat rewrite <- associative.
+      repeat rewrite (Ring.add_commute_l _ (rep_aux p)).
+      rewrite (Ring.add_commute_l _ (rep_aux q^-1)); simpl.
+      now rewrite (Ring.add_commute (1^-1)).
+    - rewrite rep_double, IHp.
+      repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      repeat rewrite <- associative.
+      now rewrite (Ring.add_commute_l _ (rep_aux p)).
+    - apply rep_aux_pred_double.
+    - repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      rewrite (commute _ (1^-1)).
+      rewrite !(Ring.add_commute_l (R:=R) _ (1^-1)), associative; simpl.
+      now rewrite Ring.add_inv_l, Ring.add_id_l.
+    - now rewrite rep_aux_pred_double, (Group.inv_op (G:=Ring.add_group R)), (Group.inv_inv (G:=Ring.add_group R)); simpl.
+    - now rewrite Ring.add_inv_r.
+  Qed.
+  
+  Lemma rep_add:
+    forall p q: Z,
+      rep (p + q) == rep p + rep q.
+  Proof.
+    intros [|p|p] [|q|q]; simpl; try (now rewrite ?Ring.add_id_l, ?Ring.add_id_r).
+    - now apply rep_aux_add.
+    - now apply rep_pos_sub.
+    - now rewrite rep_pos_sub, commute.
+    - now rewrite rep_aux_add, (Group.inv_op (G:=Ring.add_group R)), commute; simpl.
+  Qed.
+
+  Lemma rep_aux_mul:
+    forall p q,
+      rep_aux (p * q) == rep_aux p * rep_aux q.
+  Proof.
+    induction p; simpl.
+    - intros q.
+      rewrite rep_aux_add; simpl.
+      rewrite !distributive_r, Ring.mul_id_l.
+      now repeat rewrite <- associative, <- IHp.
+    - intros.
+      now rewrite !distributive_r, <- IHp.
+    - intros.
+      now rewrite Ring.mul_id_l.
+  Qed.
+    
+  Lemma rep_mul:
+    forall p q,
+      rep (p * q) == rep p * rep q.
+  Proof.
+    intros [|p|p] [|q|q]; simpl; try (now rewrite ?Ring.mul_0_l, ?Ring.mul_0_r).
+    - now apply rep_aux_mul.
+    - now rewrite rep_aux_mul, <- Ring.mul_inv_r.
+    - now rewrite rep_aux_mul, <- Ring.mul_inv_l.
+    - now rewrite rep_aux_mul, <- Ring.mul_inv_inv.
+  Qed.
+
+  Program Instance rep_is_ring_hom: isRingHom _ _ rep_map.
+  Next Obligation.
+    split; simpl; intros.
+    - split; simpl; intros.
+      + apply rep_add.
+      + reflexivity.
+    - destruct x as [|p|p]; simpl.
+      + now rewrite (Group.inv_id (Ring.add_group R)).
+      + reflexivity.
+      + now rewrite (Group.inv_inv (G:=Ring.add_group R)).
+  Qed.
+  Next Obligation.
+    split; simpl; intros.
+    - apply rep_mul.
+    - reflexivity.
+  Qed.
+
+  Definition rep_ring_hom: RingHom Z_ring R := RingHom.make rep_is_ring_hom.
+
+  Eval simpl in (rep_ring_hom 0).
+     (*   = 0 *)
+     (* : R *)
+  Eval simpl in (rep_ring_hom 1).
+     (* = 1 *)
+     (* : R *)
+  Eval simpl in (rep_ring_hom 2).
+     (* = 1 + 1 *)
+     (* : R *)
+  Eval simpl in (rep_ring_hom 4).
+     (* = 1 + 1 + (1 + 1) *)
+     (* : R *)
+  Eval simpl in (rep_ring_hom 10).
+     (* = 1 + (1 + 1) + (1 + 1) + (1 + (1 + 1) + (1 + 1)) *)
+     (* : R *)
+  Eval simpl in (rep_ring_hom 33).
+     (*   = 1 + *)
+     (*   (1 + 1 + (1 + 1) + (1 + 1 + (1 + 1)) + *)
+     (*    (1 + 1 + (1 + 1) + (1 + 1 + (1 + 1)))) + *)
+     (*   (1 + 1 + (1 + 1) + (1 + 1 + (1 + 1)) + *)
+     (*    (1 + 1 + (1 + 1) + (1 + 1 + (1 + 1)))) *)
+     (* : R *)
+  Eval simpl in (rep_ring_hom 100).
+     (* = 1 + (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1))) + *)
+     (*   (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1))) + *)
+     (*   (1 + (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1))) + *)
+     (*    (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1)))) + *)
+     (*   (1 + (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1))) + *)
+     (*    (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1))) + *)
+     (*    (1 + (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1))) + *)
+     (*     (1 + 1 + 1 + (1 + 1 + 1) + (1 + 1 + 1 + (1 + 1 + 1))))) *)
+     (* : R *)
+End FromZ.
+
+(** ** 環準同型の核はイデアル **)
+Section RingKernel.
+  Open Scope ring_scope.
+  (* Variable (R S: Ring)(f: RingHom R S). *)
+(* Toplevel input, characters 21-58: *)
+(* > Variable (R S: Ring)(f: RingHom R S). *)
+(* > ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ *)
+(* Anomaly: Universe Top.7334 undefined. Please report. *)
+
+  Definition RKernel_spec (R S: Ring)(f: RingHom R S)(x: R) := f x == 0.
+  Arguments RKernel_spec R S f x /.
+  Definition RKernel (R S: Ring)(f: RingHom R S) := { x | RKernel_spec f x }.
+
+  Program Instance RKernel_is_ideal (R S: Ring)(f: RingHom R S)
+    : isIdeal R (RKernel_spec f).
+  Next Obligation.
+    intros x y Heq P; simpl in *.
+    now rewrite Heq.
+  Qed.
+  Next Obligation.
+    now rewrite RingHom.add_op, H, H0, Ring.add_id_l.
+  Qed.
+  Next Obligation.
+    now rewrite RingHom.add_inv, H, (Ring.add_inv_id S).
+  Qed.
+  Next Obligation.
+    now rewrite RingHom.add_ident.
+  Qed.
+  Next Obligation.
+    now rewrite RingHom.mul_op, H, H0, Ring.mul_0_r.
+  Qed.
+  Next Obligation.
+    now rewrite RingHom.mul_op, H, Ring.mul_0_r.
+  Qed.
+  Next Obligation.
+    now rewrite RingHom.mul_op, H, Ring.mul_0_l.
+  Qed.
+
+  Definition RKernel_ideal (R S: Ring)(f: RingHom R S) := Ideal.make (RKernel_is_ideal R S f).
+
+End RingKernel.
+
+(** ** イデアルはある環準同型の核 
+ただし、 Coq の函数である以上、イデアルに含まれるか否かは決定可能という前提が必要
+**)
+Definition ideal_RKernel
+           `(I: Ideal R)
+           (H: forall x, {Ideal.contain I x} + {~Ideal.contain I x})
+           (x: R): R :=
+  match H x with
+  | left _ => 0%rng
+  | right _ => x
+  end.
+
+Lemma ideal_RKernel_valid:
+  forall `(I: Ideal R)(H: forall x, {Ideal.contain I x} + {~Ideal.contain I x})(x: R),
+    Ideal.contain I x <-> ideal_RKernel H x == 0%rng.
+Proof.
+  intros; split; intros H'; unfold ideal_RKernel in *; destruct (H x); try now auto.
+  rewrite H'.
+  apply Ideal.z_close.
+Qed.
+
+(** ** イデアルの商
+環 R とそのイデアル I について 'x~y :<=> x-y in I' は同値関係
+(その先の話はまた今度)
+ **)
+Section IdealQuotient.
+  Close Scope Z_scope.
+  Open Scope ring_scope.
+
+  Definition Ideal_equal (R: Ring)(I: Ideal R): R -> R -> Prop :=
+    fun x y => Ideal.contain I (x - y).
+  Arguments Ideal_equal R I x y /.
+
+  Program Instance Ideal_equiv `(I: Ideal R): Equivalence (Ideal_equal I).
+  Next Obligation.
+    intros x; simpl; simpl.
+    rewrite Ring.add_inv_r.
+    apply Ideal.z_close.
+  Qed.
+  Next Obligation.
+    intros x y Heq; simpl in *.
+    rewrite <- (Ring.add_inv_inv (y + x^-1)); simpl.
+    apply Ideal.inv_close.
+    now rewrite (Ring.add_inv_op y), (Ring.add_inv_inv x); simpl.
+  Qed.
+  Next Obligation.
+    intros x y z Hxy Hyz.
+    simpl in *.
+    rewrite <- (Ring.add_id_l (z^-1)).
+    rewrite <- (Ring.add_inv_l y).
+    rewrite !associative.
+    rewrite <- (associative (x + y^-1)).
+    now apply Ideal.add_close; auto.
+  Qed.
+
+  Definition IdealQuotient `(I: Ideal R) := Setoid.make (Ideal_equiv I).
+
+End IdealQuotient.
 
 (** * おまけ(ハイティング代数)
 途中。
