@@ -129,26 +129,6 @@ Class Divisible `(op: Binop X)(divL divR: Binop X): Prop :=
 - 既存の代数構造との関係は別途記述する
  **)
 
-(** * マグマ(Magma)
-二項演算を伴うもっともシンプルな代数構造。
-これをそのまま使うことはないと思う。
- **)
-Module Magma.
-  Structure type :=
-    make {
-        carrier: Setoid;
-        op: Binop carrier
-      }.
-
-  Module Ex.
-    Notation Magma := type.
-    Coercion carrier: Magma >-> Setoid.
-    Delimit Scope magma_scope with magma.
-    Notation "x * y" := (op _ x y) (at level 40, left associativity): magma_scope.
-  End Ex.
-End Magma.
-Export Magma.Ex.
-
 (** * モノイド(Monoid)
 比較的シンプル。
 結合的で単位元を持つ二項演算を伴うあれ。
@@ -169,8 +149,6 @@ Module Monoid.
         prf: spec op e
       }.
 
-  Definition magma (M: type) := Magma.make (op M).
-
   Module Ex.
     Existing Instance associative.
     Existing Instance identical.
@@ -183,7 +161,6 @@ Module Monoid.
     Coercion identical: isMonoid >-> Identical.
     Coercion carrier: Monoid >-> Setoid.
     Coercion prf: Monoid >-> isMonoid.
-    Coercion magma: Monoid >-> Magma.
 
     Delimit Scope monoid_scope with monoid.
     Notation "x * y" := (op _ x y) (at level 40, left associativity): monoid_scope.
@@ -828,35 +805,6 @@ Qed.
 各代数構造について準同型を定義する。
  **)
 
-(** * マグマ準同型
-二項演算の保存
- **)
-Module MagmaHom.
-  Open Scope magma_scope.
-  
-  Class spec (X Y: Magma)(f: Map X Y) :=
-    proof {
-        sp: forall x y: X, f (x * y) == f x * f y
-      }.
-
-  Structure type (X Y: Magma) :=
-    make {
-        map: Map X Y;
-        prf: spec X Y map
-      }.
-
-  Module Ex.
-    Notation isMagmaHom := spec.
-    Notation MagmaHom := type.
-
-    Coercion map: MagmaHom >-> Map.
-    Coercion prf: MagmaHom >-> isMagmaHom.
-
-    Existing Instance prf.
-  End Ex.
-End MagmaHom.
-Export MagmaHom.Ex.
-
 (** * モノイド準同型
 単位元の保存
  **)
@@ -1432,7 +1380,6 @@ Qed.
 
 (** ** イデアルの商
 環 R とそのイデアル I について 'x~y :<=> x-y in I' は同値関係
-(その先の話はまた今度)
  **)
 Section IdealQuotient.
   Close Scope Z_scope.
@@ -1468,9 +1415,7 @@ Section IdealQuotient.
 End IdealQuotient.
 Arguments Ideal_equal R I x y /.
 
-(** 
-Z/2Z は 0 と 1 (の同値類)からなる剰余環
- **)
+(** Z/2Z は 0 と 1 (の同値類)からなる剰余環 **)
 Definition Z_2Z := IdealQuotient (Zn_ideal 2).
 Lemma Z_2Z_has_only_two_elements:
   forall x: Z_2Z,

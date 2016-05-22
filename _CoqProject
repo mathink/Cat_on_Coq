@@ -37,3 +37,4 @@ theories/Enrich/Core.v
 theories/Abel.v
 
 theories/Algebra.v
+theories/Module.v

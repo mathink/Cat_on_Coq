@@ -122,7 +122,8 @@ VFILES:=theories/Setoid/Core.v\
   theories/Monoid.v\
   theories/Enrich/Core.v\
   theories/Abel.v\
-  theories/Algebra.v
+  theories/Algebra.v\
+  theories/Module.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))

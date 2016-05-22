@@ -239,35 +239,7 @@
 
 <div class="paragraph"> </div>
 
-<a name="lab31"></a><h1 class="section">マグマ(Magma)</h1>
-
-二項演算を伴うもっともシンプルな代数構造。
-これをそのまま使うことはないと思う。
- 
-</div>
-<div class="code">
-<span class="id" title="keyword">Module</span> <a name="Magma"><span class="id" title="module">Magma</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="Magma.type"><span class="id" title="record">type</span></a> :=<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a name="Magma.make"><span class="id" title="constructor">make</span></a> {<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Magma.carrier"><span class="id" title="projection">carrier</span></a>: <a class="idref" href="COC.Setoid.Core.html#Setoid.Ex.Setoid"><span class="id" title="abbreviation">Setoid</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Magma.op"><span class="id" title="projection">op</span></a>: <a class="idref" href="COC.Algebra.html#Binop.Ex.Binop"><span class="id" title="abbreviation">Binop</span></a> <a class="idref" href="COC.Algebra.html#carrier"><span class="id" title="method">carrier</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
-
-<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="Magma.Ex"><span class="id" title="module">Ex</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Magma.Ex.Magma"><span class="id" title="abbreviation">Magma</span></a> := <a class="idref" href="COC.Algebra.html#Magma.Ex.type"><span class="id" title="record">type</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Algebra.html#Magma.Ex.carrier"><span class="id" title="projection">carrier</span></a>: <span class="id" title="var">Magma</span> &gt;-&gt; <span class="id" title="var">Setoid</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Delimit</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">magma_scope</span> <span class="id" title="keyword">with</span> <span class="id" title="var">magma</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="b061ce0c6789c83f20a90a9cda5c84ed"><span class="id" title="notation">&quot;</span></a>x * y" := (<a class="idref" href="COC.Algebra.html#Magma.Ex.op"><span class="id" title="projection">op</span></a> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>): <span class="id" title="var">magma_scope</span>.<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="COC.Algebra.html#Magma.Ex"><span class="id" title="module">Ex</span></a>.<br/>
-<span class="id" title="keyword">End</span> <a class="idref" href="COC.Algebra.html#Magma"><span class="id" title="module">Magma</span></a>.<br/>
-<span class="id" title="keyword">Export</span> <span class="id" title="var">Magma.Ex</span>.<br/>
-
-<br/>
-</div>
-
-<div class="doc">
-<a name="lab32"></a><h1 class="section">モノイド(Monoid)</h1>
+<a name="lab31"></a><h1 class="section">モノイド(Monoid)</h1>
 
 比較的シンプル。
 結合的で単位元を持つ二項演算を伴うあれ。
@@ -292,9 +264,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Monoid.magma"><span class="id" title="definition">magma</span></a> (<span class="id" title="var">M</span>: <a class="idref" href="COC.Algebra.html#Monoid.type"><span class="id" title="record">type</span></a>) := <a class="idref" href="COC.Algebra.html#Magma.make"><span class="id" title="constructor">Magma.make</span></a> (<a class="idref" href="COC.Algebra.html#Monoid.op"><span class="id" title="projection">op</span></a> <a class="idref" href="COC.Algebra.html#M"><span class="id" title="variable">M</span></a>).<br/>
-
-<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="Monoid.Ex"><span class="id" title="module">Ex</span></a>.<br/>
 
 <br/>
@@ -306,7 +275,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Algebra.html#Monoid.Ex.identical"><span class="id" title="projection">identical</span></a>: <span class="id" title="var">isMonoid</span> &gt;-&gt; <span class="id" title="var">Identical</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Algebra.html#Monoid.Ex.carrier"><span class="id" title="projection">carrier</span></a>: <span class="id" title="var">Monoid</span> &gt;-&gt; <span class="id" title="var">Setoid</span>.<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Algebra.html#Monoid.Ex.prf"><span class="id" title="projection">prf</span></a>: <span class="id" title="var">Monoid</span> &gt;-&gt; <span class="id" title="var">isMonoid</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Algebra.html#Monoid.Ex.magma"><span class="id" title="definition">magma</span></a>: <span class="id" title="var">Monoid</span> &gt;-&gt; <span class="id" title="var">Magma</span>.<br/>
 
 <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Delimit</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">monoid_scope</span> <span class="id" title="keyword">with</span> <span class="id" title="var">monoid</span>.<br/>
@@ -345,7 +313,7 @@
 </div>
 
 <div class="doc">
-<a name="lab33"></a><h1 class="section">群(Group)</h1>
+<a name="lab32"></a><h1 class="section">群(Group)</h1>
 
 逆元付きのモノイド、として定義。
 結合的で単位的な逆元付きのマグマとしてもよい(面倒なのでそうはしない)。
@@ -425,7 +393,7 @@
 </div>
 
 <div class="doc">
-<a name="lab34"></a><h1 class="section">環(Ring)</h1>
+<a name="lab33"></a><h1 class="section">環(Ring)</h1>
 
 加法と乗法、二つの演算からなる構造。
 加法は群を、乗法はモノイドをなす。
@@ -549,7 +517,7 @@
 </div>
 
 <div class="doc">
-<a name="lab35"></a><h2 class="section">具体例</h2>
+<a name="lab34"></a><h2 class="section">具体例</h2>
 
 整数環
  
@@ -606,7 +574,7 @@
 </div>
 
 <div class="doc">
-<a name="lab36"></a><h1 class="section">体(Field)</h1>
+<a name="lab35"></a><h1 class="section">体(Field)</h1>
 
 乗法が零元(加法の単位元)以外で群をなす環。
 また、加法と乗法の単位元が異なる。
@@ -681,7 +649,7 @@
 </div>
 
 <div class="doc">
-<a name="lab37"></a><h2 class="section">具体化</h2>
+<a name="lab36"></a><h2 class="section">具体化</h2>
 
 有理数からなる体を作る。
  
@@ -741,7 +709,7 @@
 </div>
 
 <div class="doc">
-<a name="lab38"></a><h1 class="section">環のイデアル</h1>
+<a name="lab37"></a><h1 class="section">環のイデアル</h1>
 
 部分集合を述語で表現
   
@@ -803,7 +771,7 @@
 </div>
 
 <div class="doc">
-<a name="lab39"></a><h2 class="section">具体化</h2>
+<a name="lab38"></a><h2 class="section">具体化</h2>
 
 整数環のイデアル
  
@@ -833,47 +801,7 @@
  
 <div class="paragraph"> </div>
 
-<a name="lab40"></a><h1 class="section">マグマ準同型</h1>
-
-二項演算の保存
- 
-</div>
-<div class="code">
-<span class="id" title="keyword">Module</span> <a name="MagmaHom"><span class="id" title="module">MagmaHom</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">magma_scope</span>.<br/>
-
-<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="MagmaHom.spec"><span class="id" title="record">spec</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Algebra.html#Magma.Ex.Magma"><span class="id" title="abbreviation">Magma</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Algebra.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Algebra.html#Y"><span class="id" title="variable">Y</span></a>) :=<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a name="MagmaHom.proof"><span class="id" title="constructor">proof</span></a> {<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="MagmaHom.sp"><span class="id" title="projection">sp</span></a>: <span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="COC.Algebra.html#X"><span class="id" title="variable">X</span></a>, <a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a> (<a class="idref" href="COC.Algebra.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Algebra.html#b061ce0c6789c83f20a90a9cda5c84ed"><span class="id" title="notation">*</span></a> <a class="idref" href="COC.Algebra.html#y"><span class="id" title="variable">y</span></a>) <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Algebra.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Algebra.html#b061ce0c6789c83f20a90a9cda5c84ed"><span class="id" title="notation">*</span></a> <a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Algebra.html#y"><span class="id" title="variable">y</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
-
-<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="MagmaHom.type"><span class="id" title="record">type</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Algebra.html#Magma.Ex.Magma"><span class="id" title="abbreviation">Magma</span></a>) :=<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<a name="MagmaHom.make"><span class="id" title="constructor">make</span></a> {<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="MagmaHom.map"><span class="id" title="projection">map</span></a>: <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Algebra.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Algebra.html#Y"><span class="id" title="variable">Y</span></a>;<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="MagmaHom.prf"><span class="id" title="projection">prf</span></a>: <a class="idref" href="COC.Algebra.html#MagmaHom.spec"><span class="id" title="class">spec</span></a> <a class="idref" href="COC.Algebra.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Algebra.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Algebra.html#map"><span class="id" title="method">map</span></a><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
-
-<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="MagmaHom.Ex"><span class="id" title="module">Ex</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="MagmaHom.Ex.isMagmaHom"><span class="id" title="abbreviation">isMagmaHom</span></a> := <a class="idref" href="COC.Algebra.html#MagmaHom.Ex.spec"><span class="id" title="class">spec</span></a>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="MagmaHom.Ex.MagmaHom"><span class="id" title="abbreviation">MagmaHom</span></a> := <a class="idref" href="COC.Algebra.html#MagmaHom.Ex.type"><span class="id" title="record">type</span></a>.<br/>
-
-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Algebra.html#MagmaHom.Ex.map"><span class="id" title="projection">map</span></a>: <span class="id" title="var">MagmaHom</span> &gt;-&gt; <span class="id" title="var">Map</span>.<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Algebra.html#MagmaHom.Ex.prf"><span class="id" title="projection">prf</span></a>: <span class="id" title="var">MagmaHom</span> &gt;-&gt; <span class="id" title="var">isMagmaHom</span>.<br/>
-
-<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="COC.Algebra.html#MagmaHom.Ex"><span class="id" title="module">Ex</span></a>.<br/>
-<span class="id" title="keyword">End</span> <a class="idref" href="COC.Algebra.html#MagmaHom"><span class="id" title="module">MagmaHom</span></a>.<br/>
-<span class="id" title="keyword">Export</span> <span class="id" title="var">MagmaHom.Ex</span>.<br/>
-
-<br/>
-</div>
-
-<div class="doc">
-<a name="lab41"></a><h1 class="section">モノイド準同型</h1>
+<a name="lab39"></a><h1 class="section">モノイド準同型</h1>
 
 単位元の保存
  
@@ -940,7 +868,7 @@
 </div>
 
 <div class="doc">
-<a name="lab42"></a><h1 class="section">群準同型</h1>
+<a name="lab40"></a><h1 class="section">群準同型</h1>
 
 逆元の保存
  
@@ -1011,7 +939,7 @@
 </div>
 
 <div class="doc">
-<a name="lab43"></a><h1 class="section">環準同型</h1>
+<a name="lab41"></a><h1 class="section">環準同型</h1>
 
 加法と乗法それぞれについて準同型
  
@@ -1103,7 +1031,7 @@
 </div>
 
 <div class="doc">
-<a name="lab44"></a><h2 class="section">具体例：整数から任意の環への準同型</h2>
+<a name="lab42"></a><h2 class="section">具体例：整数から任意の環への準同型</h2>
 
 </div>
 <div class="code">
@@ -1203,7 +1131,7 @@
 </div>
 
 <div class="doc">
-<a name="lab45"></a><h2 class="section">環準同型の核はイデアル</h2>
+<a name="lab43"></a><h2 class="section">環準同型の核はイデアル</h2>
 
 </div>
 <div class="code">
@@ -1228,7 +1156,7 @@
 </div>
 
 <div class="doc">
-<a name="lab46"></a><h2 class="section">イデアルはある環準同型の核</h2>
+<a name="lab44"></a><h2 class="section">イデアルはある環準同型の核</h2>
 
 ただし、 Coq の函数である以上、イデアルに含まれるか否かは決定可能という前提が必要
 
@@ -1252,10 +1180,9 @@
 </div>
 
 <div class="doc">
-<a name="lab47"></a><h2 class="section">イデアルの商</h2>
+<a name="lab45"></a><h2 class="section">イデアルの商</h2>
 
 環 R とそのイデアル I について 'x~y :&lt;=&gt; x-y in I' は同値関係
-(その先の話はまた今度)
  
 </div>
 <div class="code">
@@ -1278,11 +1205,7 @@
 </div>
 
 <div class="doc">
-
-<div class="paragraph"> </div>
-
-Z/2Z は 0 と 1 (の同値類)からなる剰余環
- 
+Z/2Z は 0 と 1 (の同値類)からなる剰余環 
 </div>
 <div class="code">
 <span class="id" title="keyword">Definition</span> <a name="Z_2Z"><span class="id" title="definition">Z_2Z</span></a> := <a class="idref" href="COC.Algebra.html#IdealQuotient"><span class="id" title="definition">IdealQuotient</span></a> (<a class="idref" href="COC.Algebra.html#Zn_ideal"><span class="id" title="definition">Zn_ideal</span></a> 2).<br/>
@@ -1348,7 +1271,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab48"></a><h1 class="section">体準同型</h1>
+<a name="lab46"></a><h1 class="section">体準同型</h1>
 
 </div>
 <div class="code">
@@ -1414,7 +1337,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab49"></a><h1 class="section">圏を作る</h1>
+<a name="lab47"></a><h1 class="section">圏を作る</h1>
 
 </div>
 <div class="code">
@@ -1424,7 +1347,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab50"></a><h2 class="section">モノイドの圏 Mon</h2>
+<a name="lab48"></a><h2 class="section">モノイドの圏 Mon</h2>
 
 </div>
 <div class="code">
@@ -1437,7 +1360,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab51"></a><h2 class="section">群の圏 Grp</h2>
+<a name="lab49"></a><h2 class="section">群の圏 Grp</h2>
 
 </div>
 <div class="code">
@@ -1450,7 +1373,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab52"></a><h2 class="section">環の圏 Rng</h2>
+<a name="lab50"></a><h2 class="section">環の圏 Rng</h2>
 
 </div>
 <div class="code">
@@ -1463,7 +1386,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab53"></a><h3 class="section">かくにん</h3>
+<a name="lab51"></a><h3 class="section">かくにん</h3>
 
 </div>
 <div class="code">
@@ -1476,7 +1399,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab54"></a><h3 class="section">Z は始対象</h3>
+<a name="lab52"></a><h3 class="section">Z は始対象</h3>
 
 </div>
 <div class="code">
@@ -1486,7 +1409,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab55"></a><h2 class="section">体の圏 Fld</h2>
+<a name="lab53"></a><h2 class="section">体の圏 Fld</h2>
 
 </div>
 <div class="code">
@@ -1501,7 +1424,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab56"></a><h1 class="section">おまけ(ハイティング代数)</h1>
+<a name="lab54"></a><h1 class="section">おまけ(ハイティング代数)</h1>
 
 途中。
  
