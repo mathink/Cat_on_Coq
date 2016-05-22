@@ -396,7 +396,7 @@
 &nbsp;&nbsp;<span class="id" title="keyword">Import</span> <span class="id" title="var">Ex</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">monoid</span> (<span class="id" title="var">G</span>: <a class="idref" href="COC.Algebra.html#Group.Ex.Group"><span class="id" title="abbreviation">Group</span></a>) := <a class="idref" href="COC.Algebra.html#Monoid.make"><span class="id" title="constructor">Monoid.make</span></a> <a class="idref" href="COC.Algebra.html#G"><span class="id" title="variable">G</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Group.monoid"><span class="id" title="definition">monoid</span></a> (<span class="id" title="var">G</span>: <a class="idref" href="COC.Algebra.html#Group.Ex.Group"><span class="id" title="abbreviation">Group</span></a>) := <a class="idref" href="COC.Algebra.html#Monoid.make"><span class="id" title="constructor">Monoid.make</span></a> <a class="idref" href="COC.Algebra.html#G"><span class="id" title="variable">G</span></a>.<br/>
 
 <br/>
 &nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="Group.GroupProps"><span class="id" title="section">GroupProps</span></a>.<br/>
@@ -486,8 +486,8 @@
 &nbsp;&nbsp;<span class="id" title="keyword">Import</span> <span class="id" title="var">Ex</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">add_group</span> (<span class="id" title="var">R</span>: <a class="idref" href="COC.Algebra.html#Ring.Ex.Ring"><span class="id" title="abbreviation">Ring</span></a>): <a class="idref" href="COC.Algebra.html#Group.Ex.Group"><span class="id" title="abbreviation">Group</span></a> := <a class="idref" href="COC.Algebra.html#Group.make"><span class="id" title="constructor">Group.make</span></a> <a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">mul_monoid</span> (<span class="id" title="var">R</span>: <a class="idref" href="COC.Algebra.html#Ring.Ex.Ring"><span class="id" title="abbreviation">Ring</span></a>): <a class="idref" href="COC.Algebra.html#Monoid.Ex.Monoid"><span class="id" title="abbreviation">Monoid</span></a> := <a class="idref" href="COC.Algebra.html#Monoid.make"><span class="id" title="constructor">Monoid.make</span></a> (<a class="idref" href="COC.Algebra.html#Ring.is_mul_monoid"><span class="id" title="projection">is_mul_monoid</span></a> (<span class="id" title="var">spec</span>:=<a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Ring.add_group"><span class="id" title="definition">add_group</span></a> (<span class="id" title="var">R</span>: <a class="idref" href="COC.Algebra.html#Ring.Ex.Ring"><span class="id" title="abbreviation">Ring</span></a>): <a class="idref" href="COC.Algebra.html#Group.Ex.Group"><span class="id" title="abbreviation">Group</span></a> := <a class="idref" href="COC.Algebra.html#Group.make"><span class="id" title="constructor">Group.make</span></a> <a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Ring.mul_monoid"><span class="id" title="definition">mul_monoid</span></a> (<span class="id" title="var">R</span>: <a class="idref" href="COC.Algebra.html#Ring.Ex.Ring"><span class="id" title="abbreviation">Ring</span></a>): <a class="idref" href="COC.Algebra.html#Monoid.Ex.Monoid"><span class="id" title="abbreviation">Monoid</span></a> := <a class="idref" href="COC.Algebra.html#Monoid.make"><span class="id" title="constructor">Monoid.make</span></a> (<a class="idref" href="COC.Algebra.html#Ring.is_mul_monoid"><span class="id" title="projection">is_mul_monoid</span></a> (<span class="id" title="var">spec</span>:=<a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>)).<br/>
 
 <br/>
 &nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Ring.add_id_l"><span class="id" title="definition">add_id_l</span></a> {<span class="id" title="var">R</span>: <a class="idref" href="COC.Algebra.html#Ring.Ex.Ring"><span class="id" title="abbreviation">Ring</span></a>}(<span class="id" title="var">x</span>: <a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>) := (@<a class="idref" href="COC.Algebra.html#Ring.left_identical"><span class="id" title="definition">left_identical</span></a> <a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a> (<a class="idref" href="COC.Algebra.html#Ring.add"><span class="id" title="projection">add</span></a> <a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>) (<a class="idref" href="COC.Algebra.html#Ring.z"><span class="id" title="projection">z</span></a> <a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>) (<a class="idref" href="COC.Algebra.html#Ring.is_add_group"><span class="id" title="projection">is_add_group</span></a> (<span class="id" title="var">spec</span>:=<a class="idref" href="COC.Algebra.html#R"><span class="id" title="variable">R</span></a>)) <a class="idref" href="COC.Algebra.html#x"><span class="id" title="variable">x</span></a>).<br/>
@@ -980,7 +980,7 @@
 &nbsp;&nbsp;<span class="id" title="keyword">Import</span> <span class="id" title="var">Ex</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">monoid_hom</span> `(<span class="id" title="var">f</span>: <a class="idref" href="COC.Algebra.html#GroupHom.Ex.GroupHom"><span class="id" title="abbreviation">GroupHom</span></a> <span class="id" title="var">G</span> <span class="id" title="var">H</span>) := <a class="idref" href="COC.Algebra.html#MonoidHom.make"><span class="id" title="constructor">MonoidHom.make</span></a> <a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="GroupHom.monoid_hom"><span class="id" title="definition">monoid_hom</span></a> `(<span class="id" title="var">f</span>: <a class="idref" href="COC.Algebra.html#GroupHom.Ex.GroupHom"><span class="id" title="abbreviation">GroupHom</span></a> <span class="id" title="var">G</span> <span class="id" title="var">H</span>) := <a class="idref" href="COC.Algebra.html#MonoidHom.make"><span class="id" title="constructor">MonoidHom.make</span></a> <a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a>.<br/>
 
 <br/>
 &nbsp;&nbsp;<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">compose</span><br/>
@@ -1050,8 +1050,8 @@
 &nbsp;&nbsp;<span class="id" title="keyword">Import</span> <span class="id" title="var">Ex</span>.<br/>
 
 <br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">add_group_hom</span> `(<span class="id" title="var">f</span>: <a class="idref" href="COC.Algebra.html#RingHom.Ex.RingHom"><span class="id" title="abbreviation">RingHom</span></a> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) := <a class="idref" href="COC.Algebra.html#GroupHom.make"><span class="id" title="constructor">GroupHom.make</span></a> <a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a>.<br/>
-&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">mul_monoid_hom</span> `(<span class="id" title="var">f</span>: <a class="idref" href="COC.Algebra.html#RingHom.Ex.RingHom"><span class="id" title="abbreviation">RingHom</span></a> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="RingHom.add_group_hom"><span class="id" title="definition">add_group_hom</span></a> `(<span class="id" title="var">f</span>: <a class="idref" href="COC.Algebra.html#RingHom.Ex.RingHom"><span class="id" title="abbreviation">RingHom</span></a> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) := <a class="idref" href="COC.Algebra.html#GroupHom.make"><span class="id" title="constructor">GroupHom.make</span></a> <a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="RingHom.mul_monoid_hom"><span class="id" title="definition">mul_monoid_hom</span></a> `(<span class="id" title="var">f</span>: <a class="idref" href="COC.Algebra.html#RingHom.Ex.RingHom"><span class="id" title="abbreviation">RingHom</span></a> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) :=<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Algebra.html#MonoidHom.make"><span class="id" title="constructor">MonoidHom.make</span></a> (<a class="idref" href="COC.Algebra.html#RingHom.is_mul_monoid_hom"><span class="id" title="projection">is_mul_monoid_hom</span></a> (<span class="id" title="var">spec</span>:=<a class="idref" href="COC.Algebra.html#f"><span class="id" title="variable">f</span></a>)).<br/>
 
 <br/>
@@ -1345,6 +1345,13 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 &nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">x</span>: <a class="idref" href="COC.Algebra.html#Z_2Z"><span class="id" title="definition">Z_2Z</span></a>, (<a class="idref" href="COC.Algebra.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Algebra.html#da10a3bc0f93dfb192fa4ebba281c089"><span class="id" title="notation">+</span></a> <a class="idref" href="COC.Algebra.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> 0)%<span class="id" title="var">rng</span>.<br/>
 
 <br/>
+</div>
+
+<div class="doc">
+<a name="lab48"></a><h1 class="section">体準同型</h1>
+
+</div>
+<div class="code">
 <span class="id" title="keyword">Module</span> <a name="FieldHom"><span class="id" title="module">FieldHom</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">field_scope</span>.<br/>
 
@@ -1407,7 +1414,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab48"></a><h1 class="section">圏を作る</h1>
+<a name="lab49"></a><h1 class="section">圏を作る</h1>
 
 </div>
 <div class="code">
@@ -1417,7 +1424,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab49"></a><h2 class="section">モノイドの圏 Mon</h2>
+<a name="lab50"></a><h2 class="section">モノイドの圏 Mon</h2>
 
 </div>
 <div class="code">
@@ -1430,7 +1437,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab50"></a><h2 class="section">群の圏 Grp</h2>
+<a name="lab51"></a><h2 class="section">群の圏 Grp</h2>
 
 </div>
 <div class="code">
@@ -1443,7 +1450,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab51"></a><h2 class="section">環の圏 Rng</h2>
+<a name="lab52"></a><h2 class="section">環の圏 Rng</h2>
 
 </div>
 <div class="code">
@@ -1456,7 +1463,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab52"></a><h3 class="section">かくにん</h3>
+<a name="lab53"></a><h3 class="section">かくにん</h3>
 
 </div>
 <div class="code">
@@ -1469,7 +1476,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab53"></a><h3 class="section">Z は始対象</h3>
+<a name="lab54"></a><h3 class="section">Z は始対象</h3>
 
 </div>
 <div class="code">
@@ -1479,7 +1486,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab54"></a><h2 class="section">体の圏 Fld</h2>
+<a name="lab55"></a><h2 class="section">体の圏 Fld</h2>
 
 </div>
 <div class="code">
@@ -1494,7 +1501,7 @@ Z/2Z は 0 と 1 (の同値類)からなる剰余環
 </div>
 
 <div class="doc">
-<a name="lab55"></a><h1 class="section">おまけ(ハイティング代数)</h1>
+<a name="lab56"></a><h1 class="section">おまけ(ハイティング代数)</h1>
 
 途中。
  
