@@ -85,18 +85,18 @@
 
 <div class="paragraph"> </div>
 
-<a name="lab4"></a><h2 class="section">米田の補題</h2>
+<a name="lab17"></a><h2 class="section">米田の補題</h2>
 
 有名なアレ
  
 <div class="paragraph"> </div>
 
-<a name="lab5"></a><h3 class="section">評価函手</h3>
+<a name="lab18"></a><h3 class="section">評価函手</h3>
 
  
 </div>
 <div class="code">
-<span class="id" title="keyword">Definition</span> <a name="EvalFunctor_fobj"><span class="id" title="definition">EvalFunctor_fobj</span></a> (<span class="id" title="var">C</span> <span class="id" title="var">B</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>): <a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">(</span></a><a class="idref" href="COC.Structure.Fun.html#Fun"><span class="id" title="definition">Fun</span></a> <a class="idref" href="COC.Construction.Yoneda.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Construction.Yoneda.html#B"><span class="id" title="variable">B</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">)</span></a> <a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">[</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">x</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">]</span></a> <a class="idref" href="COC.Construction.Yoneda.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5rc1/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="COC.Construction.Yoneda.html#B"><span class="id" title="variable">B</span></a> :=<br/>
+<span class="id" title="keyword">Definition</span> <a name="EvalFunctor_fobj"><span class="id" title="definition">EvalFunctor_fobj</span></a> (<span class="id" title="var">C</span> <span class="id" title="var">B</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>): <a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">(</span></a><a class="idref" href="COC.Structure.Fun.html#Fun"><span class="id" title="definition">Fun</span></a> <a class="idref" href="COC.Construction.Yoneda.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Construction.Yoneda.html#B"><span class="id" title="variable">B</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">)</span></a> <a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">[</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">x</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">]</span></a> <a class="idref" href="COC.Construction.Yoneda.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="COC.Construction.Yoneda.html#B"><span class="id" title="variable">B</span></a> :=<br/>
 &nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">FX</span>: <a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">(</span></a><a class="idref" href="COC.Structure.Fun.html#Fun"><span class="id" title="definition">Fun</span></a> <a class="idref" href="COC.Construction.Yoneda.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Construction.Yoneda.html#B"><span class="id" title="variable">B</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">)</span></a> <a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">[</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">x</span></a><a class="idref" href="COC.Structure.Prod.html#654afd5c8d9755d74629c35ce8874830"><span class="id" title="notation">]</span></a> <a class="idref" href="COC.Construction.Yoneda.html#C"><span class="id" title="variable">C</span></a> =&gt; <span class="id" title="keyword">let</span> (<span class="id" title="var">F</span>,<span class="id" title="var">X</span>) := <a class="idref" href="COC.Construction.Yoneda.html#FX"><span class="id" title="variable">FX</span></a> <span class="id" title="keyword">in</span> <a class="idref" href="COC.Construction.Yoneda.html#F"><span class="id" title="variable">F</span></a> <a class="idref" href="COC.Construction.Yoneda.html#X"><span class="id" title="variable">X</span></a>).<br/>
 
 <br/>
@@ -145,7 +145,7 @@
 
 <div class="paragraph"> </div>
 
-<a name="lab6"></a><h2 class="section">射の同型とか</h2>
+<a name="lab19"></a><h2 class="section">射の同型とか</h2>
 
  
 </div>
