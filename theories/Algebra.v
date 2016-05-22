@@ -268,7 +268,7 @@ Module Group.
 
   Import Ex.
   
-  Canonical Structure monoid (G: Group) := Monoid.make G.
+  Definition monoid (G: Group) := Monoid.make G.
 
   Section GroupProps.
 
@@ -360,8 +360,8 @@ Module Ring.
   End Ex.
   Import Ex.
 
-  Canonical Structure add_group (R: Ring): Group := Group.make R.
-  Canonical Structure mul_monoid (R: Ring): Monoid := Monoid.make (is_mul_monoid (spec:=R)).
+  Definition add_group (R: Ring): Group := Group.make R.
+  Definition mul_monoid (R: Ring): Monoid := Monoid.make (is_mul_monoid (spec:=R)).
   
   Definition add_id_l {R: Ring}(x: R) := (@left_identical R (add R) (z R) (is_add_group (spec:=R)) x).
   Definition add_id_r {R: Ring}(x: R) := (@right_identical R (add R) (z R) (is_add_group (spec:=R)) x).
@@ -966,7 +966,7 @@ Module GroupHom.
 
   Import Ex.
 
-  Canonical Structure monoid_hom `(f: GroupHom G H) := MonoidHom.make f.
+  Definition monoid_hom `(f: GroupHom G H) := MonoidHom.make f.
 
   Program Canonical Structure compose
           (G H K: Group)(f: GroupHom G H)(g: GroupHom H K) :=
@@ -1041,8 +1041,8 @@ Module RingHom.
   End Ex.
   Import Ex.
   
-  Canonical Structure add_group_hom `(f: RingHom R R') := GroupHom.make f.
-  Canonical Structure mul_monoid_hom `(f: RingHom R R') :=
+  Definition add_group_hom `(f: RingHom R R') := GroupHom.make f.
+  Definition mul_monoid_hom `(f: RingHom R R') :=
     MonoidHom.make (is_mul_monoid_hom (spec:=f)).
 
   Program Canonical Structure compose
@@ -1655,6 +1655,7 @@ Proof.
   now rewrite Zplus_0_r, Zplus_diag_eq_mult_2.
 Qed.
 
+(** * 体準同型 **)
 Module FieldHom.
   Open Scope field_scope.
 
