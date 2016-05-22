@@ -56,7 +56,7 @@ Module Binop.
     - now intros f g h Hfg Hgh x y; rewrite (Hfg x y).
   Qed.
 
-  Definition setoid (X: Setoid):= Setoid.make (equiv X).
+  Canonical Structure setoid (X: Setoid):= Setoid.make (equiv X).
 End Binop.
 Export Binop.Ex.
 
@@ -268,7 +268,7 @@ Module Group.
 
   Import Ex.
   
-  Definition monoid (G: Group) := Monoid.make G.
+  Canonical Structure monoid (G: Group) := Monoid.make G.
 
   Section GroupProps.
 
@@ -360,8 +360,8 @@ Module Ring.
   End Ex.
   Import Ex.
 
-  Definition add_group (R: Ring): Group := Group.make R.
-  Definition mul_monoid (R: Ring): Monoid := Monoid.make (is_mul_monoid (spec:=R)).
+  Canonical Structure add_group (R: Ring): Group := Group.make R.
+  Canonical Structure mul_monoid (R: Ring): Monoid := Monoid.make (is_mul_monoid (spec:=R)).
   
   Definition add_id_l {R: Ring}(x: R) := (@left_identical R (add R) (z R) (is_add_group (spec:=R)) x).
   Definition add_id_r {R: Ring}(x: R) := (@right_identical R (add R) (z R) (is_add_group (spec:=R)) x).
@@ -613,6 +613,7 @@ Module Field.
 
   Import Ex.
 
+  Definition rng (K: Field) := Ring.make (field_ring (spec:=K)).
 End Field.
 Export Field.Ex.
 
@@ -883,6 +884,52 @@ Module MonoidHom.
 
     Existing Instance prf.
   End Ex.
+
+  Import Ex.
+
+  Program Canonical Structure compose
+          (M N L: Monoid)(f: MonoidHom M N)(g: MonoidHom N L) :=
+    {|
+      map := Map.compose f g;
+      prf := proof _ _
+    |}.
+  Next Obligation.
+    now rewrite !op.
+  Qed.
+  Next Obligation.
+    now rewrite !ident.
+  Qed.
+
+  Program Canonical Structure id (M: Monoid): MonoidHom M M :=
+    {|
+      map := Map.id;
+      prf := proof _ _
+    |}.
+  Next Obligation.
+    reflexivity.
+  Qed.
+  Next Obligation.
+    reflexivity.
+  Qed.
+
+  Definition equal {M N: Monoid}: relation (MonoidHom M N) :=
+    fun f g => forall x: M, f x == g x.
+  Arguments equal {M N} f g /.
+
+  Program Canonical Structure setoid (M N: Monoid): Setoid :=
+    Setoid.build (@equal M N).
+  Next Obligation.
+    intros f x;  reflexivity.
+  Qed.
+  Next Obligation.
+    intros f g Heq x.
+    generalize (Heq x).
+    now symmetry.
+  Qed.
+  Next Obligation.
+    intros f g h Hfg Hgh x.
+    rewrite (Hfg x); apply Hgh.
+  Qed.
 End MonoidHom.
 Export MonoidHom.Ex.
 
@@ -919,8 +966,45 @@ Module GroupHom.
 
   Import Ex.
 
-  Definition monoid_hom `(f: GroupHom G H) := MonoidHom.make f.
+  Canonical Structure monoid_hom `(f: GroupHom G H) := MonoidHom.make f.
 
+  Program Canonical Structure compose
+          (G H K: Group)(f: GroupHom G H)(g: GroupHom H K) :=
+    {|
+      map := MonoidHom.compose (monoid_hom f) (monoid_hom g);
+      prf := proof _ _
+    |}.
+  Next Obligation.
+    now rewrite !inv.
+  Qed.
+
+  Program Canonical Structure id (M: Group): GroupHom M M :=
+    {|
+      map := MonoidHom.id (Group.monoid M);
+      prf := proof _ _
+    |}.
+  Next Obligation.
+    reflexivity.
+  Qed.
+
+  Definition equal {G H: Group}: relation (GroupHom G H) :=
+    fun f g => forall x: G, f x == g x.
+  Arguments equal {G H} f g /.
+
+  Program Canonical Structure setoid (G H: Group): Setoid :=
+    Setoid.build (@equal G H).
+  Next Obligation.
+    intros f x;  reflexivity.
+  Qed.
+  Next Obligation.
+    intros f g Heq x.
+    generalize (Heq x).
+    now symmetry.
+  Qed.
+  Next Obligation.
+    intros f g h Hfg Hgh x.
+    rewrite (Hfg x); apply Hgh.
+  Qed.
 End GroupHom.
 Export GroupHom.Ex.
 
@@ -957,9 +1041,47 @@ Module RingHom.
   End Ex.
   Import Ex.
   
-  Definition add_group_hom `(f: RingHom R R') := GroupHom.make f.
-  Definition mul_monoid_hom `(f: RingHom R R') :=
+  Canonical Structure add_group_hom `(f: RingHom R R') := GroupHom.make f.
+  Canonical Structure mul_monoid_hom `(f: RingHom R R') :=
     MonoidHom.make (is_mul_monoid_hom (spec:=f)).
+
+  Program Canonical Structure compose
+          (R S T: Ring)(f: RingHom R S)(g: RingHom S T) :=
+    {|
+      map := GroupHom.compose (add_group_hom f) (add_group_hom g);
+      prf := proof _ _
+    |}.
+  Next Obligation.
+    now apply (MonoidHom.compose (mul_monoid_hom f) (mul_monoid_hom g)).
+  Qed.
+
+  Program Canonical Structure id (R: Ring): RingHom R R :=
+    {|
+      map := GroupHom.id (Ring.add_group R);
+      prf := proof _ _
+    |}.
+  Next Obligation.
+    now apply (MonoidHom.id).
+  Qed.
+
+  Definition equal {R S: Ring}: relation (RingHom R S) :=
+    fun f g => forall x: R, f x == g x.
+  Arguments equal {R S} f g /.
+
+  Program Canonical Structure setoid (R S: Ring): Setoid :=
+    Setoid.build (@equal R S).
+  Next Obligation.
+    intros f x;  reflexivity.
+  Qed.
+  Next Obligation.
+    intros f g Heq x.
+    generalize (Heq x).
+    now symmetry.
+  Qed.
+  Next Obligation.
+    intros f g h Hfg Hgh x.
+    rewrite (Hfg x); apply Hgh.
+  Qed.
 
   Open Scope ring_scope.
   Definition add_op `(f: RingHom R R')(x y: R): f (x + y) == f x + f y
@@ -973,7 +1095,16 @@ Module RingHom.
   Definition mul_ident `(f: RingHom R R'): f 1 == 1
     := (MonoidHom.ident (f:=mul_monoid_hom f)).
 
-  Definition equal {R S: Ring}(f g: RingHom R S) := forall x, f x == g x.
+  Section RingHomProps.
+    Lemma minus:
+      forall (R S: Ring)(x y: R)(f: RingHom R S),
+        f (x - y) == f x - f y.
+    Proof.
+      intros; rewrite (MonoidHom.op (f:=GroupHom.monoid_hom (add_group_hom f))); simpl.
+      rewrite (GroupHom.inv (f:=add_group_hom f)); simpl.
+      reflexivity.
+    Qed.
+  End RingHomProps.
 End RingHom.
 Export RingHom.Ex.
 
@@ -1508,7 +1639,223 @@ Section QuotientRing.
   (* 剰余環の完成 *)
   Canonical Structure IQ_ring := Ring.make IQ_is_ring.
 End QuotientRing.
+Arguments IQ_add R I x y /.
+Arguments IQ_O R I /.
+Arguments IQ_minus R I x /.
+Arguments IQ_mul R I x y /.
+Arguments IQ_I R I /.
 
+(* Z_2Z を環として解釈することができるようになった *)
+(* あまり意味はないけど *)
+Lemma Z_2Z_add_0:
+  forall x: Z_2Z, (x + x == 0)%rng.
+Proof.
+  simpl.
+  intros x; exists x.
+  now rewrite Zplus_0_r, Zplus_diag_eq_mult_2.
+Qed.
+
+Module FieldHom.
+  Open Scope field_scope.
+
+  Class spec (K L: Field)(f: Map K L) :=
+    proof {
+        is_ring_hom:> isRingHom (Field.rng K) (Field.rng L) f
+      }.
+
+
+  Class type (R S: Field) :=
+    make {
+        map: Map R S;
+        prf: spec R S map
+      }.
+
+  Module Ex.
+    Existing Instance is_ring_hom.
+    Existing Instance prf.
+
+    Notation isFieldHom := spec.
+    Notation FieldHom := type.
+
+    Coercion map: FieldHom >-> Map.
+    Coercion prf: FieldHom >-> isFieldHom.
+    Coercion is_ring_hom: isFieldHom >-> isRingHom.
+  End Ex.
+  Import Ex.
+  
+  Definition ring_hom `(f: FieldHom K L) := RingHom.make f.
+
+  Program Canonical Structure compose
+          (K L M: Field)(f: FieldHom K L)(g: FieldHom L M) :=
+    {|
+      map := RingHom.compose (ring_hom f) (ring_hom g);
+      prf := proof _
+    |}.
+
+  Program Canonical Structure id (K: Field): FieldHom K K :=
+    {|
+      map := RingHom.id (Field.rng K);
+      prf := proof _
+    |}.
+
+  Definition equal {K L: Field}: relation (FieldHom K L) :=
+    fun f g => forall x: K, f x == g x.
+  Arguments equal {K L} f g /.
+
+  Program Canonical Structure setoid (K L: Field): Setoid :=
+    Setoid.build (@equal K L).
+  Next Obligation.
+    intros f x;  reflexivity.
+  Qed.
+  Next Obligation.
+    intros f g Heq x.
+    generalize (Heq x).
+    now symmetry.
+  Qed.
+  Next Obligation.
+    intros f g h Hfg Hgh x.
+    rewrite (Hfg x); apply Hgh.
+  Qed.
+End FieldHom.
+Export FieldHom.Ex.
+
+(** * 圏を作る **)
+Require Import COC.Category.
+
+(** ** モノイドの圏 Mon **)
+Program Canonical Structure Mon: Category :=
+  Category.build (@MonoidHom.setoid)
+                 (@MonoidHom.compose)
+                 (@MonoidHom.id).
+Next Obligation.
+  intros f f' Heqf g g' Heqg x; simpl in *.
+  now rewrite Heqf, Heqg.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+
+(** ** 群の圏 Grp **)
+Program Canonical Structure Grp: Category :=
+  Category.build (@GroupHom.setoid)
+                 (@GroupHom.compose)
+                 (@GroupHom.id).
+Next Obligation.
+  intros f f' Heqf g g' Heqg x; simpl in *.
+  now rewrite Heqf, Heqg.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+
+(** ** 環の圏 Rng **)
+Program Canonical Structure Rng: Category :=
+  Category.build (@RingHom.setoid)
+                 (@RingHom.compose)
+                 (@RingHom.id).
+Next Obligation.
+  intros f f' Heqf g g' Heqg x; simpl in *.
+  now rewrite Heqf, Heqg.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+
+(** *** かくにん **)
+Check rep_ring_hom Q_ring \o{Rng} rep_ring_hom Z_ring.
+Eval simpl in (rep_ring_hom Q_ring \o{Rng} rep_ring_hom Z_ring) 3%Z.
+Goal
+  (rep_ring_hom Q_ring \o{Rng} rep_ring_hom Z_ring) 3%Z == (6#2)%Q.
+Proof.
+  simpl.
+  compute.
+  reflexivity.
+Qed.
+
+(** *** Z は始対象 **)
+Program Instance Z_is_initial_of_Rng: isInitial rep_ring_hom.
+Next Obligation.
+  destruct x as [|p|p].
+  - simpl.
+    rewrite (MonoidHom.ident (spec:=f)).
+    reflexivity.
+  - simpl.
+    induction p.
+    + simpl.
+      rewrite Pos2Z.inj_xI, Zmult_comm, <- Zplus_diag_eq_mult_2.
+      rewrite !(MonoidHom.op (spec:=f)); simpl.
+      rewrite IHp.
+      rewrite (MonoidHom.ident (spec:=RingHom.mul_monoid_hom f)); simpl.
+      now rewrite commute, associative.
+    + simpl.
+      rewrite Pos2Z.inj_xO, Zmult_comm, <- Zplus_diag_eq_mult_2.
+      rewrite !(MonoidHom.op (spec:=f)); simpl.
+      now rewrite IHp.
+    + simpl.
+      now rewrite (MonoidHom.ident (spec:=(RingHom.mul_monoid_hom f))); simpl.
+  - simpl.
+    induction p.
+    + simpl.
+      rewrite Pos2Z.neg_xI, Zmult_comm, <- Zplus_diag_eq_mult_2.
+      assert (H: Z.neg p + Z.neg p - 1 = (Z.neg p + Z.neg p) + (- 1)).
+      {
+        now simpl.
+      }
+      rewrite H.
+      rewrite (RingHom.minus (R:=Z_ring) _ 1).
+      rewrite !(MonoidHom.op (spec:=f)); simpl.
+      rewrite IHp.
+      rewrite (MonoidHom.ident (spec:=(RingHom.mul_monoid_hom f))); simpl.
+      rewrite !(Group.inv_op (G:=Ring.add_group c)); simpl.
+      now rewrite associative.
+    + simpl.
+      rewrite Pos2Z.neg_xO, Zmult_comm, <- Zplus_diag_eq_mult_2.
+      rewrite !(MonoidHom.op (spec:=f)); simpl.
+      rewrite IHp.
+      now rewrite !(Group.inv_op (G:=Ring.add_group c)); simpl.
+    + simpl.
+      rewrite (GroupHom.inv (f:=RingHom.add_group_hom f) 1); simpl.
+      now rewrite (MonoidHom.ident (f:=(RingHom.mul_monoid_hom f))); simpl.
+Qed.      
+
+(** ** 体の圏 Fld **)
+Program Canonical Structure Fld: Category :=
+  Category.build (@FieldHom.setoid)
+                 (@FieldHom.compose)
+                 (@FieldHom.id).
+Next Obligation.
+  intros f f' Heqf g g' Heqg x; simpl in *.
+  now rewrite Heqf, Heqg.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+Next Obligation.
+  now idtac.
+Qed.
+
+  
 (** * おまけ(ハイティング代数)
 途中。
  **)
