@@ -51,6 +51,25 @@
 
 ** =Enrich/=
    - =Enriched V= :: =V=-豊穣圏
+
 ** =Adjunction/=
    - =Adjunction F G= :: 函手の組 =F,G= の随伴
-
+** =Algebraicstructures/=
+ 
+   - =Binop X= :: セトイド =X= 上の二項演算
+   - =Monoid= :: モノイド
+   - =MonoidHom M N= :: モノイド =M= から =N= への準同型
+   - =Mon= :: モノイドの圏
+   - =Group= :: 群
+   - =GroupHom M N= :: 群 =M= から =N= への準同型
+   - =Grp= :: 群の圏
+   - =Ring= :: 環
+   - =RingHom M N= :: 環 =M= から =N= への準同型
+   - =Rng= :: 環の圏
+   - =Field= :: 体
+   - =FieldHom M N= :: 環 =M= から =N= への準同型
+   - =Fld= :: 体の圏
+   - =Ideal R= :: 環 =R= のイデアル
+   - =LMod A= :: 環 =A= の左加群
+   - =RMod A= :: 環 =A= の右加群
+   - =BiMod A B= :: (=A=, =B=)-双加群
