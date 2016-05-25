@@ -67,7 +67,6 @@
         |-- Adjunction
         |   `-- Core.v
         |-- Adjunction.v
-        |-- Algebra.v
         |-- AlgebraicStructures
         |   |-- Binop.v
         |   |-- Categories.v
