@@ -131,8 +131,8 @@ VFILES:=theories/Setoid/Core.v\
   theories/AlgebraicStructures/Field.v\
   theories/AlgebraicStructures/Categories.v\
   theories/AlgebraicStructures.v\
-  theories/Algebra.v\
-  theories/Module.v
+  theories/Examples/ASwithZ.v\
+  theories/Examples/Matrix.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))

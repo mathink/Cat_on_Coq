@@ -46,5 +46,5 @@ theories/AlgebraicStructures/Field.v
 theories/AlgebraicStructures/Categories.v
 theories/AlgebraicStructures.v
 
-theories/Algebra.v
-theories/Module.v
+theories/Examples/ASwithZ.v
+theories/Examples/Matrix.v
