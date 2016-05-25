@@ -11,6 +11,52 @@
   #+BEGIN_SRC txt
     git clone https://github.com/mathink/Cat_on_Coq.git COC
   #+END_SRC
+
+* 方針
+
+  コードは以下の方針に則って書かれています。
+
+  - 定義したい構造(型)毎にモジュール =Hoge= を用意し、その中で必要なものを構成する
+  - 構造の仕様は、構成要素についての命題クラス(=Class=) =spec= として纏めて記述する
+  - 構造は、構成要素と命題クラスの証明をフィールドとして持つ構造(=Structure=) =type=
+  - グローバル用の名前や記法はモジュール内モジュール =Ex= を使って設定する
+    - モジュール =Hoge= を閉じたあと、 =Export Hoge.Ex.= とすることで可能 
+
+  具体的には、以下のフォーマットに従って各種定義は行なわれています。
+  [[https://github.com/mathink/Cat_on_Coq/blob/master/theories/AlgebraicStructures/Group.v][群の定義]] などがわかりやすい例と思われます。
+  #+BEGIN_SRC coq
+    Module Hoge.
+      Class spec args paramters :=
+        proof {
+            specifications
+          }.
+
+      Structure type args :=
+        make {
+            parameters;
+
+            prf: spec args parameters
+          }.
+
+      Module Ex.
+        Notation isHoge := spec.
+        Notation Hoge := type.
+
+        Existing Instance prf.
+
+        Coercion prf: Hoge >-> isHoge.
+
+        (* other notations and coercions *)
+      End Ex.
+
+      Import Ex.
+
+      (* lemmas, definitions, etc. *)
+
+    End Ex.
+    Export Hoge.Ex.
+  #+END_SRC
+  
   
 * 構成
 
