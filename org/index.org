@@ -1,0 +1,56 @@
+#+TITLE: COC ドキュメント
+#+AUTHOR: mathink
+
+* 実装したものリスト
+
+** =Setoid/=
+   - =Setoid= :: 等価性付き型
+   - =Map= :: =Setoid= 上の変換
+
+** =Category/=
+   - =Category= :: 圏
+   - =Functor C D= :: =C= から =D= への函手
+   - =Natrans F G= :: =F= から =G= への自然変換
+   - =Object.v=
+     - =Initial C= :: =C= の始対象
+     - =Terminal C= :: =C= の終対象
+     - =Zero C= :: =C= の零対象
+
+** =Construction/=
+   - =Cat.v=
+     - =Cat= :: 圏の圏
+   - =Hom.v=
+     - =HomFunctor X= :: 共変 hom-函手 =Hom(X,-)=
+     - =OpHomFunctor X= :: 反変 hom-函手 =Hom(-,X)=
+   - =Fun.v=
+     - =Fun= :: 函手圏
+   - =Prod.v=
+     - 型、圏、函手などの積
+   - =Comma.v=
+     - コンマ圏
+
+** =Constitution/=
+   - =Universal.v=
+     - =UATo c F= :: 対象 =c= から函手 =F= への普遍射
+     - =UAFrom F c= :: 函手 =F= から対象 =c= への普遍射
+   - =Equalizer.v=
+     - =Equalizer f g= :: =f= と =g= のイコライザ(対象と射の組)
+     - =Coequalizer f g= :: =f= と =g= のコイコライザ
+   - =Limit.v=
+     - =Cone (D: J => C)= :: 底 =J= への錐
+     - =ConeMap c d= :: 錐 =c= から =d= への射
+     - =Cones (D: J => C)= :: =J= への錐の圏
+     - =Limit (D: J => C)= :: 図式 =D= の極限
+   - =Product.v=
+     - =Product X Y= :: =X= と =Y= の直積
+     - =Coproduct= :: =X= と =Y= の直和
+
+** =Monoid/=
+   - =Monoidal= :: モノイダル圏
+   - =MonoidObject B= :: モノイダル圏 =B= のモノイド対象
+
+** =Enrich/=
+   - =Enriched V= :: =V=-豊穣圏
+** =Adjunction/=
+   - =Adjunction F G= :: 函手の組 =F,G= の随伴
+
