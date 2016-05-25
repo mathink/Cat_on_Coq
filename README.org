@@ -1,0 +1,74 @@
+#+TITLE: Setoid-based Category Theory in Coq
+#+AUTHOR: mathink
+
+* 概要
+
+  Setoid をベースにして圏や関連する概念の定義と証明をしていこうという個人プロジェクトです。
+  Universe Polymorphism を利用しています。
+
+* 用法
+
+  #+BEGIN_SRC txt
+    git clone https://github.com/mathink/Cat_on_Coq.git COC
+  #+END_SRC
+  
+* 構成
+
+  #+BEGIN_SRC text
+    .
+    |-- html
+    `-- theories
+        |-- ASExample.v
+        |-- Abel.v
+        |-- Adjunction
+        |   `-- Core.v
+        |-- Adjunction.v
+        |-- Algebra.v
+        |-- AlgebraicStructures
+        |   |-- Binop.v
+        |   |-- Categories.v
+        |   |-- Field.v
+        |   |-- Group.v
+        |   |-- Ideal.v
+        |   |-- Module.v
+        |   |-- Monoid.v
+        |   `-- Ring.v
+        |-- AlgebraicStructures.v
+        |-- Appendix
+        |   `-- length.v
+        |-- Category
+        |   |-- Core.v
+        |   |-- Functor.v
+        |   |-- Morphism.v
+        |   |-- Natrans.v
+        |   `-- Object.v
+        |-- Category.v
+        |-- Construction
+        |   |-- Equalizer.v
+        |   |-- Limit.v
+        |   |-- Product.v
+        |   |-- Universal.v
+        |   `-- Yoneda.v
+        |-- Construction.v
+        |-- Enrich
+        |   `-- Core.v
+        |-- Examples
+        |   |-- ASwithZ.v
+        |   `-- Matrix.v
+        |-- Module.v
+        |-- Monoid
+        |   `-- Monoidal.v
+        |-- Monoid.v
+        |-- Setoid
+        |   |-- Core.v
+        |   `-- Map.v
+        |-- Setoid.v
+        |-- Structure
+        |   |-- Cat.v
+        |   |-- Comma.v
+        |   |-- Fun.v
+        |   |-- Hcomp.v
+        |   |-- Hom.v
+        |   `-- Prod.v
+        `-- Structure.v
+  #+END_SRC
