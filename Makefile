@@ -115,6 +115,7 @@ VFILES:=theories/Setoid/Core.v\
   theories/Constitution/Equalizer.v\
   theories/Constitution/Product.v\
   theories/Constitution/Limit.v\
+  theories/Constitution/Colimit.v\
   theories/Constitution.v\
   theories/Adjunction/Core.v\
   theories/Adjunction.v\

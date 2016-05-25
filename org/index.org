@@ -41,6 +41,11 @@
      - =ConeMap c d= :: 錐 =c= から =d= への射
      - =Cones (D: J => C)= :: =J= への錐の圏
      - =Limit (D: J => C)= :: 図式 =D= の極限
+   - =Limit.v=
+     - =Cocone (D: J => C)= :: 底 =J= からの錐
+     - =CoconeMap c d= :: 錐 =c= から =d= への射
+     - =Cocones (D: J => C)= :: =J= からの錐の圏
+     - =Colimit (D: J => C)= :: 図式 =D= の余極限
    - =Product.v=
      - =Product X Y= :: =X= と =Y= の直積
      - =Coproduct= :: =X= と =Y= の直和
