@@ -57,14 +57,12 @@
     Export Hoge.Ex.
   #+END_SRC
   
-  
 * 構成
 
   #+BEGIN_SRC text
-    .
     |-- html
+    |-- org
     `-- theories
-        |-- ASExample.v
         |-- Abel.v
         |-- Adjunction
         |   `-- Core.v
@@ -89,32 +87,31 @@
         |   |-- Natrans.v
         |   `-- Object.v
         |-- Category.v
-        |-- Construction
+        |-- Constitution
         |   |-- Equalizer.v
         |   |-- Limit.v
         |   |-- Product.v
         |   |-- Universal.v
         |   `-- Yoneda.v
-        |-- Construction.v
-        |-- Enrich
-        |   `-- Core.v
-        |-- Examples
-        |   |-- ASwithZ.v
-        |   `-- Matrix.v
-        |-- Module.v
-        |-- Monoid
-        |   `-- Monoidal.v
-        |-- Monoid.v
-        |-- Setoid
-        |   |-- Core.v
-        |   `-- Map.v
-        |-- Setoid.v
-        |-- Structure
+        |-- Constitution.v
+        |-- Construction
         |   |-- Cat.v
         |   |-- Comma.v
         |   |-- Fun.v
         |   |-- Hcomp.v
         |   |-- Hom.v
         |   `-- Prod.v
-        `-- Structure.v
+        |-- Construction.v
+        |-- Enrich
+        |   `-- Core.v
+        |-- Examples
+        |   |-- ASwithZ.v
+        |   `-- Matrix.v
+        |-- Monoid
+        |   `-- Monoidal.v
+        |-- Monoid.v
+        |-- Setoid
+        |   |-- Core.v
+        |   `-- Map.v
+        `-- Setoid.v
   #+END_SRC
