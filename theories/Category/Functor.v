@@ -41,8 +41,7 @@ Proof.
   transitivity g; assumption.
 Qed.
 
-(** 
- ** 函手
+(** * 函手
 対象函数と射函数を構成要素として持ち、射函数は well-defined(つまり Map)。
 さらに、合成と恒等射を保存。
  **)
@@ -83,6 +82,10 @@ Module Functor.
     Existing Instances prf fmap_isMap.
 
     Notation Fmap C D F := (forall (X Y: C), (C X Y) -> (D (F X) (F Y))).
+
+    Notation fnC := fmap_comp.
+    Notation fn1 := fmap_id.
+
   End Ex.
 
   Import Ex.
@@ -155,11 +158,6 @@ Module Functor.
   Qed.
 End Functor.
 Export Functor.Ex.
-
-
-(*  *)
-Notation fnC := Functor.fmap_comp.
-Notation fn1 := Functor.fmap_id.
 
 Program Definition ConstFunctor (C: Category)(X: C): Functor C C :=
   Functor.build (fun _ => X)

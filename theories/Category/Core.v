@@ -25,11 +25,9 @@ Module Category.
   Class spec
         (obj: Type)
         (arr: obj -> obj -> Setoid)
-        (* (arr_eq: forall {X Y: obj}, relation (arr X Y)) *)
         (comp: forall {X Y Z: obj}, arr X Y -> arr Y Z -> arr X Z)
         (id: forall X: obj, arr X X) :=
     proof {
-        (* arr_isSetoid: forall {X Y: obj}, isSetoid (@arr_eq X Y) where "f == g" := (@Setoid.equal (@Setoid.make _ _ (@arr_isSetoid _ _)) f g); *)
         comp_subst:> forall (X Y Z: obj), Proper ((==) ==> (==) ==> (==)) (@comp X Y Z);
         
         comp_assoc:
@@ -50,15 +48,12 @@ Module Category.
     make {
         obj: Type;
         arr: obj -> obj -> Setoid;
-        (* arr_eq: forall {X Y: obj}, relation (arr X Y); *)
         comp: forall {X Y Z: obj}, arr X Y -> arr Y Z -> arr X Z;
         id: forall X: obj, arr X X;
 
         prf: spec (@comp) (@id)
       }.
 
-  (* Definition hom {C: type}(X Y: obj C): Setoid := *)
-  (*   Setoid.make (arr_isSetoid (spec:=@prf C)(X:=X)(Y:=Y)). *)
   Notation build arr comp id :=
     (@make _ arr comp id (@proof _ _ _ _ _ _ _ _)).
 
@@ -68,23 +63,13 @@ Module Category.
     Coercion obj: Category >-> Sortclass.
     Coercion arr: Category >-> Funclass.
     Coercion prf: Category >-> isCategory.
-    (* Global Arguments arr_eq {C X Y} f g: rename. *)
+
     Existing Instance prf.
-    (* Existing Instance arr_isSetoid. *)
 
-    (* Notation "x == y :> C" := (@arr_eq C _ _ x y) *)
-    (*                            (at level 70, *)
-    (*                             y at next level, no associativity): cat_scope. *)
-    (* Notation "x == y" := (x == y :> _) (at level 70, no associativity): cat_scope. *)
-
-    Notation "f \;{ C } g" := (@comp C _ _ _ f g)
-                                (at level 60, right associativity): category_scope.
-    Notation "f \; g" := (@comp _ _ _ _ f g)
-                           (at level 60, right associativity): category_scope.
-    Notation "g \o{ C } f" := (@comp C _ _ _ f g)
-                                (at level 60, right associativity): cat_scope.
-    Notation "g \o f" := (g \o{_} f)
-                           (at level 60, right associativity): cat_scope.
+    Notation "f \;{ C } g" := (@comp C _ _ _ f g) (at level 60, right associativity): category_scope.
+    Notation "f \; g" := (@comp _ _ _ _ f g) (at level 60, right associativity): category_scope.
+    Notation "g \o{ C } f" := (@comp C _ _ _ f g) (at level 60, right associativity): cat_scope.
+    Notation "g \o f" := (g \o{_} f) (at level 60, right associativity): cat_scope.
     Notation Id_ C X := (@id C X).
     Notation "'Id' X" := (Id_ _ X) (at level 30, right associativity): cat_scope.
   End Ex.
@@ -149,7 +134,7 @@ Variant Iso (C: Category)(X Y: C): C X Y -> C Y X -> Prop :=
 (** 
  ** Setoid の圏: Setoids
 例にちょうどよい。
-あと、 Hom 函手を定義する時とかに使うのでここで作っておこう。
+Hom 函手を定義する時とかに使うのでここで作っておく。
  **)
 Program Definition Setoids: Category :=
   Category.build (@Map.setoid) (@Map.compose) (@Map.id).
