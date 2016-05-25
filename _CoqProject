@@ -33,6 +33,7 @@ theories/Monoid/Monoidal.v
 theories/Monoid.v
 
 theories/Enrich/Core.v
+theories/Enrich.v
 
 theories/Abel.v
 
@@ -48,3 +49,5 @@ theories/AlgebraicStructures.v
 
 theories/Examples/ASwithZ.v
 theories/Examples/Matrix.v
+
+theories/COC.v
