@@ -1,3 +1,4 @@
+
 Set Implicit Arguments.
 Unset Strict Implicit.
 Set Primitive Projections.
@@ -8,162 +9,440 @@ Set Contextual Implicit.
 Generalizable All Variables.
 
 (** * 長さ付きリスト **)
+(** * 例 **)
+Require Import ProofIrrelevance.
+Require Import COC.Setoid.
+Require Import COC.Algebra.
+
 Module Vector.
-  Inductive type (X: Type): nat -> Type :=
-  | nil: type X 0
-  | cons:forall {n: nat}, X -> type X n -> type X (S n).
+  Structure type (X: Type)(n: nat) :=
+    make {
+        get: forall {p: nat}(H: p < n), X
+      }.
 
   Module Ex.
     Notation Vector := type.
+    Coercion get: Vector >-> Funclass.
 
     Delimit Scope vector_scope with vector.
-    Infix ":>" := cons (at level 60, right associativity): vector_scope.
-    Notation "[|]" := nil (format "[|]"): vector_scope.
-    Notation "[| x , .. , y ]" := ((x%vector) :> .. ((y%vector):>Vector.nil) .. )%vector (at level 0): vector_scope.
+    Notation "( x ; H :-> y )" := (make (fun x H  => y)) (H at next level): vector_scope.
   End Ex.
 
   Import Ex.
   Open Scope vector_scope.
+
+  Definition equal (X: Setoid)(n: nat): relation (Vector X n) :=
+    fun v1 v2 => forall (p: nat)(H: p < n), v1 _ H == v2 _ H.
+  Arguments equal X n v1 v2 /.
   
-  Definition head (X: Type)(n: nat)(v: Vector X (S n)): X :=
-    match v with
-    | x:>_ => x
-    end.
+  Program Canonical Structure setoid (X: Setoid)(n: nat) :=
+    Setoid.build (@equal _ n).
+  Next Obligation.
+    intros v p H.
+    reflexivity.
+  Qed.
+  Next Obligation.
+    intros v1 v2 Heq p H; simpl in *.
+    now symmetry; apply Heq.
+  Qed.
+  Next Obligation.
+    intros v1 v2 v3 Heq12 Heq23 p H; simpl in *.
+    transitivity (v2 _ H).
+    - now apply Heq12.
+    - now apply Heq23.
+  Qed.
 
+  Definition add_with (X Y Z: Type)(op: X -> Y -> Z)(n: nat)(v1: Vector X n)(v2: Vector Y n): Vector Z n :=
+    (p;H :-> op (v1 _ H) (v2 _ H)).
+  Definition add (R: Ring) := @add_with _ _ _ (Ring.add R).
+  
   Definition tail (X: Type)(n: nat)(v: Vector X (S n)): Vector X n :=
-    match v with
-    | _:>xs => xs
+    (p;H :-> v _ (Lt.lt_n_S p n H)).
+  Arguments tail X n v /.
+    
+  Fixpoint mul_with (X Y Z W: Type)(add: Z -> W -> W)(mul: X -> Y -> Z)(e: W)(n: nat): Vector X n -> Vector Y n -> W :=
+    match n with
+    | O => fun _ _ => e
+    | S p => fun v1 v2 =>
+               (add (mul (get v1 (PeanoNat.Nat.lt_0_succ p))
+                         (get v2 (PeanoNat.Nat.lt_0_succ p)))
+                    (mul_with add mul e (tail v1) (tail v2)))
     end.
 
-  Fixpoint add_with (M: Type)(op: M -> M -> M)(n: nat)(v1: Vector M n): Vector M n -> Vector M n :=
-    match v1 in Vector _ n' return Vector _ n' -> Vector _ n' with
-    | [|] => fun _ => [|]
-    | x1:>xs1 => fun v2 => (op x1 (head v2)):>(add_with op xs1 (tail v2))
-    end.
+  Definition mul (R: Ring)(n: nat)(v1 v2: Vector R n): R :=
+    mul_with (Ring.add R) (Ring.mul R) (Ring.z R) v1 v2.
 
-  Fixpoint mul_with (R: Type)(add mul: R -> R -> R)(e: R)(n: nat)(v1: Vector R n): Vector R n -> R :=
-    match v1 in Vector _ n' return Vector _ n' -> R with
-    | [|] => fun _ => e
-    | cons x1 xs1 => fun v2 => (add (mul x1 (head v2)) (mul_with add mul e xs1 (tail v2)))
-    end.
+  Program Instance mul_proper (R: Ring)(n: nat):
+    Proper ((==) ==> (==) ==> (==)) (@mul R n).
+  Next Obligation.
+    intros v v' Heqv u u' Hequ; simpl in *; intros.
+    induction n; simpl.
+    - reflexivity.
+    - unfold mul in *; simpl.
+      rewrite Heqv, Hequ, IHn.
+      + reflexivity.
+      + now simpl; intros; apply Heqv.
+      + now simpl; intros; apply Hequ.
+  Qed.
 
-  Fixpoint append (X: Type)(n m: nat)(v1: Vector X n): Vector X m -> Vector X (n + m) :=
-    match v1 with
-    | [|] => fun v2 => v2
-    | x:>xs => fun v2 => x:>(append xs v2)
-    end.
-
-  Fixpoint rep (X: Type)(n: nat)(x: X): Vector X n :=
-    match n as n' return Vector X n' with
-    | O => [|]
-    | S p => x:>rep x
-    end.
-
-  Module Ex2.
-    Infix "++" := append (at level 60, right associativity): vector_scope.
+  Definition map (X Y: Type)(f: X -> Y)(n: nat)(v: Vector X n) :=
+    (p;H :-> f (v _ H)).
+  
+  Lemma scalar_mul_l:
+    forall (R: Ring)(n: nat)(x: R)(v u: Vector R n),
+      (x * mul v u)%rng == mul (map (`(x * y))%rng v) u.
+  Proof.
+    induction n; simpl.
+    - unfold mul; simpl.
+      now intros; rewrite Ring.mul_0_r.
+    - intros.
+      unfold mul; simpl.
+      rewrite !distributive_l.
+      rewrite <- associative.
+      rewrite (IHn x (tail v) (tail u)); simpl.
+      unfold mul.
+      reflexivity.
+  Qed.
+      
+  Lemma distributive_l:
+    forall (R: Ring)(n: nat)(v u w: Vector R n),
+      (mul v u + mul v w)%rng == mul v (add u w).
+  Proof.
+    induction n; simpl.
+    - unfold add, mul; simpl.
+      now intros; rewrite left_identical.
+    - intros.
+      generalize (IHn (tail v) (tail u) (tail w)); simpl.
+      unfold add, mul; simpl.
+      rewrite !distributive_l.
+      intros H.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite <-associative.
+      rewrite H.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite !associative.
+      reflexivity.
+  Qed.
+  
+  Lemma distributive_r:
+    forall (R: Ring)(n: nat)(v u w: Vector R n),
+      (mul v w + mul u w)%rng == mul (add v u) w.
+  Proof.
+    induction n; simpl.
+    - unfold add, mul; simpl.
+      now intros; rewrite left_identical.
+    - intros.
+      generalize (IHn (tail v) (tail u) (tail w)); simpl.
+      unfold add, mul; simpl.
+      rewrite !distributive_r.
+      intros H.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite <-associative.
+      rewrite H.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite !associative.
+      reflexivity.
+  Qed.
+  
+Module Ex2.
+    Infix "*" := mul: vector_scope.
   End Ex2.
 End Vector.
 Export Vector.Ex.
 Export Vector.Ex2.
 
+
 Module Matrix.
 
-  Definition type (X: Type)(n m: nat) := (Vector (Vector X m) n).
+  Definition type (X: Type)(n m: nat) :=
+    Vector (Vector X m) n.
+
   Module Ex.
     Notation Matrix := type.
-    Open Scope vector_scope.
   End Ex.
 
   Import Ex.
   Open Scope vector_scope.
 
-  Definition add_with (M: Type)(op: M -> M -> M)(p q: nat)(m1 m2: Matrix M p q): Matrix M p q :=
-    @Vector.add_with (Vector M q) (@Vector.add_with M op q) p m1 m2.
-  Arguments add_with M op p q m1 m2 /.
+  Definition equal (X: Setoid)(n m: nat): relation (Matrix X n m) :=
+    fun M N =>
+      forall p (Hr: p < n) q (Hc: q < m),
+        M _ Hr _ Hc == N _ Hr _ Hc.
+  Arguments equal X n m M N /.
 
+  Program Instance equiv (X: Setoid)(n m: nat): Equivalence (@equal X n m).
+  Next Obligation.
+    intros M p Hr q Hc.
+    reflexivity.
+  Qed.
+  Next Obligation.
+    intros M N Heq p Hr q Hc; simpl in *.
+    now symmetry; apply Heq.
+  Qed.
+  Next Obligation.
+    intros M N K HeqMN HeqNK p Hr q Hc; simpl in *.
+    transitivity (N _ Hr _ Hc).
+    - now apply HeqMN.
+    - now apply HeqNK.
+  Qed.
 
-  Fixpoint happ (X: Type)(p q r: nat)(m1: Matrix X p q): Matrix X p r -> Matrix X p (q + r) :=
-    match m1 in (Vector _ p')
-          return (Vector (Vector X r) p' -> Vector (Vector X (q + r)) p')
-    with
-    | [|] => fun _  => [|]
-    | v1:>vs1 => fun m2 => (v1 ++ (Vector.head m2)) :> happ vs1 (Vector.tail m2)
-    end.
-
-  Fixpoint vector_transpose (X: Type)(n: nat)(v: Vector X n): Matrix X n 1 :=
-    match v in Vector _ n'
-          return Vector (Vector X 1) n'
-    with
-    | [|] => [|]
-    | x:>xs => (x:>[|]) :> (vector_transpose xs)
-    end.
+  Canonical Structure setoid (X: Setoid)(n m: nat) := Setoid.make (@equiv X n m).
   
-  Fixpoint transpose_aux (X: Type)(p q r: nat)(n: Matrix X r p): Matrix X p q -> Matrix X p (r + q) :=
-    match n in Vector _ r'
-          return Vector (Vector _ q) p -> Vector (Vector _ (r' + q)) p
-    with
-    | [|] => fun m => m
-    | v:>vs => fun m => happ (vector_transpose v) (transpose_aux vs m)
-    end.
+  Definition add_with (X Y Z: Type)(op: X -> Y -> Z)(n m: nat)(M: Matrix X n m)(N: Matrix Y n m): Matrix Z n m :=
+    (p;Hrow :-> (q;Hcolumn :-> op (M _ Hrow _ Hcolumn) (N _ Hrow _ Hcolumn))).
 
-  Eval simpl in transpose_aux [|[|1,2,3],[|4,5,6]] [|[|],[|],[|]].
-     (* = [|[|1, 4], [|2, 5], [|3, 6]] *)
-     (* : Matrix BinNums.Z 3 (2 + 0) *)
-  
-  Definition transpose (M: Type)(p q: nat)(m: Matrix M p q): Matrix M q p.
+  Definition transpose (X: Type)(n m: nat)(M: Matrix X n m): Matrix X m n :=
+    (p;Hrow :-> (q;Hcolumn :-> M _ Hcolumn _ Hrow)).
+
+  Lemma transpose_idempotent:
+    forall (X: Setoid)(n m: nat)(M: Matrix X n m),
+      transpose (transpose M) == M.
   Proof.
-    rewrite plus_n_O.
-    exact (transpose_aux m (Vector.rep (n:=q) [|])).
-  Defined.
-  Arguments transpose M p q m /.
+    unfold transpose; simpl.
+    reflexivity.
+  Qed.
+  
+  Definition rest (X: Type)(n m: nat)(M: Matrix X n (S m)): Matrix X n m :=
+    transpose (Vector.tail (transpose M)).
+  
 
-  Eval simpl in transpose [|[|1,2,3],[|4,5,6]].
-  Goal  transpose [|[|1,2,3],[|4,5,6]] = [|[|1, 4], [|2, 5], [|3, 6]].
+  (* add group *)
+  Definition add (X: Ring)(n m: nat) :=
+    @add_with _ _ _ (Ring.add X) n m.
+  Arguments add X n m _ _ /.
+
+  Program Instance add_is_binop (X: Ring)(n m: nat): isBinop (@add X n m).
+  Next Obligation.
+    intros M M' HeqM N N' HeqN; simpl in *; intros.
+    now rewrite HeqM, HeqN.
+  Qed.
+  Canonical Structure add_binop (X: Ring)(n m: nat) :=
+    Binop.make (add_is_binop X n m).
+
+  Definition zero (X: Ring)(n m: nat): Matrix X n m :=
+    (p;Hrow :-> (q;Hcolumn :-> Ring.z X)).
+
+  Program Instance add_is_monoid (X: Ring)(n m: nat):
+    isMonoid (@add_binop X n m) (@zero X n m).
+  Next Obligation.
+    intros M N K; simpl in *; intros.
+    now rewrite associative.
+  Qed.
+  Next Obligation.
+    split; intros M; simpl in *; intros.
+    - now rewrite left_identical.
+    - now rewrite right_identical.
+  Qed.
+  Canonical Structure add_monoid (X: Ring)(n m: nat) :=
+    Monoid.make (add_is_monoid X n m).
+  
+  Definition minus (X: Ring)(n m: nat)(M: Matrix X n m): Matrix X n m :=
+    (p;Hr :-> (q;Hc :-> - M _ Hr _ Hc))%rng.
+  Arguments minus X n m M /.
+
+  Program Instance minus_is_map (X: Ring)(n m: nat): isMap (@minus X n m).
+  Next Obligation.
+    intros M M' HeqM; simpl in *; intros.
+    now rewrite HeqM.
+  Qed.
+  Canonical Structure minus_map (X: Ring)(n m: nat) := Map.make (minus_is_map X n m).
+
+  Program Instance add_is_group (X: Ring)(n m: nat):
+    isGroup (@add_binop X n m) (@zero X n m) (@minus_map X n m).
+  Next Obligation.    
+    split; intros M; simpl; intros.
+    - now rewrite left_invertible.
+    - now rewrite right_invertible.
+  Qed.
+  Canonical Structure add_group (X: Ring)(n m: nat) :=
+    Group.make (add_is_group X n m).
+
+  (* add mul Ring *)
+  Definition mul_with (X Y Z W: Type)(add: Z -> W -> W)(mul: X -> Y -> Z)(e: W)(n m k: nat)(M: Matrix X n m)(N: Matrix Y m k): Matrix W n k :=
+    (p;Hrow :-> (q;Hcolumn :-> Vector.mul_with add mul e (M _ Hrow) (transpose N _ Hcolumn))).
+
+  Definition mul (X: Ring)(n m k: nat)(M: Matrix X n m)(N: Matrix X m k): Matrix X n k :=
+    (p;Hrow :-> (q;Hcolumn :-> Vector.mul (M _ Hrow) (transpose N _ Hcolumn))).
+  Arguments mul X n m k _ _ /.
+
+  Lemma mul_assoc:
+    forall (X: Ring)(n m k l: nat)(M: Matrix X n m)(N: Matrix X m k)(K: Matrix X k l),
+      mul M (mul N K) == mul (mul M N) K.
   Proof.
     simpl.
-(* 1 subgoal, subgoal 1 (ID 484) *)
+    intros X n m; revert n.
+    induction m; simpl.
+    - unfold Vector.mul; simpl.
+      intros _ k l _ _ K _ _.
+      induction k; simpl.
+      + reflexivity.
+      + intros.
+        rewrite Ring.mul_0_l, left_identical; simpl.
+        rewrite <- (IHk (Vector.tail K) _ Hc).
+        reflexivity.
+    - intros.
+      unfold Vector.mul; simpl.
+      rewrite (IHm _ _ _ (rest M) (Vector.tail N) K _ Hr _ Hc); simpl.
+      clear IHm.
+      generalize (@Vector.scalar_mul_l _ k ((M p Hr) 0%nat (PeanoNat.Nat.lt_0_succ m)) (N 0%nat (PeanoNat.Nat.lt_0_succ m)) (q0; (Hcolumn) :-> (K q0 Hcolumn) q Hc)).
+      unfold Vector.map; simpl.
+      intro H; rewrite H; clear H; simpl.
+      rewrite Vector.distributive_r; simpl.
+      unfold Vector.add, Vector.add_with, Vector.mul; simpl.
+      reflexivity.
+  Qed.
+
+  Program Instance mul_is_binop (X: Ring)(n: nat): isBinop (@mul X n n n).
+  Next Obligation.
+    intros M M' HeqM N N' HeqN; simpl in *; intros.
+    apply Vector.mul_proper.
+    - simpl; intros.
+      now apply HeqM.
+    - simpl; intros.
+      now apply HeqN.
+  Qed.
+  Canonical Structure mul_binop (X: Ring)(n: nat) :=
+    Binop.make (mul_is_binop X n).
   
-(*   ============================ *)
-(*    eq_rect_r (Matrix BinNums.Z 3) [|[|1, 4], [|2, 5], [|3, 6]] (plus_n_O 2) = *)
-(*    [|[|1, 4], [|2, 5], [|3, 6]] *)
+  Definition unit (X: Ring)(n: nat): Matrix X n n :=
+    (p;Hrow :-> (q;Hcolumn :->
+                           if Nat.eqb p q then Ring.e X else Ring.z X)).
 
-(* (dependent evars:) *)
-  Admitted.
+  Lemma unit_identical_l:
+    forall (X: Ring)(n m: nat)(M: Matrix X n m),
+      mul (@unit _ n) M == M.
+  Proof.
+    simpl.
+    induction n as [| n].
+    - simpl.
+      intros.
+      unfold lt in Hr.
+      inversion Hr.
+    - simpl.
+      destruct p; simpl.
+      + intros.
+        unfold Vector.mul; simpl.
+        rewrite left_identical.
 
+        assert (H: (PeanoNat.Nat.lt_0_succ n) = Hr).
+        {
+          now apply proof_irrelevance.
+        }
+        rewrite H; clear H.
+
+        assert (H: Vector.mul_with (Ring.add X) (Ring.mul X) 0%rng (p; (_) :-> 0%rng) (p; (H) :-> (M (S p) (Lt.lt_n_S p n H)) q Hc) == 0%rng).
+        {
+          clear IHn.
+          induction n; simpl.
+          - reflexivity.
+          - rewrite Ring.mul_0_l, left_identical.
+            now rewrite (IHn (Vector.tail M) (PeanoNat.Nat.lt_0_succ n)).
+        }
+        rewrite H; clear H.
+        now rewrite right_identical.
+      + intros.
+        unfold Vector.mul; simpl.
+        generalize (IHn m (Vector.tail M) p (Lt.lt_S_n _ _ Hr) q Hc).
+        intros H; rewrite H; clear H.
+        rewrite Ring.mul_0_l, left_identical; simpl.
+        assert (H: (Lt.lt_n_S p n (Lt.lt_S_n p n Hr)) = Hr).
+        {
+          now apply proof_irrelevance.
+        }
+        now rewrite H.
+  Qed.
+
+  Lemma unit_identical_r:
+    forall (X: Ring)(n m: nat)(M: Matrix X n m),
+      mul M (@unit _ m) == M.
+  Proof.
+    simpl.
+    intros X n m M p Hr q Hc.
+    revert m n M q Hc p Hr.
+    induction m as [| m]; simpl.
+    - intros; inversion Hc.
+    - destruct q; simpl.
+      + intros.
+        unfold Vector.mul; simpl.
+        rewrite right_identical.
+        assert (H: (Vector.mul_with (Ring.add X) (Ring.mul X) 0
+                                    (p0; (H) :-> (M p Hr) (S p0) (Lt.lt_n_S p0 m H)) 
+                                    (p0; (_) :-> 0) == 0)%rng).
+        {
+          clear IHm.
+          induction m as [| m]; simpl.
+          - reflexivity.
+          - rewrite Ring.mul_0_r, left_identical; simpl.
+            now rewrite (IHm (rest M) (PeanoNat.Nat.lt_0_succ m)).
+        }
+        rewrite H; clear H.
+        rewrite right_identical.
+        assert (H: PeanoNat.Nat.lt_0_succ m = Hc).
+        {
+          now apply proof_irrelevance.
+        }
+        now rewrite H.
+      + intros.
+        unfold Vector.mul; simpl.
+        rewrite Ring.mul_0_r, left_identical.
+        rewrite (IHm _ (rest M) _ (Lt.lt_S_n _ _ Hc) _ Hr); simpl.
+        assert (H: (Lt.lt_n_S q m (Lt.lt_S_n q m Hc)) = Hc).
+        {
+          now apply proof_irrelevance.
+        }
+        now rewrite H.
+  Qed.
+
+  Program Instance mul_is_monoid (X: Ring)(n: nat):
+    isMonoid (@mul_binop X n) (@unit X n).
+  Next Obligation.
+    intros M N K; simpl; intros.
+    apply mul_assoc.
+  Qed.
+  Next Obligation.
+    split; intros M; simpl; intros.
+    - now apply unit_identical_l.
+    - now apply unit_identical_r.
+  Qed.
+  Canonical Structure mul_monoid (X: Ring)(n: nat) :=
+    Monoid.make (mul_is_monoid X n).
+
+  Program Instance is_rng (X: Ring)(n: nat):
+    isRing (@add_binop X n n) (@zero X n n) (@minus_map X n n)
+           (@mul_binop X n) (@unit X n).
+  Next Obligation.
+    intros M N; simpl; intros.
+    now rewrite commute.
+  Qed.
+  Next Obligation.
+    split; simpl; intros.
+    - now rewrite Vector.distributive_l.
+    - now rewrite Vector.distributive_r.
+  Qed.
+  Canonical Structure rng (X: Ring)(n: nat) :=
+    Ring.make (@is_rng X n).
 End Matrix.
 Export Matrix.Ex.
 
-
-(** * 例 **)
-Require Import COC.Setoid.
-Require Import COC.Algebra.
-
-Open Scope vector_scope.
-
-Definition vadd (M: Monoid) := Vector.add_with (Monoid.op M).
-Arguments vadd M n v1 v2 /.
-Definition vmul (R: Ring) := Vector.mul_with (Ring.add R) (Ring.mul R) (Ring.z R).
-Arguments vmul R n v1 v2 /.
-
-Eval simpl in vadd [|1,2,3] [|4,5,6].
-     (* = [|5, 7, 9] *)
-     (* : Vector Zplus_monoid 3 *)
-Eval simpl in vadd (M:=Zmult_monoid) [|1,2,3] [|4,5,6].
-     (* = [|4, 10, 18] *)
-     (* : Vector Zmult_monoid 3 *)
-Eval simpl in vmul [|1,2,3] [|4,5,6].
-     (* = 32 *)
-     (* : Z_ring *)
-
-Definition madd (M: Monoid) := Matrix.add_with (Monoid.op M).
-Arguments madd M p q m1 m2 /.
-
-Eval simpl in madd
-                [|[|1,2,3],
-                  [|4,5,6]]
-                [|[|1,2,3],
-                  [|4,5,6]].
-     (* = [|[|2, 4, 6], [|8, 10, 12]] *)
-     (* : Matrix Zplus_monoid 2 3 *)
+Require Import COC.Module.
+(** * 行列と加群
+M(m,n) は (M(m),M(n))-双加群
+ **)
+Section MatrixModule.
+  Context (X: Ring)(m n: nat).
+  Program Instance Matrix_is_abelian :
+    isAbelian (Matrix.add_group X m n).
+  Next Obligation.
+    intros M N; simpl; intros.
+    now rewrite commute.
+  Qed.
+  Canonical Structure Matrix_abelian := Abelian.make Matrix_is_abelian.
 
 
+  Let lsm (M: Matrix X m m)(N: Matrix X m n): Matrix X m n := Matrix.mul M N.
+  Let rsm (N: Matrix X m n)(M: Matrix X m m): Matrix X m n := Matrix.mul M N.
+
+  (* W.I.P *)
+  Program Instance RM_is_lmod: isLMod (A:=Matrix.rng X m)(M:=Matrix_abelian) lsm.
+  Program Instance RM_is_rmod: isRMod (A:=Matrix.rng X m)(M:=Matrix_abelian) rsm.
+End MatrixModule.
