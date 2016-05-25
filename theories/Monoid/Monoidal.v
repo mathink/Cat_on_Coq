@@ -3,7 +3,7 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Structure.
+Require Import COC.Construction.
 
 Notation bifmap F p := (fmap F (X:=(_,_))(Y:=(_,_)) p) (only parsing).
 Notation "x '[Bi' F ] y" := (fmap F (X:=(_,_))(Y:=(_,_)) (x,y)) (at level 60, no associativity, format "x  [Bi  F  ]  y").

@@ -5,7 +5,7 @@ Set Primitive Projections.
 Set Universe Polymorphism.
 
 Require Import COC.Category.
-Require Import COC.Structure.Cat.
+Require Import COC.Construction.Cat.
 
 Module Hcomp.
   (* 

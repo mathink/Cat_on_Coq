@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
+<h1 class="libtitle">Library COC.Constitution.Limit</h1>
+
+<div class="code">
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Category.html#"><span class="id" title="library">COC.Category</span></a>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="Cone"><span class="id" title="module">Cone</span></a>.<br/>
+</div>
+
+<div class="doc">
+<a name="lab44"></a><h2 class="section">底 J への錐</h2>
+ J :: index category, D :: diagram in C 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="Cone.spec"><span class="id" title="record">spec</span></a> (<span class="id" title="var">J</span> <span class="id" title="var">C</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>)(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a> <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a>)(<span class="id" title="var">apex</span>: <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a>)(<span class="id" title="var">gen</span>: <span class="id" title="keyword">forall</span> <span class="id" title="var">i</span>: <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a>, <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Constitution.Limit.html#apex"><span class="id" title="variable">apex</span></a> (<a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a> <a class="idref" href="COC.Constitution.Limit.html#i"><span class="id" title="variable">i</span></a>)) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Cone.proof"><span class="id" title="constructor">proof</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Cone.commute"><span class="id" title="projection">commute</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<span class="id" title="var">i</span> <span class="id" title="var">j</span>: <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a>)(<span class="id" title="var">u</span>: <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a> <a class="idref" href="COC.Constitution.Limit.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="COC.Constitution.Limit.html#j"><span class="id" title="variable">j</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Category.Functor.html#Functor.Ex.fmap"><span class="id" title="definition">fmap</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a> <a class="idref" href="COC.Constitution.Limit.html#u"><span class="id" title="variable">u</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Constitution.Limit.html#gen"><span class="id" title="variable">gen</span></a> <a class="idref" href="COC.Constitution.Limit.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Constitution.Limit.html#gen"><span class="id" title="variable">gen</span></a> <a class="idref" href="COC.Constitution.Limit.html#j"><span class="id" title="variable">j</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="Cone.type"><span class="id" title="record">type</span></a> (<span class="id" title="var">J</span> <span class="id" title="var">C</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>)(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a> <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Cone.make"><span class="id" title="constructor">make</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Cone.apex"><span class="id" title="projection">apex</span></a>: <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Cone.gen"><span class="id" title="projection">gen</span></a>: <span class="id" title="keyword">forall</span> <span class="id" title="var">i</span>: <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a>, <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Constitution.Limit.html#apex"><span class="id" title="method">apex</span></a> (<a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a> <a class="idref" href="COC.Constitution.Limit.html#i"><span class="id" title="variable">i</span></a>);<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Cone.prf"><span class="id" title="projection">prf</span></a>: <a class="idref" href="COC.Constitution.Limit.html#Cone.spec"><span class="id" title="class">spec</span></a> (@<a class="idref" href="COC.Constitution.Limit.html#gen"><span class="id" title="method">gen</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="Cone.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Cone.Ex.isCone"><span class="id" title="abbreviation">isCone</span></a> := <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.spec"><span class="id" title="class">spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> := <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.type"><span class="id" title="record">type</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.apex"><span class="id" title="projection">apex</span></a>: <span class="id" title="var">Cone</span> &gt;-&gt; <span class="id" title="var">Category.obj</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.prf"><span class="id" title="projection">prf</span></a>: <span class="id" title="var">Cone</span> &gt;-&gt; <span class="id" title="var">isCone</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="COC.Constitution.Limit.html#Cone"><span class="id" title="module">Cone</span></a>.<br/>
+<span class="id" title="keyword">Export</span> <span class="id" title="var">Cone.Ex</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="ConeMap"><span class="id" title="module">ConeMap</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="ConeMap.spec"><span class="id" title="record">spec</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">c</span> <span class="id" title="var">d</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="ConeMap.commute"><span class="id" title="projection">commute</span></a>:&gt; <span class="id" title="keyword">forall</span> <span class="id" title="var">i</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Constitution.Limit.html#Cone.gen"><span class="id" title="projection">Cone.gen</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a> <a class="idref" href="COC.Constitution.Limit.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Constitution.Limit.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Constitution.Limit.html#Cone.gen"><span class="id" title="projection">Cone.gen</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#i"><span class="id" title="variable">i</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="ConeMap.type"><span class="id" title="record">type</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">c</span> <span class="id" title="var">d</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="ConeMap.make"><span class="id" title="constructor">make</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ConeMap.map"><span class="id" title="projection">map</span></a>: <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ConeMap.prf"><span class="id" title="projection">prf</span></a>: <a class="idref" href="COC.Constitution.Limit.html#ConeMap.spec"><span class="id" title="class">spec</span></a> <a class="idref" href="COC.Constitution.Limit.html#map"><span class="id" title="method">map</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="ConeMap.build"><span class="id" title="abbreviation">build</span></a> <span class="id" title="var">map</span> := (@<a class="idref" href="COC.Constitution.Limit.html#ConeMap.make"><span class="id" title="constructor">make</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">map</span> <span class="id" title="var">_</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="ConeMap.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="ConeMap.Ex.isConeMap"><span class="id" title="abbreviation">isConeMap</span></a> := <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.spec"><span class="id" title="class">spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> := <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.type"><span class="id" title="record">type</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.map"><span class="id" title="projection">map</span></a>: <span class="id" title="var">ConeMap</span> &gt;-&gt; <span class="id" title="var">Setoid.carrier</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.prf"><span class="id" title="projection">prf</span></a>: <span class="id" title="var">ConeMap</span> &gt;-&gt; <span class="id" title="var">isConeMap</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Import</span> <span class="id" title="var">Ex</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="ConeMap.equal"><span class="id" title="definition">equal</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">c</span> <span class="id" title="var">d</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>)(<span class="id" title="var">f</span> <span class="id" title="var">g</span>: <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a>) := <a class="idref" href="COC.Constitution.Limit.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Constitution.Limit.html#g"><span class="id" title="variable">g</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Instance</span> <a name="ConeMap.equiv"><span class="id" title="instance">equiv</span></a>`(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">c</span> <span class="id" title="var">d</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>): <a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Classes.RelationClasses.html#Equivalence"><span class="id" title="class">Equivalence</span></a> (@<a class="idref" href="COC.Constitution.Limit.html#ConeMap.equal"><span class="id" title="definition">equal</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="ConeMap.setoid"><span class="id" title="definition">setoid</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">c</span> <span class="id" title="var">d</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>):= <a class="idref" href="COC.Setoid.Core.html#Setoid.make"><span class="id" title="constructor">Setoid.make</span></a> (<a class="idref" href="COC.Constitution.Limit.html#ConeMap.equiv"><span class="id" title="instance">equiv</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="ConeMap.compose"><span class="id" title="definition">compose</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">e</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a>)(<span class="id" title="var">g</span>: <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#d"><span class="id" title="variable">d</span></a> <a class="idref" href="COC.Constitution.Limit.html#e"><span class="id" title="variable">e</span></a>): <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#e"><span class="id" title="variable">e</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Constitution.Limit.html#ConeMap.build"><span class="id" title="abbreviation">build</span></a> (<a class="idref" href="COC.Constitution.Limit.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Category.Core.html#ec135f28f491d2cc9fbc2aee6ce82a09"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Constitution.Limit.html#f"><span class="id" title="variable">f</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="ConeMap.ident"><span class="id" title="definition">ident</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">c</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>): <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> := <a class="idref" href="COC.Constitution.Limit.html#ConeMap.build"><span class="id" title="abbreviation">build</span></a> (<a class="idref" href="COC.Category.Core.html#94b4d35155ed2065b21540ab41688c48"><span class="id" title="notation">Id</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="COC.Constitution.Limit.html#ConeMap"><span class="id" title="module">ConeMap</span></a>.<br/>
+<span class="id" title="keyword">Export</span> <span class="id" title="var">ConeMap.Ex</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Program Definition</span> <a name="Cones"><span class="id" title="definition">Cones</span></a> (<span class="id" title="var">J</span> <span class="id" title="var">C</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>)(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a> <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a>) :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Core.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.Constitution.Limit.html#ConeMap.setoid"><span class="id" title="definition">ConeMap.setoid</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.Constitution.Limit.html#ConeMap.compose"><span class="id" title="definition">ConeMap.compose</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.Constitution.Limit.html#ConeMap.ident"><span class="id" title="definition">ConeMap.ident</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="Limit"><span class="id" title="module">Limit</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="Limit.spec"><span class="id" title="record">spec</span></a> (<span class="id" title="var">J</span> <span class="id" title="var">C</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>)(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <a class="idref" href="COC.Constitution.Limit.html#J"><span class="id" title="variable">J</span></a> <a class="idref" href="COC.Constitution.Limit.html#C"><span class="id" title="variable">C</span></a>)(<span class="id" title="var">limD</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>)(<span class="id" title="var">u</span>: <span class="id" title="keyword">forall</span> <span class="id" title="var">c</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>, <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#limD"><span class="id" title="variable">limD</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Limit.proof"><span class="id" title="constructor">proof</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Limit.ump"><span class="id" title="projection">ump</span></a>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">c</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#limD"><span class="id" title="variable">limD</span></a>), <a class="idref" href="COC.Constitution.Limit.html#u"><span class="id" title="variable">u</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Setoid.Core.html#d484e2814ec0d62284f25bb4d00ee201"><span class="id" title="notation">==</span></a> <a class="idref" href="COC.Constitution.Limit.html#f"><span class="id" title="variable">f</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="Limit.type"><span class="id" title="record">type</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Limit.make"><span class="id" title="constructor">make</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Limit.obj"><span class="id" title="projection">obj</span></a>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Limit.univ"><span class="id" title="projection">univ</span></a>: <span class="id" title="keyword">forall</span> <span class="id" title="var">c</span>: <a class="idref" href="COC.Constitution.Limit.html#Cone.Ex.Cone"><span class="id" title="abbreviation">Cone</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>, <a class="idref" href="COC.Constitution.Limit.html#ConeMap.Ex.ConeMap"><span class="id" title="abbreviation">ConeMap</span></a> <a class="idref" href="COC.Constitution.Limit.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="COC.Constitution.Limit.html#obj"><span class="id" title="method">obj</span></a>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="Limit.prf"><span class="id" title="projection">prf</span></a>: <a class="idref" href="COC.Constitution.Limit.html#Limit.spec"><span class="id" title="class">spec</span></a> (@<a class="idref" href="COC.Constitution.Limit.html#univ"><span class="id" title="method">univ</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="Limit.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Limit.Ex.isLimit"><span class="id" title="abbreviation">isLimit</span></a> := <a class="idref" href="COC.Constitution.Limit.html#Limit.Ex.spec"><span class="id" title="class">spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="Limit.Ex.Limit"><span class="id" title="abbreviation">Limit</span></a> := <a class="idref" href="COC.Constitution.Limit.html#Limit.Ex.type"><span class="id" title="record">type</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Constitution.Limit.html#Limit.Ex.obj"><span class="id" title="projection">obj</span></a>: <span class="id" title="var">Limit</span> &gt;-&gt; <span class="id" title="var">Cone</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Constitution.Limit.html#Limit.Ex.prf"><span class="id" title="projection">prf</span></a>: <span class="id" title="var">Limit</span> &gt;-&gt; <span class="id" title="var">isLimit</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="044e2a0310024b6148ade00ddbc20671"><span class="id" title="notation">&quot;</span></a>'lim&lt;-' D " :=  (<a class="idref" href="COC.Constitution.Limit.html#Limit.Ex.Limit"><span class="id" title="abbreviation">Limit</span></a> <span class="id" title="var">D</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 50, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>, <span class="id" title="var">format</span> "lim&lt;- D").<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="COC.Constitution.Limit.html#Limit.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="COC.Constitution.Limit.html#Limit"><span class="id" title="module">Limit</span></a>.<br/>
+<span class="id" title="keyword">Export</span> <span class="id" title="var">Limit.Ex</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Program Instance</span> <a name="Cones'_terminal_is_limit"><span class="id" title="instance">Cones'_terminal_is_limit</span></a> `(<span class="id" title="var">D</span>: <a class="idref" href="COC.Category.Functor.html#Functor.Ex.Functor"><span class="id" title="abbreviation">Functor</span></a> <span class="id" title="var">J</span> <span class="id" title="var">C</span>)(<span class="id" title="var">t</span>: <a class="idref" href="COC.Category.Object.html#Terminal.Ex.Terminal"><span class="id" title="abbreviation">Terminal</span></a> (<a class="idref" href="COC.Constitution.Limit.html#Cones"><span class="id" title="definition">Cones</span></a> <a class="idref" href="COC.Constitution.Limit.html#D"><span class="id" title="variable">D</span></a>))<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Constitution.Limit.html#Limit.Ex.isLimit"><span class="id" title="abbreviation">isLimit</span></a> (<a class="idref" href="COC.Category.Object.html#Terminal.univ"><span class="id" title="projection">Terminal.univ</span></a> <a class="idref" href="COC.Constitution.Limit.html#t"><span class="id" title="variable">t</span></a>).<br/>
+
+<br/>
+</div>
+</div>
+</div
+</body>
+</html>

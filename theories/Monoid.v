@@ -1,3 +1,3 @@
-Require Export COC.Structure.
+Require Export COC.Construction.
 
 Require Export COC.Monoid.Monoidal.

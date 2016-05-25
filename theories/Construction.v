@@ -1,7 +1,8 @@
-Require Export COC.Structure.
+Require Export COC.Category.
 
-Require Export COC.Construction.Universal.
-Require Export COC.Construction.Yoneda.
-Require Export COC.Construction.Equalizer.
-Require Export COC.Construction.Product.
-Require Export COC.Construction.Limit.
+Require Export COC.Construction.Cat.
+Require Export COC.Construction.Hcomp.
+Require Export COC.Construction.Hom.
+Require Export COC.Construction.Fun.
+Require Export COC.Construction.Prod.
+Require Export COC.Construction.Comma.

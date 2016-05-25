@@ -6,7 +6,7 @@ Set Universe Polymorphism.
 Generalizable All Variables.
 
 Require Import COC.Category.
-Require Import COC.Construction.Equalizer.
+Require Import COC.Constitution.Equalizer.
 
 (* Module Kernel. *)
   

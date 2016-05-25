@@ -82,7 +82,7 @@ Export UniversalArrow.From.Ex.
 Module UATo := UniversalArrow.To.
 Module UAFrom := UniversalArrow.From.
 
-Require Import COC.Structure.
+Require Import COC.Construction.
 
 (* Program Definition CommaInitUA (C D: Category)(S: Functor D C)(c: C)(i: Initial (CommaTo c S)): [UA c :=> S] := *)
 (*   let r := (Comma.cod (@Initial.obj _ i)) in *)

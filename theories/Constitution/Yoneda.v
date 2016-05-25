@@ -4,8 +4,8 @@ Set Contextual Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Structure.
-Require Import COC.Construction.Universal.
+Require Import COC.Construction.
+Require Import Universal.
 
 Program Definition UATo_map
         (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r))(d: D)
