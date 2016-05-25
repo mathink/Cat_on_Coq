@@ -9,10 +9,9 @@ Set Contextual Implicit.
 Generalizable All Variables.
 
 (** * 長さ付きリスト **)
-(** * 例 **)
 Require Import ProofIrrelevance.
-Require Import COC.Setoid.
-Require Import COC.Algebra.
+Require Import Arith.
+From COC Require Import Setoid AlgebraicStructures.
 
 Module Vector.
   Structure type (X: Type)(n: nat) :=
@@ -52,9 +51,10 @@ Module Vector.
     - now apply Heq23.
   Qed.
 
+  Open Scope field_scope.
   Definition add_with (X Y Z: Type)(op: X -> Y -> Z)(n: nat)(v1: Vector X n)(v2: Vector Y n): Vector Z n :=
     (p;H :-> op (v1 _ H) (v2 _ H)).
-  Definition add (R: Ring) := @add_with _ _ _ (Ring.add R).
+  Definition add (K: Field) := @add_with _ _ _ (Field.add K).
   
   Definition tail (X: Type)(n: nat)(v: Vector X (S n)): Vector X n :=
     (p;H :-> v _ (Lt.lt_n_S p n H)).
@@ -69,11 +69,11 @@ Module Vector.
                     (mul_with add mul e (tail v1) (tail v2)))
     end.
 
-  Definition mul (R: Ring)(n: nat)(v1 v2: Vector R n): R :=
-    mul_with (Ring.add R) (Ring.mul R) (Ring.z R) v1 v2.
+  Definition mul (K: Field)(n: nat)(v1 v2: Vector K n): K :=
+    mul_with (Field.add K) (Field.mul K) (Field.z K) v1 v2.
 
-  Program Instance mul_proper (R: Ring)(n: nat):
-    Proper ((==) ==> (==) ==> (==)) (@mul R n).
+  Program Instance mul_proper (K: Field)(n: nat):
+    Proper ((==) ==> (==) ==> (==)) (@mul K n).
   Next Obligation.
     intros v v' Heqv u u' Hequ; simpl in *; intros.
     induction n; simpl.
@@ -89,12 +89,12 @@ Module Vector.
     (p;H :-> f (v _ H)).
   
   Lemma scalar_mul_l:
-    forall (R: Ring)(n: nat)(x: R)(v u: Vector R n),
-      (x * mul v u)%rng == mul (map (`(x * y))%rng v) u.
+    forall (K: Field)(n: nat)(x: K)(v u: Vector K n),
+      (x * mul v u) == mul (map (`(x * y)) v) u.
   Proof.
     induction n; simpl.
     - unfold mul; simpl.
-      now intros; rewrite Ring.mul_0_r.
+      now intros; rewrite (Field.mul_0_r x).
     - intros.
       unfold mul; simpl.
       rewrite !distributive_l.
@@ -105,8 +105,8 @@ Module Vector.
   Qed.
       
   Lemma distributive_l:
-    forall (R: Ring)(n: nat)(v u w: Vector R n),
-      (mul v u + mul v w)%rng == mul v (add u w).
+    forall (K: Field)(n: nat)(v u w: Vector K n),
+      (mul v u + mul v w) == mul v (add u w).
   Proof.
     induction n; simpl.
     - unfold add, mul; simpl.
@@ -116,17 +116,17 @@ Module Vector.
       unfold add, mul; simpl.
       rewrite !distributive_l.
       intros H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
       rewrite <-associative.
       rewrite H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
       rewrite !associative.
       reflexivity.
   Qed.
   
   Lemma distributive_r:
-    forall (R: Ring)(n: nat)(v u w: Vector R n),
-      (mul v w + mul u w)%rng == mul (add v u) w.
+    forall (K: Field)(n: nat)(v u w: Vector K n),
+      (mul v w + mul u w) == mul (add v u) w.
   Proof.
     induction n; simpl.
     - unfold add, mul; simpl.
@@ -136,10 +136,10 @@ Module Vector.
       unfold add, mul; simpl.
       rewrite !distributive_r.
       intros H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
       rewrite <-associative.
       rewrite H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group R))); simpl.
+      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
       rewrite !associative.
       reflexivity.
   Qed.
@@ -151,7 +151,7 @@ End Vector.
 Export Vector.Ex.
 Export Vector.Ex2.
 
-
+(** * 行列 **)
 Module Matrix.
 
   Definition type (X: Type)(n m: nat) :=
@@ -163,6 +163,7 @@ Module Matrix.
 
   Import Ex.
   Open Scope vector_scope.
+  Open Scope field_scope.
 
   Definition equal (X: Setoid)(n m: nat): relation (Matrix X n m) :=
     fun M N =>
@@ -187,7 +188,8 @@ Module Matrix.
   Qed.
 
   Canonical Structure setoid (X: Setoid)(n m: nat) := Setoid.make (@equiv X n m).
-  
+
+  (** ** 体上の行列は群や環を構成する **)
   Definition add_with (X Y Z: Type)(op: X -> Y -> Z)(n m: nat)(M: Matrix X n m)(N: Matrix Y n m): Matrix Z n m :=
     (p;Hrow :-> (q;Hcolumn :-> op (M _ Hrow _ Hcolumn) (N _ Hrow _ Hcolumn))).
 
@@ -261,12 +263,12 @@ Module Matrix.
   Definition mul_with (X Y Z W: Type)(add: Z -> W -> W)(mul: X -> Y -> Z)(e: W)(n m k: nat)(M: Matrix X n m)(N: Matrix Y m k): Matrix W n k :=
     (p;Hrow :-> (q;Hcolumn :-> Vector.mul_with add mul e (M _ Hrow) (transpose N _ Hcolumn))).
 
-  Definition mul (X: Ring)(n m k: nat)(M: Matrix X n m)(N: Matrix X m k): Matrix X n k :=
-    (p;Hrow :-> (q;Hcolumn :-> Vector.mul (M _ Hrow) (transpose N _ Hcolumn))).
+  Definition mul (X: Field)(n m k: nat)(M: Matrix X n m)(N: Matrix X m k): Matrix X n k :=
+    (p;Hrow :-> (q;Hcolumn :-> (M _ Hrow * transpose N _ Hcolumn)%vector)).
   Arguments mul X n m k _ _ /.
 
   Lemma mul_assoc:
-    forall (X: Ring)(n m k l: nat)(M: Matrix X n m)(N: Matrix X m k)(K: Matrix X k l),
+    forall (X: Field)(n m k l: nat)(M: Matrix X n m)(N: Matrix X m k)(K: Matrix X k l),
       mul M (mul N K) == mul (mul M N) K.
   Proof.
     simpl.
@@ -277,7 +279,7 @@ Module Matrix.
       induction k; simpl.
       + reflexivity.
       + intros.
-        rewrite Ring.mul_0_l, left_identical; simpl.
+        rewrite Field.mul_0_l, left_identical; simpl.
         rewrite <- (IHk (Vector.tail K) _ Hc).
         reflexivity.
     - intros.
@@ -292,7 +294,7 @@ Module Matrix.
       reflexivity.
   Qed.
 
-  Program Instance mul_is_binop (X: Ring)(n: nat): isBinop (@mul X n n n).
+  Program Instance mul_is_binop (X: Field)(n: nat): isBinop (@mul X n n n).
   Next Obligation.
     intros M M' HeqM N N' HeqN; simpl in *; intros.
     apply Vector.mul_proper.
@@ -301,15 +303,15 @@ Module Matrix.
     - simpl; intros.
       now apply HeqN.
   Qed.
-  Canonical Structure mul_binop (X: Ring)(n: nat) :=
+  Canonical Structure mul_binop (X: Field)(n: nat) :=
     Binop.make (mul_is_binop X n).
   
-  Definition unit (X: Ring)(n: nat): Matrix X n n :=
+  Definition unit (X: Field)(n: nat): Matrix X n n :=
     (p;Hrow :-> (q;Hcolumn :->
                            if Nat.eqb p q then Ring.e X else Ring.z X)).
 
   Lemma unit_identical_l:
-    forall (X: Ring)(n m: nat)(M: Matrix X n m),
+    forall (X: Field)(n m: nat)(M: Matrix X n m),
       mul (@unit _ n) M == M.
   Proof.
     simpl.
@@ -330,12 +332,12 @@ Module Matrix.
         }
         rewrite H; clear H.
 
-        assert (H: Vector.mul_with (Ring.add X) (Ring.mul X) 0%rng (p; (_) :-> 0%rng) (p; (H) :-> (M (S p) (Lt.lt_n_S p n H)) q Hc) == 0%rng).
+        assert (H: Vector.mul_with (Field.add X) (Field.mul X) 0 (p; (_) :-> 0) (p; (H) :-> (M (S p) (Lt.lt_n_S p n H)) q Hc) == 0).
         {
           clear IHn.
           induction n; simpl.
           - reflexivity.
-          - rewrite Ring.mul_0_l, left_identical.
+          - rewrite Field.mul_0_l, left_identical.
             now rewrite (IHn (Vector.tail M) (PeanoNat.Nat.lt_0_succ n)).
         }
         rewrite H; clear H.
@@ -344,7 +346,7 @@ Module Matrix.
         unfold Vector.mul; simpl.
         generalize (IHn m (Vector.tail M) p (Lt.lt_S_n _ _ Hr) q Hc).
         intros H; rewrite H; clear H.
-        rewrite Ring.mul_0_l, left_identical; simpl.
+        rewrite Field.mul_0_l, left_identical; simpl.
         assert (H: (Lt.lt_n_S p n (Lt.lt_S_n p n Hr)) = Hr).
         {
           now apply proof_irrelevance.
@@ -353,7 +355,7 @@ Module Matrix.
   Qed.
 
   Lemma unit_identical_r:
-    forall (X: Ring)(n m: nat)(M: Matrix X n m),
+    forall (X: Field)(n m: nat)(M: Matrix X n m),
       mul M (@unit _ m) == M.
   Proof.
     simpl.
@@ -365,14 +367,14 @@ Module Matrix.
       + intros.
         unfold Vector.mul; simpl.
         rewrite right_identical.
-        assert (H: (Vector.mul_with (Ring.add X) (Ring.mul X) 0
+        assert (H: (Vector.mul_with (Field.add X) (Field.mul X) 0
                                     (p0; (H) :-> (M p Hr) (S p0) (Lt.lt_n_S p0 m H)) 
-                                    (p0; (_) :-> 0) == 0)%rng).
+                                    (p0; (_) :-> 0) == 0)).
         {
           clear IHm.
           induction m as [| m]; simpl.
           - reflexivity.
-          - rewrite Ring.mul_0_r, left_identical; simpl.
+          - rewrite Field.mul_0_r, left_identical; simpl.
             now rewrite (IHm (rest M) (PeanoNat.Nat.lt_0_succ m)).
         }
         rewrite H; clear H.
@@ -384,7 +386,7 @@ Module Matrix.
         now rewrite H.
       + intros.
         unfold Vector.mul; simpl.
-        rewrite Ring.mul_0_r, left_identical.
+        rewrite Field.mul_0_r, left_identical.
         rewrite (IHm _ (rest M) _ (Lt.lt_S_n _ _ Hc) _ Hr); simpl.
         assert (H: (Lt.lt_n_S q m (Lt.lt_S_n q m Hc)) = Hc).
         {
@@ -393,7 +395,7 @@ Module Matrix.
         now rewrite H.
   Qed.
 
-  Program Instance mul_is_monoid (X: Ring)(n: nat):
+  Program Instance mul_is_monoid (X: Field)(n: nat):
     isMonoid (@mul_binop X n) (@unit X n).
   Next Obligation.
     intros M N K; simpl; intros.
@@ -404,12 +406,12 @@ Module Matrix.
     - now apply unit_identical_l.
     - now apply unit_identical_r.
   Qed.
-  Canonical Structure mul_monoid (X: Ring)(n: nat) :=
+  Canonical Structure mul_monoid (X: Field)(n: nat) :=
     Monoid.make (mul_is_monoid X n).
 
-  Program Instance is_rng (X: Ring)(n: nat):
+  Program Instance is_rng (X: Field)(n: nat):
     isRing (@add_binop X n n) (@zero X n n) (@minus_map X n n)
-           (@mul_binop X n) (@unit X n).
+            (@mul_binop X n) (@unit X n).
   Next Obligation.
     intros M N; simpl; intros.
     now rewrite commute.
@@ -419,17 +421,16 @@ Module Matrix.
     - now rewrite Vector.distributive_l.
     - now rewrite Vector.distributive_r.
   Qed.
-  Canonical Structure rng (X: Ring)(n: nat) :=
+  Canonical Structure rng (X: Field)(n: nat) :=
     Ring.make (@is_rng X n).
 End Matrix.
 Export Matrix.Ex.
 
-Require Import COC.Module.
 (** * 行列と加群
 M(m,n) は (M(m),M(n))-双加群
  **)
 Section MatrixModule.
-  Context (X: Ring)(m n: nat).
+  Context (X: Field)(m n: nat).
   Program Instance Matrix_is_abelian :
     isAbelian (Matrix.add_group X m n).
   Next Obligation.
@@ -440,9 +441,60 @@ Section MatrixModule.
 
 
   Let lsm (M: Matrix X m m)(N: Matrix X m n): Matrix X m n := Matrix.mul M N.
-  Let rsm (N: Matrix X m n)(M: Matrix X m m): Matrix X m n := Matrix.mul M N.
+  Let rsm (N: Matrix X m n)(M: Matrix X n n): Matrix X m n := Matrix.mul N M.
 
   (* W.I.P *)
-  Program Instance RM_is_lmod: isLMod (A:=Matrix.rng X m)(M:=Matrix_abelian) lsm.
-  Program Instance RM_is_rmod: isRMod (A:=Matrix.rng X m)(M:=Matrix_abelian) rsm.
+  Program Instance MatrixOnField_is_lmod: isLMod (A:=Matrix.rng X m)(M:=Matrix_abelian) lsm.
+  Next Obligation.
+    intros M M' HeqM N N' HeqN; simpl; intros.
+    simpl in HeqM, HeqN.
+    apply Vector.mul_proper; simpl; intros.
+    - now apply HeqM.
+    - now apply HeqN.
+  Qed.
+  Next Obligation.
+    rewrite Vector.distributive_l; simpl.
+    apply Vector.mul_proper; simpl; intros; reflexivity.
+  Qed.
+  Next Obligation.
+    rewrite Vector.distributive_r; simpl.
+    apply Vector.mul_proper; simpl; intros; reflexivity.
+  Qed.
+  Next Obligation.
+    symmetry.
+    now apply Matrix.mul_assoc.
+  Qed.
+  Next Obligation.
+    now apply Matrix.unit_identical_l.
+  Qed.
+
+  Program Instance MatrixOnField_is_rmod: isRMod (A:=Matrix.rng X n)(M:=Matrix_abelian) (rsm).
+  Next Obligation.
+    intros M M' HeqM N N' HeqN; simpl; intros.
+    simpl in HeqM, HeqN.
+    apply Vector.mul_proper; simpl; intros.
+    - now apply HeqM.
+    - now apply HeqN.
+  Qed.
+  Next Obligation.
+    rewrite Vector.distributive_r; simpl.
+    apply Vector.mul_proper; simpl; intros; reflexivity.
+  Qed.
+  Next Obligation.
+    rewrite Vector.distributive_l; simpl.
+    apply Vector.mul_proper; simpl; intros; reflexivity.
+  Qed.
+  Next Obligation.
+    now apply Matrix.mul_assoc.
+  Qed.
+  Next Obligation.
+    now apply Matrix.unit_identical_r.
+  Qed.
+
+  Program Instance MatrixOnField_is_bimod: isBiMod (A:=Matrix.rng X m) (B:=Matrix.rng X n)(M:=Matrix_abelian) lsm rsm.
+  Next Obligation.
+    symmetry.
+    now apply Matrix.mul_assoc.
+  Qed.
+  
 End MatrixModule.

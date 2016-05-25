@@ -122,6 +122,15 @@ VFILES:=theories/Setoid/Core.v\
   theories/Monoid.v\
   theories/Enrich/Core.v\
   theories/Abel.v\
+  theories/AlgebraicStructures/Binop.v\
+  theories/AlgebraicStructures/Monoid.v\
+  theories/AlgebraicStructures/Group.v\
+  theories/AlgebraicStructures/Ring.v\
+  theories/AlgebraicStructures/Module.v\
+  theories/AlgebraicStructures/Ideal.v\
+  theories/AlgebraicStructures/Field.v\
+  theories/AlgebraicStructures/Categories.v\
+  theories/AlgebraicStructures.v\
   theories/Algebra.v\
   theories/Module.v
 

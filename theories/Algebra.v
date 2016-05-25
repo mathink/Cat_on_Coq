@@ -543,8 +543,8 @@ Module Field.
     proof {
         field_ring:> isRing add z minus mul e; (* [ring] って名前、色々面倒なので [field_ring] にしてある *)
 
-        mul_inv_l: forall x: K, ~ x == z -> mul (inv x) x == e;
-        mul_inv_r: forall x: K, ~ x == z -> mul x (inv x) == e;
+        mul_inv_e_l: forall x: K, ~ x == z -> mul (inv x) x == e;
+        mul_inv_e_r: forall x: K, ~ x == z -> mul x (inv x) == e;
 
         zero_neq_one: ~(z == e)
       }.
@@ -562,6 +562,8 @@ Module Field.
         prf: spec add z minus mul e inv
       }.
 
+  Definition rng (K: type) := Ring.make (field_ring (spec:=prf K)).
+
   Module Ex.
     Notation isField := spec.
     Notation Field := type.
@@ -570,12 +572,11 @@ Module Field.
     Coercion carrier: Field >-> Setoid.
     Coercion prf: Field >-> isField.
 
+    Coercion rng: Field >-> Ring.
+    
     Existing Instance field_ring.
     Existing Instance prf.
 
-    Definition ring_of_field (K: Field): Ring := Ring.make (field_ring (spec:=K)).
-    Coercion ring_of_field: Field >-> Ring.
-    
     Delimit Scope field_scope with fld.
 
     Notation "x + y" := (add _ x y): field_scope.
@@ -590,7 +591,24 @@ Module Field.
 
   Import Ex.
 
-  Definition rng (K: Field) := Ring.make (field_ring (spec:=K)).
+  Section FieldProps.
+    Context (K: Field).
+    Open Scope field_scope.
+    Definition mul_0_l: forall (x: K),(0 * x == 0)
+      := Ring.mul_0_l (R:=K).
+    Definition mul_0_r: forall (x: K), (x * 0 == 0)
+      := Ring.mul_0_r (R:=K).
+    Definition minus_mul_l: forall x: K, (- 1%fld) * x == - x
+      := Ring.minus_mul_l (R:=K).
+    Definition minus_mul_r: forall x: K, x * (- 1%fld) == - x
+      := Ring.minus_mul_r (R:=K).
+    Definition mul_inv_l: forall x y: K, (- x) * y == - (x * y)
+      := Ring.mul_inv_l (R:=K).
+    Definition mul_inv_r: forall x y: K, x * (- y) == - (x * y)
+      := Ring.mul_inv_r (R:=K).
+    Definition mul_inv_inv: forall x y: K, (- x) * (- y) == x * y
+      := Ring.mul_inv_inv (R:=K).
+  End FieldProps.
 End Field.
 Export Field.Ex.
 
