@@ -119,6 +119,7 @@ VFILES:=theories/Setoid/Core.v\
   theories/Constitution.v\
   theories/Adjunction/Core.v\
   theories/Adjunction/Exponential.v\
+  theories/Adjunction/CCC.v\
   theories/Adjunction.v\
   theories/Monoid/Monoidal.v\
   theories/Monoid.v\
