@@ -39,7 +39,7 @@ Module Product.
 
     Existing Instance prf.
 
-    Notation "< f , g >" := (univ _ f g).
+    (* Notation "<: f , g :>" := (univ _ f g). *)
     Arguments ump {C X Y P pi1 pi2 univ}(spec){Z}(f g): clear implicits.
     Arguments uniq {C X Y P pi1 pi2 univ}(spec){Z}(f g fg _): clear implicits.
   End Ex.
@@ -72,7 +72,11 @@ Module Product.
         * subst f g.
           now rewrite <- catCa, Hf2.
       + now split; rewrite catC1f.
-  Qed.        
+  Qed.
+
+  Definition hom (C: Category)(prod: forall X Y, Product X Y)
+             (X Y Z W: C)(f: C X Y)(g: C Z W): C (prod X Z) (prod Y W) :=
+    univ (prod Y W) (f \o pi1 (prod X Z)) (g \o pi2 (prod X Z)).
 End Product.
 Export Product.Ex.
 
@@ -141,6 +145,10 @@ Module Coproduct.
           now rewrite catCa, Hf2.
       + now split; rewrite catCf1.
   Qed.        
+
+  Definition hom (C: Category)(coprod: forall X Y, Coproduct X Y)
+             (X Y Z W: C)(f: C X Y)(g: C Z W): C (coprod X Z) (coprod Y W) :=
+    univ (coprod X Z) (inj1 (coprod Y W) \o f) (inj2 (coprod Y W) \o g).
 End Coproduct.
 Export Coproduct.Ex.
 
