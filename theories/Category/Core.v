@@ -72,6 +72,7 @@ Module Category.
     Notation "g \o f" := (g \o{_} f) (at level 60, right associativity): cat_scope.
     Notation Id_ C X := (@id C X).
     Notation "'Id' X" := (Id_ _ X) (at level 30, right associativity): cat_scope.
+
   End Ex.
 
   Import Ex.
@@ -116,27 +117,27 @@ Module Category.
     intros; simpl in *.
     now rewrite comp_id_dom.
   Qed.
-  
+
+  Module Ex2.
+    Notation catCa := comp_assoc.
+    Notation catC1f := comp_id_dom.
+    Notation catCf1 := comp_id_cod.
+    Notation catCs := comp_subst.
+    Notation catCsd := comp_subst_dom.
+    Notation catCsc := comp_subst_cod.
+  End Ex2.
+    
 End Category.
 Export Category.Ex.
+Export Category.Ex2.
 
-(* *)
-Notation catCa := Category.comp_assoc.
-Notation catC1f := Category.comp_id_dom.
-Notation catCf1 := Category.comp_id_cod.
-Notation catCs := Category.comp_subst.
-Notation catCsd := Category.comp_subst_dom.
-Notation catCsc := Category.comp_subst_cod.
-
-Variant Iso (C: Category)(X Y: C): C X Y -> C Y X -> Prop :=
-| Iso_def: forall f g, g \o f == Id X -> f \o g == Id Y -> Iso f g.
 
 (** 
  ** Setoid の圏: Setoids
 例にちょうどよい。
 Hom 函手を定義する時とかに使うのでここで作っておく。
  **)
-Program Definition Setoids: Category :=
+Program Canonical Structure Setoids: Category :=
   Category.build (@Map.setoid) (@Map.compose) (@Map.id).
 Next Obligation.
   intros f f' Hf g g' Hg x; simpl.

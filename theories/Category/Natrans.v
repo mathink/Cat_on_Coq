@@ -119,6 +119,8 @@ Module Natrans.
 End Natrans.
 Export Natrans.Ex.
 
+Require Import COC.Category.Morphism.
+
 Module NaturalIso.
   
   Class spec {C D: Category}{F G: Functor C D}

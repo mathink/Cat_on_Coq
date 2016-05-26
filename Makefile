@@ -135,8 +135,6 @@ VFILES:=theories/Setoid/Core.v\
   theories/AlgebraicStructures/Field.v\
   theories/AlgebraicStructures/Categories.v\
   theories/AlgebraicStructures.v\
-  theories/Examples/ASwithZ.v\
-  theories/Examples/Matrix.v\
   theories/COC.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
