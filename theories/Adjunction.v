@@ -1,3 +1,6 @@
 Require Export COC.Constitution.
 
-Require Export COC.Adjunction.Core.
+From COC.Adjunction Require Export
+     Core
+     Exponential
+     CCC.

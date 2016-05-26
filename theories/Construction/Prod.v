@@ -136,9 +136,13 @@ Module Prod.
   Program Definition functor (C C' D D': Category)(F: Functor C D)(G: Functor C' D')
     : Functor (category C C') (category D D') :=
     Functor.make (@isFunctor _ _ _ _ F G).
+
+  Module Ex2.
+    Infix "[*]" := setoid (at level 40, left associativity): cat_scope.
+    Infix "[x]" := category (at level 40, left associativity): cat_scope.
+    Notation Bifunctor B C D := (Functor (B [x] C) D).
+  End Ex2.
 End Prod.
 Export Prod.Ex.
-Infix "[*]" := Prod.setoid (at level 40, left associativity).
-Infix "[x]" := Prod.category (at level 40, left associativity).
+Export Prod.Ex2.
 
-Notation Bifunctor B C D := (Functor (B [x] C) D).

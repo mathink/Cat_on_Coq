@@ -6,6 +6,9 @@ Set Universe Polymorphism.
 Require Import COC.Setoid.
 Require Import COC.Category.Core.
 
+Variant Iso (C: Category)(X Y: C): C X Y -> C Y X -> Prop :=
+| Iso_def: forall f g, g \o f == Id X -> f \o g == Id Y -> Iso f g.
+
 Definition invertible (C: Category)(X Y: C)(f: C X Y) :=
   exists f': C Y X, (f' \o f == Id X) /\ (f \o f' == Id Y).
 

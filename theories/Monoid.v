@@ -1,3 +1,4 @@
 Require Export COC.Construction.
 
-Require Export COC.Monoid.Monoidal.
+From COC.Monoid Require Export
+     Monoidal.
