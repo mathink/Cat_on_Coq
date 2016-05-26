@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
+<h1 class="libtitle">Library COC.Adjunction.CCC</h1>
+
+<div class="code">
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Category.html#"><span class="id" title="library">COC.Category</span></a> <a class="idref" href="COC.Constitution.html#"><span class="id" title="library">COC.Constitution</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="COC.Adjunction.Exponential.html#"><span class="id" title="library">COC.Adjunction.Exponential</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab24"></a><h1 class="section">Cartesian Closed Cccegory</h1>
+
+<div class="paragraph"> </div>
+
+以下を見たす圏を Cartesian Closed Cccegory と呼ぶ
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> 終対象を持つ
+
+</li>
+<li> 任意の二対象の積を持つ
+
+</li>
+<li> 任意の二対象の羃を持つ
+ 
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Module</span> <a name="CCC"><span class="id" title="module">CCC</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Structure</span> <a name="CCC.type"><span class="id" title="record">type</span></a>  :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="CCC.make"><span class="id" title="constructor">make</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="CCC.category"><span class="id" title="projection">category</span></a>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="CCC.terminal"><span class="id" title="projection">terminal</span></a>: <a class="idref" href="COC.Category.Object.html#Terminal.Ex.Terminal"><span class="id" title="abbreviation">Terminal</span></a> <a class="idref" href="COC.Adjunction.CCC.html#category"><span class="id" title="method">category</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="CCC.prod"><span class="id" title="projection">prod</span></a>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Adjunction.CCC.html#category"><span class="id" title="method">category</span></a>), <a class="idref" href="COC.Constitution.Product.html#Product.Ex.Product"><span class="id" title="abbreviation">Product</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="CCC.exp"><span class="id" title="projection">exp</span></a>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Adjunction.CCC.html#category"><span class="id" title="method">category</span></a>), <a class="idref" href="COC.Adjunction.Exponential.html#Exponential.Ex.Exponential"><span class="id" title="abbreviation">Exponential</span></a> <a class="idref" href="COC.Adjunction.CCC.html#prod"><span class="id" title="method">prod</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Module</span> <a name="CCC.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="CCC.Ex.CCC"><span class="id" title="abbreviation">CCC</span></a> := <a class="idref" href="COC.Adjunction.CCC.html#CCC.Ex.type"><span class="id" title="record">type</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <a class="idref" href="COC.Adjunction.CCC.html#CCC.Ex.category"><span class="id" title="projection">category</span></a>: <span class="id" title="var">CCC</span> &gt;-&gt; <span class="id" title="var">Category</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Delimit</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">ccc_scope</span> <span class="id" title="keyword">with</span> <span class="id" title="var">ccc</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Infix</span> <a name="bb4ef221a4244f93dfb6e52a70950912"><span class="id" title="notation">&quot;</span></a>X [*] Y" := (@<a class="idref" href="COC.Adjunction.CCC.html#CCC.Ex.prod"><span class="id" title="projection">prod</span></a> <span class="id" title="var">_</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>): <span class="id" title="var">ccc_scope</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span>  <a name="2ca0c1eeeea5174b65af50ee48ead087"><span class="id" title="notation">&quot;</span></a>Y ^ X" := (@<a class="idref" href="COC.Adjunction.CCC.html#CCC.Ex.exp"><span class="id" title="projection">exp</span></a> <span class="id" title="var">_</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>): <span class="id" title="var">ccc_scope</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="8b550cfbe0e752c4617119c74752be65"><span class="id" title="notation">&quot;</span></a>'1'" := (@<a class="idref" href="COC.Adjunction.CCC.html#CCC.Ex.terminal"><span class="id" title="projection">terminal</span></a> <span class="id" title="var">_</span>): <span class="id" title="var">ccc_scope</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="COC.Adjunction.CCC.html#CCC.Ex"><span class="id" title="module">Ex</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="COC.Adjunction.CCC.html#CCC"><span class="id" title="module">CCC</span></a>.<br/>
+<span class="id" title="keyword">Export</span> <span class="id" title="var">CCC.Ex</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab25"></a><h1 class="section">Setoids is CCC</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <a name="SetoidsIsCCC"><span class="id" title="section">SetoidsIsCCC</span></a>.<br/>
+</div>
+
+<div class="doc">
+<a name="lab26"></a><h2 class="section">unit is a terminal object in Setoids</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">unit_setoid</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;@<a class="idref" href="COC.Setoid.Core.html#Setoid.make"><span class="id" title="constructor">Setoid.make</span></a> <span class="id" title="var">_</span> (@<a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Init.Logic.html#eq"><span class="id" title="inductive">eq</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>) <span class="id" title="var">_</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="to_unit_setoid"><span class="id" title="definition">to_unit_setoid</span></a> (<span class="id" title="var">X</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>): <a class="idref" href="COC.Setoid.Map.html#Map.Ex.Map"><span class="id" title="abbreviation">Map</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#unit_setoid"><span class="id" title="definition">unit_setoid</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">x</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a><a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Instance</span> <a name="unit_setoid_is_terminal"><span class="id" title="instance">unit_setoid_is_terminal</span></a>: <a class="idref" href="COC.Category.Object.html#Terminal.Ex.isTerminal"><span class="id" title="abbreviation">isTerminal</span></a> (@<a class="idref" href="COC.Adjunction.CCC.html#to_unit_setoid"><span class="id" title="definition">to_unit_setoid</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="unit_setoid_terminal"><span class="id" title="definition">unit_setoid_terminal</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Category.Object.html#Terminal.make"><span class="id" title="constructor">Terminal.make</span></a> <a class="idref" href="COC.Adjunction.CCC.html#unit_setoid_is_terminal"><span class="id" title="instance">unit_setoid_is_terminal</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab27"></a><h2 class="section">Prod.setoid X Y is a product of X and Y in Setoids</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="Prod_fst_map"><span class="id" title="definition">Prod_fst_map</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>): <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> (<a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">[*]</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>) <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">xy</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Construction.Prod.html#Prod.fst"><span class="id" title="projection">Prod.fst</span></a> <a class="idref" href="COC.Adjunction.CCC.html#xy"><span class="id" title="variable">xy</span></a> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="Prod_snd_map"><span class="id" title="definition">Prod_snd_map</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>): <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> (<a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">[*]</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>) <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">xy</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Construction.Prod.html#Prod.snd"><span class="id" title="projection">Prod.snd</span></a> <a class="idref" href="COC.Adjunction.CCC.html#xy"><span class="id" title="variable">xy</span></a> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="Prod_prod_map"><span class="id" title="definition">Prod_prod_map</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Z"><span class="id" title="variable">Z</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a>)(<span class="id" title="var">g</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Z"><span class="id" title="variable">Z</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Z"><span class="id" title="variable">Z</span></a> (<a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">[*]</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">z</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Construction.Prod.html#d18f6dc627fa07767279860ac995d1b5"><span class="id" title="notation">(</span></a><a class="idref" href="COC.Adjunction.CCC.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Adjunction.CCC.html#z"><span class="id" title="variable">z</span></a><a class="idref" href="COC.Construction.Prod.html#d18f6dc627fa07767279860ac995d1b5"><span class="id" title="notation">,</span></a> <a class="idref" href="COC.Adjunction.CCC.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="COC.Adjunction.CCC.html#z"><span class="id" title="variable">z</span></a><a class="idref" href="COC.Construction.Prod.html#d18f6dc627fa07767279860ac995d1b5"><span class="id" title="notation">)</span></a>%<span class="id" title="var">cat</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Instance</span> <a name="Prod_is_product"><span class="id" title="instance">Prod_is_product</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <a class="idref" href="COC.Constitution.Product.html#Product.Ex.isProduct"><span class="id" title="abbreviation">isProduct</span></a> (<a class="idref" href="COC.Adjunction.CCC.html#Prod_fst_map"><span class="id" title="definition">Prod_fst_map</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>) (<a class="idref" href="COC.Adjunction.CCC.html#Prod_snd_map"><span class="id" title="definition">Prod_snd_map</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>) (@<a class="idref" href="COC.Adjunction.CCC.html#Prod_prod_map"><span class="id" title="definition">Prod_prod_map</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Prod_product"><span class="id" title="definition">Prod_product</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Constitution.Product.html#Product.make"><span class="id" title="constructor">Product.make</span></a> (<a class="idref" href="COC.Adjunction.CCC.html#Prod_is_product"><span class="id" title="instance">Prod_is_product</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab28"></a><h2 class="section">Map.setoid X Y is a exponential of X and Y in Setoids</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="apply_map"><span class="id" title="definition">apply_map</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>): <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> (<a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">(</span></a><a class="idref" href="COC.Setoid.Map.html#Map.setoid"><span class="id" title="definition">Map.setoid</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a><a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">)</span></a> <a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">[*]</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a>) <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">fx</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <span class="id" title="keyword">let</span> (<span class="id" title="var">f</span>,<span class="id" title="var">x</span>) := <a class="idref" href="COC.Adjunction.CCC.html#fx"><span class="id" title="variable">fx</span></a> <span class="id" title="keyword">in</span> <a class="idref" href="COC.Adjunction.CCC.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Adjunction.CCC.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Instance</span> <a name="make_proper"><span class="id" title="instance">make_proper</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Classes.Morphisms.html#Proper"><span class="id" title="class">Proper</span></a> (<a class="idref" href="COC.Setoid.Core.html#096826193edc3a690fc4e3a9421ef124"><span class="id" title="notation">(==:&gt;</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a><a class="idref" href="COC.Setoid.Core.html#096826193edc3a690fc4e3a9421ef124"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Classes.Morphisms.html#5bcff5fca4c3a87e683dd8ca07bab63f"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="COC.Setoid.Core.html#096826193edc3a690fc4e3a9421ef124"><span class="id" title="notation">(==:&gt;</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a><a class="idref" href="COC.Setoid.Core.html#096826193edc3a690fc4e3a9421ef124"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl1/stdlib/Coq.Classes.Morphisms.html#5bcff5fca4c3a87e683dd8ca07bab63f"><span class="id" title="notation">==&gt;</span></a> <a class="idref" href="COC.Setoid.Core.html#096826193edc3a690fc4e3a9421ef124"><span class="id" title="notation">(==:&gt;</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a><a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">[*]</span></a><a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a><a class="idref" href="COC.Setoid.Core.html#096826193edc3a690fc4e3a9421ef124"><span class="id" title="notation">)</span></a>) (@<a class="idref" href="COC.Construction.Prod.html#Prod.make"><span class="id" title="constructor">Prod.make</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="exp_univ_map"><span class="id" title="definition">exp_univ_map</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>)(<span class="id" title="var">f</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> (<a class="idref" href="COC.Adjunction.CCC.html#Z"><span class="id" title="variable">Z</span></a> <a class="idref" href="COC.Construction.Prod.html#3e8e751607bc309ba95523bde971721b"><span class="id" title="notation">[*]</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a>) <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Z"><span class="id" title="variable">Z</span></a> (<a class="idref" href="COC.Setoid.Map.html#Map.setoid"><span class="id" title="definition">Map.setoid</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">[</span></a> <span class="id" title="var">z</span> <span class="id" title="var">x</span> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Adjunction.CCC.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="COC.Construction.Prod.html#d18f6dc627fa07767279860ac995d1b5"><span class="id" title="notation">(</span></a><a class="idref" href="COC.Adjunction.CCC.html#z"><span class="id" title="variable">z</span></a><a class="idref" href="COC.Construction.Prod.html#d18f6dc627fa07767279860ac995d1b5"><span class="id" title="notation">,</span></a><a class="idref" href="COC.Adjunction.CCC.html#x"><span class="id" title="variable">x</span></a><a class="idref" href="COC.Construction.Prod.html#d18f6dc627fa07767279860ac995d1b5"><span class="id" title="notation">)</span></a> <a class="idref" href="COC.Setoid.Map.html#1c5b83def9e8b3faae3b00acafa2d0e3"><span class="id" title="notation">]</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Instance</span> <a name="Map_setoid_is_exponential"><span class="id" title="instance">Map_setoid_is_exponential</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <a class="idref" href="COC.Adjunction.Exponential.html#Exponential.Ex.isExponential"><span class="id" title="abbreviation">isExponential</span></a> (<span class="id" title="var">prod</span>:=<a class="idref" href="COC.Adjunction.CCC.html#Prod_product"><span class="id" title="definition">Prod_product</span></a>) (<a class="idref" href="COC.Adjunction.CCC.html#apply_map"><span class="id" title="definition">apply_map</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>) (@<a class="idref" href="COC.Adjunction.CCC.html#exp_univ_map"><span class="id" title="definition">exp_univ_map</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="Map_setoid_exponential"><span class="id" title="definition">Map_setoid_exponential</span></a> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Category.Core.html#Setoids"><span class="id" title="definition">Setoids</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Adjunction.Exponential.html#Exponential.make"><span class="id" title="constructor">Exponential.make</span></a> (<a class="idref" href="COC.Adjunction.CCC.html#Map_setoid_is_exponential"><span class="id" title="instance">Map_setoid_is_exponential</span></a> <a class="idref" href="COC.Adjunction.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Y"><span class="id" title="variable">Y</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab29"></a><h2 class="section">Setoids is CCC</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Setoids_ccc</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Adjunction.CCC.html#CCC.make"><span class="id" title="constructor">CCC.make</span></a> <a class="idref" href="COC.Adjunction.CCC.html#unit_setoid_terminal"><span class="id" title="definition">unit_setoid_terminal</span></a> <a class="idref" href="COC.Adjunction.CCC.html#Map_setoid_exponential"><span class="id" title="definition">Map_setoid_exponential</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="COC.Adjunction.CCC.html#SetoidsIsCCC"><span class="id" title="section">SetoidsIsCCC</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+</div
+</body>
+</html>
