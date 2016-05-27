@@ -9,7 +9,7 @@ Require Import COC.Setoid.
 From COC.AlgebraicStructures Require Import Binop Monoid Group Ring.
 
 (** * 体(Field)
-可換環でかつ乗法が零元以外逆元を持つ
+可換環でかつ乗法が零元以外逆元を持ち可換
  **)
 Module Field.
   Class spec (K: Setoid)(add: Binop K)(z: K)(minus: Map K K)
@@ -17,7 +17,8 @@ Module Field.
     proof {
         field_ring:> isRing add z minus mul e; (* [ring] って名前、色々面倒なので [field_ring] にしてある *)
         add_commute:> Commute add;
-
+        mul_commute:> Commute mul;
+        
         mul_inv_e_l: forall x: K, ~ x == z -> mul (inv x) x == e;
         mul_inv_e_r: forall x: K, ~ x == z -> mul x (inv x) == e;
 
