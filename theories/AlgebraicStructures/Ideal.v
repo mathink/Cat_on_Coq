@@ -178,7 +178,7 @@ Section QuotientRing.
   Next Obligation.
     intros x x' Heqx y y' Heqy; simpl in *.
     unfold IQ_add.
-    rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+    rewrite (Group.inv_op (G:=Ring.g R)); simpl.
     rewrite (commute (- y')), !associative.
     rewrite <- (associative x), (commute y), !associative, <- !associative.
     rewrite associative.
@@ -210,7 +210,7 @@ Section QuotientRing.
   Next Obligation.
     intros x y Heq; simpl in *.
     unfold IQ_minus.
-    rewrite <- (Group.inv_op (G:=Ring.add_group R)); simpl.
+    rewrite <- (Group.inv_op (G:=Ring.g R)); simpl.
     apply Ideal.inv_close.
     now rewrite commute.
   Qed.    

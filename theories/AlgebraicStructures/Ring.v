@@ -36,13 +36,12 @@ Module Ring.
         prf: spec add z inv mul e
       }.
 
-  Module Ex.
-    Existing Instance is_add_group.
-    Existing Instance add_commute.
-    Existing Instance is_mul_monoid.
-    Existing Instance distributive.
-    Existing Instance prf.
+  Definition g (R: type) :=
+    Group.make (is_add_group (spec:=prf R)).
+  Definition m (R: type) :=
+    Monoid.make (is_mul_monoid (spec:=prf R)).
 
+  Module Ex.
     Notation isRing := spec.
     Notation Ring := type.
 
@@ -52,6 +51,13 @@ Module Ring.
     Coercion distributive: isRing >-> Distributive.
     Coercion carrier: Ring >-> Setoid.
     Coercion prf: Ring >-> isRing.
+
+
+    Existing Instance is_add_group.
+    Existing Instance add_commute.
+    Existing Instance is_mul_monoid.
+    Existing Instance distributive.
+    Existing Instance prf.
 
     Delimit Scope ring_scope with rng.
 
@@ -64,22 +70,19 @@ Module Ring.
   End Ex.
   Import Ex.
 
-  Definition add_group (R: Ring): Group := Group.make R.
-  Definition mul_monoid (R: Ring): Monoid := Monoid.make (is_mul_monoid (spec:=R)).
-  
-  Definition add_id_l {R: Ring}(x: R) := (@left_identical R (add R) (z R) (is_add_group (spec:=R)) x).
-  Definition add_id_r {R: Ring}(x: R) := (@right_identical R (add R) (z R) (is_add_group (spec:=R)) x).
-  Definition add_inv_l {R: Ring}(x: R) := (@left_invertible R (add R) (z R) (is_add_group (spec:=R)) (inv R) (is_add_group (spec:=R)) x).
-  Definition add_inv_r {R: Ring}(x: R) := (@right_invertible R (add R) (z R) (is_add_group (spec:=R)) (inv R) (is_add_group (spec:=R)) x).
+  Definition add_id_l {R: Ring}(x: R) := (@left_identical R (add R) (z R) (g R) x).
+  Definition add_id_r {R: Ring}(x: R) := (@right_identical R (add R) (z R) (g R) x).
+  Definition add_inv_l {R: Ring}(x: R) := (@left_invertible R (add R) (z R) (g R) (inv R) (is_add_group (spec:=R)) x).
+  Definition add_inv_r {R: Ring}(x: R) := (@right_invertible R (add R) (z R) (g R) (inv R) (is_add_group (spec:=R)) x).
   Definition add_inv_op {R: Ring}(x y: R) :=
-    (Group.inv_op (G:=(Ring.add_group R)) x y).
+    (Group.inv_op (G:=(g R)) x y).
   Definition add_inv_id (R: Ring): (- 0 == 0)%rng
-    := (Group.inv_id (add_group R)).
+    := (Group.inv_id (g R)).
   Definition add_inv_inv {R: Ring}(x: R)
-    := (Group.inv_inv (G:=add_group R) x).
-  Definition add_commute_l {R: Ring}(x y z: R) := (Monoid.commute_l (M:=Group.monoid (add_group R)) x y z).
-  Definition mul_id_l {R: Ring}(x: R) := (@left_identical R (mul R) (e R) (is_mul_monoid (spec:=R)) x).
-  Definition mul_id_r {R: Ring}(x: R) := (@right_identical R (mul R) (e R) (is_mul_monoid (spec:=R)) x).
+    := (Group.inv_inv (G:=g R) x).
+  Definition add_commute_l {R: Ring}(x y z: R) := (Monoid.commute_l (M:=(g R)) x y z).
+  Definition mul_id_l {R: Ring}(x: R) := (@left_identical R (mul R) (e R) (m R) x).
+  Definition mul_id_r {R: Ring}(x: R) := (@right_identical R (mul R) (e R) (m R) x).
 
   Section RingProps.
     Variable (R: Ring).
@@ -98,7 +101,7 @@ Module Ring.
         now rewrite (distributive_r).
       }
       apply symmetry.
-      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) (-(0*x)) H); simpl.
+      generalize (Monoid.left_op (M:=g R) (-(0*x)) H); simpl.
       now rewrite Ring.add_inv_l, associative, Ring.add_inv_l, Ring.add_id_l.
     Qed.
     
@@ -114,7 +117,7 @@ Module Ring.
         now rewrite (distributive_l).
       }
       apply symmetry.
-      generalize (Monoid.left_op (M:=Group.monoid (Ring.add_group R)) (-(x*0)) H); simpl.
+      generalize (Monoid.left_op (M:=g R) (-(x*0)) H); simpl.
       now rewrite Ring.add_inv_l, associative, Ring.add_inv_l, Ring.add_id_l.
     Qed.
 
@@ -178,8 +181,8 @@ Module RingHom.
 
   Class spec (R S: Ring)(f: Map R S) :=
     proof {
-        is_add_group_hom:> isGroupHom (Ring.add_group R) (Ring.add_group S) f;
-        is_mul_monoid_hom:> isMonoidHom (Ring.mul_monoid R) (Ring.mul_monoid S) f
+        is_add_group_hom:> isGroupHom (Ring.g R) (Ring.g S) f;
+        is_mul_monoid_hom:> isMonoidHom (Ring.m R) (Ring.m S) f
       }.
 
   Class type (R S: Ring) :=
@@ -188,38 +191,40 @@ Module RingHom.
         prf: spec R S map
       }.
 
-  Module Ex.
-    Existing Instance is_add_group_hom.
-    Existing Instance is_mul_monoid_hom.
-    Existing Instance prf.
+  Definition gh (R S: Ring)(f: type R S) :=
+    GroupHom.make (is_add_group_hom (spec:=prf)).
 
+  Definition mh (R S: Ring)(f: type R S) :=
+    MonoidHom.make (is_mul_monoid_hom (spec:=prf)).
+
+  Module Ex.
     Notation isRingHom := spec.
     Notation RingHom := type.
 
-    Coercion map: RingHom >-> Map.
-    Coercion prf: RingHom >-> isRingHom.
     Coercion is_add_group_hom: isRingHom >-> isGroupHom.
     Coercion is_mul_monoid_hom: isRingHom >-> isMonoidHom.
+    Coercion map: RingHom >-> Map.
+    Coercion prf: RingHom >-> isRingHom.
+
+    Existing Instance is_add_group_hom.
+    Existing Instance is_mul_monoid_hom.
+    Existing Instance prf.
   End Ex.
   Import Ex.
   
-  Definition add_group_hom `(f: RingHom R R') := GroupHom.make f.
-  Definition mul_monoid_hom `(f: RingHom R R') :=
-    MonoidHom.make (is_mul_monoid_hom (spec:=f)).
-
   Program Canonical Structure compose
           (R S T: Ring)(f: RingHom R S)(g: RingHom S T) :=
     {|
-      map := GroupHom.compose (add_group_hom f) (add_group_hom g);
+      map := GroupHom.compose (RingHom.gh f) (RingHom.gh g);
       prf := proof _ _
     |}.
   Next Obligation.
-    now apply (MonoidHom.compose (mul_monoid_hom f) (mul_monoid_hom g)).
+    now apply (MonoidHom.compose (mh f) (mh g)).
   Qed.
 
   Program Canonical Structure id (R: Ring): RingHom R R :=
     {|
-      map := GroupHom.id (Ring.add_group R);
+      map := GroupHom.id (Ring.g R);
       prf := proof _ _
     |}.
   Next Obligation.
@@ -247,23 +252,23 @@ Module RingHom.
 
   Open Scope ring_scope.
   Definition add_op `(f: RingHom R R')(x y: R): f (x + y) == f x + f y
-    := (MonoidHom.op (f:=GroupHom.monoid_hom (add_group_hom f)) x y).
+    := (MonoidHom.op (f:=GroupHom.mh (gh f)) x y).
   Definition add_ident `(f: RingHom R R'): f 0 == 0
-    := (MonoidHom.ident (f:=GroupHom.monoid_hom (add_group_hom f))).
+    := (MonoidHom.ident (f:=GroupHom.mh (gh f))).
   Definition add_inv `(f: RingHom R R')(x: R): f (- x) == - f x
-    := (GroupHom.inv (f:=add_group_hom f) x).
+    := (GroupHom.inv (f:=gh f) x).
   Definition mul_op `(f: RingHom R R')(x y: R): f (x * y) == f x * f y
-    := (MonoidHom.op (f:=mul_monoid_hom f) x y).
+    := (MonoidHom.op (f:=mh f) x y).
   Definition mul_ident `(f: RingHom R R'): f 1 == 1
-    := (MonoidHom.ident (f:=mul_monoid_hom f)).
+    := (MonoidHom.ident (f:=mh f)).
 
   Section RingHomProps.
     Lemma minus:
       forall (R S: Ring)(x y: R)(f: RingHom R S),
         f (x - y) == f x - f y.
     Proof.
-      intros; rewrite (MonoidHom.op (f:=GroupHom.monoid_hom (add_group_hom f))); simpl.
-      rewrite (GroupHom.inv (f:=add_group_hom f)); simpl.
+      intros; rewrite (MonoidHom.op (f:=GroupHom.mh (gh f))); simpl.
+      rewrite (GroupHom.inv (f:=gh f)); simpl.
       reflexivity.
     Qed.
   End RingHomProps.

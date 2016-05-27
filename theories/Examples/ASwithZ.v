@@ -204,7 +204,7 @@ Section FromZ.
     destruct p; simpl.
     - now rewrite Ring.add_id_l.
     - reflexivity.
-    - now rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+    - now rewrite (Group.inv_op (G:=Ring.g R)); simpl.
   Qed.
   
   Lemma rep_succ_double:
@@ -215,8 +215,8 @@ Section FromZ.
     - now repeat rewrite Ring.add_id_r.
     - reflexivity.
     - rewrite rep_aux_pred_double.
-      repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
-      now rewrite (Group.inv_inv (G:=Ring.add_group R)), associative.
+      repeat rewrite (Group.inv_op (G:=Ring.g R)); simpl.
+      now rewrite (Group.inv_inv (G:=Ring.g R)), associative.
   Qed.
 
   Lemma rep_pred_double:
@@ -226,7 +226,7 @@ Section FromZ.
     destruct p; simpl.
     - now repeat rewrite Ring.add_id_r.
     - now rewrite rep_aux_pred_double, commute, <- associative.
-    - repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+    - repeat rewrite (Group.inv_op (G:=Ring.g R)); simpl.
       now rewrite (commute), (commute _ (- 1%rng)).
   Qed.
 
@@ -236,7 +236,7 @@ Section FromZ.
   Proof.
     induction p, q; simpl.
     - rewrite rep_double, IHp.
-      repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      repeat rewrite (Group.inv_op (G:=Ring.g R)); simpl.
       repeat rewrite <- associative.
       rewrite (Ring.add_commute _ (- 1%rng)).
       rewrite (Ring.add_commute_l (- rep_aux q) (- 1%rng)); simpl.
@@ -245,26 +245,26 @@ Section FromZ.
       rewrite Ring.add_inv_r, Ring.add_id_l.
       now rewrite (Ring.add_commute_l _ (rep_aux p)).
     - rewrite rep_succ_double, IHp.
-      rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      rewrite (Group.inv_op (G:=Ring.g R)); simpl.
       repeat rewrite <- associative.
       now rewrite (Ring.add_commute_l (- rep_aux q) (rep_aux p)).
     - rewrite (Ring.add_commute _ (- 1%rng)), <- associative, (associative _ 1).
       now rewrite Ring.add_inv_l, Ring.add_id_l.
-    - rewrite rep_pred_double, IHp, !(Group.inv_op (G:=Ring.add_group R)); simpl.
+    - rewrite rep_pred_double, IHp, !(Group.inv_op (G:=Ring.g R)); simpl.
       repeat rewrite <- associative.
       repeat rewrite (Ring.add_commute_l _ (rep_aux p)).
       rewrite (Ring.add_commute_l _ (- rep_aux q)); simpl.
       now rewrite (Ring.add_commute (- 1%rng)).
     - rewrite rep_double, IHp.
-      repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+      repeat rewrite (Group.inv_op (G:=Ring.g R)); simpl.
       repeat rewrite <- associative.
       now rewrite (Ring.add_commute_l _ (rep_aux p)).
     - apply rep_aux_pred_double.
-    - repeat rewrite (Group.inv_op (G:=Ring.add_group R)); simpl.
+    - repeat rewrite (Group.inv_op (G:=Ring.g R)); simpl.
       rewrite (commute _ (- 1%rng)).
       rewrite !(Ring.add_commute_l (R:=R) _ (- 1%rng)), associative; simpl.
       now rewrite Ring.add_inv_l, Ring.add_id_l.
-    - now rewrite rep_aux_pred_double, (Group.inv_op (G:=Ring.add_group R)), (Group.inv_inv (G:=Ring.add_group R)); simpl.
+    - now rewrite rep_aux_pred_double, (Group.inv_op (G:=Ring.g R)), (Group.inv_inv (G:=Ring.g R)); simpl.
     - now rewrite Ring.add_inv_r.
   Qed.
   
@@ -276,7 +276,7 @@ Section FromZ.
     - now apply rep_aux_add.
     - now apply rep_pos_sub.
     - now rewrite rep_pos_sub, commute.
-    - now rewrite rep_aux_add, (Group.inv_op (G:=Ring.add_group R)), commute; simpl.
+    - now rewrite rep_aux_add, (Group.inv_op (G:=Ring.g R)), commute; simpl.
   Qed.
 
   Lemma rep_aux_mul:
@@ -312,9 +312,9 @@ Section FromZ.
       + apply rep_add.
       + reflexivity.
     - destruct x as [|p|p]; simpl.
-      + now rewrite (Group.inv_id (Ring.add_group R)).
+      + now rewrite (Group.inv_id (Ring.g R)).
       + reflexivity.
-      + now rewrite (Group.inv_inv (G:=Ring.add_group R)).
+      + now rewrite (Group.inv_inv (G:=Ring.g R)).
   Qed.
   Next Obligation.
     split; simpl; intros.
@@ -565,14 +565,14 @@ Next Obligation.
       rewrite Pos2Z.inj_xI, Zmult_comm, <- Zplus_diag_eq_mult_2.
       rewrite !(MonoidHom.op (spec:=f)); simpl.
       rewrite IHp.
-      rewrite (MonoidHom.ident (spec:=RingHom.mul_monoid_hom f)); simpl.
+      rewrite (MonoidHom.ident (spec:=RingHom.mh f)); simpl.
       now rewrite commute, associative.
     + simpl.
       rewrite Pos2Z.inj_xO, Zmult_comm, <- Zplus_diag_eq_mult_2.
       rewrite !(MonoidHom.op (spec:=f)); simpl.
       now rewrite IHp.
     + simpl.
-      now rewrite (MonoidHom.ident (spec:=(RingHom.mul_monoid_hom f))); simpl.
+      now rewrite (MonoidHom.ident (spec:=(RingHom.mh f))); simpl.
   - simpl.
     induction p.
     + simpl.
@@ -585,17 +585,17 @@ Next Obligation.
       rewrite (RingHom.minus (R:=Z_ring) _ 1).
       rewrite !(MonoidHom.op (spec:=f)); simpl.
       rewrite IHp.
-      rewrite (MonoidHom.ident (spec:=(RingHom.mul_monoid_hom f))); simpl.
-      rewrite !(Group.inv_op (G:=Ring.add_group c)); simpl.
+      rewrite (MonoidHom.ident (spec:=(RingHom.mh f))); simpl.
+      rewrite !(Group.inv_op (G:=Ring.g c)); simpl.
       now rewrite associative.
     + simpl.
       rewrite Pos2Z.neg_xO, Zmult_comm, <- Zplus_diag_eq_mult_2.
       rewrite !(MonoidHom.op (spec:=f)); simpl.
       rewrite IHp.
-      now rewrite !(Group.inv_op (G:=Ring.add_group c)); simpl.
+      now rewrite !(Group.inv_op (G:=Ring.g c)); simpl.
     + simpl.
-      rewrite (GroupHom.inv (f:=RingHom.add_group_hom f) 1); simpl.
-      now rewrite (MonoidHom.ident (f:=(RingHom.mul_monoid_hom f))); simpl.
+      rewrite (GroupHom.inv (f:=RingHom.gh f) 1); simpl.
+      now rewrite (MonoidHom.ident (f:=(RingHom.mh f))); simpl.
 Qed.      
 
 
@@ -630,7 +630,7 @@ Section AbelianIsZMod.
     intros p x.
     induction p; simpl.
     - rewrite IHp.
-      rewrite (Monoid.commute_l (M:=Group.monoid M)); simpl.
+      rewrite (Monoid.commute_l (M:=M)); simpl.
       now rewrite !associative.
     - reflexivity.
     - reflexivity.
@@ -645,27 +645,27 @@ Section AbelianIsZMod.
       rewrite az_lsm_aux_pos_succ.
       rewrite <- !associative in *.
       rewrite IHp.
-      rewrite <- !(Monoid.commute_l (M:=Group.monoid M) _ x); simpl.
-      rewrite (Monoid.commute_l (M:=Group.monoid M) (az_lsm_aux p x) (az_lsm_aux q x)); simpl.
+      rewrite <- !(Monoid.commute_l (M:= M) _ x); simpl.
+      rewrite (Monoid.commute_l (M:= M) (az_lsm_aux p x) (az_lsm_aux q x)); simpl.
       now rewrite !associative.
     + rewrite IHp.
       rewrite <- !associative in *.
-      rewrite (Monoid.commute_l (M:=Group.monoid M) x); simpl.
+      rewrite (Monoid.commute_l (M:= M) x); simpl.
       rewrite (commute x).
-      now rewrite !(Monoid.commute_l (M:=Group.monoid M) (az_lsm_aux p x) (az_lsm_aux q x)); simpl.
+      now rewrite !(Monoid.commute_l (M:= M) (az_lsm_aux p x) (az_lsm_aux q x)); simpl.
     + rewrite az_lsm_aux_pos_succ.
       rewrite <- !associative.
-      now rewrite (Monoid.commute_l (M:=Group.monoid M) x); simpl.
+      now rewrite (Monoid.commute_l (M:= M) x); simpl.
     + rewrite IHp.
       rewrite <- !associative.
-      now rewrite (Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux p x)); simpl.
+      now rewrite (Monoid.commute_l (M:= M) _ (az_lsm_aux p x)); simpl.
     + rewrite IHp.
       rewrite <- !associative.
-      now rewrite (Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux p x)); simpl.
+      now rewrite (Monoid.commute_l (M:= M) _ (az_lsm_aux p x)); simpl.
     + reflexivity.
     + rewrite az_lsm_aux_pos_succ.
       rewrite <- !associative.
-      now rewrite !(Monoid.commute_l (M:=Group.monoid M) x); simpl.
+      now rewrite !(Monoid.commute_l (M:= M) x); simpl.
     + now rewrite (commute x).
     + reflexivity.
   Qed.
@@ -689,11 +689,11 @@ Section AbelianIsZMod.
       rewrite !associative.
       rewrite <- !associative.
       rewrite right_invertible, right_identical.
-      now rewrite !(Monoid.commute_l (M:=Group.monoid M) _ x); simpl.
+      now rewrite !(Monoid.commute_l (M:= M) _ x); simpl.
     - rewrite IHp.
       rewrite (commute _ x).
       rewrite <- !associative.
-      rewrite !(Monoid.commute_l (M:=Group.monoid M) _ (x^-1)); simpl.
+      rewrite !(Monoid.commute_l (M:= M) _ (x^-1)); simpl.
       rewrite !associative.
       now rewrite left_invertible, left_identical.
     - now rewrite <- associative, right_invertible, right_identical.
@@ -729,16 +729,16 @@ Section AbelianIsZMod.
     - rewrite az_lsm_z_double, IHp.
       rewrite !Group.inv_op.
       rewrite <- !associative.
-      rewrite !(Monoid.commute_l (M:=Group.monoid M) _ x); simpl.
-      rewrite !(Monoid.commute_l (M:=Group.monoid M) _ (x^-1)); simpl.
+      rewrite !(Monoid.commute_l (M:= M) _ x); simpl.
+      rewrite !(Monoid.commute_l (M:= M) _ (x^-1)); simpl.
       rewrite !associative.
       rewrite left_invertible, left_identical.
       rewrite <- !associative.
-      now rewrite !(Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux q x^-1)); simpl.
+      now rewrite !(Monoid.commute_l (M:= M) _ (az_lsm_aux q x^-1)); simpl.
     - rewrite az_lsm_z_succ_double, IHp.
       rewrite !Group.inv_op.
       rewrite <- !associative.
-      rewrite !(Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux p x)); simpl.
+      rewrite !(Monoid.commute_l (M:= M) _ (az_lsm_aux p x)); simpl.
       rewrite (commute x).
       now rewrite !associative.
     - now rewrite <- !associative, right_invertible, right_identical.
@@ -746,10 +746,10 @@ Section AbelianIsZMod.
       rewrite !Group.inv_op.
       rewrite (commute (x^-1)).
       rewrite <- !associative.
-      now rewrite !(Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux p x)); simpl.
+      now rewrite !(Monoid.commute_l (M:= M) _ (az_lsm_aux p x)); simpl.
     - rewrite az_lsm_z_double, IHp.
       rewrite !Group.inv_op.
-      rewrite !(Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux p x)); simpl.
+      rewrite !(Monoid.commute_l (M:= M) _ (az_lsm_aux p x)); simpl.
       now rewrite <- !associative.
     - apply az_lsm_aux_pos_pred_double.
     - rewrite !Group.inv_op.
@@ -788,11 +788,11 @@ Section AbelianIsZMod.
   Proof.
     induction p; simpl; intros.
     - rewrite IHp.
-      rewrite (Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux p x)).
+      rewrite (Monoid.commute_l (M:= M) _ (az_lsm_aux p x)).
       rewrite <- !associative.
-      now rewrite !(Monoid.commute_l (M:=Group.monoid M) _ x).
+      now rewrite !(Monoid.commute_l (M:= M) _ x).
     - rewrite IHp.
-      rewrite (Monoid.commute_l (M:=Group.monoid M) _ (az_lsm_aux p x)).
+      rewrite (Monoid.commute_l (M:= M) _ (az_lsm_aux p x)).
       now rewrite <- !associative.
     - reflexivity.
   Qed.

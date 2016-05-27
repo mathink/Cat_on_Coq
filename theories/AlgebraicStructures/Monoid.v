@@ -28,6 +28,8 @@ Module Monoid.
         prf: spec op e
       }.
 
+  Notation build op e := (@make _ op e (@proof _ _ _ _ _)).
+  
   Module Ex.
     Existing Instance associative.
     Existing Instance identical.

@@ -16,6 +16,7 @@ Module Field.
         (mul: Binop K)(e: K)(inv: Map K K) :=
     proof {
         field_ring:> isRing add z minus mul e; (* [ring] って名前、色々面倒なので [field_ring] にしてある *)
+        add_commute:> Commute add;
 
         mul_inv_e_l: forall x: K, ~ x == z -> mul (inv x) x == e;
         mul_inv_e_r: forall x: K, ~ x == z -> mul x (inv x) == e;
@@ -36,7 +37,7 @@ Module Field.
         prf: spec add z minus mul e inv
       }.
 
-  Definition rng (K: type) := Ring.make (field_ring (spec:=prf K)).
+  Definition r (K: type) := Ring.make (field_ring (spec:=prf K)).
 
   Module Ex.
     Notation isField := spec.
@@ -45,8 +46,7 @@ Module Field.
     Coercion field_ring: isField >-> isRing.
     Coercion carrier: Field >-> Setoid.
     Coercion prf: Field >-> isField.
-
-    Coercion rng: Field >-> Ring.
+    Coercion r: Field >-> Ring.
     
     Existing Instance field_ring.
     Existing Instance prf.
@@ -92,7 +92,7 @@ Module FieldHom.
 
   Class spec (K L: Field)(f: Map K L) :=
     proof {
-        is_ring_hom:> isRingHom (Field.rng K) (Field.rng L) f
+        is_ring_hom:> isRingHom K L f
       }.
 
 
@@ -102,16 +102,20 @@ Module FieldHom.
         prf: spec R S map
       }.
 
-  Module Ex.
-    Existing Instance is_ring_hom.
-    Existing Instance prf.
+  Definition rh `(f: type K L) :=
+    RingHom.make (is_ring_hom (spec:=prf)).
 
+  Module Ex.
     Notation isFieldHom := spec.
     Notation FieldHom := type.
 
+    Coercion is_ring_hom: isFieldHom >-> isRingHom.
     Coercion map: FieldHom >-> Map.
     Coercion prf: FieldHom >-> isFieldHom.
-    Coercion is_ring_hom: isFieldHom >-> isRingHom.
+    Coercion rh : FieldHom >-> RingHom.
+
+    Existing Instance is_ring_hom.
+    Existing Instance prf.
   End Ex.
   Import Ex.
   
@@ -120,13 +124,13 @@ Module FieldHom.
   Program Canonical Structure compose
           (K L M: Field)(f: FieldHom K L)(g: FieldHom L M) :=
     {|
-      map := RingHom.compose (ring_hom f) (ring_hom g);
+      map := RingHom.compose f g;
       prf := proof _
     |}.
 
   Program Canonical Structure id (K: Field): FieldHom K K :=
     {|
-      map := RingHom.id (Field.rng K);
+      map := RingHom.id K;
       prf := proof _
     |}.
 
