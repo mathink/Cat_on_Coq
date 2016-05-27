@@ -231,7 +231,7 @@ Section Commutator.
       f [:g,h:] == [:f g, f h:].
   Proof.
     intros; unfold g_commutator.
-    rewrite !(MonoidHom.op (spec:=GroupHom.monoid_hom f)); simpl.
+    rewrite !(MonoidHom.op (spec:=f)); simpl.
     now rewrite !GroupHom.inv.
   Qed.
 End Commutator.
