@@ -29,6 +29,11 @@ Module Group.
         prf: spec op e inv
       }.
 
+  Notation build op e inv :=
+    (@make _ op e inv (@proof _ op e inv _ _)).
+  
+  Definition m (G: type) :=
+    Monoid.make (is_monoid (spec:=prf G)).
 
   Module Ex.
     Existing Instance is_monoid.
@@ -42,6 +47,7 @@ Module Group.
     Coercion invertible: isGroup >-> Invertible.
     Coercion carrier: Group >-> Setoid.
     Coercion prf: Group >-> isGroup.
+    Coercion m: Group >-> Monoid.
 
     Delimit Scope group_scope with group.
 
@@ -52,8 +58,6 @@ Module Group.
 
   Import Ex.
   
-  Definition monoid (G: Group) := Monoid.make G.
-
   Section GroupProps.
 
     Variable (G: Group).
@@ -96,7 +100,7 @@ Module GroupHom.
 
   Class spec (G H: Group)(f: Map G H) :=
     proof {
-        is_monoid_hom:> isMonoidHom (Group.monoid G) (Group.monoid H) f;
+        is_monoid_hom:> isMonoidHom G H f;
         inv: forall x, f(x^-1) == (f x)^-1
       }.
 
@@ -106,26 +110,28 @@ Module GroupHom.
         prf: spec G H map
       }.
 
+  Definition mh (G H: Group)(f: type G H) :=
+    MonoidHom.make (is_monoid_hom (spec:=prf )).
+  
   Module Ex.
-    Existing Instance is_monoid_hom.
-    Existing Instance prf.
-
     Notation isGroupHom := spec.
     Notation GroupHom := type.
 
     Coercion is_monoid_hom: isGroupHom >-> isMonoidHom.
     Coercion map: GroupHom >-> Map.
     Coercion prf: GroupHom >-> isGroupHom.
+    Coercion mh: GroupHom >-> MonoidHom.
+    
+    Existing Instance is_monoid_hom.
+    Existing Instance prf.
   End Ex.
 
   Import Ex.
 
-  Definition monoid_hom `(f: GroupHom G H) := MonoidHom.make f.
-
   Program Canonical Structure compose
           (G H K: Group)(f: GroupHom G H)(g: GroupHom H K) :=
     {|
-      map := MonoidHom.compose (monoid_hom f) (monoid_hom g);
+      map := MonoidHom.compose f g;
       prf := proof _ _
     |}.
   Next Obligation.
@@ -134,7 +140,7 @@ Module GroupHom.
 
   Program Canonical Structure id (M: Group): GroupHom M M :=
     {|
-      map := MonoidHom.id (Group.monoid M);
+      map := MonoidHom.id M;
       prf := proof _ _
     |}.
   Next Obligation.

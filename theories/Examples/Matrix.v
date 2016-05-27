@@ -116,10 +116,10 @@ Module Vector.
       unfold add, mul; simpl.
       rewrite !distributive_l.
       intros H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
+      rewrite (Monoid.commute_l (M:=Ring.g K)); simpl.
       rewrite <-associative.
       rewrite H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
+      rewrite (Monoid.commute_l (M:=Ring.g K)); simpl.
       rewrite !associative.
       reflexivity.
   Qed.
@@ -136,10 +136,10 @@ Module Vector.
       unfold add, mul; simpl.
       rewrite !distributive_r.
       intros H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
+      rewrite (Monoid.commute_l (M:=Ring.g K)); simpl.
       rewrite <-associative.
       rewrite H.
-      rewrite (Monoid.commute_l (M:=Group.monoid (Ring.add_group K))); simpl.
+      rewrite (Monoid.commute_l (M:=Ring.g K)); simpl.
       rewrite !associative.
       reflexivity.
   Qed.

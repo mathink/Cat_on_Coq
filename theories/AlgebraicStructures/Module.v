@@ -172,7 +172,7 @@ Section BiModFromRingHom.
   Open Scope ring_scope.
 
   (** 環からアーベル群 **)
-  Instance Ring_is_abelian (R: Ring): isAbelian (Ring.add_group R).
+  Instance Ring_is_abelian (R: Ring): isAbelian (Ring.g R).
   Proof.
     split; simpl.
     apply R.
@@ -200,11 +200,11 @@ Section BiModFromRingHom.
     now rewrite distributive_r.
   Qed.
   Next Obligation.
-    rewrite (MonoidHom.op (spec:=(RingHom.mul_monoid_hom f))); simpl.
+    rewrite (MonoidHom.op (spec:=(RingHom.mh f))); simpl.
     now rewrite associative.
   Qed.
   Next Obligation.
-    rewrite (MonoidHom.ident (spec:=RingHom.mul_monoid_hom f)); simpl.
+    rewrite (MonoidHom.ident (spec:=RingHom.mh f)); simpl.
     now rewrite left_identical.
   Qed.
     
@@ -222,11 +222,11 @@ Section BiModFromRingHom.
     now rewrite distributive_l.
   Qed.
   Next Obligation.
-    rewrite (MonoidHom.op (spec:=(RingHom.mul_monoid_hom f))); simpl.
+    rewrite (MonoidHom.op (spec:=(RingHom.mh f))); simpl.
     now rewrite associative.
   Qed.
   Next Obligation.
-    rewrite (MonoidHom.ident (spec:=RingHom.mul_monoid_hom f)); simpl.
+    rewrite (MonoidHom.ident (spec:=RingHom.mh f)); simpl.
     now rewrite right_identical.
   Qed.
 
