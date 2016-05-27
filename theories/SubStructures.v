@@ -195,3 +195,43 @@ Module NormalSubGroup.
       now rewrite Group.inv_inv.
   Qed.
 End NormalSubGroup.
+
+Section Commutator.
+  Open Scope group_scope.
+
+  Definition g_commutator (G: Group)(g h: G) :=
+    g^-1 * h^-1 * g * h.
+
+  Notation "[: g , h :]" := (g_commutator g h): group_scope.
+
+  Lemma g_commutator_inv:
+    forall (G: Group)(g h: G),
+      [:g , h:]^-1 == [:h , g:].
+  Proof.
+    intros; unfold g_commutator.
+    now rewrite !Group.inv_op, !Group.inv_inv, !associative.
+  Qed.
+
+  Definition g_conjugate (G: Group)(g h: G) :=
+    h^-1 * g * h.
+
+  Notation "g ^ h" := (g_conjugate g h): group_scope.
+
+  Lemma g_commutator_conjugate:
+    forall (G: Group)(s g h: G),
+      [:g,h:]^s == [:g^s,h^s:].
+  Proof.
+    intros; unfold g_commutator, g_conjugate.
+    rewrite !Group.inv_op, !Group.inv_inv, <- !associative.
+    now rewrite !(associative _ (s^-1)), !right_invertible, !left_identical.
+  Qed.
+
+  Lemma g_commutator_group_hom:
+    forall (G H: Group)(f: GroupHom G H)(g h: G),
+      f [:g,h:] == [:f g, f h:].
+  Proof.
+    intros; unfold g_commutator.
+    rewrite !(MonoidHom.op (spec:=GroupHom.monoid_hom f)); simpl.
+    now rewrite !GroupHom.inv.
+  Qed.
+End Commutator.
