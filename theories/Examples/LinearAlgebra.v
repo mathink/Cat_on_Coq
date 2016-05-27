@@ -33,7 +33,7 @@ Module VSpace.
           forall a b v,
             scalar a (scalar b v) == scalar (a * b) v;
 
-        scalar_unit:
+        scalar_unit_l:
           forall v,
             scalar 1 v == v
       }.
@@ -177,11 +177,36 @@ Module VSpace.
 End VSpace.
 Export VSpace.Ex.
 
+Section FieldAsVSpace.
+  Context (F: Field).
+  Open Scope field_scope.
+
+  Program Definition FieldVSpace: VSpace F :=
+    VSpace.build
+      F
+      (Field.add F)
+      (Field.minus F)
+      (Field.mul F)
+      0.
+  Next Obligation.
+    now rewrite distributive_l.
+  Qed.  
+  Next Obligation.
+    now rewrite distributive_r.
+  Qed.  
+  Next Obligation.
+    now rewrite associative.
+  Qed.
+  Next Obligation.
+    now rewrite left_identical.
+  Qed.
+End FieldAsVSpace.
+
 Section FunctionSpace.
   Context (F: Field)(X: Setoid).
   Open Scope field_scope.
 
-  Program Definition function_addition: Binop (Map.setoid X F) :=
+  Program Definition function_add: Binop (Map.setoid X F) :=
     Binop.build (fun f g => [ v :-> (f v + g v)]).
   Next Obligation.
     now intros u v Heq; rewrite Heq.
@@ -204,7 +229,7 @@ Section FunctionSpace.
   Program Definition FunctionSpace: VSpace F :=
     VSpace.build
       (Map.setoid X F)
-      function_addition
+      function_add
       function_minus
       (fun x f => [ v :-> x * f v])
       ([ v :-> 0]).
@@ -301,101 +326,174 @@ Module LinearMap.
     intros f g h Hfg Hgh x.
     rewrite (Hfg x); apply Hgh.
   Qed.
+
+  Program Definition compose F (U V W: VSpace F)(f: LinearMap U V)(g: LinearMap V W)
+    : LinearMap U W :=
+    LinearMap.build (Map.compose f g).
+  Next Obligation.
+    now rewrite !preserve_add.
+  Qed.
+  Next Obligation.
+    now rewrite !preserve_scalar.
+  Qed.
+
+  Program Definition id F (U: VSpace F): LinearMap U U :=
+    LinearMap.build (Map.id ).
+  Next Obligation.
+    reflexivity.
+  Qed.
+  Next Obligation.
+    reflexivity.
+  Qed.
   
-  Section DualSpace.
-    Context (F: Field)(U V: VSpace F).
+End LinearMap.
+Export LinearMap.Ex.
 
-    Program Definition add (f g: LinearMap U V): LinearMap U V :=
-      LinearMap.build ([ v :-> f v + g v]).
-    Next Obligation.
-      now intros v v' Heqv; rewrite Heqv.
-    Qed.
-    Next Obligation.
-      rewrite !preserve_add.
-      rewrite <- associative.
-      now rewrite (associative (f v)), (commute (f v)), !associative.
-    Qed.
-    Next Obligation.
-      rewrite !preserve_scalar.
-      now rewrite VSpace.distributive_l.
-    Qed.
+Section HomSpace.
+  Context (F: Field)(U V: VSpace F).
+  Open Scope vspace_scope.
+  
+  Program Definition linear_map_add (f g: LinearMap U V): LinearMap U V :=
+    LinearMap.build ([ v :-> f v + g v]).
+  Next Obligation.
+    now intros v v' Heqv; rewrite Heqv.
+  Qed.
+  Next Obligation.
+    rewrite !LinearMap.preserve_add.
+    rewrite <- associative.
+    now rewrite (associative (f v)), (commute (f v)), !associative.
+  Qed.
+  Next Obligation.
+    rewrite !LinearMap.preserve_scalar.
+    now rewrite VSpace.distributive_l.
+  Qed.
 
-    Program Definition add_binop := Binop.build add.
-    Next Obligation.
-      now intros f f' Heqf g g' Heqg x; simpl in *; rewrite Heqf, Heqg.
-    Qed.
-    
-    Program Definition inv (f: LinearMap U V): LinearMap U V :=
-      LinearMap.build ([ v :-> - f v ]).
-    Next Obligation.
-      now intros v v' Heqv; rewrite Heqv.
-    Qed.
-    Next Obligation.
-      now rewrite preserve_add, VSpace.inv_add_inv.
-    Qed.
-    Next Obligation.
-      rewrite preserve_scalar.
-      now rewrite <- VSpace.scalar_inv_r.
-    Qed.
+  Program Definition linear_map_add_binop: Binop (LinearMap.setoid U V) :=
+    Binop.build linear_map_add.
+  Next Obligation.
+    now intros f f' Heqf g g' Heqg x; simpl in *; rewrite Heqf, Heqg.
+  Qed.
+  
+  Program Definition linear_map_inv (f: LinearMap U V): LinearMap U V :=
+    LinearMap.build ([ v :-> - f v ]).
+  Next Obligation.
+    now intros v v' Heqv; rewrite Heqv.
+  Qed.
+  Next Obligation.
+    now rewrite LinearMap.preserve_add, VSpace.inv_add_inv.
+  Qed.
+  Next Obligation.
+    rewrite LinearMap.preserve_scalar.
+    now rewrite <- VSpace.scalar_inv_r.
+  Qed.
 
-    Program Definition inv_map := Map.build inv.
-    Next Obligation.
-      now intros f f' Heqf; simpl in *; intros x; rewrite Heqf.
-    Qed.
-    
-    Program Definition HomSpace: VSpace F :=
-      VSpace.build
-        (LinearMap.setoid U V)
-        add_binop
-        inv_map
-        (fun x f => LinearMap.build ([ v :-> x * f v ]))
-        (LinearMap.build ([ v :-> 0])).
-    Next Obligation.
-      now intros v v' Heq; rewrite Heq.
-    Qed.
-    Next Obligation.
-      now rewrite preserve_add, VSpace.distributive_l.
-    Qed.
-    Next Obligation.
-      rewrite commute.
-      rewrite preserve_scalar, !VSpace.scalar_assoc.
-      apply VSpace.scalar_proper.
-      rewrite commute.
-      (* TODO: 体に可換性がない！ *)
-    Qed.
-    Next Obligation.
+  Program Definition linear_map_inv_map: Map (LinearMap.setoid U V) (LinearMap.setoid U V)
+    := Map.build linear_map_inv.
+  Next Obligation.
+    now intros f f' Heqf; simpl in *; intros x; rewrite Heqf.
+  Qed.
+  
+  Program Definition HomSpace: VSpace F :=
+    VSpace.build
+      (LinearMap.setoid U V)
+      linear_map_add_binop
+      linear_map_inv_map
+      (fun x f => LinearMap.build ([ v :-> x * f v ]))
+      (LinearMap.build ([ v :-> 0])).
+  Next Obligation.
+    now intros v v' Heq; rewrite Heq.
+  Qed.
+  Next Obligation.
+    now rewrite LinearMap.preserve_add, VSpace.distributive_l.
+  Qed.
+  Next Obligation.
+    now rewrite LinearMap.preserve_scalar, !VSpace.scalar_assoc, commute.
+  Qed.
+  Next Obligation.
+    now intros _ _ _.
+  Qed.
+  Next Obligation.
+    now rewrite left_identical.
+  Qed.
+  Next Obligation.
+    now rewrite VSpace.scalar_0_r.
+  Qed.
+  Next Obligation.
+    intros x x' Heqx f f' Heqf v; simpl in *.
+    now rewrite Heqx, Heqf.
+  Qed.
+  Next Obligation.
+    intros f g h x; simpl.
+    now rewrite associative.
+  Qed.
+  Next Obligation.
+    intros f g x; simpl.
+    now rewrite commute.
+  Qed.
+  Next Obligation.
+    split; intros f x; simpl.
+    - now rewrite left_identical.
+    - now rewrite right_identical.
+  Qed.
+  Next Obligation.
+    split; intros f x; simpl.
+    - now rewrite left_invertible.
+    - now rewrite right_invertible.
+  Qed.
+  Next Obligation.
+    now rewrite VSpace.distributive_l.
+  Qed.
+  Next Obligation.
+    now rewrite VSpace.distributive_r.
+  Qed.
+  Next Obligation.
+    now rewrite VSpace.scalar_assoc.
+  Qed.
+  Next Obligation.
+    now rewrite VSpace.scalar_unit_l.
+  Qed.
+End HomSpace.
 
-    Qed.
-    Next Obligation.
+Section DualSpace.
+  Context (F: Field).
 
-    Qed.
-    Next Obligation.
+  Definition DualSpace (V: VSpace F) := HomSpace V (FieldVSpace F).
+  
+  Program Definition DualDual_canonical (V: VSpace F)
+    : Map V (DualSpace (DualSpace V)) :=
+    [ v :-> LinearMap.build ([f :-> f v])].
+  Next Obligation.
+    now intros f f' Heqf.
+  Qed.
+  Next Obligation.
+    reflexivity.
+  Qed.
+  Next Obligation.
+    reflexivity.
+  Qed.
+  Next Obligation.
+    intros v v' Heqv f; simpl.
+    now rewrite Heqv.
+  Qed.
+End DualSpace.
 
-    Qed.
-    Next Obligation.
+Require Import COC.Category.
 
-    Qed.
-    Next Obligation.
+Program Definition VSpaces (F: Field): Category :=
+  Category.build (@LinearMap.setoid F)
+                 (@LinearMap.compose F)
+                 (@LinearMap.id F).
+Next Obligation.
+  intros f f' Heqf g g' Heqg x; simpl in *.
+  now rewrite Heqf, Heqg.
+Qed.
+Next Obligation.
+  reflexivity.
+Qed.
+Next Obligation.
+  reflexivity.
+Qed.
+Next Obligation.
+  reflexivity.
+Qed.
 
-    Qed.
-    Next Obligation.
-
-    Qed.
-    Next Obligation.
-
-    Qed.
-    Next Obligation.
-
-    Qed.
-    Next Obligation.
-
-    Qed.
-    Next Obligation.
-
-    Qed.
-    Next Obligation.
-
-    Qed.
-    Next Obligation.
-
-    Qed.
