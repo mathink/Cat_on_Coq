@@ -131,24 +131,3 @@ End Category.
 Export Category.Ex.
 Export Category.Ex2.
 
-
-(** 
- ** Setoid の圏: Setoids
-例にちょうどよい。
-Hom 函手を定義する時とかに使うのでここで作っておく。
- **)
-Program Canonical Structure Setoids: Category :=
-  Category.build (@Map.setoid) (@Map.compose) (@Map.id).
-Next Obligation.
-  intros f f' Hf g g' Hg x; simpl.
-  rewrite (Hf x); apply Hg.
-Qed.
-Next Obligation.
-  reflexivity.
-Qed.
-Next Obligation.
-  reflexivity.
-Qed.
-Next Obligation.
-  reflexivity.
-Qed.

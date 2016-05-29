@@ -3,7 +3,11 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Constitution.
+Require Import
+        COC.Setoid
+        COC.Category
+        COC.Construction
+        COC.Constitution.
 
 Program Definition HomF (C: Category): Bifunctor (Category.op C) C Setoids :=
   Functor.build 

@@ -11,7 +11,7 @@ Generalizable All Variables.
 (** * 長さ付きリスト **)
 Require Import ProofIrrelevance.
 Require Import Arith.
-From COC Require Import Setoid AlgebraicStructures.
+Require Import COC.Setoid COC.AlgebraicStructures.
 
 Module Vector.
   Structure type (X: Type)(n: nat) :=

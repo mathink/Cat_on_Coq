@@ -41,16 +41,16 @@
 </div>
 
 <div class="doc">
-<a name="lab58"></a><h1 class="section">圏を作る</h1>
+<a name="lab60"></a><h1 class="section">圏を作る</h1>
 
 <div class="paragraph"> </div>
 
-<a name="lab59"></a><h2 class="section">モノイドの圏 Mon</h2>
+<a name="lab61"></a><h2 class="section">モノイドの圏 Mon</h2>
 
 </div>
 <div class="code">
-<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Mon</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="COC.Category.Core.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Monoid.html#MonoidHom.setoid"><span class="id" title="definition">MonoidHom.setoid</span></a>)<br/>
+<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Mon</span>: <a class="idref" href="COC.Category.Category.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Category.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Monoid.html#MonoidHom.setoid"><span class="id" title="definition">MonoidHom.setoid</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Monoid.html#MonoidHom.compose"><span class="id" title="definition">MonoidHom.compose</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Monoid.html#MonoidHom.id"><span class="id" title="definition">MonoidHom.id</span></a>).<br/>
 
@@ -58,12 +58,12 @@
 </div>
 
 <div class="doc">
-<a name="lab60"></a><h2 class="section">群の圏 Grp</h2>
+<a name="lab62"></a><h2 class="section">群の圏 Grp</h2>
 
 </div>
 <div class="code">
-<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Grp</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="COC.Category.Core.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Group.html#GroupHom.setoid"><span class="id" title="definition">GroupHom.setoid</span></a>)<br/>
+<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Grp</span>: <a class="idref" href="COC.Category.Category.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Category.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Group.html#GroupHom.setoid"><span class="id" title="definition">GroupHom.setoid</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Group.html#GroupHom.compose"><span class="id" title="definition">GroupHom.compose</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Group.html#GroupHom.id"><span class="id" title="definition">GroupHom.id</span></a>).<br/>
 
@@ -71,12 +71,12 @@
 </div>
 
 <div class="doc">
-<a name="lab61"></a><h2 class="section">環の圏 Rng</h2>
+<a name="lab63"></a><h2 class="section">環の圏 Rng</h2>
 
 </div>
 <div class="code">
-<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Rng</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="COC.Category.Core.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Ring.html#RingHom.setoid"><span class="id" title="definition">RingHom.setoid</span></a>)<br/>
+<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Rng</span>: <a class="idref" href="COC.Category.Category.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Category.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Ring.html#RingHom.setoid"><span class="id" title="definition">RingHom.setoid</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Ring.html#RingHom.compose"><span class="id" title="definition">RingHom.compose</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Ring.html#RingHom.id"><span class="id" title="definition">RingHom.id</span></a>).<br/>
 
@@ -84,12 +84,12 @@
 </div>
 
 <div class="doc">
-<a name="lab62"></a><h2 class="section">体の圏 Fld</h2>
+<a name="lab64"></a><h2 class="section">体の圏 Fld</h2>
 
 </div>
 <div class="code">
-<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Fld</span>: <a class="idref" href="COC.Category.Core.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
-&nbsp;&nbsp;<a class="idref" href="COC.Category.Core.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Field.html#FieldHom.setoid"><span class="id" title="definition">FieldHom.setoid</span></a>)<br/>
+<span class="id" title="keyword">Program Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">Fld</span>: <a class="idref" href="COC.Category.Category.html#Category.Ex.Category"><span class="id" title="abbreviation">Category</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Category.Category.html#Category.build"><span class="id" title="abbreviation">Category.build</span></a> (@<a class="idref" href="COC.AlgebraicStructures.Field.html#FieldHom.setoid"><span class="id" title="definition">FieldHom.setoid</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Field.html#FieldHom.compose"><span class="id" title="definition">FieldHom.compose</span></a>)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<a class="idref" href="COC.AlgebraicStructures.Field.html#FieldHom.id"><span class="id" title="definition">FieldHom.id</span></a>).<br/>
 </div>

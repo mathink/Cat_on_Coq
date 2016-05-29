@@ -3,7 +3,11 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Monoid.
+Require Import
+        COC.Setoid
+        COC.Category
+        Construction
+        Monoidal.
 
 Structure Enriched (V: Monoidal) :=
   {

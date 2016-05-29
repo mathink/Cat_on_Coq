@@ -4,7 +4,7 @@ Set Primitive Projections.
 Set Universe Polymorphism.
 
 Require Import COC.Setoid.
-Require Import COC.Category.Core.
+Require Import COC.Category.Category.
 
 Inductive eq_Hom (C : Category)(X Y: C)(f: C X Y):
   forall (Z W: C), C Z W -> Prop :=

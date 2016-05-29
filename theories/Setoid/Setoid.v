@@ -36,7 +36,7 @@ Module Setoid.
   Module Ex.
     Notation isSetoid := Equivalence.
     Notation Setoid := type.
-    Global Arguments equal {t} x y.
+
     Coercion carrier: Setoid >-> Sortclass.
     Coercion prf: Setoid >-> Equivalence.
     Existing Instance prf.

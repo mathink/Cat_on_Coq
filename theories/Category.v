@@ -1,7 +1,6 @@
-Require Export COC.Setoid.
-
 From COC.Category Require Export
-     Core
+     Category
+     Categories
      Object
      Morphism
      Functor

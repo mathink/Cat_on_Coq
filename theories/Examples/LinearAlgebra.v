@@ -4,9 +4,9 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-From COC Require Import
-     Setoid
-     AlgebraicStructures.
+Require Import
+        COC.Setoid
+        COC.AlgebraicStructures.
 
 Module VSpace.
 
