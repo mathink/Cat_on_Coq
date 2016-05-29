@@ -59,6 +59,8 @@
   
 * 構成
 
+  各ライブラリの依存性グラフ [[./depgraph.pdf]]
+
   #+BEGIN_SRC text
     |-- html
     |-- org
