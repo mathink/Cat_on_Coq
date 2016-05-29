@@ -4,7 +4,10 @@ Set Contextual Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Category.
+Require Import
+        COC.Setoid
+        COC.Category.
+
 Require Import COC.Construction.Cat.
 
 Module Hcomp.

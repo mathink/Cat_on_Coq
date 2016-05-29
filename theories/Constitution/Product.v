@@ -4,7 +4,8 @@ Set Primitive Projections.
 Set Universe Polymorphism.
 
 Generalizable All Variables.
-Require Import COC.Category.
+
+Require Import COC.Setoid COC.Category.
 
 Module Product.
   Class spec (C: Category)(X Y: C)(P: C)(pi1: C P X)(pi2: C P Y)(univ: forall {Z}, C Z X -> C Z Y -> C Z P) :=

@@ -3,7 +3,9 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Category.
+Require Import
+        COC.Setoid
+        COC.Category.
 
 (** * イコライザ(Equalizer)
 #$f,g: X\rightarrow$# のイコライザとは

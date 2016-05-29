@@ -4,7 +4,10 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Category COC.Constitution.
+Require Import
+        COC.Setoid
+        COC.Category
+        COC.Constitution.
 
 Module Exponential.
   Class spec (C: Category)(prod: forall X Y, Product X Y)(Y Z: C)

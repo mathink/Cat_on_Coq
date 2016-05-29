@@ -6,7 +6,7 @@ Set Universe Polymorphism.
 
 Generalizable All Variables.
 
-Require Import COC.Setoid.Core.
+Require Import COC.Setoid.Setoid.
 
 (** * Map
 [Setoid] の間のモルフィズム。
@@ -48,13 +48,11 @@ Module Map.
   Next Obligation.
     now intros x x' Heq; simpl in *; rewrite Heq.
   Qed.
-  Global Arguments compose {X Y Z} f g /.
 
   Program Definition id (X: Setoid): Map X X := [ x :-> x ].
   Next Obligation.
     now intros x y.
   Qed.
-  Global Arguments id X /.
 
   Definition equal {X Y: Setoid}: relation (Map X Y) :=
     fun f g => forall x: X, f x == g x.

@@ -5,7 +5,7 @@ Set Primitive Projections.
 Set Universe Polymorphism.
 
 Require Import COC.Setoid.
-Require Import COC.Category.Core COC.Category.Functor.
+Require Import COC.Category.Category COC.Category.Functor.
 
 (** 
  ** 自然変換

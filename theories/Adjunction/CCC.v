@@ -4,7 +4,12 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Category COC.Constitution.
+Require Import
+        COC.Setoid
+        COC.Category
+        COC.Construction
+        COC.Constitution.
+
 Require Import COC.Adjunction.Exponential.
 
 (** * Cartesian Closed Cccegory **)

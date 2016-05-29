@@ -1,9 +1,9 @@
-From COC Require Export
-     Setoid
-     Category
-     Construction
-     Constitution
-     AlgebraicStructures
-     Adjunction
-     Monoid
-     Enrich.
+Require Export
+        COC.Setoid
+        COC.Category
+        COC.Construction
+        COC.Constitution
+        COC.AlgebraicStructures
+        COC.Adjunction
+        COC.Monoidal
+        COC.Enrich.

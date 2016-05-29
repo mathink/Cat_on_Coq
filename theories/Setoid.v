@@ -1,3 +1,3 @@
 From COC.Setoid Require Export
-     Core
+     Setoid
      Map.

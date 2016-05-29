@@ -94,10 +94,11 @@ endif
 #                    #
 ######################
 
-VFILES:=theories/Setoid/Core.v\
+VFILES:=theories/Setoid/Setoid.v\
   theories/Setoid/Map.v\
   theories/Setoid.v\
-  theories/Category/Core.v\
+  theories/Category/Category.v\
+  theories/Category/Categories.v\
   theories/Category/Object.v\
   theories/Category/Morphism.v\
   theories/Category/Functor.v\
@@ -115,15 +116,14 @@ VFILES:=theories/Setoid/Core.v\
   theories/Constitution/Equalizer.v\
   theories/Constitution/Product.v\
   theories/Constitution/Limit.v\
-  theories/Constitution/Colimit.v\
   theories/Constitution.v\
-  theories/Adjunction/Core.v\
+  theories/Adjunction/Adjunction.v\
   theories/Adjunction/Exponential.v\
   theories/Adjunction/CCC.v\
   theories/Adjunction.v\
-  theories/Monoid/Monoidal.v\
-  theories/Monoid.v\
-  theories/Enrich/Core.v\
+  theories/Monoidal/Monoidal.v\
+  theories/Monoidal.v\
+  theories/Enrich/Enrich.v\
   theories/Enrich.v\
   theories/Abel.v\
   theories/AlgebraicStructures/Binop.v\
