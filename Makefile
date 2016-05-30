@@ -121,6 +121,8 @@ VFILES:=theories/Setoid/Setoid.v\
   theories/Adjunction/Exponential.v\
   theories/Adjunction/CCC.v\
   theories/Adjunction.v\
+  theories/Algebra/Algebra.v\
+  theories/Algebra.v\
   theories/Monoidal/Monoidal.v\
   theories/Monoidal.v\
   theories/Enrich/Enrich.v\
