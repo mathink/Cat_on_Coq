@@ -201,7 +201,113 @@ Lemma foldr_is_catamorphism:
   forall (A B: Type)(f: A -> B -> B)(e: B)(l: list A),
     foldr f e l = catamorphism (@list_initial A) (listF_make_algebra f e) l.
 Proof.
-  unfold listF_catamorphism, catamorphism; simpl.
+  unfold catamorphism; simpl.
   induction l as [| x xs]; simpl; auto.
   now rewrite IHxs.
 Qed.
+
+(** * F-余代数
+函手 #$F: C \rightarrow C$# について組 #$(X,x:X\rightarrow F(X))$# を F-代数と呼ぶ。
+ **)
+Module Coalgebra.
+  Structure type `(F: Functor C C) :=
+    make {
+        obj: C;
+        arr: C obj (F obj)
+      }.
+  
+  Module Ex.
+    Notation Coalgebra := type.
+
+    Coercion obj: Coalgebra >-> Category.obj.
+    Coercion arr: Coalgebra >-> Setoid.carrier.
+  End Ex.
+End Coalgebra.  
+Export Coalgebra.Ex.
+
+(** ** F-余代数間の射 **)
+Module CoalgebraMap.
+  Class spec `(F: Functor C C)(x y: Coalgebra F)(h: C x y) :=
+    proof {
+        commute:
+          fmap F h \o x == y \o h
+      }.
+
+  Structure type `(F: Functor C C)(x y: Coalgebra F) :=
+    make {
+        arr: C x y;
+
+        prf: spec arr
+      }.
+
+  Notation build arr := (@make _ _ _ _ arr (@proof _ _ _ _ _ _)).
+
+  Module Ex.
+    Notation isCoalgebraMap := spec.
+    Notation CoalgebraMap := type.
+
+    Coercion arr: CoalgebraMap >-> Setoid.carrier.
+    Coercion prf: CoalgebraMap >-> isCoalgebraMap.
+
+    Existing Instance prf.
+  End Ex.
+
+  Import Ex.
+
+  Section Coalg.
+    Context `(F: Functor C C).
+
+    Notation CMap := CoalgebraMap.
+    
+    Program Definition setoid (x y: Coalgebra F):=
+      Setoid.build (fun (f g: CMap x y) => f == g).
+    Next Obligation.
+      now intros f.
+    Qed.
+    Next Obligation.
+      now intros f g.
+    Qed.
+    Next Obligation.
+      now intros f g h; apply transitivity.
+    Qed.
+
+    Program Definition compose (x y z: Coalgebra F)(f: CMap x y)(g: CMap y z): CMap x z :=
+      build (g \o f).
+    Next Obligation.
+      now rewrite Functor.fmap_comp, catCa, commute, <- !catCa, commute.
+    Qed.
+
+    Program Definition id (x: Coalgebra F): CMap x x :=
+      build (Id x).
+    Next Obligation.
+      now rewrite Functor.fmap_id, catCf1, catC1f.
+    Qed.
+  End Coalg.
+End CoalgebraMap.
+Export CoalgebraMap.Ex.
+
+(** ** F-余代数の圏 **)
+Program Definition Coalg `(F: Functor C C): Category :=
+  Category.build (@CoalgebraMap.setoid _ F)
+                 (@CoalgebraMap.compose _ F)
+                 (@CoalgebraMap.id _ F).
+Next Obligation.
+  intros f f' Heqf g g' Heqg; simpl.
+  now rewrite Heqf, Heqg.
+Qed.
+Next Obligation.
+  now apply catCa.
+Qed.
+Next Obligation.
+  now apply catC1f.
+Qed.
+Next Obligation.
+  now apply catCf1.
+Qed.
+
+Definition TerminalCoalgebra `(F: Functor C C) := Terminal (Coalg F).
+
+(** ** anamorphism **)
+Definition anamorphism `(F: Functor C C)(term: TerminalCoalgebra F)(x: Coalgebra F):
+  C x (Terminal.obj term) :=
+  Terminal.univ term x.
