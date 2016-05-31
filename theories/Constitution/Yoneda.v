@@ -81,31 +81,28 @@ Definition EvalFunctor_fmap (C B: Category)
 Arguments EvalFunctor_fmap C B / X Y _.
 
 
-Instance Eval_isFunctor (C B: Category)
-  : @isFunctor ((Fun C B) [x] C) B
-               (@EvalFunctor_fobj C B) (@EvalFunctor_fmap C B).
-Proof.
-  split; simpl.
-  {
-    intros [F X] [G Y]; simpl.
-    intros [S f] [T g]; simpl in *.
-    intros [HeqST Heqfg]; simpl in *.
-    now rewrite Heqfg, (HeqST X).
-  }
-  {
-    intros [F X] [G Y] [H Z]; simpl.
-    intros [S f] [T g]; simpl.
-    rewrite catCa, fnC, catCa.
-    now rewrite <- (catCa (h:=fmap H f)), <- Natrans.naturality, catCa.
-  }  
-  {
-    intros [F X]; simpl.
-    now rewrite catC1f, fn1.
-  }
+Program Definition EvalFunctor (C B: Category): Functor ((Fun C B) [x] C) B :=
+  Functor.build (@EvalFunctor_fobj C B)
+                (@EvalFunctor_fmap C B).
+Next Obligation.
+  revert X Y.
+  intros [F X] [G Y]; simpl.
+  intros [S f] [T g]; simpl in *.
+  intros [HeqST Heqfg]; simpl in *.
+  now rewrite Heqfg, (HeqST X).
 Qed.
-
-Definition EvalFunctor (C B: Category): Functor ((Fun C B) [x] C) B :=
-  Functor.make (@Eval_isFunctor C B).
+Next Obligation.
+  revert X Y Z f g.
+  intros [F X] [G Y] [H Z]; simpl.
+  intros [S f] [T g]; simpl.
+  rewrite catCa, fnC, catCa.
+  now rewrite <- (catCa (h:=fmap H f)), <- Natrans.naturality, catCa.
+Qed.
+Next Obligation.
+  revert X.
+  intros [F X]; simpl.
+  now rewrite catC1f, fn1.
+Qed.
 
 Program Definition NFunctor (C: Category)
   : Functor (Fun C Setoids [x] C) Setoids :=
@@ -232,7 +229,7 @@ Next Obligation.
   now rewrite catCa.
 Qed.
 
-Instance Grothendieck_isFunctor (C: Category)
+Instance Grothendieck_is_functor (C: Category)
   : @isFunctor (Category.op C) (Fun C Setoids)
                (fun (X: C) => Hom(X,-))
                (fun Y X (f: C X Y) => HomNat f).
@@ -254,5 +251,5 @@ Qed.
 
 Definition GrothFunctor (C: Category)
   : Functor (Category.op C) (Fun C Setoids) :=
-  Functor.make (@Grothendieck_isFunctor C).
+  Functor.make (@Grothendieck_is_functor C).
 

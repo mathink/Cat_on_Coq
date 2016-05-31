@@ -6,8 +6,7 @@ Set Contextual Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Setoid COC.Algebra.
-From COC.Category Require Import Category Functor Object.
+Require Import COC.Setoid COC.Category COC.Algebra.
 
 Require Import List.
 Import List.ListNotations.

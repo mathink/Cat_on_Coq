@@ -19,54 +19,30 @@ Require Import COC.Category.Category COC.Category.Functor.
  **)
 
 Module Natrans.
-  Class canonical_spec
+  Class spec
         (C D: Category)
-        (Fo: C -> D)(Fa: Fmap C D Fo)
-        (Go: C -> D)(Ga: Fmap C D Go)
-        (natrans: forall X: C, D (Fo X) (Go X)) :=
+        (F G: Functor C D)
+        (natrans: forall X: C, D (F X) (G X)) :=
     proof {
-        dom_isFunctor: isFunctor Fa;
-        cod_isFunctor: isFunctor Ga;
         naturality:
           forall (X Y: C)(f: C X Y),
-            (natrans Y \o Fa _ _ f == Ga _ _ f \o natrans X :> D _ _)
+            (natrans Y \o fmap F f == fmap G f \o natrans X :> D _ _)
       }.
 
-  Structure canonical {C D: Category}
-            (Fo: C -> D)(Fa: Fmap C D Fo)(Go: C -> D)(Ga: Fmap C D Go)
-    :=
+  Structure type {C D: Category}(F G: Functor C D) :=
     make {
-        natrans (X: C): D (Fo X) (Go X);
-        prf: canonical_spec Fa Ga (@natrans)
+        natrans (X: C): D (F X) (G X);
+        prf: spec (@natrans)
       }.
 
-  Notation canonical_build natrans := (@make _ _ _ _ _ _ natrans _).
-
-  Definition spec (C D: Category)
-             (F G: Functor C D)
-             (natrans: forall X: C, D (F X) (G X)) :=
-    @canonical_spec
-      C D
-      (@Functor.fobj _ _ F) (@Functor.fmap _ _ F)
-      (@Functor.fobj _ _ G) (@Functor.fmap _ _ G)
-      (@natrans).
-
-  Definition type {C D: Category}(F G: Functor C D) :=
-    (@canonical C D
-                (@Functor.fobj _ _ F) (@Functor.fmap _ _ F)
-                (@Functor.fobj _ _ G) (@Functor.fmap _ _ G)).
-
-  Notation build F G natrans :=
-    (@make _ _ _ _ _ _ natrans (@proof _ _ _ _ _ _ natrans F G _)).
+  Notation build F G natrans := (@make _ _ F G natrans (@proof _ _ F G natrans _)).
 
   Module Ex.
     Notation Natrans := type.
     Notation isNatrans := spec.
-    Coercion natrans: canonical >-> Funclass.
-    Coercion prf: canonical >-> canonical_spec.
+    Coercion natrans: Natrans >-> Funclass.
+    Coercion prf: type >-> spec.
     Existing Instance prf.
-    Existing Instance dom_isFunctor.
-    Existing Instance cod_isFunctor.
   End Ex.
 
   Import Ex.
@@ -75,22 +51,8 @@ Module Natrans.
   Definition cod {C D: Category}{F G: Functor C D}(S: Natrans F G) := G.
 
 
-  Program Definition canonical_compose
-          {C D: Category}
-          {Fo Go Ho: C -> D}
-          {Fa: Fmap C D Fo}{Ga: Fmap C D Go}{Ha: Fmap C D Ho}
-          (S: canonical Fa Ga)(T: canonical Ga Ha)
-    : canonical Fa Ha :=
-    canonical_build (fun X => T X \o S X).
-  Next Obligation.
-    intros; split; [apply S | apply T |].
-    intros X Y f; simpl.
-    rewrite catCa, naturality.
-    now rewrite <- catCa, naturality, catCa.
-  Qed.
-
   Program Definition compose {C D: Category}{F G H: Functor C D}(S: Natrans F G)(T: Natrans G H): Natrans F H :=
-    build F H (canonical_compose S T).
+    build F H (fun X => T X \o S X).
   Next Obligation.
     rewrite catCa, naturality, <- catCa.
     now rewrite <- catCa, <- naturality.
