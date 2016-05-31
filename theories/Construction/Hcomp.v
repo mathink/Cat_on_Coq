@@ -10,6 +10,7 @@ Require Import
 
 Require Import COC.Construction.Cat.
 
+(** * Horizontal Composition **)
 Module Hcomp.
   (* 
                  -- G -> 
@@ -91,38 +92,5 @@ Module Hcomp.
   Import Ex.
 
 
-  (* 以前の定義だとそもそも型が合わずに Lemma コマンドが失敗する *)
-  Lemma dom_compose_cod:
-    forall {C D E K: Category}
-           (F: Functor C D){G H: Functor D E}(S: Natrans G H)(I: Functor E K),
-      (I \Fo (S \oF F) == (I \Fo S) \oF F :> Natrans.setoid _ _)%category.
-  Proof.
-    simpl; intros.
-    intros X; simpl.
-    apply reflexivity.
-  Qed.
-
-  Lemma dom_compose_v:
-    forall {C D E: Category}
-           (F: Functor C D){G H: Functor D E}(S: Natrans G H),
-      (S \oF F == S \vo (Natrans.id F) :> Natrans.setoid _ _)%category.
-  Proof.
-    simpl; intros.
-    intros X; simpl.
-    apply symmetry.
-    eapply transitivity; [| apply Category.comp_id_dom ].
-    apply Category.comp_subst; [apply Functor.fmap_id | apply reflexivity].
-  Qed.
-
-  Lemma cod_compose_v:
-    forall {C D E: Category}
-           {F G: Functor C D}(S: Natrans F G)(H: Functor D E),
-      (H \Fo S == (Natrans.id H) \vo S :> Natrans.setoid _ _)%category.
-  Proof.
-    simpl; intros.
-    intros X; simpl.
-    apply symmetry.
-    apply Category.comp_id_cod.
-  Qed.
 End Hcomp.
 Export Hcomp.Ex.
