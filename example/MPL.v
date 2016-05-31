@@ -297,7 +297,7 @@ Qed.
 (* Notation "'for' ( x : A ) 'with' P ; 'result' y 'of' m ; 'satisfies' Q" := (for (x : A) with P; result y of m in _; satisfies Q) (at level 97, x at next level, format "'for'  ( x :  A )  'with'  P ; '//' 'result'  y  'of'  m ; '//' 'satisfies'  Q"). *)
 (* Notation "'for' x 'with' P ; 'result' y 'of' m 'in' KPL ; 'satisfies' Q" := (for (x : _) with P; result y of m in KPL; satisfies Q) (at level 97, format "'for'  x  'with'  P ; '//' 'result'  y  'of'  m  'in'  KPL ; '//' 'satisfies'  Q"). *)
 (* Notation "'for' x 'with' P ; 'result' y 'of' m ; 'satisfies' Q" := (for x with P; result y of m in _; satisfies Q) (at level 97, format "'for'  x  'with'  P ; '//' 'result'  y  'of'  m ; '//' 'satisfies'  Q"). *)
-Notation "'for' ( x : A ) 'with' P  ; 'result' y 'of' m 'in' KPL ; 'satisfies' Q" := (Pred.pord (fun (x:A) => P) (sbst (C:=Types)(KPL:=KPL) (fun x => m) (fun y => Q))) (at level 97, x at next level).
+Notation "'for' ( x : A ) 'with' P  ; 'result' y 'of' m 'in' KPL ; 'satisfies' Q" := (Pred.pord (fun (x:A) => P) (sbst (C:=Types)(KPL:=KPL) (fun (x: A) => m) (fun y => Q))) (at level 97, x at next level).
 Notation "'for' ( x : A ) 'with' P  ; 'result' y 'of' m ; 'satisfies' Q" := (for (x : A) with P; result y of m in _; satisfies Q) (at level 97, x at next level).
 Notation "'for' x 'with' P  ; 'result' y 'of' m 'in' KPL ; 'satisfies' Q" := (for (x : _) with P; result y of m in KPL; satisfies Q) (at level 97).
 Notation "'for' x 'with' P  ; 'result' y 'of' m ; 'satisfies' Q" := (for x with P; result y of m in _; satisfies Q) (at level 97).
@@ -622,6 +622,8 @@ Proof.
   - apply IHHeven.
 Qed.
 
+(* ListExKPL を利用した命題記述は、
+計算結果のいずれかが与えられた述語を満たすことを意味する *)
 Goal
   for l with (l = [2;3;5;7;9]);
   result x of l in ListExKPL;
@@ -631,6 +633,8 @@ Proof.
   now rewrite Exists_cons; left; auto.
 Qed.
 
+(* ListFaKPL を利用した命題記述は、
+計算結果の全てが与えられた述語を満たすことを意味する *)
 Goal
   forall nl: list nat,
     for l with (l = nl);
@@ -644,11 +648,12 @@ Proof.
 Qed.
 
 
+(* 具体的なリストでの証明例 *)
 Goal
   for (_:unit) with True;
   result x of (n <- [1;3;5;7];
-                 m <- [2;4;6;8];
-                 pure (n * m)) in ListFaKPL;
+               m <- [2;4;6;8];
+               pure (n * m)) in ListFaKPL;
   satisfies (even x).
 Proof.
   simpl; intros.
@@ -656,6 +661,32 @@ Proof.
     (repeat apply even_SSn; auto).
 Qed.
 
+(* もう少し抽象的な例 *)
+(* 2 を含むリストと空でないリスト、それぞれの要素を全て互いにかけあわせた結果のいずれかは偶数 *)
+Goal
+  for (l1l2: list nat * list nat)
+    with (let (l1,l2) := l1l2 in In 2 l1 /\ l2 <> []);
+  result x of (let (l1,l2) := l1l2 in
+               n <- l1;
+               m <- l2;
+               pure (n * m)) in ListExKPL;
+  satisfies (even x).
+Proof.
+  simpl; intros [l1 l2].
+  destruct l2 as [| m l2]; [intros [_ H]; elim H; auto |].
+  intros [HIn _]; revert HIn l2.
+  induction l1 as [| n l1].
+  - simpl; intros H; contradiction.
+  - simpl; intros [Heq | HIn].
+    + subst.
+      intros.
+      rewrite Exists_cons; left.
+      now rewrite mult_comm; apply even_n2.
+    + intros l2.
+      rewrite Exists_cons; right.
+      rewrite Exists_app; right.
+      now apply IHl1.
+Qed.      
 
 
 (* State Monad *)
