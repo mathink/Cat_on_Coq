@@ -17,7 +17,7 @@ Delimit Scope category_scope with category.
 Delimit Scope cat_scope with cat.
 
 (** COC をインポートする場合、基本的に [cat_scope] を開くようにする。 **)
-Global Open Scope cat_scope.
+Open Scope cat_scope.
 
 (** * Setoid **)
 (** 要素の等価性を同値関係で以って与える構造。同値関係で型の商を取っている。 **)
