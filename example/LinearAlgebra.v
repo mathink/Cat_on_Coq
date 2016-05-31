@@ -207,7 +207,7 @@ Section FunctionSpace.
   Open Scope field_scope.
 
   Program Definition function_add: Binop (Map.setoid X F) :=
-    Binop.build (fun f g => [ v :-> (f v + g v)]).
+    Binop.build (fun f g => [: v :-> (f v + g v)]).
   Next Obligation.
     now intros u v Heq; rewrite Heq.
   Qed.
@@ -217,7 +217,7 @@ Section FunctionSpace.
   Qed.
 
   Program Definition function_minus: Map (Map.setoid X F) (Map.setoid X F) :=
-    [ f v :-> - f v ].
+    [: f v :-> - f v ].
   Next Obligation.
     now intros u v Heq; rewrite Heq.
   Qed.
@@ -231,8 +231,8 @@ Section FunctionSpace.
       (Map.setoid X F)
       function_add
       function_minus
-      (fun x f => [ v :-> x * f v])
-      ([ v :-> 0]).
+      (fun x f => [: v :-> x * f v])
+      ([: v :-> 0]).
   Next Obligation.
     now intros u v Heq; rewrite Heq.
   Qed.
@@ -354,7 +354,7 @@ Section HomSpace.
   Open Scope vspace_scope.
   
   Program Definition linear_map_add (f g: LinearMap U V): LinearMap U V :=
-    LinearMap.build ([ v :-> f v + g v]).
+    LinearMap.build ([: v :-> f v + g v]).
   Next Obligation.
     now intros v v' Heqv; rewrite Heqv.
   Qed.
@@ -375,7 +375,7 @@ Section HomSpace.
   Qed.
   
   Program Definition linear_map_inv (f: LinearMap U V): LinearMap U V :=
-    LinearMap.build ([ v :-> - f v ]).
+    LinearMap.build ([: v :-> - f v ]).
   Next Obligation.
     now intros v v' Heqv; rewrite Heqv.
   Qed.
@@ -398,8 +398,8 @@ Section HomSpace.
       (LinearMap.setoid U V)
       linear_map_add_binop
       linear_map_inv_map
-      (fun x f => LinearMap.build ([ v :-> x * f v ]))
-      (LinearMap.build ([ v :-> 0])).
+      (fun x f => LinearMap.build ([: v :-> x * f v ]))
+      (LinearMap.build ([: v :-> 0])).
   Next Obligation.
     now intros v v' Heq; rewrite Heq.
   Qed.
@@ -461,7 +461,7 @@ Section DualSpace.
   
   Program Definition DualDual_canonical (V: VSpace F)
     : Map V (DualSpace (DualSpace V)) :=
-    [ v :-> LinearMap.build ([f :-> f v])].
+    [: v :-> LinearMap.build ([: f :-> f v])].
   Next Obligation.
     now intros f f' Heqf.
   Qed.

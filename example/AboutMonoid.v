@@ -4,7 +4,7 @@ Unset Strict Implicit.
 Set Primitive Projections.
 Set Universe Polymorphism.
 
-Require Import COC.Category COC.AlgebraicStructures.
+Require Import COC.Setoid COC.Category COC.AlgebraicStructures.
 
 Section MapMonoid.
   Context (X: Setoid).

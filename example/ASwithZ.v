@@ -432,6 +432,10 @@ Canonical Structure Q_ring := Ring.make Q_is_ring.
 (* Field of '+' & '*' *)
 Program Instance Q_is_field: isField Qplus_binop 0 Qopp_map Qmult_binop 1 Qinv_map.
 Next Obligation.
+  intros a b; simpl.
+  now rewrite Qmult_comm.
+Qed.
+Next Obligation.
   now rewrite Qmult_comm, Qmult_inv_r.
 Qed.
 Next Obligation.
