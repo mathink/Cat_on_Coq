@@ -49,7 +49,7 @@ Section SetoidsIsCCC.
     @Setoid.make _ (@eq unit) _.
 
   Program Definition to_unit_setoid (X: Setoids): Map X unit_setoid :=
-    [ x :-> tt].
+    [: x :-> tt].
   Next Obligation.
     intros x y Heq; reflexivity.
   Qed.
@@ -64,20 +64,20 @@ Section SetoidsIsCCC.
 
   (** ** Prod.setoid X Y is a product of X and Y in Setoids **)
   Program Definition Prod_fst_map (X Y: Setoids): Setoids (X [*] Y) X :=
-    [ xy :-> Prod.fst xy ].
+    [: xy :-> Prod.fst xy ].
   Next Obligation.
     now intros [x y] [x' y'] [Heqx Heqy]; simpl in *.
   Qed.
 
   Program Definition Prod_snd_map (X Y: Setoids): Setoids (X [*] Y) Y :=
-    [ xy :-> Prod.snd xy ].
+    [: xy :-> Prod.snd xy ].
   Next Obligation.
     now intros [x y] [x' y'] [Heqx Heqy]; simpl in *.
   Qed.
 
   Program Definition Prod_prod_map (X Y Z: Setoids)(f: Setoids Z X)(g: Setoids Z Y)
     : Setoids Z (X [*] Y) :=
-    [ z :-> (f z, g z)%cat ].
+    [: z :-> (f z, g z)%cat ].
   Next Obligation.
     intros z z' Heqz; simpl; rewrite Heqz; split; reflexivity.
   Qed.
@@ -99,7 +99,7 @@ Section SetoidsIsCCC.
 
   (** ** Map.setoid X Y is a exponential of X and Y in Setoids **)
   Program Definition apply_map (X Y: Setoids): Setoids ((Map.setoid X Y) [*] X) Y :=
-    [ fx :-> let (f,x) := fx in f x ].
+    [: fx :-> let (f,x) := fx in f x ].
   Next Obligation.
     now intros [f x] [g y] [Heqfg Heqxy]; simpl in *; rewrite Heqxy; apply Heqfg.
   Qed.
@@ -112,7 +112,7 @@ Section SetoidsIsCCC.
   
   Program Definition exp_univ_map (X Y Z: Setoids)(f: Setoids (Z [*] X) Y)
     : Setoids Z (Map.setoid X Y) :=
-    [ z x :-> f (z,x) ].
+    [: z x :-> f (z,x) ].
   Next Obligation.
     now intros x x' Heq; rewrite Heq.
   Qed.

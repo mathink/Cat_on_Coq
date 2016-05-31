@@ -14,7 +14,7 @@ Require Import
 Program Definition UATo_map
         (D C: Category)(c: C)(S: Functor D C)(r: D)(u: C c (S r))(d: D)
   : Map (D r d) (C c (S d)) :=
-  [ f' :-> fmap S f' \o u].
+  [: f' :-> fmap S f' \o u].
 Next Obligation.
   now intros f g H; rewrite H.
 Qed.
@@ -110,8 +110,8 @@ Program Definition NFunctor (C: Category)
                 (fun FX GY Sf => let (F,X) := FX in
                                  let (G,Y) := GY in
                                  let (S,f) := Sf in
-                                 [alpha :->
-                                        Natrans.build Hom(Y,-) G (fun X => S X \o alpha X \o fmap Hom(-,X) f )]).
+                                 [: alpha :->
+                                          Natrans.build Hom(Y,-) G (fun X => S X \o alpha X \o fmap Hom(-,X) f )]).
 Next Obligation.
   revert C FX GY Sf alpha X Y f x.
   intros C [F X] [G Y] [S f]; simpl in *.
@@ -151,7 +151,7 @@ Qed.
 
 Program Definition yoneda (C: Category)
   : Natrans (@NFunctor C) (@EvalFunctor C Setoids) :=
-  Natrans.build _ _ (fun FX => let (F, X) := FX in [alpha :-> alpha X (Id X)]).
+  Natrans.build _ _ (fun FX => let (F, X) := FX in [: alpha :-> alpha X (Id X)]).
 Next Obligation.
   destruct FX as [F X]; simpl.
   intros S T Heq.
@@ -172,7 +172,7 @@ Program Definition inv_yoneda (C: Category):
   Natrans (@EvalFunctor C Setoids) (@NFunctor C) :=
   Natrans.build (@EvalFunctor C Setoids) (@NFunctor C)
     (fun FX => let (F,X) := FX in
-               [ x :-> Natrans.build Hom(X,-) F (fun Y => [f :-> fmap F f x])]).
+               [: x :-> Natrans.build Hom(X,-) F (fun Y => [: f :-> fmap F f x])]).
 Next Obligation.
   revert FX x Y.
   intros [F X] x Y f g Heq.
@@ -220,7 +220,7 @@ Qed.
 (* Next: Grothendieck Functor *)
 Program Definition HomNat {C: Category}(X Y: C)(f: C X Y)
   : Natrans Hom(Y,-) Hom(X,-) :=
-  Natrans.build _ _ (fun Z => [ g :-> g \o f ]).
+  Natrans.build _ _ (fun Z => [: g :-> g \o f ]).
 Next Obligation.
   intros g g' Heq; simpl in *.
   now rewrite Heq.

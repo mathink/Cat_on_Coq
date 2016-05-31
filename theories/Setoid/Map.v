@@ -32,10 +32,10 @@ Module Map.
     Coercion prf: Map >-> isMap.
     Existing Instance prf.
 
-    Notation "[ x .. y :-> p ]" := 
+    Notation "[: x .. y :-> p ]" := 
       (build (fun x => .. (build (fun y => p)) ..))
         (at level 200, x binder, right associativity,
-         format "'[' [ x .. y  :->  '/ ' p ] ']'"): cat_scope.
+         format "'[' [: x .. y  :->  '/ ' p ] ']'"): cat_scope.
   End Ex.
   Import Ex.
 
@@ -44,12 +44,12 @@ Module Map.
 
   Program Definition compose
           {X Y Z: Setoid}(f: Map X Y)(g: Map Y Z): Map X Z :=
-    [ x :-> g (f x)].
+    [: x :-> g (f x)].
   Next Obligation.
     now intros x x' Heq; simpl in *; rewrite Heq.
   Qed.
 
-  Program Definition id (X: Setoid): Map X X := [ x :-> x ].
+  Program Definition id (X: Setoid): Map X X := [: x :-> x ].
   Next Obligation.
     now intros x y.
   Qed.

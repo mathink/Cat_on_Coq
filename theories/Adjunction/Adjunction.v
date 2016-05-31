@@ -12,7 +12,7 @@ Require Import
 Program Definition HomF (C: Category): Bifunctor (Category.op C) C Setoids :=
   Functor.build 
     (fun XY => let (X,Y) := XY in C X Y)
-    (fun XY XY' fg => let (f,g) := fg in [ h :-> g \o{C} h \o{C} f]).
+    (fun XY XY' fg => let (f,g) := fg in [: h :-> g \o{C} h \o{C} f]).
 Next Obligation.
   revert XY XY' fg.
   intros [X Y] [X' Y'] [f g]; simpl; intros h h' Heq; simpl in *.

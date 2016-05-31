@@ -19,7 +19,7 @@ Require Import
  **)
 Program Definition HomFunctor (C: Category)(X: C)
   : Functor C Setoids :=
-  Functor.build (C X) (fun Y X g => [f :-> g \o{C} f]).
+  Functor.build (C X) (fun Y X g => [: f :-> g \o{C} f]).
 Next Obligation.
   now intros f f' Heq; rewrite Heq.
 Qed.
@@ -40,7 +40,7 @@ Qed.
 Program Definition OpHomFunctor (C: Category)(Y: C)
   : Functor (Category.op C) Setoids :=
   Functor.build (fun X => C X Y)
-                (fun X Y f => [g :-> g \o{C} f]).
+                (fun X Y f => [: g :-> g \o{C} f]).
 Next Obligation.
   now intros g g' Heq; rewrite Heq.
 Qed.

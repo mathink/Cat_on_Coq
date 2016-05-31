@@ -74,7 +74,7 @@ Module Prod.
 
   Program Definition map {X Y Z W: Setoid}(f: Map X Z)(g: Map Y W):
     Map (X [*] Y) (Z [*] W) :=
-    [ p :-> make (f (fst p)) (g (snd p))].
+    [: p :-> make (f (fst p)) (g (snd p))].
   Next Obligation.
     intros; intros [x1 y1] [x2 y2]; simpl.
     intros [Heqx Heqy]; split; apply Map.substitute; assumption.

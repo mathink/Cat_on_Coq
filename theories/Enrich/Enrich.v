@@ -65,12 +65,12 @@ Section Setoids_as_Monoidal.
       Monoidal.cat := Setoids;
       Monoidal.mult := Prod_Bifunctor;
       Monoidal.unit := unit_setoid;
-      Monoidal.assoc X Y Z := [x_yz:-> ((x_yz.1, x_yz.2.1), x_yz.2.2)];
-      Monoidal.assoc_inv X Y Z := [xy_z:-> (xy_z.1.1, (xy_z.1.2, xy_z.2))];
-      Monoidal.lambda X := [p :-> p.2];
-      Monoidal.lambda_inv X := [x :-> (tt,x)];
-      Monoidal.rho X := [p :-> p.1];
-      Monoidal.rho_inv X := [x :-> (x,tt)]
+      Monoidal.assoc X Y Z := [:x_yz:-> ((x_yz.1, x_yz.2.1), x_yz.2.2)];
+      Monoidal.assoc_inv X Y Z := [:xy_z:-> (xy_z.1.1, (xy_z.1.2, xy_z.2))];
+      Monoidal.lambda X := [:p :-> p.2];
+      Monoidal.lambda_inv X := [:x :-> (tt,x)];
+      Monoidal.rho X := [:p :-> p.1];
+      Monoidal.rho_inv X := [:x :-> (x,tt)]
     |}.
   Next Obligation.
     simpl; intros x x' H. 
@@ -122,8 +122,8 @@ Program Definition Setoids_Enriched (C: Category): Enriched Setoids_Monoidal :=
   {|
     obj := Category.obj C;
     hom X Y := C X Y;
-    comp X Y Z := [fg :-> let (f,g) := fg in g \o f];
-    id X := [U :-> Id X]
+    comp X Y Z := [: fg :-> let (f,g) := fg in g \o f];
+    id X := [: U :-> Id X]
   |}.
 Next Obligation.
   intros [f g] [f' g'] [Hf Hg]; simpl in *.
