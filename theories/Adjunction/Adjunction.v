@@ -181,3 +181,4 @@ Module Adjunction.
   Qed.
 
 End Adjunction.
+Export Adjunction.Ex.

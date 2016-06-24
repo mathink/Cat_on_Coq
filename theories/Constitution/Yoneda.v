@@ -116,11 +116,11 @@ Next Obligation.
   revert C FX GY Sf alpha X Y f x.
   intros C [F X] [G Y] [S f]; simpl in *.
   intros T Z W h g; simpl in *.
-  generalize (Natrans.naturality (natrans:=S)(f:=h)(T Z (g \o f))); simpl.
+  generalize (Natrans.naturality (natrans:=S) h (T Z (g \o f))); simpl.
   intros H; rewrite <- H; clear H.
   apply Map.substitute.
   rewrite catCa.
-  generalize (Natrans.naturality (natrans:=T)(f:=h) (g \o f)); simpl.
+  generalize (Natrans.naturality (natrans:=T) h (g \o f)); simpl.
   now intros H; rewrite H.
 Qed.
 Next Obligation.
@@ -161,9 +161,9 @@ Next Obligation.
   revert X Y f x.
   intros [F X] [G Y] [S f] T; simpl in *.
   rewrite catCf1.
-  generalize (Natrans.naturality (natrans:=S) (f:=f) (T X (Id X))).
+  generalize (Natrans.naturality (natrans:=S) f (T X (Id X))).
   simpl; intro Heq; rewrite <- Heq; clear Heq.
-  generalize (Natrans.naturality (natrans:=T) (f:=f) (Id X)).
+  generalize (Natrans.naturality (natrans:=T) f (Id X)).
   simpl; intro Heq; rewrite <- Heq; clear Heq.
   now rewrite catC1f.
 Qed.
@@ -211,7 +211,7 @@ Proof.
   intros C [F X]; simpl.
   apply Iso_def; simpl.
   - intros S Y f; simpl.
-    generalize (Natrans.naturality (natrans:=S)(f:=f)); simpl.
+    generalize (Natrans.naturality (natrans:=S) f); simpl.
     intro Heq.
     now rewrite <- (Heq (Id X)), catC1f.
   - apply (Functor.fmap_id (fobj:=F)).

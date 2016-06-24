@@ -767,7 +767,7 @@ Definition modify {S: PType}(f: PType.carrier S -> PType.carrier S): state S uni
 
 Program Definition StateKPLMap (S: PType){X Y: Type}(f: X -> state S Y)
   : Map (SPred_setoid S Y) (SPred_setoid S X) :=
-  [ P :-> fun s x => let (y,s') := f x s in P s' y ].
+  [: P :-> fun s x => let (y,s') := f x s in P s' y ].
 Next Obligation.
   intros P Q Heq s x.
   destruct (f x s); apply Heq.
@@ -852,15 +852,6 @@ Save consS_length.
 
 (* カウント付き比較 *)
 Definition leb_c (n m: nat) := _ <- modify (S:=Pnat) S; pure (n <=? m).
-(* Fixpoint leb_c (n m: nat): state Pnat bool := *)
-(*   match n, m with *)
-(*   | O, O *)
-(*   | O, S _ => _ <- modify (S:=Pnat) S; *)
-(*                 pure true *)
-(*   | S _, O => _ <- modify (S:=Pnat) S; *)
-(*                 pure false *)
-(*   | S p, S q => leb_c p q *)
-(*   end. *)
 
 (* 比較すれば比較回数は真に大きくなるよ *)
 Fixpoint insert (n: nat)(l: list nat){struct l}: state Pnat (list nat)  :=
@@ -872,6 +863,51 @@ Fixpoint insert (n: nat)(l: list nat){struct l}: state Pnat (list nat)  :=
                 else (res <- insert n xs;
                         pure (m::res)))
   end.
+
+Lemma insert_compare:
+  forall (c len n: nat),
+    from s in Pnat;
+    for (l: list nat) with (s <= c /\ length l = len);
+    result l' of insert n l;
+    into s';
+    satisfies (s' <= c + len /\ length l' = S len).
+Proof.
+  intros c len n s l [Hle Heq].
+  revert c s Hle len Heq n; induction l; simpl; auto with arith.
+  intros.
+  destruct (n <=? a); simpl; auto with arith; try (split; omega).
+  simpl in *.
+  destruct len as [| len]; try discriminate.
+  apply le_n_S in Hle.
+  apply eq_add_S in Heq.
+  specialize (IHl _ _ Hle _ Heq n).
+  destruct (insert n l (S s)).
+  simpl in *.
+  destruct IHl.
+  split.
+  + now rewrite <- plus_n_Sm; auto.
+  + auto.
+Qed.
+
+Lemma insert_compare':
+  forall (c n: nat),
+    from s in Pnat;
+    for (l: list nat) with (s <= c);
+    result l' of insert n l;
+    into s';
+    satisfies (s' <= c + length l').
+Proof.
+  intros c n s l Hle.
+  revert c s Hle n; induction l; simpl; auto with arith.
+  intros.
+  destruct (n <=? a); simpl; auto with arith; try omega.
+  simpl in *.
+  apply le_n_S in Hle.
+  specialize (IHl _ _ Hle n).
+  destruct (insert n l (S s)).
+  simpl in *.
+  now rewrite <- plus_n_Sm; auto.
+Qed.
 
 Fixpoint insertion_sort (l: list nat): state Pnat (list nat) :=
   match l with
@@ -885,400 +921,95 @@ Eval compute in insertion_sort [3;1;4;1;5;9;6] 0.
      (* : list nat * Pnat *)
 
 
-(* 大雑把な評価 *)
-Lemma insertion_sort_compare_count_max_gen:
-  forall c,
-    from s in Pnat;                 (* 状態 s から始めて *)
-    for (l: list nat) with (s = c); (* 値 l と条件 s = c について *)
-    result l' of insertion_sort l;  (* insertion_sort l を計算した結果 l' が *)
-    into s';                        (* 状態 s' に至ったとすると *)
-    satisfies (s' <= c + length l' * length l'). (* これらは s' <= c + length l' * length l' を満たす *)
+Lemma divmod_2_mul:
+  forall x y,
+    x <= y / 2 <-> 2 * x <= y.
 Proof.
-  simpl; intros c s l H.
-  induction l as [| n l]; simpl; auto.
-  - now rewrite plus_0_r; subst.
-  - simpl in IHl.
-    generalize (conj H IHl).
-    clear H IHl.
-    revert s l.
-    eapply (hoare_comp (kpl:=StateKPL Pnat)).
-    + simpl; intros s l [Heq Hle]; subst.
-      generalize (eq_refl (length l)); intro H.
-      apply (conj H Hle).
-    + simpl.
-      intros s l.
-      revert c n s.
-      induction l as [| m l]; simpl; auto.
-      * intros; omega.
-      * intros c n s; generalize tt; revert s.
-        change (
-            from s in Pnat;
-            for (_:unit) with (s <= c + S (length l + length l * S (length l)));
-            result l' of (
-                     _ <- modify (S:=Pnat) S;
-                     if n <=? m
-                     then pure (X:=list nat:Types)(n::m::l)
-                     else l' <- insert n l; pure (X:=list nat:Types)(m::l'));
-            into s';
-            satisfies (s' <= c + length l' * length l')
-          ).
-        eapply (hoare_comp (kpl:=StateKPL Pnat)).
-        Focus 2.
-        simpl; intros.
-        destruct (n <=? m).
-        Focus 2.
-        generalize (IHl (S c + length (fst (insert n l s)) + length (fst (insert n l s))) n s H).
-        destruct (insert n l s); simpl.
-        simpl.
-        rewrite <- mult_n_Sm, (plus_comm (_*_)).
-        rewrite !plus_n_Sm.
-        now rewrite !plus_assoc.
-Admitted.
-
-Lemma insertion_sort_compare_count_max:
-  from s in Pnat;
-  for (l: list nat) with (s = 0);
-  result l' of insertion_sort l;
-  into s';
-  satisfies (s' <= length l' * length l').
-Proof.
-  apply insertion_sort_compare_count_max_gen.
-Qed.
-
-(* 一筋縄じゃいかねぇ *)
-
-Inductive le': nat -> nat -> Prop :=
-| le'_0_n: forall n, le' 0 n
-| le'_n_S: forall n m, le' n m -> le' (S n) (S m).
-Hint Resolve le'_0_n le'_n_S.
-
-Lemma le_0_n:
-  forall n, le 0 n.
-Proof.
-  induction n; auto.
-Qed.
-
-Lemma le'_n:
-  forall n, le' n n.
-Proof.
-  induction n as [| n]; auto.
-Qed.
-
-Lemma le'_S:
-  forall n m, le' n m -> le' n (S m).
-Proof.
-  intros n m Hle'; induction Hle'; auto.
-Qed.
-
-Theorem le_le':
-  forall n m, le n m <-> le' n m.
-Proof.
-  intros; split.
-  {
-    intros Hle; induction Hle.
-    - now apply le'_n.
-    - now apply le'_S.
-  }
-  {
-    intros Hle; induction Hle.
-    - now apply le_0_n.
-    - now apply le_n_S.
-  }
-Qed.
-
-Goal
-  forall P n m,
-    from s in Pnat;
-    for (_:unit) with (n <= m/\P (S s));
-    result b of (leb_c n m);
-    into s';
-    satisfies (b = true/\P s').
-Proof.
-  simpl; intros P n m s ? [Hle Hp].
-  rewrite le_le' in Hle.
-  induction Hle; simpl; auto.
-Qed.
-
-Goal
-  forall P n m,
-    from s in Pnat;
-    for (_:unit) with (n > m/\P (S s));
-    result b of (leb_c n m);
-    into s';
-    satisfies (b = false/\P s').
-Proof.
-  simpl; intros P n m s _ [Hle Hp].
-  unfold gt, lt in Hle.
-  revert m Hle s Hp; induction n as [| n]; simpl.
-  - intros; inversion Hle.
-  - destruct m; auto; intros.
-    apply le_S_n in Hle.
-    apply IHn; auto .
-Qed.
-
-(* 大雑把な評価 *)
-Goal
-  forall c,
-    from s in Pnat;                 (* 状態 s から始めて *)
-    for (l: list nat) with (s = c); (* 値 l と条件 s = c について *)
-    result l' of insertion_sort l;  (* insertion_sort l を計算した結果 l' が *)
-    into s';                        (* 状態 s' に至ったとすると *)
-    satisfies (s' <= c + length l' * length l'). (* これらは s' <= c + length l' * length l' を満たす *)
-Proof.
-  simpl; intros.
-  induction x as [| n l]; simpl; auto.
-  - subst; omega.
-  - generalize tt (conj H IHl).
-    clear H IHl.
-    revert s.
-    eapply (hoare_comp (kpl:=StateKPL Pnat)).
-    + simpl; intros s _ [Heq Hle].
-      apply Hle.
-    + Goal
-        forall n c,
-          (from s in Pnat;
-           for l with (s <= c + length l * length l);
-           result l' of insert n l;
-           into s';
-           satisfies (s' <= c + length l' * length l')).
-      Proof.
-        simpl.
-        intros.
-        induction x as [| m l]; auto.
-        - simpl in *; omega.
-        - simpl.
-          revert c l H IHl.
-          functional induction (leb_c n m).
-          + intros; simpl in *.
-            rewrite !mult_succ_r in *.
-            omega.
-          + intros; simpl in *.
-            rewrite !mult_succ_r in *.
-            omega.
-          + intros; simpl in *.
-            
-            
-            (*  *)
-          destruct (le_gt_dec n m) as [Hle | Hgt].
-          + generalize tt (conj H IHl).
-            clear H IHl.
-            revert s.
-            eapply (hoare_comp (kpl:=StateKPL Pnat)).
-            * simpl; intros.
-              apply Unnamed_thm9 with
-              (P := fun s => match s with
-                             | O => True
-                             | S s =>
-                               s <= c + S (length l + length l * S (length l)) /\
-                               (s <= c + length l * length l ->
-                                let (y, s') := insert n l s in s' <= c + length y * length y)
-                             end); auto.
-            (* TODO *)
-            * simpl; intros; subst.
-              destruct H; subst.
-              destruct s; auto with arith.
-              simpl.
-              destruct H0.
-              admit.
-          +
-            Focus 2.
-            simpl; intros.
-          + simpl; intros s _ [H H'].
-            Focus 2.
-      Admitted.
-      apply Unnamed_thm10.
-Goal
-  from s in Pnat;
-  for (l: list nat) with (s = 0);
-  result l' of insertion_sort l;
-  into s';
-  satisfies (s' <= length l' * length l').
-Proof.
-  apply Unnamed_thm9.
-Qed.
-
-(* 一筋縄じゃいかねぇ *)
-Inductive sorted: list nat -> Prop :=
-| sorted_nil: sorted []
-| sorted_one: forall n, sorted [n]
-| sorted_cons: forall n m l, n <= m -> sorted (m::l) -> sorted (n::m::l).
-Hint Resolve sorted_nil sorted_one sorted_cons.
-
-
-Lemma sorted_cons_inv:
-  forall n l, sorted (n::l) -> sorted l.
-Proof.
-  intros n l Hs.
-  inversion Hs; subst; auto.
-Qed.
-
-
-
-Lemma sorted_cons_cons_inv:
-  forall n m l, sorted (n::m::l) -> sorted (n::l).
-Proof.
-  intros n m l.
-  revert n m; destruct l as [| k l]; auto.
+  simpl.
   intros.
-  inversion H; subst.
-  inversion H4; subst.
-  apply sorted_cons; auto.
-  apply le_trans with m; auto.
-Qed.  
-
-Lemma sorted_cons_inv_in:
-  forall n l, sorted (n::l) ->
-              (forall x, In x l -> n <= x).
-Proof.
-  intros n l; revert n.
-  induction l as [| m l].
-  - contradiction.
-  - simpl; intros n Hs x [Heq | HIn].
-    + subst.
-      now inversion Hs.
-    + apply IHl; auto.
-      apply sorted_cons_cons_inv with m; auto.
+  generalize (Nat.divmod_spec y 1 0 1 (le_n _)).
+  destruct (Nat.divmod y 1 0 1); simpl.
+  rewrite !plus_0_r; intros [Heq Hle]; subst.
+  destruct n0; split; abstract omega.
 Qed.
 
-Lemma sorted_in:
-  forall n l, sorted l -> (forall x, In x l -> n <= x) -> sorted (n::l).
+Lemma mul_2_divmod:
+  forall x,
+    2 * (x / 2) <= x.
 Proof.
-  intros n l Hs; revert n; induction Hs; auto.
-  - simpl.
-    intros m H; apply sorted_cons; auto.
-  - intros; apply sorted_cons; auto.
-    apply H0; left; reflexivity.
+  simpl in *; intros x.
+  generalize (Nat.divmod_spec x 1 0 1 (le_n _)).
+  destruct (Nat.divmod x 1 0 1); simpl.
+  rewrite !plus_0_r.
+  intros [Heq _]; rewrite Heq.
+  destruct n0; abstract omega.
 Qed.
 
-Goal
-  forall n,
-    from _ in Pnat;
-    for l with (sorted l);
-    result l' of (insert n l);
-    into _;
-    satisfies (sorted l').
-Proof.
-Admitted.
 
-Goal
-  from _ in Pnat;
-  for (l: list nat) with True;
+Lemma insertion_sort_compare_count_max_aux:
+  forall c len,
+    from s in Pnat;                 
+    for (l: list nat) with (s <= c /\ length l = len); 
+    result l' of insertion_sort l;  
+    into s';                        
+    satisfies (let n := length l' in
+               s' <= c + (n^2 - n)/2 /\ n = len). 
+Proof.
+  intros c n s l H.
+  revert c s n H.
+  induction l as [| m l]; simpl; auto;
+    intros c s n [Hle Heq]; try (split; omega).
+
+  destruct n as [| n]; try discriminate.
+  specialize (IHl c s n (conj Hle (eq_add_S _ _ Heq))); simpl in IHl.
+  destruct (insertion_sort l s).
+  clear Hle Heq l s.
+  rename l0 into l, c0 into s.
+  change (let len := length l in
+          s <= c + (len^2 - len)/2 /\ len = n) in IHl.
+  change (let (y, s') := insert m l s in
+          let len := length y in
+          s' <= c + (len^2 - len)/2 /\ len = S n).
+  generalize (@insert_compare
+                (let m := length l in c + (m^2 - m)/2) n
+                m s l IHl); intros H; simpl in H.
+  change (
+      let (y, s') := insert m l s in
+      let len := length l in
+      s' <= c + (len^2 - len)/2 + n /\ length y = S n
+    ) in H.
+  destruct IHl as [Hle Heq].
+  destruct (insert m l s).
+  rewrite <- Heq in *.
+  clear Hle Heq.
+  destruct H as [Hle Heq]; split; auto.
+  rewrite Heq in *.
+  clear Heq l0 s; rename c0 into s.
+  set (length l) as len in *.
+  change (s <= c + (len^2 - len)/2 + len) in Hle.
+  eapply transitivity; [apply Hle |].
+  rewrite <- plus_assoc.
+  apply plus_le_compat_l.
+  apply divmod_2_mul.
+  rewrite Nat.mul_add_distr_l.
+  eapply transitivity;
+    [apply plus_le_compat_r, mul_2_divmod |]; simpl.
+  rewrite !mult_1_r, plus_0_r, <- !mult_n_Sm; simpl.
+  apply Nat.le_add_le_sub_r.
+  rewrite !plus_assoc, Nat.sub_add; try omega.
+  destruct (mult_O_le len len) as [Heq | H];
+    [now rewrite Heq; auto | assumption].
+Qed.    
+
+Lemma insertion_sort_compare_count_max':
+  from s in Pnat;
+  for (l: list nat) with (s = 0);
   result l' of insertion_sort l;
-  into _;
-  satisfies (sorted l').
+  into s';
+  satisfies (let n := length l' in
+             s' <= (n^2 - n)/2).
 Proof.
-  simpl; intros.
-  induction x as [| n l]; simpl; auto.
-  revert IHl.
-  generalize tt.
-  revert s.
-  eapply (hoare_comp (kpl:=StateKPL Pnat)).
-  - simpl; intros.
-    apply H0.
-  - simpl.
-    intros.
-    apply Unnamed_thm13; auto.
+  intros s x Heq; subst.
+  generalize (@insertion_sort_compare_count_max_aux 0 (length x) 0 x (conj (le_n 0) (eq_refl (length x)))); simpl; intros H.
+  destruct (insertion_sort x 0); tauto.
 Qed.
-
-Goal
-  forall P n m c,
-    from s in Pnat;
-    for (l:list nat) with (s <= c /\ P (S s) l);
-    result bl of b <- leb_c n m; pure (b,l);
-    into s';
-    satisfies (let (b,l) := bl: bool * list nat in s' <= S c /\ P s' l).
-Proof.
-  intros P n m c s H; simpl.
-  subst.
-  revert m c.
-  induction n as [| n]; simpl.
-  - destruct m as [| m]; intros c [Hle Hp]; split; try omega; auto.
-  - destruct m as [| m]; auto; intros c [Hle Hp].
-    + split; try omega; auto.
-    + apply IHn; split; auto.
-Qed.
-
-(* insert に於ける比較回数は高々リストの長さ分だよ *)
-(* 長さに関する記述が足りない *)
-Goal
-  forall len n c,
-    from s in Pnat;
-    for l with (s <= c /\ length l = len);
-    result l' of insert n l;
-    into s';
-    satisfies (s' <= c + length l' /\ length l' = S len).
-Proof.
-  intros len n c s l; simpl.
-  revert len n c s.
-  induction l as [| m xs].
-  - intros len c n s [Hle Heq]; simpl in *.
-    subst; split; omega.
-  - simpl.
-    intros len n c s [Hle Heq].
-    revert len c s xs Hle Heq IHxs.
-    functional induction (leb_c n m); simpl.
-    + split.
-      * rewrite <- plus_n_Sm.
-        apply le_n_S.
-        now apply le_plus_trans.
-      * now apply eq_S.
-    + split.
-      * rewrite <- plus_n_Sm.
-        apply le_n_S.
-        now apply le_plus_trans.
-      * now apply eq_S.
-    + intros.
-      generalize (IHxs (length xs) (S p) (S s) (S s) (conj (le_n _) (eq_refl _))).
-      destruct (insert (S p) xs (S s)); simpl.
-      intros [Hle' Heq'].
-      subst.
-      rewrite Heq'; split; omega.
-    + intros.
-      generalize (IHs len c s xs Hle Heq).
-      destruct (leb_c p q s) as [[|] s']; intros.
-      * simpl in *.
-        apply H.
-        apply IHxs.
-      * simpl in *.
-        admit.
-Admitted.
-    
-Goal
-  forall len c,
-    from s in Pnat;
-    for (l: list nat) with (s <= c /\ length l = len);
-    result l' of insertion_sort l;
-    into s';
-    satisfies (s' <= c + length l' * length l' /\ length l' = len).
-Proof.
-  intros len c s l.
-  revert len c s.
-  induction l as [| n xs ]; simpl.
-  - intros; simpl; split; omega.
-  - intros len c s Hle; generalize s xs (conj Hle (IHxs (length xs) c s)).
-    clear s xs IHxs Hle.
-    eapply (hoare_comp (kpl:=StateKPL Pnat)).
-    + simpl.
-      intros s xs [Heq H].
-      destruct Heq as [Hle Heq].
-      generalize (H (conj Hle (eq_refl _))).
-      destruct (insertion_sort xs s).
-      intros H'.
-      apply H'.
-    + eapply (hoare_trans_r (kpl:=StateKPL Pnat)).
-      eapply transitivity.
-      Focus 2.
-      apply (@Unnamed_thm12).
-      
-      * simpl in *.
-        intros.
-        split.
-        
-        intros H s xs Hle.
-      generalize (H n (c + length xs * length xs) s xs).
-      destruct (insert n xs s).
-      apply H.
-    + simpl; intros s' l H.
-      generalize (IHxs c s' H).
-      destruct (insertion_sort xs s').
-      tauto.
