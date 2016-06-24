@@ -1,6 +1,6 @@
 Set Implicit Arguments.
 Unset Strict Implicit.
-Set Contextual Implicit.
+
 Set Primitive Projections.
 Set Universe Polymorphism.
 
