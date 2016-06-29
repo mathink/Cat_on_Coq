@@ -794,11 +794,7 @@ Next Obligation.
   tauto.
 Qed.
 
-(* Notation "[ x <~ m 'and' s ; P ]" := (m # (fun s x => P)). *)
-(* Definition spred_kpl_template (S: PType)(X Y: Type)(P: spredicate S X)(Q: spredicate S Y)(f: X -> state S Y) := *)
-(*   (SPred.pord P (sbst (C:=Types)(KPL:=StateKPL S) f Q)). *)
 Notation "'from' s 'in' S ; 'for' ( x : A ) 'with' P ; 'result' y 'of' m ; 'into' t ; 'satisfies' Q" :=
-  (* (spred_kpl_template (fun (s: S)(x: A) => P) (fun t (y: _) => Q) (fun (x: A) => m)) *)
   (SPred.pord (fun (s:S)(x:A) => P) (sbst (C:=Types)(KPL:=StateKPL _) (fun x => m) (fun (t: S) y => Q)))
   (at level 97, x at next level, format "'[' 'from'  s  'in'  S ; ']' '/' '[' 'for'  ( x :  A )  'with'  P ; ']' '/' '[' 'result'  y  'of'  m ; ']' '/' '[' 'into'  t ; ']' '/' '[' 'satisfies'  Q ']'").
 Notation "'from' s 'in' S ; 'for' x 'with' P ; 'result' y 'of' m ; 'into' t ; 'satisfies' Q" := (from s in S; for (x:_) with P; result y of m; into t; satisfies Q) (at level 97, format "'[' 'from'  s  'in'  S ; ']' '/' '[' 'for'  x  'with'  P ; ']' '/' '[' 'result'  y  'of'  m ; ']' '/' '[' 'into'  t ; ']' '/' '[' 'satisfies'  Q ']'").
@@ -849,7 +845,7 @@ Proof.
 Save consS_length.
 
 
-
+(** * 挿入ソートの最悪計算量 **)
 (* カウント付き比較 *)
 Definition leb_c (n m: nat) := _ <- modify (S:=Pnat) S; pure (n <=? m).
 
@@ -986,7 +982,7 @@ Proof.
   rewrite Heq in *.
   clear Heq l0 s; rename c0 into s.
   set (length l) as len in *.
-  change (s <= c + (len^2 - len)/2 + len) in Hle.
+
   eapply transitivity; [apply Hle |].
   rewrite <- plus_assoc.
   apply plus_le_compat_l.
@@ -1001,7 +997,7 @@ Proof.
     [now rewrite Heq; auto | assumption].
 Qed.    
 
-Lemma insertion_sort_compare_count_max':
+Lemma insertion_sort_compare_count_max:
   from s in Pnat;
   for (l: list nat) with (s = 0);
   result l' of insertion_sort l;
@@ -1012,4 +1008,52 @@ Proof.
   intros s x Heq; subst.
   generalize (@insertion_sort_compare_count_max_aux 0 (length x) 0 x (conj (le_n 0) (eq_refl (length x)))); simpl; intros H.
   destruct (insertion_sort x 0); tauto.
+Qed.
+
+(** ** ソートの正しさ **)
+Inductive sorted: list nat -> Prop :=
+| sorted_nil:
+    sorted nil
+| sorted_one:
+    forall n, sorted [n]
+| sorted_cons:
+    forall n m l, sorted (m::l) -> n <= m -> sorted (n::m::l).
+
+Hint Constructors sorted.
+
+Lemma sorted_insert_sorted:
+  forall n,
+    from s in Pnat;
+    for (l: list nat) with (sorted l);
+    result l' of (insert n l);
+    into s';
+    satisfies (sorted l').
+Proof.
+  intros n s l Hs; simpl.
+  revert n s; induction Hs; simpl; auto; intros n' s.
+  - case_eq (n' <=? n); intro Hle.
+    + now apply leb_complete in Hle; auto.
+    + now apply leb_iff_conv, Nat.lt_le_incl in Hle; auto.
+  - case_eq (n' <=? n); intro Hle.
+    + now apply leb_complete in Hle; auto.
+    + simpl in *.
+      specialize (IHHs n').
+      apply leb_iff_conv, Nat.lt_le_incl in Hle.
+      revert IHHs; case_eq (n' <=? m); intros Hle' IHHs.
+      * now apply leb_complete in Hle'; auto.
+      * specialize (IHHs (S s)).
+        now destruct (insert n' l (S (S s))); auto.
+Qed.
+
+Lemma insertion_sort_sorted:
+  from s in Pnat;
+  for (l: list nat) with True;
+  result l' of (insertion_sort l);
+  into s';
+  satisfies (sorted l').
+Proof.
+  intros s l; induction l; simpl; auto.
+  specialize (IHl I); intros _; simpl in IHl.
+  destruct (insertion_sort l s).
+  now apply sorted_insert_sorted.
 Qed.
