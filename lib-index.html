@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
+<table>
+<tr>
+<td>Global Index</td>
+<td><a href="lib-index.html#global_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#global_C">C</a></td>
+<td><a href="lib-index.html#global_D">D</a></td>
+<td><a href="lib-index.html#global_E">E</a></td>
+<td><a href="lib-index.html#global_F">F</a></td>
+<td>G</td>
+<td><a href="lib-index.html#global_H">H</a></td>
+<td><a href="lib-index.html#global_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#global_L">L</a></td>
+<td><a href="lib-index.html#global_M">M</a></td>
+<td><a href="lib-index.html#global_N">N</a></td>
+<td><a href="lib-index.html#global_O">O</a></td>
+<td><a href="lib-index.html#global_P">P</a></td>
+<td><a href="lib-index.html#global_Q">Q</a></td>
+<td><a href="lib-index.html#global_R">R</a></td>
+<td><a href="lib-index.html#global_S">S</a></td>
+<td><a href="lib-index.html#global_T">T</a></td>
+<td><a href="lib-index.html#global_U">U</a></td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td><a href="lib-index.html#global_Z">Z</a></td>
+<td>_</td>
+<td><a href="lib-index.html#global_*">other</a></td>
+<td>(481 entries)</td>
+</tr>
+<tr>
+<td>Notation Index</td>
+<td>A</td>
+<td>B</td>
+<td>C</td>
+<td>D</td>
+<td>E</td>
+<td>F</td>
+<td>G</td>
+<td>H</td>
+<td>I</td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td>P</td>
+<td>Q</td>
+<td>R</td>
+<td>S</td>
+<td>T</td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td><a href="lib-index.html#notation_*">other</a></td>
+<td>(114 entries)</td>
+</tr>
+<tr>
+<td>Library Index</td>
+<td><a href="lib-index.html#library_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#library_C">C</a></td>
+<td><a href="lib-index.html#library_D">D</a></td>
+<td><a href="lib-index.html#library_E">E</a></td>
+<td><a href="lib-index.html#library_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#library_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#library_L">L</a></td>
+<td><a href="lib-index.html#library_M">M</a></td>
+<td><a href="lib-index.html#library_N">N</a></td>
+<td>O</td>
+<td><a href="lib-index.html#library_P">P</a></td>
+<td>Q</td>
+<td><a href="lib-index.html#library_R">R</a></td>
+<td><a href="lib-index.html#library_S">S</a></td>
+<td><a href="lib-index.html#library_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(29 entries)</td>
+</tr>
+<tr>
+<td>Lemma Index</td>
+<td><a href="lib-index.html#lemma_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#lemma_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#lemma_E">E</a></td>
+<td>F</td>
+<td>G</td>
+<td><a href="lib-index.html#lemma_H">H</a></td>
+<td><a href="lib-index.html#lemma_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#lemma_L">L</a></td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#lemma_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td>S</td>
+<td><a href="lib-index.html#lemma_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(20 entries)</td>
+</tr>
+<tr>
+<td>Constructor Index</td>
+<td>A</td>
+<td>B</td>
+<td><a href="lib-index.html#constructor_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#constructor_E">E</a></td>
+<td>F</td>
+<td>G</td>
+<td><a href="lib-index.html#constructor_H">H</a></td>
+<td><a href="lib-index.html#constructor_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#constructor_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td><a href="lib-index.html#constructor_S">S</a></td>
+<td><a href="lib-index.html#constructor_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(12 entries)</td>
+</tr>
+<tr>
+<td>Projection Index</td>
+<td><a href="lib-index.html#projection_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#projection_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#projection_E">E</a></td>
+<td><a href="lib-index.html#projection_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#projection_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#projection_L">L</a></td>
+<td><a href="lib-index.html#projection_M">M</a></td>
+<td><a href="lib-index.html#projection_N">N</a></td>
+<td>O</td>
+<td><a href="lib-index.html#projection_P">P</a></td>
+<td>Q</td>
+<td><a href="lib-index.html#projection_R">R</a></td>
+<td><a href="lib-index.html#projection_S">S</a></td>
+<td><a href="lib-index.html#projection_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(120 entries)</td>
+</tr>
+<tr>
+<td>Inductive Index</td>
+<td>A</td>
+<td>B</td>
+<td><a href="lib-index.html#inductive_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#inductive_E">E</a></td>
+<td>F</td>
+<td>G</td>
+<td><a href="lib-index.html#inductive_H">H</a></td>
+<td>I</td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#inductive_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td><a href="lib-index.html#inductive_S">S</a></td>
+<td>T</td>
+<td><a href="lib-index.html#inductive_U">U</a></td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(8 entries)</td>
+</tr>
+<tr>
+<td>Instance Index</td>
+<td>A</td>
+<td>B</td>
+<td><a href="lib-index.html#instance_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#instance_E">E</a></td>
+<td><a href="lib-index.html#instance_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#instance_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#instance_L">L</a></td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#instance_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td><a href="lib-index.html#instance_S">S</a></td>
+<td>T</td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(12 entries)</td>
+</tr>
+<tr>
+<td>Abbreviation Index</td>
+<td>A</td>
+<td>B</td>
+<td>C</td>
+<td>D</td>
+<td>E</td>
+<td>F</td>
+<td>G</td>
+<td>H</td>
+<td>I</td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td><a href="lib-index.html#abbreviation_N">N</a></td>
+<td>O</td>
+<td>P</td>
+<td>Q</td>
+<td>R</td>
+<td>S</td>
+<td>T</td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(2 entries)</td>
+</tr>
+<tr>
+<td>Definition Index</td>
+<td><a href="lib-index.html#definition_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#definition_C">C</a></td>
+<td><a href="lib-index.html#definition_D">D</a></td>
+<td><a href="lib-index.html#definition_E">E</a></td>
+<td><a href="lib-index.html#definition_F">F</a></td>
+<td>G</td>
+<td><a href="lib-index.html#definition_H">H</a></td>
+<td><a href="lib-index.html#definition_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#definition_L">L</a></td>
+<td><a href="lib-index.html#definition_M">M</a></td>
+<td><a href="lib-index.html#definition_N">N</a></td>
+<td><a href="lib-index.html#definition_O">O</a></td>
+<td><a href="lib-index.html#definition_P">P</a></td>
+<td><a href="lib-index.html#definition_Q">Q</a></td>
+<td><a href="lib-index.html#definition_R">R</a></td>
+<td><a href="lib-index.html#definition_S">S</a></td>
+<td><a href="lib-index.html#definition_T">T</a></td>
+<td><a href="lib-index.html#definition_U">U</a></td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td><a href="lib-index.html#definition_Z">Z</a></td>
+<td>_</td>
+<td>other</td>
+<td>(117 entries)</td>
+</tr>
+<tr>
+<td>Record Index</td>
+<td><a href="lib-index.html#record_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#record_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#record_E">E</a></td>
+<td><a href="lib-index.html#record_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#record_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#record_L">L</a></td>
+<td><a href="lib-index.html#record_M">M</a></td>
+<td><a href="lib-index.html#record_N">N</a></td>
+<td>O</td>
+<td><a href="lib-index.html#record_P">P</a></td>
+<td>Q</td>
+<td><a href="lib-index.html#record_R">R</a></td>
+<td><a href="lib-index.html#record_S">S</a></td>
+<td><a href="lib-index.html#record_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(47 entries)</td>
+</tr>
+</table>
+<hr/>
+<h1>Global Index</h1>
+<a name="global_A"></a><h2>A </h2>
+<a href="COC.KanExt.Adj.html">Adj</a> [library]<br/>
+<a href="COC.Adj.Adjunction.html#Adjunction">Adjunction</a> [record, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html">Adjunction</a> [library]<br/>
+<a href="COC.KanExt.Adj.html#adjunction_from_lan">adjunction_from_lan</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Adj.Adjunction.html#Adjunction_by_unit_and_counit">Adjunction_by_unit_and_counit</a> [definition, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_rl_Natrans">adj_rl_Natrans</a> [definition, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_lr_Natrans">adj_lr_Natrans</a> [definition, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_rlF">adj_rlF</a> [definition, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_lrF">adj_lrF</a> [definition, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_satisfies_triangle">adj_satisfies_triangle</a> [lemma, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_triangle">adj_triangle</a> [definition, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_counit">adj_counit</a> [definition, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_unit">adj_unit</a> [definition, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_rl">adj_rl</a> [projection, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_lr">adj_lr</a> [projection, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_rl_naturality">adj_rl_naturality</a> [projection, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_lr_naturality">adj_lr_naturality</a> [projection, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_iso_rl_lr">adj_iso_rl_lr</a> [projection, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_iso_lr_rl">adj_iso_lr_rl</a> [projection, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.All.html">All</a> [library]<br/>
+<br/><br/><a name="global_C"></a><h2>C </h2>
+<a href="COC.Base.Functor.html#Cat">Cat</a> [definition, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Category.html#Category">Category</a> [record, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html">Category</a> [library]<br/>
+<a href="COC.Base.Category.html#cat_prf">cat_prf</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_id">cat_id</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp">cat_comp</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_hom">cat_hom</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_obj">cat_obj</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_id_cod">cat_comp_id_cod</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_id_dom">cat_comp_id_dom</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_assoc">cat_comp_assoc</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_proper">cat_comp_proper</a> [projection, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Limit.Colimit.html#Cocone">Cocone</a> [record, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap">CoconeMap</a> [record, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap_setoid">CoconeMap_setoid</a> [definition, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap_id">CoconeMap_id</a> [definition, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap_compose">CoconeMap_compose</a> [definition, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#Cocones">Cocones</a> [definition, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_map_prf">cocone_map_prf</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_map_map">cocone_map_map</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_map_commute">cocone_map_commute</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_prf">cocone_prf</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_gen">cocone_gen</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_apex">cocone_apex</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_commute">cocone_commute</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Base.Category.html#codomain">codomain</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalize">coequalize</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#Coequalizer">Coequalizer</a> [record, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html">Coequalizer</a> [library]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_of_Setoids">coequalizer_of_Setoids</a> [definition, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_isomorphic">coequalizer_isomorphic</a> [lemma, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_univ_subst">coequalizer_univ_subst</a> [lemma, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_prf">coequalizer_prf</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_univ">coequalizer_univ</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_map">coequalizer_map</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_obj">coequalizer_obj</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_uniqueness">coequalizer_uniqueness</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_universality">coequalizer_universality</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalize_pair_relation">coequalize_pair_relation</a> [definition, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalize_pair_def">coequalize_pair_def</a> [constructor, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalize_pair">coequalize_pair</a> [inductive, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Colimit.html#Colimit">Colimit</a> [record, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html">Colimit</a> [library]<br/>
+<a href="COC.KanExt.LanColimit.html#colimit_from_lan">colimit_from_lan</a> [definition, in <a href="COC.KanExt.LanColimit.html">COC.KanExt.LanColimit</a>]<br/>
+<a href="COC.Adj.LimDiag.html#colimit_diag_adjunction">colimit_diag_adjunction</a> [definition, in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Adj.LimDiag.html#Colimit_functor">Colimit_functor</a> [definition, in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_by_initial_of_cocones">colimit_by_initial_of_cocones</a> [definition, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_isomorphic">colimit_isomorphic</a> [lemma, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_prf">colimit_prf</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_univ">colimit_univ</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_obj">colimit_obj</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_uniqueness">colimit_uniqueness</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_universality">colimit_universality</a> [projection, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Limit.html#Cone">Cone</a> [record, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap">ConeMap</a> [record, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap_setoid">ConeMap_setoid</a> [definition, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap_id">ConeMap_id</a> [definition, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap_compose">ConeMap_compose</a> [definition, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#Cones">Cones</a> [definition, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_map_prf">cone_map_prf</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_map_map">cone_map_map</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_map_commute">cone_map_commute</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_prf">cone_prf</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_gen">cone_gen</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_apex">cone_apex</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_commute">cone_commute</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Base.Functor.html#constant_functor">constant_functor</a> [definition, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#contravariant_hom_functor">contravariant_hom_functor</a> [definition, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct">coproduct</a> [inductive, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#Coproduct">Coproduct</a> [record, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html">Coproduct</a> [library]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_of_Cat">coproduct_of_Cat</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_category">coproduct_category</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_hom">coproduct_hom</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_of_Setoids">coproduct_of_Setoids</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_setoid">coproduct_setoid</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_of_Types">coproduct_of_Types</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_isomorphic">coproduct_isomorphic</a> [lemma, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_map_id">coproduct_map_id</a> [lemma, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_map_compose">coproduct_map_compose</a> [lemma, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_map_proper">coproduct_map_proper</a> [instance, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_map">coproduct_map</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_univ_proper">coproduct_univ_proper</a> [instance, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_prf">coproduct_prf</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_univ">coproduct_univ</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_inj2">coproduct_inj2</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_inj1">coproduct_inj1</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_obj">coproduct_obj</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_uniqueness">coproduct_uniqueness</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_universality_2">coproduct_universality_2</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_universality_1">coproduct_universality_1</a> [projection, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.KanExt.Adj.html#counit_from_lan_makes_triangle">counit_from_lan_makes_triangle</a> [lemma, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#counit_from_lan">counit_from_lan</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Base.Functor.html#covariant_hom_functor">covariant_hom_functor</a> [definition, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="global_D"></a><h2>D </h2>
+<a href="COC.Adj.LimDiag.html#Diagonal_functor">Diagonal_functor</a> [definition, in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Adj.LimDiag.html#diag_limit_adjunction">diag_limit_adjunction</a> [definition, in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Base.Category.html#DiscreteCategory">DiscreteCategory</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#domain">domain</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#DualCategory">DualCategory</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Cons.Duality.html">Duality</a> [library]<br/>
+<br/><br/><a name="global_E"></a><h2>E </h2>
+<a href="COC.Cons.Equalizer.html#elem">elem</a> [definition, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#elem_map">elem_map</a> [definition, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Base.Setoid.html#empty">empty</a> [inductive, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#empty_setoid">empty_setoid</a> [definition, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#EqCl">EqCl</a> [definition, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#eqcl_trans">eqcl_trans</a> [constructor, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#eqcl_sym">eqcl_sym</a> [constructor, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#eqcl_refl">eqcl_refl</a> [constructor, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#eqcl_base">eqcl_base</a> [constructor, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalize">equalize</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#Equalizer">Equalizer</a> [record, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html">Equalizer</a> [library]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_of_Setoids">equalizer_of_Setoids</a> [definition, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_isomorphic">equalizer_isomorphic</a> [lemma, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_univ_subst">equalizer_univ_subst</a> [lemma, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_prf">equalizer_prf</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_univ">equalizer_univ</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_map">equalizer_map</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_obj">equalizer_obj</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_uniqueness">equalizer_uniqueness</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_universality">equalizer_universality</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalize_predicate">equalize_predicate</a> [definition, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#EquivClosure">EquivClosure</a> [inductive, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#EquivClosure_Equivalence">EquivClosure_Equivalence</a> [instance, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Base.Setoid.html#eq_setoid">eq_setoid</a> [definition, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Exponential.html#Exponential">Exponential</a> [record, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html">Exponential</a> [library]<br/>
+<a href="COC.Cons.Exponential.html#Exponential_functor">Exponential_functor</a> [definition, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exponential_of_Setoids">exponential_of_Setoids</a> [definition, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exponential_isomorphic">exponential_isomorphic</a> [lemma, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exponential_univ_proper">exponential_univ_proper</a> [instance, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_prf">exp_prf</a> [projection, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_univ">exp_univ</a> [projection, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_eval">exp_eval</a> [projection, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_obj">exp_obj</a> [projection, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_uniqueness">exp_uniqueness</a> [projection, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_universality">exp_universality</a> [projection, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<br/><br/><a name="global_F"></a><h2>F </h2>
+<a href="COC.Base.Functor.html#fmap">fmap</a> [projection, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fmap_id">fmap_id</a> [projection, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fmap_comp">fmap_comp</a> [projection, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fmap_subst">fmap_subst</a> [projection, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Coproduct.html#fobj_for_coproduct_of_Cat">fobj_for_coproduct_of_Cat</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Initial.html#FromZero">FromZero</a> [definition, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Product.html#fst">fst</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#fst_proper">fst_proper</a> [instance, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Base.Natrans.html#Fun">Fun</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Setoid.html#function">function</a> [definition, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Functor.html#Functor">Functor</a> [record, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html">Functor</a> [library]<br/>
+<a href="COC.Base.Functor.html#Functor_setoid">Functor_setoid</a> [definition, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#Functor_id">Functor_id</a> [definition, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#Functor_compose">Functor_compose</a> [definition, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Product.html#functor_for_product_of_Cat">functor_for_product_of_Cat</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Coproduct.html#functor_for_coproduct_of_Cat">functor_for_coproduct_of_Cat</a> [definition, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Base.Functor.html#fun_prf">fun_prf</a> [projection, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fun_obj">fun_obj</a> [projection, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="global_H"></a><h2>H </h2>
+<a href="COC.Adj.Naturality.html#hom_functor">hom_functor</a> [definition, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Base.Functor.html#hom_eq_trans">hom_eq_trans</a> [lemma, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#hom_eq_sym">hom_eq_sym</a> [lemma, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#hom_eq_refl">hom_eq_refl</a> [lemma, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#hom_eq_def">hom_eq_def</a> [constructor, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#hom_eq">hom_eq</a> [inductive, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="global_I"></a><h2>I </h2>
+<a href="COC.Cons.Initial.html#Initial">Initial</a> [record, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html">Initial</a> [library]<br/>
+<a href="COC.Cons.Duality.html#initial_from_terminal">initial_from_terminal</a> [definition, in <a href="COC.Cons.Duality.html">COC.Cons.Duality</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_of_Cat">initial_of_Cat</a> [definition, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_of_Setoids">initial_of_Setoids</a> [definition, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_of_Types">initial_of_Types</a> [definition, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_isomorphic">initial_isomorphic</a> [lemma, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_prf">initial_prf</a> [projection, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_univ">initial_univ</a> [projection, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_obj">initial_obj</a> [projection, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_uniqueness">initial_uniqueness</a> [projection, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Coproduct.html#inj1">inj1</a> [constructor, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#inj1_proper">inj1_proper</a> [instance, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#inj2">inj2</a> [constructor, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#inj2_proper">inj2_proper</a> [instance, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.KanExt.Adj.html#Inverse_functor">Inverse_functor</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Adj.Adjunction.html#IsAdjunction">IsAdjunction</a> [record, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Base.Category.html#IsCategory">IsCategory</a> [record, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Limit.Colimit.html#IsCocone">IsCocone</a> [record, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#IsCoconeMap">IsCoconeMap</a> [record, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#IsCoequalizer">IsCoequalizer</a> [record, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Colimit.html#IsColimit">IsColimit</a> [record, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Limit.html#IsCone">IsCone</a> [record, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#IsConeMap">IsConeMap</a> [record, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Cons.Coproduct.html#IsCoproduct">IsCoproduct</a> [record, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Equalizer.html#IsEqualizer">IsEqualizer</a> [record, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Exponential.html#IsExponential">IsExponential</a> [record, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Base.Functor.html#IsFunctor">IsFunctor</a> [record, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Initial.html#IsInitial">IsInitial</a> [record, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.KanExt.Lan.html#IsLan">IsLan</a> [record, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.Limit.Limit.html#IsLimit">IsLimit</a> [record, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Base.Setoid.html#IsMap">IsMap</a> [record, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Natrans.html#IsNatrans">IsNatrans</a> [record, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Category.html#isomorphic">isomorphic</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#isomorphic_setoid">isomorphic_setoid</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Cons.Equalizer.html#IsPredicate">IsPredicate</a> [record, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Product.html#IsProduct">IsProduct</a> [record, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.KanExt.Ran.html#IsRan">IsRan</a> [record, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#IsRelation">IsRelation</a> [record, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Terminal.html#IsTerminal">IsTerminal</a> [record, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<br/><br/><a name="global_L"></a><h2>L </h2>
+<a href="COC.KanExt.Lan.html#Lan">Lan</a> [record, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html">Lan</a> [library]<br/>
+<a href="COC.KanExt.LanColimit.html">LanColimit</a> [library]<br/>
+<a href="COC.KanExt.Lan.html#lanF">lanF</a> [projection, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lanN">lanN</a> [projection, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lanU">lanU</a> [projection, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.LanColimit.html#lan_from_colimit">lan_from_colimit</a> [definition, in <a href="COC.KanExt.LanColimit.html">COC.KanExt.LanColimit</a>]<br/>
+<a href="COC.KanExt.Adj.html#lan_inverse_adjunction">lan_inverse_adjunction</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#Lan_functor">Lan_functor</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#lan_from_adjunction">lan_from_adjunction</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Lan.html#lan_prf">lan_prf</a> [projection, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lan_uniqueness">lan_uniqueness</a> [projection, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lan_universality">lan_universality</a> [projection, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Adj.html#left_adjoint_preserve_lan">left_adjoint_preserve_lan</a> [instance, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Adj.LimDiag.html">LimDiag</a> [library]<br/>
+<a href="COC.Limit.Limit.html#Limit">Limit</a> [record, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html">Limit</a> [library]<br/>
+<a href="COC.Adj.LimDiag.html#Limit_functor">Limit_functor</a> [definition, in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_by_terminal_of_cones">limit_by_terminal_of_cones</a> [definition, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_isomorphic">limit_isomorphic</a> [lemma, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_prf">limit_prf</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_univ">limit_univ</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_obj">limit_obj</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_uniqueness">limit_uniqueness</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_universality">limit_universality</a> [projection, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.KanExt.RanLimit.html#limit_from_ran">limit_from_ran</a> [definition, in <a href="COC.KanExt.RanLimit.html">COC.KanExt.RanLimit</a>]<br/>
+<br/><br/><a name="global_M"></a><h2>M </h2>
+<a href="COC.KanExt.Main.html">Main</a> [library]<br/>
+<a href="COC.Adj.Main.html">Main</a> [library]<br/>
+<a href="COC.Limit.Main.html">Main</a> [library]<br/>
+<a href="COC.Cons.Main.html">Main</a> [library]<br/>
+<a href="COC.Base.Main.html">Main</a> [library]<br/>
+<a href="COC.Base.Setoid.html#Map">Map</a> [record, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#Map_setoid">Map_setoid</a> [definition, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#Map_id">Map_id</a> [definition, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#Map_compose">Map_compose</a> [definition, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#map_prf">map_prf</a> [projection, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#map_fun">map_fun</a> [projection, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#map_proper">map_proper</a> [projection, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><a name="global_N"></a><h2>N </h2>
+<a href="COC.Base.Natrans.html#Nassoc">Nassoc</a> [abbreviation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Nassoc_inv">Nassoc_inv</a> [abbreviation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#natrans">natrans</a> [projection, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans">Natrans</a> [record, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html">Natrans</a> [library]<br/>
+<a href="COC.Base.Natrans.html#Natrans_assoc_inv">Natrans_assoc_inv</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_assoc">Natrans_assoc</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_cod_inv">Natrans_id_cod_inv</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_cod">Natrans_id_cod</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_dom_inv">Natrans_id_dom_inv</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_dom">Natrans_id_dom</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_setoid">Natrans_setoid</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_hcompose">Natrans_hcompose</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_cod_compose">Natrans_cod_compose</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_dom_compose">Natrans_dom_compose</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id">Natrans_id</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_compose">Natrans_compose</a> [definition, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#natrans_prf">natrans_prf</a> [projection, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#natrans_naturality">natrans_naturality</a> [projection, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Adj.Naturality.html">Naturality</a> [library]<br/>
+<br/><br/><a name="global_O"></a><h2>O </h2>
+<a href="COC.Cons.Terminal.html#One">One</a> [definition, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Adj.Naturality.html#op_functor">op_functor</a> [definition, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<br/><br/><a name="global_P"></a><h2>P </h2>
+<a href="COC.Cons.Product.html#pair_of_proper">pair_of_proper</a> [instance, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#pair_of">pair_of</a> [constructor, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Equalizer.html#predicate">predicate</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#Predicate">Predicate</a> [record, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#predicate_prf">predicate_prf</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#predicate_proper">predicate_proper</a> [projection, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.KanExt.Adj.html#PreserveLan">PreserveLan</a> [record, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#PreserveLan">PreserveLan</a> [inductive, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#preserve_lan">preserve_lan</a> [projection, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#preserve_lan">preserve_lan</a> [constructor, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Adj.Adjunction.html#prf">prf</a> [projection, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.ProdExp.html">ProdExp</a> [library]<br/>
+<a href="COC.Cons.Product.html#product">product</a> [record, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#Product">Product</a> [record, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html">Product</a> [library]<br/>
+<a href="COC.Cons.Product.html#Product_2_functor">Product_2_functor</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#Product_1_functor">Product_1_functor</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_of_Cat">product_of_Cat</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_category">product_category</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_of_Setoids">product_of_Setoids</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_setoid">product_setoid</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_of_types">product_of_types</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_isomorphic">product_isomorphic</a> [lemma, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map_id">product_map_id</a> [lemma, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map_compose">product_map_compose</a> [lemma, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map_proper">product_map_proper</a> [instance, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map">product_map</a> [definition, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_univ_proper">product_univ_proper</a> [instance, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_prf">product_prf</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_univ">product_univ</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_proj2">product_proj2</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_proj1">product_proj1</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_obj">product_obj</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_uniqueness">product_uniqueness</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_universality_2">product_universality_2</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_universality_1">product_universality_1</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Adj.Naturality.html#prod_functor">prod_functor</a> [definition, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.ProdExp.html#prod_exp_adjunction">prod_exp_adjunction</a> [definition, in <a href="COC.Adj.ProdExp.html">COC.Adj.ProdExp</a>]<br/>
+<a href="COC.Base.Category.html#Prop_setoid">Prop_setoid</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<br/><br/><a name="global_Q"></a><h2>Q </h2>
+<a href="COC.Cons.Coequalizer.html#QuotientSetoid">QuotientSetoid</a> [definition, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="global_R"></a><h2>R </h2>
+<a href="COC.KanExt.Ran.html#Ran">Ran</a> [record, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html">Ran</a> [library]<br/>
+<a href="COC.KanExt.Ran.html#ranF">ranF</a> [projection, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.RanLimit.html">RanLimit</a> [library]<br/>
+<a href="COC.KanExt.Ran.html#ranN">ranN</a> [projection, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ranU">ranU</a> [projection, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Adj.html#ran_inverse_adjunction">ran_inverse_adjunction</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#Ran_functor">Ran_functor</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#ran_from_adjunction">ran_from_adjunction</a> [definition, in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.RanLimit.html#ran_from_limit">ran_from_limit</a> [definition, in <a href="COC.KanExt.RanLimit.html">COC.KanExt.RanLimit</a>]<br/>
+<a href="COC.KanExt.Ran.html#ran_prf">ran_prf</a> [projection, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ran_uniqueness">ran_uniqueness</a> [projection, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ran_universality">ran_universality</a> [projection, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#Relation">Relation</a> [record, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#relation_prf">relation_prf</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#relation_rel">relation_rel</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#relation_proper">relation_proper</a> [projection, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="global_S"></a><h2>S </h2>
+<a href="COC.Base.Setoid.html#Setoid">Setoid</a> [record, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html">Setoid</a> [library]<br/>
+<a href="COC.Base.Category.html#Setoids">Setoids</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Setoid.html#setoid_prf">setoid_prf</a> [projection, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#setoid_equal">setoid_equal</a> [projection, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#setoid_carrier">setoid_carrier</a> [projection, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Product.html#snd">snd</a> [projection, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#snd_proper">snd_proper</a> [instance, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Equalizer.html#SubSetoid">SubSetoid</a> [definition, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#subsetoid_def">subsetoid_def</a> [constructor, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#SubSetoid_type">SubSetoid_type</a> [inductive, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<br/><br/><a name="global_T"></a><h2>T </h2>
+<a href="COC.Cons.Terminal.html#Terminal">Terminal</a> [record, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html">Terminal</a> [library]<br/>
+<a href="COC.Cons.Duality.html#terminal_from_initial">terminal_from_initial</a> [definition, in <a href="COC.Cons.Duality.html">COC.Cons.Duality</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_of_Cat">terminal_of_Cat</a> [definition, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_of_Setoids">terminal_of_Setoids</a> [definition, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_of_Types">terminal_of_Types</a> [definition, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_isomorphic">terminal_isomorphic</a> [lemma, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_prf">terminal_prf</a> [projection, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_univ">terminal_univ</a> [projection, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_obj">terminal_obj</a> [projection, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_uniqueness">terminal_uniqueness</a> [projection, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#ToOne">ToOne</a> [definition, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Base.Setoid.html#tt">tt</a> [constructor, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Category.html#Types">Types</a> [definition, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<br/><br/><a name="global_U"></a><h2>U </h2>
+<a href="COC.Base.Setoid.html#unit">unit</a> [inductive, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#unit_setoid">unit_setoid</a> [definition, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><a name="global_Z"></a><h2>Z </h2>
+<a href="COC.Cons.Initial.html#Zero">Zero</a> [definition, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<br/><br/><a name="global_*"></a><h2>other </h2>
+<a href="COC.Base.Setoid.html#bec439b36d449155cf4821d64d620d15">_ == _</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#0236fa375a420182c6cc448c54305b47">_ == _ in _</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Adj.Naturality.html#988d30b3cd973f52867a6a0b6ce3a6e0">_ ^opF</a> [notation, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Base.Functor.html#0b72784ed6f29cb5f943bd0f0e4e6ec4">_ =H _</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#f5599bf72c13cc5830eb3145a592c66e">_ =H _ in _</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#db9d5d46ef2ab5995e0c0739081666c1">_ --> _</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Product.html#a69e212c296979580f068aaf7cc48a40">_ .2</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#9a4d58e74533193c909813f3be0a58f0">_ .1</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Base.Category.html#cacc4a91c4895144a931936cac22406e">_ ^op</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#39064cd091a0ac785497a0862b96127b">_ === _</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#a54ae3b674b37ae6269953bc973a632a">_ === _ in _</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#d5b2c8a285259ee455024ad20520eddc">_ \o _</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#ce8e2071ad922fb0f81313b55453a3b6">_ \o{ _ } _</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Natrans.html#1acad0ad77adcbcdf68a70ab21aafe4a">_ ^ _</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#8988272a846480402bccb2e1117484ab">_ <o> _</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#51df21a3ac9001232be87414c8e2156c">_ <o _</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#0d629ffa762c3beb4a5f835eba844068">_ o> _</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#9fa7b26229d04861d763df487bf10d81">_ ==> _</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Adj.Adjunction.html#28aacaa742ceaa4e4c1faece44d5eb94">_ -| _</a> [notation, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#0097cfb3ef183620f15141624aac35ab">_ -| _ ; _ <--> _</a> [notation, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Naturality.html#a1ec6f685a960ba2f3117750ee2fff9c">HomF _</a> [notation, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Base.Functor.html#5fb443b5406f4ef4f6046b893daaab5a">Hom (- , _ )</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#36fb83fed4d3bd09f47105beaec82c25">Hom ( _ , -)</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Category.html#ad9c7ea90ef2f83cdf60b109358a3299">Id_{ _ } _</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#fff925835640b741c02c946c340195cd">Id _</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Cons.Coproduct.html#97d258162eb1aa78562e6d92e844eac7">in1_{ _ }</a> [notation, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#81662cc9b98a8c009b23129f48ce352f">in2_{ _ }</a> [notation, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Product.html#73fa6af23e93de2cda983fdf9bf0d735">pi1_{ _ }</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#4ffa2416166db3ba5344549bc2e2408d">pi2_{ _ }</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#7525f6b7e3269be8ce262d7f86495f59">( _ , _ )</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Base.Setoid.html#b1f8ccb6060107e82faf0663c730d6ad">(== in _ )</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#8a330640e9d4504ed2fdb0433a25bee6">(==)</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#e9f873b6b95431381f15837f0c15f392">[ Rel by _ on _ ]</a> [notation, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#500bbe45edb5a032e658db0ab2bea552">[ Coequalizer by _ ]</a> [notation, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#7ffeb5c4a4c57acdff827db1cdf47746">[ Coequalizer by _ with _ ]</a> [notation, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#bb52921330ac5edde6a4ff1d960d9a35">[ Coequalizer of _ , _ by _ with _ ]</a> [notation, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#97e4ba7eade82b1cf32cddc3c5f12142">[ Coequalizer of _ , _ by _ with _ to _ in _ ]</a> [notation, in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Limit.html#cedadd7395a36a6f881b841d4ada4140">[ ConeMap by _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#89bce98e59f33fd1832cdb8a1ffd0fc3">[ Limit by _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#371298e41bcb027764948bcbcec019ed">[ Limit _ by _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#1286c5624c34af7efe0ad8693b0a9a2c">[ Limit by _ of _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#b61e1a27a1cc644717d36ed21bfec88e">[ Limit _ by _ of _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#c75c6a1c3cf98eebb573eb3e3e1ccf44">[ Cone by _ :-> _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#df65764933b2306b3c311825d61d06a9">[ Cone by _ :-> _ from _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#14df29b1c97db9fbc0956d666c0257f3">[ Cone by _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#f00ea00819648e99506eecac66e986fd">[ Cone by _ from _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#d6d37d79cc31e12436dee30ba0d442fd">[ Cone of _ by _ from _ ]</a> [notation, in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Cons.Terminal.html#920d94c80e853637eba01d3884e98753">[ Terminal by _ ]</a> [notation, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#51d13fdc3dd6f281652b2e1680970e1b">[ Terminal _ by _ ]</a> [notation, in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Base.Setoid.html#76538026ce82ed82995ee1976177c396">[ _ :-> _ ]</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c">[ _ in _ :-> _ ]</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#a9805346ebc05a9851467b8489155a17">[ Map by _ ]</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#451a0362eecd03e75124b69bcf30f70e">[ Setoid by _ ]</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#0a2844cbafe24c39d21e76f3d06fd377">[ Setoid by _ on _ ]</a> [notation, in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Adj.Naturality.html#deaf53ea0a7a9ce24a66396336314cbe">[ _ xF _ ]</a> [notation, in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Cons.Equalizer.html#b7e3f4cbe4ec5da7878fd8d89cd85bc7">[ _ satisfies _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#86808302f8148e1201bbf3466d1ca6ca">[ _ satisfies _ on _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#5e7b00fcd95dcac7f19a238934d858f7">[ Predicate by _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#dd09e5e39a48813afaa2fc0fdcc74caf">[ Predicate by _ on _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#9391820b832e7f333836499b61079950">[ Equalizer by _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#b51fa7bc2de983258ed4ef5464b987a6">[ Equalizer by _ with _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#f9c7aa7cceda5a6cab799ae711846c57">[ Equalizer of _ , _ by _ with _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#a8287e2dc3cfd19fcce575de524af0c1">[ Equalizer of _ , _ by _ with _ from _ in _ ]</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.KanExt.Lan.html#a9d65abc6ae86f3b012efee367bc2591">[ Lan by _ with _ , _ ]</a> [notation, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#709d93c7f78abeebb74959d4131eaa48">[ Lan of _ along _ by _ with _ , _ ]</a> [notation, in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.Base.Functor.html#caa2705d808428539feec3918261f5f3">[ * in _ |-> _ in _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#ebcf0fdb76ddc4e3a7a333c8358f7ff1">[ Functor by _ :-> _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#6b44e1fcae8fc6b75b30f1109c27d694">[ Functor by _ :-> _ ; _ to _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#512888e5ffc713746a943ac5f6bcc830">[ Functor by _ :-> _ with _ :-> _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#c75b8550cf37dcadf99cdfb5435140fe">[ Functor by _ :-> _ with _ :-> _ ; _ to _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#30d829e17bc88b76dc9c933ff9d93e6b">[ Functor by _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#670dae7896cfa36405afc72b6cfc81f2">[ Functor by _ with _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#7ffa477a1887752d404574a3da77158a">[ Functor by _ with _ ; _ to _ ]</a> [notation, in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Product.html#9494c23fcc5b24672d6f35bd867834a1">[ _ \* _ with _ ]</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#c7b1757d6f65025f79c73f1377957705">[ _ , _ to _ ]</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#1784c752dc8df49cba0f1c28f3a363d0">[ Product by _ with _ , _ ]</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#5a04e96fa5630cdc732f0bb839379653">[ Product _ by _ with _ , _ ]</a> [notation, in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Limit.Colimit.html#9f56efc512fcdb3d76e0bf74a05c593d">[ CoconeMap by _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#119e476e029daddccef8edb171bd01a9">[ Colimit by _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#987f703f406c55f27e6e6d3efc7edfc2">[ Colimit _ by _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#1868973a2b471f1008c8e1d23b2efc18">[ Colimit by _ of _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#c595a01b0a734a9b1e3ac1c2ecfec529">[ Colimit _ by _ of _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#4884e708361d0d4e39996bcf66275b5a">[ Cocone by _ :-> _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#c06673632f5985aef8a7ac856b874421">[ Cocone by _ :-> _ to _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#50904e1389600050e5efeb745709d95b">[ Cocone by _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#3a8233bdc3241b6e370c0a2a08a4ee9b">[ Cocone by _ to _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#1f53720dc086ccf54960563fc8b2a67f">[ Cocone of _ by _ to _ ]</a> [notation, in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Cons.Coproduct.html#6b61c0e85f4b2a5f865b0da8599ec9e7">[ _ \+ _ with _ ]</a> [notation, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#244235025db33d624438a032f0a2cd85">[ _ , _ from _ ]</a> [notation, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#1263a0142abcca4960f9b9d38fa3bf1f">[ Coproduct by _ with _ , _ ]</a> [notation, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#3f9184a30b7fd65ca8af74d7b73d8efa">[ Coproduct _ by _ with _ , _ ]</a> [notation, in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Exponential.html#5bd15fd9275406e53e20597080797b8c">[ curry _ to _ ]</a> [notation, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#24e93329c91618df1a66032da72e1242">[ Exp by _ with _ ]</a> [notation, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#6ab361e0301c7d145dcd4461f72c3d1e">[ Exp _ by _ with _ ]</a> [notation, in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Base.Category.html#9b0c771952d642b3775c969ca8263bee">[ Category by _ with comp := _ with id := _ ]</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#8fdfc4f313549e6cad3cb32da85d5bd5">[ Category by _ with _ , _ ]</a> [notation, in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Natrans.html#96a042c6ce92941d410ed39faa80ff6d">[ * ==> 1 \o * ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#3dd4c7a1a0c374b8e9002514e935f675">[ 1 \o * ==> * ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#8b39d05f68a6d6355538911cb8b43ca0">[ * ==> * \o 1 ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#b549cf64fa0a0b540a07737b83f9fb68">[ * \o 1 ==> * ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#d2fa0178f30f2b0610f50e24c4d9548f">[ _ :=> _ ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#f67c2c21bdee69a45dd9e2683fa47e0b">[ _ in _ :=> _ ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#bc8f0ebc8177b95900a705fcc4fdad2f">[ _ :=> _ from _ to _ ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#23685dfa1b976e6d0d2a69f1d3aba67f">[ _ in _ :=> _ from _ to _ ]</a> [notation, in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.KanExt.Ran.html#b2395e66be8230f124cf71be0f8dfd63">[ Ran by _ ]</a> [notation, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#2119633792f2a7a7e6f407ba6f86ffab">[ Ran by _ with _ , _ ]</a> [notation, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#828cd9338108fd792c214b68b428cdda">[ Ran of _ along _ by _ ]</a> [notation, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#47347350653c3763efe96359e542705c">[ Ran of _ along _ by _ with _ , _ ]</a> [notation, in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.Cons.Initial.html#75bbc1db81f229bbf9b4f003c4594c82">[ Initial by _ ]</a> [notation, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#42c4f637365f2038cc2c540dc43e91af">[ Initial _ by _ ]</a> [notation, in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Adj.Adjunction.html#f22bc3ab5b7a001d9688abcedbeacd4a">[ _ -| _ by _ , _ ]</a> [notation, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe">[ Adj by _ , _ ]</a> [notation, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#3792cf42085acb7f4767455d2038bee2">[ Adj of _ , _ by _ , _ ]</a> [notation, in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Cons.Equalizer.html#3dcbb8fb53571c178eeaea946517e19e">{{ _ in _ | _ }}</a> [notation, in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<br/><br/><hr/>
+<h1>Notation Index</h1>
+<a name="notation_*"></a><h2>other </h2>
+<a href="COC.Base.Setoid.html#bec439b36d449155cf4821d64d620d15">_ == _</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#0236fa375a420182c6cc448c54305b47">_ == _ in _</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Adj.Naturality.html#988d30b3cd973f52867a6a0b6ce3a6e0">_ ^opF</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Base.Functor.html#0b72784ed6f29cb5f943bd0f0e4e6ec4">_ =H _</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#f5599bf72c13cc5830eb3145a592c66e">_ =H _ in _</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#db9d5d46ef2ab5995e0c0739081666c1">_ --> _</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Product.html#a69e212c296979580f068aaf7cc48a40">_ .2</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#9a4d58e74533193c909813f3be0a58f0">_ .1</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Base.Category.html#cacc4a91c4895144a931936cac22406e">_ ^op</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#39064cd091a0ac785497a0862b96127b">_ === _</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#a54ae3b674b37ae6269953bc973a632a">_ === _ in _</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#d5b2c8a285259ee455024ad20520eddc">_ \o _</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#ce8e2071ad922fb0f81313b55453a3b6">_ \o{ _ } _</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Natrans.html#1acad0ad77adcbcdf68a70ab21aafe4a">_ ^ _</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#8988272a846480402bccb2e1117484ab">_ <o> _</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#51df21a3ac9001232be87414c8e2156c">_ <o _</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#0d629ffa762c3beb4a5f835eba844068">_ o> _</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#9fa7b26229d04861d763df487bf10d81">_ ==> _</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Adj.Adjunction.html#28aacaa742ceaa4e4c1faece44d5eb94">_ -| _</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#0097cfb3ef183620f15141624aac35ab">_ -| _ ; _ <--> _</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Naturality.html#a1ec6f685a960ba2f3117750ee2fff9c">HomF _</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Base.Functor.html#5fb443b5406f4ef4f6046b893daaab5a">Hom (- , _ )</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#36fb83fed4d3bd09f47105beaec82c25">Hom ( _ , -)</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Category.html#ad9c7ea90ef2f83cdf60b109358a3299">Id_{ _ } _</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#fff925835640b741c02c946c340195cd">Id _</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Cons.Coproduct.html#97d258162eb1aa78562e6d92e844eac7">in1_{ _ }</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#81662cc9b98a8c009b23129f48ce352f">in2_{ _ }</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Product.html#73fa6af23e93de2cda983fdf9bf0d735">pi1_{ _ }</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#4ffa2416166db3ba5344549bc2e2408d">pi2_{ _ }</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#7525f6b7e3269be8ce262d7f86495f59">( _ , _ )</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Base.Setoid.html#b1f8ccb6060107e82faf0663c730d6ad">(== in _ )</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#8a330640e9d4504ed2fdb0433a25bee6">(==)</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#e9f873b6b95431381f15837f0c15f392">[ Rel by _ on _ ]</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#500bbe45edb5a032e658db0ab2bea552">[ Coequalizer by _ ]</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#7ffeb5c4a4c57acdff827db1cdf47746">[ Coequalizer by _ with _ ]</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#bb52921330ac5edde6a4ff1d960d9a35">[ Coequalizer of _ , _ by _ with _ ]</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#97e4ba7eade82b1cf32cddc3c5f12142">[ Coequalizer of _ , _ by _ with _ to _ in _ ]</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Limit.html#cedadd7395a36a6f881b841d4ada4140">[ ConeMap by _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#89bce98e59f33fd1832cdb8a1ffd0fc3">[ Limit by _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#371298e41bcb027764948bcbcec019ed">[ Limit _ by _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#1286c5624c34af7efe0ad8693b0a9a2c">[ Limit by _ of _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#b61e1a27a1cc644717d36ed21bfec88e">[ Limit _ by _ of _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#c75c6a1c3cf98eebb573eb3e3e1ccf44">[ Cone by _ :-> _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#df65764933b2306b3c311825d61d06a9">[ Cone by _ :-> _ from _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#14df29b1c97db9fbc0956d666c0257f3">[ Cone by _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#f00ea00819648e99506eecac66e986fd">[ Cone by _ from _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#d6d37d79cc31e12436dee30ba0d442fd">[ Cone of _ by _ from _ ]</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Cons.Terminal.html#920d94c80e853637eba01d3884e98753">[ Terminal by _ ]</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#51d13fdc3dd6f281652b2e1680970e1b">[ Terminal _ by _ ]</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Base.Setoid.html#76538026ce82ed82995ee1976177c396">[ _ :-> _ ]</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c">[ _ in _ :-> _ ]</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#a9805346ebc05a9851467b8489155a17">[ Map by _ ]</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#451a0362eecd03e75124b69bcf30f70e">[ Setoid by _ ]</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#0a2844cbafe24c39d21e76f3d06fd377">[ Setoid by _ on _ ]</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Adj.Naturality.html#deaf53ea0a7a9ce24a66396336314cbe">[ _ xF _ ]</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Cons.Equalizer.html#b7e3f4cbe4ec5da7878fd8d89cd85bc7">[ _ satisfies _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#86808302f8148e1201bbf3466d1ca6ca">[ _ satisfies _ on _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#5e7b00fcd95dcac7f19a238934d858f7">[ Predicate by _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#dd09e5e39a48813afaa2fc0fdcc74caf">[ Predicate by _ on _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#9391820b832e7f333836499b61079950">[ Equalizer by _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#b51fa7bc2de983258ed4ef5464b987a6">[ Equalizer by _ with _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#f9c7aa7cceda5a6cab799ae711846c57">[ Equalizer of _ , _ by _ with _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#a8287e2dc3cfd19fcce575de524af0c1">[ Equalizer of _ , _ by _ with _ from _ in _ ]</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.KanExt.Lan.html#a9d65abc6ae86f3b012efee367bc2591">[ Lan by _ with _ , _ ]</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#709d93c7f78abeebb74959d4131eaa48">[ Lan of _ along _ by _ with _ , _ ]</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.Base.Functor.html#caa2705d808428539feec3918261f5f3">[ * in _ |-> _ in _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#ebcf0fdb76ddc4e3a7a333c8358f7ff1">[ Functor by _ :-> _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#6b44e1fcae8fc6b75b30f1109c27d694">[ Functor by _ :-> _ ; _ to _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#512888e5ffc713746a943ac5f6bcc830">[ Functor by _ :-> _ with _ :-> _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#c75b8550cf37dcadf99cdfb5435140fe">[ Functor by _ :-> _ with _ :-> _ ; _ to _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#30d829e17bc88b76dc9c933ff9d93e6b">[ Functor by _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#670dae7896cfa36405afc72b6cfc81f2">[ Functor by _ with _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#7ffa477a1887752d404574a3da77158a">[ Functor by _ with _ ; _ to _ ]</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Product.html#9494c23fcc5b24672d6f35bd867834a1">[ _ \* _ with _ ]</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#c7b1757d6f65025f79c73f1377957705">[ _ , _ to _ ]</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#1784c752dc8df49cba0f1c28f3a363d0">[ Product by _ with _ , _ ]</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#5a04e96fa5630cdc732f0bb839379653">[ Product _ by _ with _ , _ ]</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Limit.Colimit.html#9f56efc512fcdb3d76e0bf74a05c593d">[ CoconeMap by _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#119e476e029daddccef8edb171bd01a9">[ Colimit by _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#987f703f406c55f27e6e6d3efc7edfc2">[ Colimit _ by _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#1868973a2b471f1008c8e1d23b2efc18">[ Colimit by _ of _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#c595a01b0a734a9b1e3ac1c2ecfec529">[ Colimit _ by _ of _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#4884e708361d0d4e39996bcf66275b5a">[ Cocone by _ :-> _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#c06673632f5985aef8a7ac856b874421">[ Cocone by _ :-> _ to _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#50904e1389600050e5efeb745709d95b">[ Cocone by _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#3a8233bdc3241b6e370c0a2a08a4ee9b">[ Cocone by _ to _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#1f53720dc086ccf54960563fc8b2a67f">[ Cocone of _ by _ to _ ]</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Cons.Coproduct.html#6b61c0e85f4b2a5f865b0da8599ec9e7">[ _ \+ _ with _ ]</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#244235025db33d624438a032f0a2cd85">[ _ , _ from _ ]</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#1263a0142abcca4960f9b9d38fa3bf1f">[ Coproduct by _ with _ , _ ]</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#3f9184a30b7fd65ca8af74d7b73d8efa">[ Coproduct _ by _ with _ , _ ]</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Exponential.html#5bd15fd9275406e53e20597080797b8c">[ curry _ to _ ]</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#24e93329c91618df1a66032da72e1242">[ Exp by _ with _ ]</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#6ab361e0301c7d145dcd4461f72c3d1e">[ Exp _ by _ with _ ]</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Base.Category.html#9b0c771952d642b3775c969ca8263bee">[ Category by _ with comp := _ with id := _ ]</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#8fdfc4f313549e6cad3cb32da85d5bd5">[ Category by _ with _ , _ ]</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Natrans.html#96a042c6ce92941d410ed39faa80ff6d">[ * ==> 1 \o * ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#3dd4c7a1a0c374b8e9002514e935f675">[ 1 \o * ==> * ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#8b39d05f68a6d6355538911cb8b43ca0">[ * ==> * \o 1 ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#b549cf64fa0a0b540a07737b83f9fb68">[ * \o 1 ==> * ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#d2fa0178f30f2b0610f50e24c4d9548f">[ _ :=> _ ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#f67c2c21bdee69a45dd9e2683fa47e0b">[ _ in _ :=> _ ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#bc8f0ebc8177b95900a705fcc4fdad2f">[ _ :=> _ from _ to _ ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#23685dfa1b976e6d0d2a69f1d3aba67f">[ _ in _ :=> _ from _ to _ ]</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.KanExt.Ran.html#b2395e66be8230f124cf71be0f8dfd63">[ Ran by _ ]</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#2119633792f2a7a7e6f407ba6f86ffab">[ Ran by _ with _ , _ ]</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#828cd9338108fd792c214b68b428cdda">[ Ran of _ along _ by _ ]</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#47347350653c3763efe96359e542705c">[ Ran of _ along _ by _ with _ , _ ]</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.Cons.Initial.html#75bbc1db81f229bbf9b4f003c4594c82">[ Initial by _ ]</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#42c4f637365f2038cc2c540dc43e91af">[ Initial _ by _ ]</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Adj.Adjunction.html#f22bc3ab5b7a001d9688abcedbeacd4a">[ _ -| _ by _ , _ ]</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe">[ Adj by _ , _ ]</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#3792cf42085acb7f4767455d2038bee2">[ Adj of _ , _ by _ , _ ]</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Cons.Equalizer.html#3dcbb8fb53571c178eeaea946517e19e">{{ _ in _ | _ }}</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<br/><br/><hr/>
+<h1>Library Index</h1>
+<a name="library_A"></a><h2>A </h2>
+<a href="COC.KanExt.Adj.html">Adj</a> <br/>
+<a href="COC.Adj.Adjunction.html">Adjunction</a> <br/>
+<a href="COC.All.html">All</a> <br/>
+<br/><br/><a name="library_C"></a><h2>C </h2>
+<a href="COC.Base.Category.html">Category</a> <br/>
+<a href="COC.Cons.Coequalizer.html">Coequalizer</a> <br/>
+<a href="COC.Limit.Colimit.html">Colimit</a> <br/>
+<a href="COC.Cons.Coproduct.html">Coproduct</a> <br/>
+<br/><br/><a name="library_D"></a><h2>D </h2>
+<a href="COC.Cons.Duality.html">Duality</a> <br/>
+<br/><br/><a name="library_E"></a><h2>E </h2>
+<a href="COC.Cons.Equalizer.html">Equalizer</a> <br/>
+<a href="COC.Cons.Exponential.html">Exponential</a> <br/>
+<br/><br/><a name="library_F"></a><h2>F </h2>
+<a href="COC.Base.Functor.html">Functor</a> <br/>
+<br/><br/><a name="library_I"></a><h2>I </h2>
+<a href="COC.Cons.Initial.html">Initial</a> <br/>
+<br/><br/><a name="library_L"></a><h2>L </h2>
+<a href="COC.KanExt.Lan.html">Lan</a> <br/>
+<a href="COC.KanExt.LanColimit.html">LanColimit</a> <br/>
+<a href="COC.Adj.LimDiag.html">LimDiag</a> <br/>
+<a href="COC.Limit.Limit.html">Limit</a> <br/>
+<br/><br/><a name="library_M"></a><h2>M </h2>
+<a href="COC.KanExt.Main.html">Main</a> <br/>
+<a href="COC.Adj.Main.html">Main</a> <br/>
+<a href="COC.Limit.Main.html">Main</a> <br/>
+<a href="COC.Cons.Main.html">Main</a> <br/>
+<a href="COC.Base.Main.html">Main</a> <br/>
+<br/><br/><a name="library_N"></a><h2>N </h2>
+<a href="COC.Base.Natrans.html">Natrans</a> <br/>
+<a href="COC.Adj.Naturality.html">Naturality</a> <br/>
+<br/><br/><a name="library_P"></a><h2>P </h2>
+<a href="COC.Adj.ProdExp.html">ProdExp</a> <br/>
+<a href="COC.Cons.Product.html">Product</a> <br/>
+<br/><br/><a name="library_R"></a><h2>R </h2>
+<a href="COC.KanExt.Ran.html">Ran</a> <br/>
+<a href="COC.KanExt.RanLimit.html">RanLimit</a> <br/>
+<br/><br/><a name="library_S"></a><h2>S </h2>
+<a href="COC.Base.Setoid.html">Setoid</a> <br/>
+<br/><br/><a name="library_T"></a><h2>T </h2>
+<a href="COC.Cons.Terminal.html">Terminal</a> <br/>
+<br/><br/><hr/>
+<h1>Lemma Index</h1>
+<a name="lemma_A"></a><h2>A </h2>
+<a href="COC.Adj.Adjunction.html#adj_satisfies_triangle">adj_satisfies_triangle</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<br/><br/><a name="lemma_C"></a><h2>C </h2>
+<a href="COC.Cons.Coequalizer.html#coequalizer_isomorphic">coequalizer_isomorphic</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_univ_subst">coequalizer_univ_subst</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_isomorphic">colimit_isomorphic</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_isomorphic">coproduct_isomorphic</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_map_id">coproduct_map_id</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_map_compose">coproduct_map_compose</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.KanExt.Adj.html#counit_from_lan_makes_triangle">counit_from_lan_makes_triangle</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<br/><br/><a name="lemma_E"></a><h2>E </h2>
+<a href="COC.Cons.Equalizer.html#equalizer_isomorphic">equalizer_isomorphic</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_univ_subst">equalizer_univ_subst</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Exponential.html#exponential_isomorphic">exponential_isomorphic</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<br/><br/><a name="lemma_H"></a><h2>H </h2>
+<a href="COC.Base.Functor.html#hom_eq_trans">hom_eq_trans</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#hom_eq_sym">hom_eq_sym</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#hom_eq_refl">hom_eq_refl</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="lemma_I"></a><h2>I </h2>
+<a href="COC.Cons.Initial.html#initial_isomorphic">initial_isomorphic</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<br/><br/><a name="lemma_L"></a><h2>L </h2>
+<a href="COC.Limit.Limit.html#limit_isomorphic">limit_isomorphic</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<br/><br/><a name="lemma_P"></a><h2>P </h2>
+<a href="COC.Cons.Product.html#product_isomorphic">product_isomorphic</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map_id">product_map_id</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map_compose">product_map_compose</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<br/><br/><a name="lemma_T"></a><h2>T </h2>
+<a href="COC.Cons.Terminal.html#terminal_isomorphic">terminal_isomorphic</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<br/><br/><hr/>
+<h1>Constructor Index</h1>
+<a name="constructor_C"></a><h2>C </h2>
+<a href="COC.Cons.Coequalizer.html#coequalize_pair_def">coequalize_pair_def</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="constructor_E"></a><h2>E </h2>
+<a href="COC.Cons.Coequalizer.html#eqcl_trans">eqcl_trans</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#eqcl_sym">eqcl_sym</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#eqcl_refl">eqcl_refl</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#eqcl_base">eqcl_base</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="constructor_H"></a><h2>H </h2>
+<a href="COC.Base.Functor.html#hom_eq_def">hom_eq_def</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="constructor_I"></a><h2>I </h2>
+<a href="COC.Cons.Coproduct.html#inj1">inj1</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#inj2">inj2</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<br/><br/><a name="constructor_P"></a><h2>P </h2>
+<a href="COC.Cons.Product.html#pair_of">pair_of</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.KanExt.Adj.html#preserve_lan">preserve_lan</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<br/><br/><a name="constructor_S"></a><h2>S </h2>
+<a href="COC.Cons.Equalizer.html#subsetoid_def">subsetoid_def</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<br/><br/><a name="constructor_T"></a><h2>T </h2>
+<a href="COC.Base.Setoid.html#tt">tt</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><hr/>
+<h1>Projection Index</h1>
+<a name="projection_A"></a><h2>A </h2>
+<a href="COC.Adj.Adjunction.html#adj_rl">adj_rl</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_lr">adj_lr</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_rl_naturality">adj_rl_naturality</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_lr_naturality">adj_lr_naturality</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_iso_rl_lr">adj_iso_rl_lr</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_iso_lr_rl">adj_iso_lr_rl</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<br/><br/><a name="projection_C"></a><h2>C </h2>
+<a href="COC.Base.Category.html#cat_prf">cat_prf</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_id">cat_id</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp">cat_comp</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_hom">cat_hom</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_obj">cat_obj</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_id_cod">cat_comp_id_cod</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_id_dom">cat_comp_id_dom</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_assoc">cat_comp_assoc</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#cat_comp_proper">cat_comp_proper</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_map_prf">cocone_map_prf</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_map_map">cocone_map_map</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_map_commute">cocone_map_commute</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_prf">cocone_prf</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_gen">cocone_gen</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_apex">cocone_apex</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#cocone_commute">cocone_commute</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalize">coequalize</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_prf">coequalizer_prf</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_univ">coequalizer_univ</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_map">coequalizer_map</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_obj">coequalizer_obj</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_uniqueness">coequalizer_uniqueness</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_universality">coequalizer_universality</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_prf">colimit_prf</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_univ">colimit_univ</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_obj">colimit_obj</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_uniqueness">colimit_uniqueness</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_universality">colimit_universality</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_map_prf">cone_map_prf</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_map_map">cone_map_map</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_map_commute">cone_map_commute</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_prf">cone_prf</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_gen">cone_gen</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_apex">cone_apex</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#cone_commute">cone_commute</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_prf">coproduct_prf</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_univ">coproduct_univ</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_inj2">coproduct_inj2</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_inj1">coproduct_inj1</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_obj">coproduct_obj</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_uniqueness">coproduct_uniqueness</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_universality_2">coproduct_universality_2</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_universality_1">coproduct_universality_1</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<br/><br/><a name="projection_E"></a><h2>E </h2>
+<a href="COC.Cons.Equalizer.html#equalize">equalize</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_prf">equalizer_prf</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_univ">equalizer_univ</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_map">equalizer_map</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_obj">equalizer_obj</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_uniqueness">equalizer_uniqueness</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_universality">equalizer_universality</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_prf">exp_prf</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_univ">exp_univ</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_eval">exp_eval</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_obj">exp_obj</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_uniqueness">exp_uniqueness</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exp_universality">exp_universality</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<br/><br/><a name="projection_F"></a><h2>F </h2>
+<a href="COC.Base.Functor.html#fmap">fmap</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fmap_id">fmap_id</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fmap_comp">fmap_comp</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fmap_subst">fmap_subst</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Product.html#fst">fst</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Base.Functor.html#fun_prf">fun_prf</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#fun_obj">fun_obj</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="projection_I"></a><h2>I </h2>
+<a href="COC.Cons.Initial.html#initial_prf">initial_prf</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_univ">initial_univ</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_obj">initial_obj</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_uniqueness">initial_uniqueness</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<br/><br/><a name="projection_L"></a><h2>L </h2>
+<a href="COC.KanExt.Lan.html#lanF">lanF</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lanN">lanN</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lanU">lanU</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lan_prf">lan_prf</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lan_uniqueness">lan_uniqueness</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.KanExt.Lan.html#lan_universality">lan_universality</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_prf">limit_prf</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_univ">limit_univ</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_obj">limit_obj</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_uniqueness">limit_uniqueness</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_universality">limit_universality</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<br/><br/><a name="projection_M"></a><h2>M </h2>
+<a href="COC.Base.Setoid.html#map_prf">map_prf</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#map_fun">map_fun</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#map_proper">map_proper</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><a name="projection_N"></a><h2>N </h2>
+<a href="COC.Base.Natrans.html#natrans">natrans</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#natrans_prf">natrans_prf</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#natrans_naturality">natrans_naturality</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<br/><br/><a name="projection_P"></a><h2>P </h2>
+<a href="COC.Cons.Equalizer.html#predicate">predicate</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#predicate_prf">predicate_prf</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#predicate_proper">predicate_proper</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.KanExt.Adj.html#preserve_lan">preserve_lan</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Adj.Adjunction.html#prf">prf</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Cons.Product.html#product_prf">product_prf</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_univ">product_univ</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_proj2">product_proj2</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_proj1">product_proj1</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_obj">product_obj</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_uniqueness">product_uniqueness</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_universality_2">product_universality_2</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_universality_1">product_universality_1</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<br/><br/><a name="projection_R"></a><h2>R </h2>
+<a href="COC.KanExt.Ran.html#ranF">ranF</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ranN">ranN</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ranU">ranU</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ran_prf">ran_prf</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ran_uniqueness">ran_uniqueness</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.KanExt.Ran.html#ran_universality">ran_universality</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#relation_prf">relation_prf</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#relation_rel">relation_rel</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#relation_proper">relation_proper</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="projection_S"></a><h2>S </h2>
+<a href="COC.Base.Setoid.html#setoid_prf">setoid_prf</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#setoid_equal">setoid_equal</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#setoid_carrier">setoid_carrier</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Product.html#snd">snd</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<br/><br/><a name="projection_T"></a><h2>T </h2>
+<a href="COC.Cons.Terminal.html#terminal_prf">terminal_prf</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_univ">terminal_univ</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_obj">terminal_obj</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_uniqueness">terminal_uniqueness</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<br/><br/><hr/>
+<h1>Inductive Index</h1>
+<a name="inductive_C"></a><h2>C </h2>
+<a href="COC.Cons.Coequalizer.html#coequalize_pair">coequalize_pair</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct">coproduct</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<br/><br/><a name="inductive_E"></a><h2>E </h2>
+<a href="COC.Base.Setoid.html#empty">empty</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#EquivClosure">EquivClosure</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="inductive_H"></a><h2>H </h2>
+<a href="COC.Base.Functor.html#hom_eq">hom_eq</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="inductive_P"></a><h2>P </h2>
+<a href="COC.KanExt.Adj.html#PreserveLan">PreserveLan</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<br/><br/><a name="inductive_S"></a><h2>S </h2>
+<a href="COC.Cons.Equalizer.html#SubSetoid_type">SubSetoid_type</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<br/><br/><a name="inductive_U"></a><h2>U </h2>
+<a href="COC.Base.Setoid.html#unit">unit</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><hr/>
+<h1>Instance Index</h1>
+<a name="instance_C"></a><h2>C </h2>
+<a href="COC.Cons.Coproduct.html#coproduct_map_proper">coproduct_map_proper</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_univ_proper">coproduct_univ_proper</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<br/><br/><a name="instance_E"></a><h2>E </h2>
+<a href="COC.Cons.Coequalizer.html#EquivClosure_Equivalence">EquivClosure_Equivalence</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Exponential.html#exponential_univ_proper">exponential_univ_proper</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<br/><br/><a name="instance_F"></a><h2>F </h2>
+<a href="COC.Cons.Product.html#fst_proper">fst_proper</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<br/><br/><a name="instance_I"></a><h2>I </h2>
+<a href="COC.Cons.Coproduct.html#inj1_proper">inj1_proper</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#inj2_proper">inj2_proper</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<br/><br/><a name="instance_L"></a><h2>L </h2>
+<a href="COC.KanExt.Adj.html#left_adjoint_preserve_lan">left_adjoint_preserve_lan</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<br/><br/><a name="instance_P"></a><h2>P </h2>
+<a href="COC.Cons.Product.html#pair_of_proper">pair_of_proper</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map_proper">product_map_proper</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_univ_proper">product_univ_proper</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<br/><br/><a name="instance_S"></a><h2>S </h2>
+<a href="COC.Cons.Product.html#snd_proper">snd_proper</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<br/><br/><hr/>
+<h1>Abbreviation Index</h1>
+<a name="abbreviation_N"></a><h2>N </h2>
+<a href="COC.Base.Natrans.html#Nassoc">Nassoc</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Nassoc_inv">Nassoc_inv</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<br/><br/><hr/>
+<h1>Definition Index</h1>
+<a name="definition_A"></a><h2>A </h2>
+<a href="COC.KanExt.Adj.html#adjunction_from_lan">adjunction_from_lan</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Adj.Adjunction.html#Adjunction_by_unit_and_counit">Adjunction_by_unit_and_counit</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_rl_Natrans">adj_rl_Natrans</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_lr_Natrans">adj_lr_Natrans</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_rlF">adj_rlF</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Naturality.html#adj_lrF">adj_lrF</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_triangle">adj_triangle</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_counit">adj_counit</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Adj.Adjunction.html#adj_unit">adj_unit</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<br/><br/><a name="definition_C"></a><h2>C </h2>
+<a href="COC.Base.Functor.html#Cat">Cat</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap_setoid">CoconeMap_setoid</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap_id">CoconeMap_id</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap_compose">CoconeMap_compose</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#Cocones">Cocones</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Base.Category.html#codomain">codomain</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalizer_of_Setoids">coequalizer_of_Setoids</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#coequalize_pair_relation">coequalize_pair_relation</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.KanExt.LanColimit.html#colimit_from_lan">colimit_from_lan</a> [in <a href="COC.KanExt.LanColimit.html">COC.KanExt.LanColimit</a>]<br/>
+<a href="COC.Adj.LimDiag.html#colimit_diag_adjunction">colimit_diag_adjunction</a> [in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Adj.LimDiag.html#Colimit_functor">Colimit_functor</a> [in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Limit.Colimit.html#colimit_by_initial_of_cocones">colimit_by_initial_of_cocones</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap_setoid">ConeMap_setoid</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap_id">ConeMap_id</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap_compose">ConeMap_compose</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#Cones">Cones</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Base.Functor.html#constant_functor">constant_functor</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#contravariant_hom_functor">contravariant_hom_functor</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_of_Cat">coproduct_of_Cat</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_category">coproduct_category</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_hom">coproduct_hom</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_of_Setoids">coproduct_of_Setoids</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_setoid">coproduct_setoid</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_of_Types">coproduct_of_Types</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Coproduct.html#coproduct_map">coproduct_map</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.KanExt.Adj.html#counit_from_lan">counit_from_lan</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Base.Functor.html#covariant_hom_functor">covariant_hom_functor</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="definition_D"></a><h2>D </h2>
+<a href="COC.Adj.LimDiag.html#Diagonal_functor">Diagonal_functor</a> [in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Adj.LimDiag.html#diag_limit_adjunction">diag_limit_adjunction</a> [in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Base.Category.html#DiscreteCategory">DiscreteCategory</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#domain">domain</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#DualCategory">DualCategory</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<br/><br/><a name="definition_E"></a><h2>E </h2>
+<a href="COC.Cons.Equalizer.html#elem">elem</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#elem_map">elem_map</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Base.Setoid.html#empty_setoid">empty_setoid</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#EqCl">EqCl</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalizer_of_Setoids">equalizer_of_Setoids</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Equalizer.html#equalize_predicate">equalize_predicate</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Base.Setoid.html#eq_setoid">eq_setoid</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Cons.Exponential.html#Exponential_functor">Exponential_functor</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Cons.Exponential.html#exponential_of_Setoids">exponential_of_Setoids</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<br/><br/><a name="definition_F"></a><h2>F </h2>
+<a href="COC.Cons.Coproduct.html#fobj_for_coproduct_of_Cat">fobj_for_coproduct_of_Cat</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Initial.html#FromZero">FromZero</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Base.Natrans.html#Fun">Fun</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Setoid.html#function">function</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Functor.html#Functor_setoid">Functor_setoid</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#Functor_id">Functor_id</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Base.Functor.html#Functor_compose">Functor_compose</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Product.html#functor_for_product_of_Cat">functor_for_product_of_Cat</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Coproduct.html#functor_for_coproduct_of_Cat">functor_for_coproduct_of_Cat</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<br/><br/><a name="definition_H"></a><h2>H </h2>
+<a href="COC.Adj.Naturality.html#hom_functor">hom_functor</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<br/><br/><a name="definition_I"></a><h2>I </h2>
+<a href="COC.Cons.Duality.html#initial_from_terminal">initial_from_terminal</a> [in <a href="COC.Cons.Duality.html">COC.Cons.Duality</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_of_Cat">initial_of_Cat</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_of_Setoids">initial_of_Setoids</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Cons.Initial.html#initial_of_Types">initial_of_Types</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.KanExt.Adj.html#Inverse_functor">Inverse_functor</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Base.Category.html#isomorphic">isomorphic</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Base.Category.html#isomorphic_setoid">isomorphic_setoid</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<br/><br/><a name="definition_L"></a><h2>L </h2>
+<a href="COC.KanExt.LanColimit.html#lan_from_colimit">lan_from_colimit</a> [in <a href="COC.KanExt.LanColimit.html">COC.KanExt.LanColimit</a>]<br/>
+<a href="COC.KanExt.Adj.html#lan_inverse_adjunction">lan_inverse_adjunction</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#Lan_functor">Lan_functor</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#lan_from_adjunction">lan_from_adjunction</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Adj.LimDiag.html#Limit_functor">Limit_functor</a> [in <a href="COC.Adj.LimDiag.html">COC.Adj.LimDiag</a>]<br/>
+<a href="COC.Limit.Limit.html#limit_by_terminal_of_cones">limit_by_terminal_of_cones</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.KanExt.RanLimit.html#limit_from_ran">limit_from_ran</a> [in <a href="COC.KanExt.RanLimit.html">COC.KanExt.RanLimit</a>]<br/>
+<br/><br/><a name="definition_M"></a><h2>M </h2>
+<a href="COC.Base.Setoid.html#Map_setoid">Map_setoid</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#Map_id">Map_id</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Setoid.html#Map_compose">Map_compose</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><a name="definition_N"></a><h2>N </h2>
+<a href="COC.Base.Natrans.html#Natrans_assoc_inv">Natrans_assoc_inv</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_assoc">Natrans_assoc</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_cod_inv">Natrans_id_cod_inv</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_cod">Natrans_id_cod</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_dom_inv">Natrans_id_dom_inv</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id_dom">Natrans_id_dom</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_setoid">Natrans_setoid</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_hcompose">Natrans_hcompose</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_cod_compose">Natrans_cod_compose</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_dom_compose">Natrans_dom_compose</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_id">Natrans_id</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Base.Natrans.html#Natrans_compose">Natrans_compose</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<br/><br/><a name="definition_O"></a><h2>O </h2>
+<a href="COC.Cons.Terminal.html#One">One</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Adj.Naturality.html#op_functor">op_functor</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<br/><br/><a name="definition_P"></a><h2>P </h2>
+<a href="COC.Cons.Product.html#Product_2_functor">Product_2_functor</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#Product_1_functor">Product_1_functor</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_of_Cat">product_of_Cat</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_category">product_category</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_of_Setoids">product_of_Setoids</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_setoid">product_setoid</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_of_types">product_of_types</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#product_map">product_map</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Adj.Naturality.html#prod_functor">prod_functor</a> [in <a href="COC.Adj.Naturality.html">COC.Adj.Naturality</a>]<br/>
+<a href="COC.Adj.ProdExp.html#prod_exp_adjunction">prod_exp_adjunction</a> [in <a href="COC.Adj.ProdExp.html">COC.Adj.ProdExp</a>]<br/>
+<a href="COC.Base.Category.html#Prop_setoid">Prop_setoid</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<br/><br/><a name="definition_Q"></a><h2>Q </h2>
+<a href="COC.Cons.Coequalizer.html#QuotientSetoid">QuotientSetoid</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="definition_R"></a><h2>R </h2>
+<a href="COC.KanExt.Adj.html#ran_inverse_adjunction">ran_inverse_adjunction</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#Ran_functor">Ran_functor</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.Adj.html#ran_from_adjunction">ran_from_adjunction</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.KanExt.RanLimit.html#ran_from_limit">ran_from_limit</a> [in <a href="COC.KanExt.RanLimit.html">COC.KanExt.RanLimit</a>]<br/>
+<br/><br/><a name="definition_S"></a><h2>S </h2>
+<a href="COC.Base.Category.html#Setoids">Setoids</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Cons.Equalizer.html#SubSetoid">SubSetoid</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<br/><br/><a name="definition_T"></a><h2>T </h2>
+<a href="COC.Cons.Duality.html#terminal_from_initial">terminal_from_initial</a> [in <a href="COC.Cons.Duality.html">COC.Cons.Duality</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_of_Cat">terminal_of_Cat</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_of_Setoids">terminal_of_Setoids</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#terminal_of_Types">terminal_of_Types</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Cons.Terminal.html#ToOne">ToOne</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<a href="COC.Base.Category.html#Types">Types</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<br/><br/><a name="definition_U"></a><h2>U </h2>
+<a href="COC.Base.Setoid.html#unit_setoid">unit_setoid</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><a name="definition_Z"></a><h2>Z </h2>
+<a href="COC.Cons.Initial.html#Zero">Zero</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<br/><br/><hr/>
+<h1>Record Index</h1>
+<a name="record_A"></a><h2>A </h2>
+<a href="COC.Adj.Adjunction.html#Adjunction">Adjunction</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<br/><br/><a name="record_C"></a><h2>C </h2>
+<a href="COC.Base.Category.html#Category">Category</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Limit.Colimit.html#Cocone">Cocone</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#CoconeMap">CoconeMap</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#Coequalizer">Coequalizer</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Colimit.html#Colimit">Colimit</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Limit.html#Cone">Cone</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#ConeMap">ConeMap</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Cons.Coproduct.html#Coproduct">Coproduct</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<br/><br/><a name="record_E"></a><h2>E </h2>
+<a href="COC.Cons.Equalizer.html#Equalizer">Equalizer</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Exponential.html#Exponential">Exponential</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<br/><br/><a name="record_F"></a><h2>F </h2>
+<a href="COC.Base.Functor.html#Functor">Functor</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<br/><br/><a name="record_I"></a><h2>I </h2>
+<a href="COC.Cons.Initial.html#Initial">Initial</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.Adj.Adjunction.html#IsAdjunction">IsAdjunction</a> [in <a href="COC.Adj.Adjunction.html">COC.Adj.Adjunction</a>]<br/>
+<a href="COC.Base.Category.html#IsCategory">IsCategory</a> [in <a href="COC.Base.Category.html">COC.Base.Category</a>]<br/>
+<a href="COC.Limit.Colimit.html#IsCocone">IsCocone</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Colimit.html#IsCoconeMap">IsCoconeMap</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#IsCoequalizer">IsCoequalizer</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Limit.Colimit.html#IsColimit">IsColimit</a> [in <a href="COC.Limit.Colimit.html">COC.Limit.Colimit</a>]<br/>
+<a href="COC.Limit.Limit.html#IsCone">IsCone</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Limit.Limit.html#IsConeMap">IsConeMap</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Cons.Coproduct.html#IsCoproduct">IsCoproduct</a> [in <a href="COC.Cons.Coproduct.html">COC.Cons.Coproduct</a>]<br/>
+<a href="COC.Cons.Equalizer.html#IsEqualizer">IsEqualizer</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Exponential.html#IsExponential">IsExponential</a> [in <a href="COC.Cons.Exponential.html">COC.Cons.Exponential</a>]<br/>
+<a href="COC.Base.Functor.html#IsFunctor">IsFunctor</a> [in <a href="COC.Base.Functor.html">COC.Base.Functor</a>]<br/>
+<a href="COC.Cons.Initial.html#IsInitial">IsInitial</a> [in <a href="COC.Cons.Initial.html">COC.Cons.Initial</a>]<br/>
+<a href="COC.KanExt.Lan.html#IsLan">IsLan</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.Limit.Limit.html#IsLimit">IsLimit</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<a href="COC.Base.Setoid.html#IsMap">IsMap</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<a href="COC.Base.Natrans.html#IsNatrans">IsNatrans</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<a href="COC.Cons.Equalizer.html#IsPredicate">IsPredicate</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.Cons.Product.html#IsProduct">IsProduct</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.KanExt.Ran.html#IsRan">IsRan</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#IsRelation">IsRelation</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<a href="COC.Cons.Terminal.html#IsTerminal">IsTerminal</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<br/><br/><a name="record_L"></a><h2>L </h2>
+<a href="COC.KanExt.Lan.html#Lan">Lan</a> [in <a href="COC.KanExt.Lan.html">COC.KanExt.Lan</a>]<br/>
+<a href="COC.Limit.Limit.html#Limit">Limit</a> [in <a href="COC.Limit.Limit.html">COC.Limit.Limit</a>]<br/>
+<br/><br/><a name="record_M"></a><h2>M </h2>
+<a href="COC.Base.Setoid.html#Map">Map</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><a name="record_N"></a><h2>N </h2>
+<a href="COC.Base.Natrans.html#Natrans">Natrans</a> [in <a href="COC.Base.Natrans.html">COC.Base.Natrans</a>]<br/>
+<br/><br/><a name="record_P"></a><h2>P </h2>
+<a href="COC.Cons.Equalizer.html#Predicate">Predicate</a> [in <a href="COC.Cons.Equalizer.html">COC.Cons.Equalizer</a>]<br/>
+<a href="COC.KanExt.Adj.html#PreserveLan">PreserveLan</a> [in <a href="COC.KanExt.Adj.html">COC.KanExt.Adj</a>]<br/>
+<a href="COC.Cons.Product.html#product">product</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<a href="COC.Cons.Product.html#Product">Product</a> [in <a href="COC.Cons.Product.html">COC.Cons.Product</a>]<br/>
+<br/><br/><a name="record_R"></a><h2>R </h2>
+<a href="COC.KanExt.Ran.html#Ran">Ran</a> [in <a href="COC.KanExt.Ran.html">COC.KanExt.Ran</a>]<br/>
+<a href="COC.Cons.Coequalizer.html#Relation">Relation</a> [in <a href="COC.Cons.Coequalizer.html">COC.Cons.Coequalizer</a>]<br/>
+<br/><br/><a name="record_S"></a><h2>S </h2>
+<a href="COC.Base.Setoid.html#Setoid">Setoid</a> [in <a href="COC.Base.Setoid.html">COC.Base.Setoid</a>]<br/>
+<br/><br/><a name="record_T"></a><h2>T </h2>
+<a href="COC.Cons.Terminal.html#Terminal">Terminal</a> [in <a href="COC.Cons.Terminal.html">COC.Cons.Terminal</a>]<br/>
+<br/><br/><hr/><table>
+<tr>
+<td>Global Index</td>
+<td><a href="lib-index.html#global_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#global_C">C</a></td>
+<td><a href="lib-index.html#global_D">D</a></td>
+<td><a href="lib-index.html#global_E">E</a></td>
+<td><a href="lib-index.html#global_F">F</a></td>
+<td>G</td>
+<td><a href="lib-index.html#global_H">H</a></td>
+<td><a href="lib-index.html#global_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#global_L">L</a></td>
+<td><a href="lib-index.html#global_M">M</a></td>
+<td><a href="lib-index.html#global_N">N</a></td>
+<td><a href="lib-index.html#global_O">O</a></td>
+<td><a href="lib-index.html#global_P">P</a></td>
+<td><a href="lib-index.html#global_Q">Q</a></td>
+<td><a href="lib-index.html#global_R">R</a></td>
+<td><a href="lib-index.html#global_S">S</a></td>
+<td><a href="lib-index.html#global_T">T</a></td>
+<td><a href="lib-index.html#global_U">U</a></td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td><a href="lib-index.html#global_Z">Z</a></td>
+<td>_</td>
+<td><a href="lib-index.html#global_*">other</a></td>
+<td>(481 entries)</td>
+</tr>
+<tr>
+<td>Notation Index</td>
+<td>A</td>
+<td>B</td>
+<td>C</td>
+<td>D</td>
+<td>E</td>
+<td>F</td>
+<td>G</td>
+<td>H</td>
+<td>I</td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td>P</td>
+<td>Q</td>
+<td>R</td>
+<td>S</td>
+<td>T</td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td><a href="lib-index.html#notation_*">other</a></td>
+<td>(114 entries)</td>
+</tr>
+<tr>
+<td>Library Index</td>
+<td><a href="lib-index.html#library_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#library_C">C</a></td>
+<td><a href="lib-index.html#library_D">D</a></td>
+<td><a href="lib-index.html#library_E">E</a></td>
+<td><a href="lib-index.html#library_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#library_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#library_L">L</a></td>
+<td><a href="lib-index.html#library_M">M</a></td>
+<td><a href="lib-index.html#library_N">N</a></td>
+<td>O</td>
+<td><a href="lib-index.html#library_P">P</a></td>
+<td>Q</td>
+<td><a href="lib-index.html#library_R">R</a></td>
+<td><a href="lib-index.html#library_S">S</a></td>
+<td><a href="lib-index.html#library_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(29 entries)</td>
+</tr>
+<tr>
+<td>Lemma Index</td>
+<td><a href="lib-index.html#lemma_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#lemma_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#lemma_E">E</a></td>
+<td>F</td>
+<td>G</td>
+<td><a href="lib-index.html#lemma_H">H</a></td>
+<td><a href="lib-index.html#lemma_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#lemma_L">L</a></td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#lemma_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td>S</td>
+<td><a href="lib-index.html#lemma_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(20 entries)</td>
+</tr>
+<tr>
+<td>Constructor Index</td>
+<td>A</td>
+<td>B</td>
+<td><a href="lib-index.html#constructor_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#constructor_E">E</a></td>
+<td>F</td>
+<td>G</td>
+<td><a href="lib-index.html#constructor_H">H</a></td>
+<td><a href="lib-index.html#constructor_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#constructor_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td><a href="lib-index.html#constructor_S">S</a></td>
+<td><a href="lib-index.html#constructor_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(12 entries)</td>
+</tr>
+<tr>
+<td>Projection Index</td>
+<td><a href="lib-index.html#projection_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#projection_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#projection_E">E</a></td>
+<td><a href="lib-index.html#projection_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#projection_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#projection_L">L</a></td>
+<td><a href="lib-index.html#projection_M">M</a></td>
+<td><a href="lib-index.html#projection_N">N</a></td>
+<td>O</td>
+<td><a href="lib-index.html#projection_P">P</a></td>
+<td>Q</td>
+<td><a href="lib-index.html#projection_R">R</a></td>
+<td><a href="lib-index.html#projection_S">S</a></td>
+<td><a href="lib-index.html#projection_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(120 entries)</td>
+</tr>
+<tr>
+<td>Inductive Index</td>
+<td>A</td>
+<td>B</td>
+<td><a href="lib-index.html#inductive_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#inductive_E">E</a></td>
+<td>F</td>
+<td>G</td>
+<td><a href="lib-index.html#inductive_H">H</a></td>
+<td>I</td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#inductive_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td><a href="lib-index.html#inductive_S">S</a></td>
+<td>T</td>
+<td><a href="lib-index.html#inductive_U">U</a></td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(8 entries)</td>
+</tr>
+<tr>
+<td>Instance Index</td>
+<td>A</td>
+<td>B</td>
+<td><a href="lib-index.html#instance_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#instance_E">E</a></td>
+<td><a href="lib-index.html#instance_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#instance_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#instance_L">L</a></td>
+<td>M</td>
+<td>N</td>
+<td>O</td>
+<td><a href="lib-index.html#instance_P">P</a></td>
+<td>Q</td>
+<td>R</td>
+<td><a href="lib-index.html#instance_S">S</a></td>
+<td>T</td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(12 entries)</td>
+</tr>
+<tr>
+<td>Abbreviation Index</td>
+<td>A</td>
+<td>B</td>
+<td>C</td>
+<td>D</td>
+<td>E</td>
+<td>F</td>
+<td>G</td>
+<td>H</td>
+<td>I</td>
+<td>J</td>
+<td>K</td>
+<td>L</td>
+<td>M</td>
+<td><a href="lib-index.html#abbreviation_N">N</a></td>
+<td>O</td>
+<td>P</td>
+<td>Q</td>
+<td>R</td>
+<td>S</td>
+<td>T</td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(2 entries)</td>
+</tr>
+<tr>
+<td>Definition Index</td>
+<td><a href="lib-index.html#definition_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#definition_C">C</a></td>
+<td><a href="lib-index.html#definition_D">D</a></td>
+<td><a href="lib-index.html#definition_E">E</a></td>
+<td><a href="lib-index.html#definition_F">F</a></td>
+<td>G</td>
+<td><a href="lib-index.html#definition_H">H</a></td>
+<td><a href="lib-index.html#definition_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#definition_L">L</a></td>
+<td><a href="lib-index.html#definition_M">M</a></td>
+<td><a href="lib-index.html#definition_N">N</a></td>
+<td><a href="lib-index.html#definition_O">O</a></td>
+<td><a href="lib-index.html#definition_P">P</a></td>
+<td><a href="lib-index.html#definition_Q">Q</a></td>
+<td><a href="lib-index.html#definition_R">R</a></td>
+<td><a href="lib-index.html#definition_S">S</a></td>
+<td><a href="lib-index.html#definition_T">T</a></td>
+<td><a href="lib-index.html#definition_U">U</a></td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td><a href="lib-index.html#definition_Z">Z</a></td>
+<td>_</td>
+<td>other</td>
+<td>(117 entries)</td>
+</tr>
+<tr>
+<td>Record Index</td>
+<td><a href="lib-index.html#record_A">A</a></td>
+<td>B</td>
+<td><a href="lib-index.html#record_C">C</a></td>
+<td>D</td>
+<td><a href="lib-index.html#record_E">E</a></td>
+<td><a href="lib-index.html#record_F">F</a></td>
+<td>G</td>
+<td>H</td>
+<td><a href="lib-index.html#record_I">I</a></td>
+<td>J</td>
+<td>K</td>
+<td><a href="lib-index.html#record_L">L</a></td>
+<td><a href="lib-index.html#record_M">M</a></td>
+<td><a href="lib-index.html#record_N">N</a></td>
+<td>O</td>
+<td><a href="lib-index.html#record_P">P</a></td>
+<td>Q</td>
+<td><a href="lib-index.html#record_R">R</a></td>
+<td><a href="lib-index.html#record_S">S</a></td>
+<td><a href="lib-index.html#record_T">T</a></td>
+<td>U</td>
+<td>V</td>
+<td>W</td>
+<td>X</td>
+<td>Y</td>
+<td>Z</td>
+<td>_</td>
+<td>other</td>
+<td>(47 entries)</td>
+</tr>
+</table>
+</div>
+</div
+</body>
+</html>
