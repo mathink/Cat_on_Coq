@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+env COQDOCFLAGS="--charset utf-8 --with-header static/header.html --with-footer static/footer.html --index lib-index" make gallinahtml
+./gengraph
+dot -Tpng depgraph.dot -o html/depgraph.png
+cp static/index.html html/index.html
+

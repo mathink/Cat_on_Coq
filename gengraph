@@ -1,0 +1,10 @@
+#!/bin/bash
+
+FNAME=depgraph.dot
+
+coqdep -R theories COC -dumpgraph ${FNAME} theories/All.v
+sed -i -e 's/theories/COC/g' ${FNAME}
+sed -i -e 's/\//./g' ${FNAME}
+dot -Tpdf ${FNAME} -o ${FNAME/.dot/.pdf}
+
+
