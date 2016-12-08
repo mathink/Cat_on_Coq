@@ -132,3 +132,11 @@ Next Obligation.
     now rewrite cat_comp_id_dom.
   - now rewrite (fmap_id (F:=X.1) X.2 x).
 Qed.
+
+Fail Check yoneda_natrans Setoids.
+(* The command has indeed failed with message: *)
+(* The term "Setoids" has type "Category@{Top.3438 Top.3439}" *)
+(* while it is expected to have type "Category@{Top.3437 Top.3437}". *)
+
+
+

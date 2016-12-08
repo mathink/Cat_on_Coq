@@ -100,3 +100,60 @@ Next Obligation.
   induction x as [x | tl IHl tr IHr]; simpl; auto.
   now rewrite IHl, IHr, map_app.
 Qed.
+
+Fixpoint list_equal (X: Setoid)(l1 l2: list X) :=
+  match l1, l2 with
+  | [], [] => True
+  | x :: l1, y :: l2 => x == y /\ list_equal l1 l2
+  | _, _ => False
+  end.
+
+Inductive list_equal_inductive (X: Setoid): list X -> list X -> Prop :=
+| list_equal_nil: list_equal_inductive [] []
+| list_equal_cons: forall (x y: X)(l1 l2: list X),
+    x == y -> list_equal_inductive l1 l2 ->
+    list_equal_inductive (x :: l1) (y :: l2).
+Hint Resolve list_equal_nil list_equal_cons.
+
+Lemma list_equal_equiv:
+  forall (X: Setoid)(l1 l2: list X),
+    list_equal l1 l2 <-> list_equal_inductive l1 l2.
+Proof.
+  intros; split.
+  - revert l2; induction l1 as [| x l1 IH].
+    + now intros [| y l2] H; try contradiction; auto.
+    + intros [| y l2] H; try contradiction; simpl in *.
+      apply list_equal_cons; [apply H |].
+      now apply IH, H.
+  - now intros H; induction H.
+Qed.
+
+Program Definition list_setoid (X: Setoid) :=
+  [Setoid by @list_equal X].
+Next Obligation.
+  - now intros l; induction l as [| x l IHl].
+  - intros l1 l2 Heq; apply list_equal_equiv in Heq.
+    now induction Heq.
+  - intros l1 l2 l3 Heq12; revert l3.
+    apply list_equal_equiv in Heq12; induction Heq12; try now idtac.
+    intros l3 Heq23; apply list_equal_equiv in Heq23; inversion Heq23.
+    simpl; subst.
+    split; [now transitivity y |].
+    now apply IHHeq12, list_equal_equiv.
+Qed.
+Canonical Structure list_setoid.
+
+Program Definition list_functor: Setoids --> Setoids :=
+  [Functor by f :-> [Map by map f] with X :-> list_setoid X].
+Next Obligation.
+  intros l1 l2 Heq; apply list_equal_equiv in Heq; induction Heq; simpl; try now idtac.
+  now rewrite H1.
+Qed.
+Next Obligation.
+  - intros f g Heq l.
+    now induction l as [| x l IHl].
+  - rewrite map_map.
+    now apply (Equivalence_Reflexive (Equivalence:=list_setoid_obligation_1 Z)).
+  - rewrite map_id.
+    now apply (Equivalence_Reflexive (Equivalence:=list_setoid_obligation_1 X)).
+Qed.

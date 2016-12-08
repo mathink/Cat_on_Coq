@@ -124,6 +124,7 @@ VFILES:=theories/Base/Setoid.v\
   theories/KanExt/RanLimit.v\
   theories/KanExt/Adj.v\
   theories/KanExt/Main.v\
+  theories/Rep/Yoneda.v\
   theories/All.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)

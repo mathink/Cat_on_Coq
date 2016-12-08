@@ -18,15 +18,15 @@ Class IsFunctor (C D: Category)
               forall X Y: C, Proper ((==) ==> (==)) (@fmap X Y);
     fmap_comp:
       forall (X Y Z: C)(f: C X Y)(g: C Y Z),
-        fmap (g \o{C} f) == fmap g \o{D} fmap f;
+        fmap (g \o f) == fmap g \o fmap f;
     fmap_id:
       forall X: C, fmap (Id X) == Id (fobj X)
   }.
 
 Structure Functor (C D: Category): Type :=
   {
-    fun_obj:> C -> D;
-    fmap: forall {X Y: C}, C X Y -> D (fun_obj X) (fun_obj Y);
+    fobj:> C -> D;
+    fmap: forall {X Y: C}, C X Y -> D (fobj X) (fobj Y);
 
     fun_prf:> IsFunctor (@fmap)
   }.
@@ -142,13 +142,12 @@ Next Obligation.
   - now rewrite cat_comp_assoc.
   - now rewrite cat_comp_id_cod.
 Qed.
-Notation "'Hom' ( X , -)" := (covariant_hom_functor _ X).
+Notation "'Hom' ( X , -)" := (covariant_hom_functor _ X) (format "'Hom' ( X ,  -)").
 
 (** Hom(-,Y): C^op -> Setoids **)
 Program Definition contravariant_hom_functor (C: Category)(Y: C)
   : C^op --> Setoids :=
-  [Functor by (fun (X W: C)(f: C W X) =>
-                 [g in C X Y :-> g \o f] )
+  [Functor by (fun (X W: C)(f: C W X) => [g in C X Y :-> g \o f] )
    with (fun X => C X Y)].
 Next Obligation.
   now intros g g' Heq; rewrite Heq.
@@ -160,4 +159,4 @@ Next Obligation.
   - now rewrite cat_comp_assoc.
   - now rewrite cat_comp_id_dom.
 Qed.
-Notation "'Hom' (- , Y )" := (contravariant_hom_functor _ Y).
+Notation "'Hom' (- , Y )" := (contravariant_hom_functor _ Y) (format "'Hom' (- ,  Y )").
