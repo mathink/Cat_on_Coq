@@ -22,7 +22,7 @@ Program Definition inv_yoneda_map (C: Category)(X: C)(F: C --> Setoids)
   [ x in F X :-> [ Y in C :=> [ f in C X Y :-> fmap F f x ]]].
 Next Obligation.
   intros f f' Heq.
-  now apply (fmap_subst (IsFunctor:=F) Heq x).
+  now apply (fmap_proper (IsFunctor:=F) Heq x).
 Qed.
 Next Obligation.
   now rewrite (fmap_comp (F:=F) _ _ x).

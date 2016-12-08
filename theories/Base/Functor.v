@@ -14,7 +14,7 @@ Class IsFunctor (C D: Category)
       (fobj: C -> D)
       (fmap: forall {X Y: C}, C X Y -> D (fobj X) (fobj Y)) :=
   {
-    fmap_subst:>
+    fmap_proper:>
               forall X Y: C, Proper ((==) ==> (==)) (@fmap X Y);
     fmap_comp:
       forall (X Y Z: C)(f: C X Y)(g: C Y Z),

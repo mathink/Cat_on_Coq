@@ -33,7 +33,7 @@ Program Definition op_functor (C D: Category)(F: C --> D)
   : C^op --> D^op :=
   [Functor by f :-> fmap F f ].
 Next Obligation.
-  - now apply fmap_subst.
+  - now apply fmap_proper.
   - now apply fmap_comp.
   - now apply fmap_id.
 Qed.
