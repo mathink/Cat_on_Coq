@@ -34,6 +34,9 @@ Notation "[ X :=> f 'from' F 'to' G ]" := [X in _ :=> f from F to G].
 Notation "[ X 'in' T :=> f ]" := [X in T :=> f from _ to _].
 Notation "[ X :=> f ]" := ([ X in _ :=> f]).
 
+Class NaturalIsomorphic (C D: Category)(F G: C --> D)(S: F ==> G)(T: G ==> F) :=
+  naturali_isomorphic:> forall (X: C), Isomorphic (S X) (T X).
+
 Program Definition Natrans_compose (C D: Category)(F G H: C --> D)(S: F ==> G)(T: G ==> H): F ==> H :=
   [X :=> T X \o S X].
 Next Obligation.

@@ -60,9 +60,14 @@ Notation "'Id' X" := (Id_{_} X) (at level 30, right associativity).
 Definition domain {C: Category}{X Y: C}(f: C X Y) := X.
 Definition codomain {C: Category}{X Y: C}(f: C X Y) := Y.
 
+Class Isomorphic (C: Category)(X Y: C)(f: C X Y)(g: C Y X) :=
+  {
+    isomorphic_iso: g \o f == Id X;
+    isomorphic_inv: f \o g == Id Y
+  }.
+
 Definition isomorphic (C: Category)(X Y: C) :=
-  exists (f: C X Y)(g: C Y X),
-    (g \o f == Id X) /\ (f \o g == Id Y).
+  exists (f: C X Y)(g: C Y X), Isomorphic f g.
 
 Program Definition isomorphic_setoid (C: Category) :=
   [Setoid by isomorphic C on C].

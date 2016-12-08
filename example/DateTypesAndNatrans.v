@@ -100,4 +100,3 @@ Next Obligation.
   induction x as [x | tl IHl tr IHr]; simpl; auto.
   now rewrite IHl, IHr, map_app.
 Qed.
-
