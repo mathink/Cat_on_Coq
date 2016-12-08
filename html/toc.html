@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
+<div id="toc">
+<a href="COC.Base.Setoid.html"><h2>Library COC.Base.Setoid</h2></a>
+<ul class="doclist">
+<li><a href="COC.Base.Setoid.html#lab1">Setoid, Map</a>
+
+</li>
+</ul>
+<a href="COC.Base.Category.html"><h2>Library COC.Base.Category</h2></a>
+<ul class="doclist">
+<li><a href="COC.Base.Category.html#lab2">Category</a>
+
+</li>
+</ul>
+<a href="COC.Base.Functor.html"><h2>Library COC.Base.Functor</h2></a>
+<ul class="doclist">
+<li><a href="COC.Base.Functor.html#lab3">Functor</a>
+<ul class="doclist">
+<li><ul class="doclist">
+<li><a href="COC.Base.Functor.html#lab4">1.2.2 Category of Category</a>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+<a href="COC.Base.Natrans.html"><h2>Library COC.Base.Natrans</h2></a>
+<ul class="doclist">
+<li><a href="COC.Base.Natrans.html#lab5">Functor</a>
+
+</li>
+</ul>
+<a href="COC.Base.Main.html"><h2>Library COC.Base.Main</h2></a>
+<a href="COC.Cons.Initial.html"><h2>Library COC.Cons.Initial</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Initial.html#lab6">Initial Object</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Terminal.html"><h2>Library COC.Cons.Terminal</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Terminal.html#lab7">Terminal Object</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Product.html"><h2>Library COC.Cons.Product</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Product.html#lab8">Product</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Coproduct.html"><h2>Library COC.Cons.Coproduct</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Coproduct.html#lab9">Coproduct</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Equalizer.html"><h2>Library COC.Cons.Equalizer</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Equalizer.html#lab10">Equalizer</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Coequalizer.html"><h2>Library COC.Cons.Coequalizer</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Coequalizer.html#lab11">Coequalizer</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Exponential.html"><h2>Library COC.Cons.Exponential</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Exponential.html#lab12">Exponential</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Duality.html"><h2>Library COC.Cons.Duality</h2></a>
+<ul class="doclist">
+<li><a href="COC.Cons.Duality.html#lab13">Terminal Object</a>
+
+</li>
+</ul>
+<a href="COC.Cons.Main.html"><h2>Library COC.Cons.Main</h2></a>
+<a href="COC.Limit.Limit.html"><h2>Library COC.Limit.Limit</h2></a>
+<ul class="doclist">
+<li><a href="COC.Limit.Limit.html#lab14">Limit</a>
+
+</li>
+</ul>
+<a href="COC.Limit.Colimit.html"><h2>Library COC.Limit.Colimit</h2></a>
+<ul class="doclist">
+<li><a href="COC.Limit.Colimit.html#lab15">Colimit</a>
+
+</li>
+</ul>
+<a href="COC.Limit.Main.html"><h2>Library COC.Limit.Main</h2></a>
+<a href="COC.Adj.Adjunction.html"><h2>Library COC.Adj.Adjunction</h2></a>
+<ul class="doclist">
+<li><a href="COC.Adj.Adjunction.html#lab16">Adjunction</a>
+
+</li>
+</ul>
+<a href="COC.Adj.Naturality.html"><h2>Library COC.Adj.Naturality</h2></a>
+<ul class="doclist">
+<li><a href="COC.Adj.Naturality.html#lab17">Adjunction</a>
+
+</li>
+</ul>
+<a href="COC.Adj.ProdExp.html"><h2>Library COC.Adj.ProdExp</h2></a>
+<ul class="doclist">
+<li><a href="COC.Adj.ProdExp.html#lab18">(- * Y) -| (-)^Y</a>
+
+</li>
+</ul>
+<a href="COC.Adj.LimDiag.html"><h2>Library COC.Adj.LimDiag</h2></a>
+<ul class="doclist">
+<li><a href="COC.Adj.LimDiag.html#lab19">Colim -| Diag -| Lim</a>
+
+</li>
+</ul>
+<a href="COC.Adj.Main.html"><h2>Library COC.Adj.Main</h2></a>
+<a href="COC.KanExt.Lan.html"><h2>Library COC.KanExt.Lan</h2></a>
+<ul class="doclist">
+<li><a href="COC.KanExt.Lan.html#lab20">Lan</a>
+
+</li>
+</ul>
+<a href="COC.KanExt.LanColimit.html"><h2>Library COC.KanExt.LanColimit</h2></a>
+<ul class="doclist">
+<li><a href="COC.KanExt.LanColimit.html#lab21">Lan and Colimit</a>
+
+</li>
+</ul>
+<a href="COC.KanExt.Ran.html"><h2>Library COC.KanExt.Ran</h2></a>
+<ul class="doclist">
+<li><a href="COC.KanExt.Ran.html#lab22">Ran</a>
+
+</li>
+</ul>
+<a href="COC.KanExt.RanLimit.html"><h2>Library COC.KanExt.RanLimit</h2></a>
+<ul class="doclist">
+<li><a href="COC.KanExt.RanLimit.html#lab23">Ran and Limit</a>
+
+</li>
+</ul>
+<a href="COC.KanExt.Adj.html"><h2>Library COC.KanExt.Adj</h2></a>
+<ul class="doclist">
+<li><a href="COC.KanExt.Adj.html#lab24">Adjunction and Kan extension</a>
+<ul class="doclist">
+<li><ul class="doclist">
+<li><a href="COC.KanExt.Adj.html#lab25">5.3.2 Lan -| Inverse -| Ran</a>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+<a href="COC.KanExt.Main.html"><h2>Library COC.KanExt.Main</h2></a>
+<a href="COC.All.html"><h2>Library COC.All</h2></a>
+</div>
+</div>
+</div
+</body>
+</html>

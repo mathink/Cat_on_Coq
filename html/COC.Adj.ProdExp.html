@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
+<h1 class="libtitle">Library COC.Adj.ProdExp</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab18"></a><h1 class="section">(- * Y) -| (-)^Y</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Base.Main.html#"><span class="id" title="library">COC.Base.Main</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Cons.Product.html#"><span class="id" title="library">COC.Cons.Product</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Cons.Exponential.html#"><span class="id" title="library">COC.Cons.Exponential</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Adj.Adjunction.html#"><span class="id" title="library">COC.Adj.Adjunction</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Program Definition</span> <a name="prod_exp_adjunction"><span class="id" title="definition">prod_exp_adjunction</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">C</span>: <a class="idref" href="COC.Base.Category.html#Category"><span class="id" title="record">Category</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">prod</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.Adj.ProdExp.html#C"><span class="id" title="variable">C</span></a>), <a class="idref" href="COC.Cons.Product.html#Product"><span class="id" title="record">Product</span></a> <a class="idref" href="COC.Adj.ProdExp.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Adj.ProdExp.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">exp</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">Y</span> <span class="id" title="var">Z</span>: <a class="idref" href="COC.Adj.ProdExp.html#C"><span class="id" title="variable">C</span></a>), <a class="idref" href="COC.Cons.Exponential.html#Exponential"><span class="id" title="record">Exponential</span></a> <a class="idref" href="COC.Adj.ProdExp.html#prod"><span class="id" title="variable">prod</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Z"><span class="id" title="variable">Z</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Y</span>: <a class="idref" href="COC.Adj.ProdExp.html#C"><span class="id" title="variable">C</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="COC.Cons.Product.html#Product_2_functor"><span class="id" title="definition">Product_2_functor</span></a> <a class="idref" href="COC.Adj.ProdExp.html#prod"><span class="id" title="variable">prod</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Adj.Adjunction.html#28aacaa742ceaa4e4c1faece44d5eb94"><span class="id" title="notation">-|</span></a> <a class="idref" href="COC.Cons.Exponential.html#Exponential_functor"><span class="id" title="definition">Exponential_functor</span></a> <a class="idref" href="COC.Adj.ProdExp.html#exp"><span class="id" title="variable">exp</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe"><span class="id" title="notation">[</span></a><a class="idref" href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe"><span class="id" title="notation">Adj</span></a> <a class="idref" href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe"><span class="id" title="notation">by</span></a> <a class="idref" href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe"><span class="id" title="notation">(</span></a><span class="id" title="keyword">fun</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> =&gt; <a class="idref" href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c"><span class="id" title="notation">[</span></a><span class="id" title="var">f</span> <span class="id" title="keyword">in</span> <a class="idref" href="COC.Adj.ProdExp.html#C"><span class="id" title="variable">C</span></a> (<a class="idref" href="COC.Adj.ProdExp.html#prod"><span class="id" title="variable">prod</span></a> <a class="idref" href="COC.Adj.ProdExp.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a>) <a class="idref" href="COC.Adj.ProdExp.html#Z"><span class="id" title="variable">Z</span></a> <a class="idref" href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Cons.Exponential.html#5bd15fd9275406e53e20597080797b8c"><span class="id" title="notation">[</span></a><a class="idref" href="COC.Cons.Exponential.html#5bd15fd9275406e53e20597080797b8c"><span class="id" title="notation">curry</span></a> <span class="id" title="var">f</span> <a class="idref" href="COC.Cons.Exponential.html#5bd15fd9275406e53e20597080797b8c"><span class="id" title="notation">to</span></a> <a class="idref" href="COC.Adj.ProdExp.html#exp"><span class="id" title="variable">exp</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Z"><span class="id" title="variable">Z</span></a><a class="idref" href="COC.Cons.Exponential.html#5bd15fd9275406e53e20597080797b8c"><span class="id" title="notation">]</span></a><a class="idref" href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c"><span class="id" title="notation">]</span></a><a class="idref" href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe"><span class="id" title="notation">),</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe"><span class="id" title="notation">(</span></a><span class="id" title="keyword">fun</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> =&gt; <a class="idref" href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c"><span class="id" title="notation">[</span></a><span class="id" title="var">f</span> <span class="id" title="keyword">in</span> <a class="idref" href="COC.Adj.ProdExp.html#C"><span class="id" title="variable">C</span></a> <a class="idref" href="COC.Adj.ProdExp.html#X"><span class="id" title="variable">X</span></a> (<a class="idref" href="COC.Adj.ProdExp.html#exp"><span class="id" title="variable">exp</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Z"><span class="id" title="variable">Z</span></a>) <a class="idref" href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c"><span class="id" title="notation">:-&gt;</span></a> <a class="idref" href="COC.Cons.Exponential.html#exp_eval"><span class="id" title="projection">exp_eval</span></a> (<a class="idref" href="COC.Adj.ProdExp.html#exp"><span class="id" title="variable">exp</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Z"><span class="id" title="variable">Z</span></a>) <a class="idref" href="COC.Base.Category.html#d5b2c8a285259ee455024ad20520eddc"><span class="id" title="notation">\</span></a><a class="idref" href="COC.Base.Category.html#d5b2c8a285259ee455024ad20520eddc"><span class="id" title="notation">o</span></a> <a class="idref" href="COC.Cons.Product.html#9494c23fcc5b24672d6f35bd867834a1"><span class="id" title="notation">[</span></a><span class="id" title="var">f</span> <a class="idref" href="COC.Cons.Product.html#9494c23fcc5b24672d6f35bd867834a1"><span class="id" title="notation">\*</span></a> <a class="idref" href="COC.Base.Category.html#fff925835640b741c02c946c340195cd"><span class="id" title="notation">Id</span></a> <a class="idref" href="COC.Adj.ProdExp.html#Y"><span class="id" title="variable">Y</span></a> <span class="id" title="keyword">with</span> <a class="idref" href="COC.Adj.ProdExp.html#prod"><span class="id" title="variable">prod</span></a><a class="idref" href="COC.Cons.Product.html#9494c23fcc5b24672d6f35bd867834a1"><span class="id" title="notation">]</span></a><a class="idref" href="COC.Base.Setoid.html#bdccdafb98ee25c07f26d89378189a6c"><span class="id" title="notation">]</span></a><a class="idref" href="COC.Adj.Adjunction.html#13d20665a815de7f24caa62e0495eebe"><span class="id" title="notation">)]</span></a>.<br/>
+</div>
+</div>
+</div
+</body>
+</html>
