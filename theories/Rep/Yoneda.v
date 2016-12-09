@@ -13,12 +13,12 @@ Require Import COC.Base.Main.
 (** simple ver. **)
 (** Nat(Hom(X,-), F) -> F X **)
 Program Definition yoneda_map (C: Category)(X: C)(F: C --> Setoids)
-  : Map (Natrans_setoid Hom(X,-) F) (F X) :=
+  : Map ((Setoids^C) Hom(X,-) F) (F X) :=
   [ S in Natrans Hom(X,-) F :-> S X (Id X) ].
 
 (** F X -> Nat(Hom(X,-), F) **)
 Program Definition inv_yoneda_map (C: Category)(X: C)(F: C --> Setoids)
-  : Map (F X) (Natrans_setoid Hom(X,-) F) :=
+  : Map (F X) ((Setoids^C) Hom(X,-) F) :=
   [ x in F X :-> [ Y in C :=> [ f in C X Y :-> fmap F f x ]]].
 Next Obligation.
   intros f f' Heq.
