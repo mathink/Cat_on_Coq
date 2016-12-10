@@ -33,8 +33,8 @@ Structure Functor (C D: Category): Type :=
 Existing Instance fun_prf.
 
 Notation "C --> D" := (Functor C D).
-Arguments fmap_comp {C D fobj fmap F}{X Y Z}(f g): rename, clear implicits.
-Arguments fmap_id {C D fobj fmap F}(X): rename, clear implicits.
+Arguments fmap_comp {C D fobj fmap F}{X Y Z}(f g): rename.
+Arguments fmap_id {C D fobj fmap F}(X): rename.
 
 Notation "[ 'Functor' 'by' fmap 'with' fobj ; C 'to' D ]" := (@Build_Functor C D fobj fmap _).
 Notation "[ 'Functor' 'by' fmap 'with' fobj ]" := [Functor by fmap with fobj ; _ to _].

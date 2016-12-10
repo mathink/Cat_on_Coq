@@ -55,15 +55,17 @@ Definition adj_rlF (C D: Category)(G: D --> C): (product_category C^op D) --> Se
 Program Definition adj_lr_Natrans
         (C D: Category)(F: C --> D)(G: D --> C)(adj: F -| G)
   : (adj_lrF F) ==> (adj_rlF G):=
-  [ cd :=> let (c,d) := cd in adj_lr adj (c:=c)(d:=d)].
+  [ cd :=> match cd with (c,d) => adj_lr adj (c:=c)(d:=d) end].
 Next Obligation.
+  destruct Y as [c' d'], X as [c d]; simpl in *.
   now rewrite adj_lr_naturality.
 Qed.
 
 Program Definition adj_rl_Natrans
         (C D: Category)(F: C --> D)(G: D --> C)(adj: F -| G)
   : (adj_rlF G) ==> (adj_lrF F):=
-  [ cd :=> let (c,d) := cd in adj_rl adj (c:=c)(d:=d)].
+  [ cd :=> match cd with (c,d) => adj_rl adj (c:=c)(d:=d) end].
 Next Obligation.
+  destruct Y as [c' d'], X as [c d]; simpl in *.
   now rewrite adj_rl_naturality.
 Qed.

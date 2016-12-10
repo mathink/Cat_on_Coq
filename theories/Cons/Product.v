@@ -144,8 +144,19 @@ Qed.
 
 
 (** Examples **)
-Record product (A B: Type): Type :=
- pair_of { fst: A; snd: B }.
+Inductive product (A B: Type): Type :=
+| pair_of (fst: A)(snd: B).
+
+Definition fst (A B: Type)(p: product A B): A :=
+  match p with
+  | pair_of a _ => a
+  end.
+
+Definition snd (A B: Type)(p: product A B): B :=
+  match p with
+  | pair_of _ b => b
+  end.
+
 Notation "( x , y )" := (pair_of x y) (format "( x ,  y )").
 
 Notation "p .1" := (fst p) (at level 5, left associativity, format "p .1").

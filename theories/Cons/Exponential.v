@@ -96,8 +96,9 @@ Next Obligation.
   now intros x x' Heq y; simpl; rewrite Heq.
 Qed.
 Next Obligation.
-  rename g into f, u into g, x0 into y.
-  now rewrite (H (x, y)).
+  - now destruct x.
+  - rename g into f, u into g, x0 into y.
+    now rewrite (H (x, y)).
 Qed.
 
 (** Exp as Functor **)
