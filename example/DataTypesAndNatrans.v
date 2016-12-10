@@ -157,29 +157,3 @@ Next Obligation.
   - rewrite map_id.
     now apply (Equivalence_Reflexive (Equivalence:=list_setoid_obligation_1 X)).
 Qed.
-
-Require Import Rep.Yoneda.
-Program Definition test: Map (eq_setoid bool) (eq_setoid nat) := [ m :-> match m with true => 0 | false => 1 end].
-Next Obligation.
-  now intros [|] [|].
-Qed.
-
-Goal
-  (forall (C: Category)(X: C)(F: C --> Setoids)(x: F X)(Y: C)(f: C X Y),
-      inv_yoneda_map X F x Y f == fmap F f x
-  ).
-Proof.
-  now intros; simpl.
-Qed.
-
-
-Eval compute in fmap list_functor test [true; false; false; true].
-Eval compute in inv_yoneda_map (eq_setoid bool) list_functor [true; false; false; true] (eq_setoid nat) test.
-
-
-Lemma leaf_eq_eq:
-  forall (X: Type)(x y: X),
-    [:x:] = [:y:] -> x = y.
-Proof.
-  intros.
-  inversion H.
