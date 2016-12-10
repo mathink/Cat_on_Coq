@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" 
+            content="text/html; charset=utf-8">
+    <link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<!-- Mathjax -->
+    <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js' type='text/javascript'>    
+    MathJax.Hub.Config({
+            HTML: ["input/TeX","output/HTML-CSS"],
+            TeX: { extensions: ["http://booksthere.github.io/extensions/TeX/xypic.js" ,"AMSmath.js","AMSsymbols.js"], 
+		    equationNumbers: { autoNumber: "AMS" } },
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    skipTags: ["script","noscript","style","textarea","code"],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+            "HTML-CSS": { availableFonts: ["TeX"],
+                    linebreaks: { automatic: true } }
+    });
+    </script>
+  </head>
+  <body>
+    <div id="page">
+      <div id="header"></div>
+      <div id="main">
+<h1 class="libtitle">Library COC.CCC.CCC</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab27"></a><h1 class="section">Cartesian Closed Category</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Base.Main.html#"><span class="id" title="library">COC.Base.Main</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Cons.Terminal.html#"><span class="id" title="library">COC.Cons.Terminal</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Cons.Product.html#"><span class="id" title="library">COC.Cons.Product</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="COC.Cons.Exponential.html#"><span class="id" title="library">COC.Cons.Exponential</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Structure</span> <a name="CCC"><span class="id" title="record">CCC</span></a> :=<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="ccc_category"><span class="id" title="projection">ccc_category</span></a>:&gt; <a class="idref" href="COC.Base.Category.html#Category"><span class="id" title="record">Category</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="ccc_terminal"><span class="id" title="projection">ccc_terminal</span></a>: <a class="idref" href="COC.Cons.Terminal.html#Terminal"><span class="id" title="record">Terminal</span></a> <a class="idref" href="COC.CCC.CCC.html#ccc_category"><span class="id" title="method">ccc_category</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="ccc_product"><span class="id" title="projection">ccc_product</span></a>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>: <a class="idref" href="COC.CCC.CCC.html#ccc_category"><span class="id" title="method">ccc_category</span></a>), <a class="idref" href="COC.Cons.Product.html#Product"><span class="id" title="record">Product</span></a> <span class="id" title="var">_</span> <a class="idref" href="COC.CCC.CCC.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="COC.CCC.CCC.html#Y"><span class="id" title="variable">Y</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="ccc_exp"><span class="id" title="projection">ccc_exp</span></a>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">Y</span> <span class="id" title="var">Z</span>: <a class="idref" href="COC.CCC.CCC.html#ccc_category"><span class="id" title="method">ccc_category</span></a>), <a class="idref" href="COC.Cons.Exponential.html#Exponential"><span class="id" title="record">Exponential</span></a> <a class="idref" href="COC.CCC.CCC.html#ccc_product"><span class="id" title="method">ccc_product</span></a> <a class="idref" href="COC.CCC.CCC.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="COC.CCC.CCC.html#Z"><span class="id" title="variable">Z</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="fd1852dd88db3968dcc32e1cb1a8887d"><span class="id" title="notation">&quot;</span></a>[ Z ^^ Y 'on' CCC ]" := (<a class="idref" href="COC.CCC.CCC.html#ccc_exp"><span class="id" title="projection">ccc_exp</span></a> (<span class="id" title="var">c</span>:=<span class="id" title="var">CCC</span>) <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>).<br/>
+<span class="id" title="keyword">Infix</span> <a name="94d37570a1573183fff24de5e7b31e72"><span class="id" title="notation">&quot;</span></a>*" := (<a class="idref" href="COC.CCC.CCC.html#ccc_product"><span class="id" title="projection">ccc_product</span></a> (<span class="id" title="var">c</span>:=<span class="id" title="var">_</span>)).<br/>
+<span class="id" title="keyword">Notation</span> <a name="03724dc4a1e298bc630b3f3aa32a7849"><span class="id" title="notation">&quot;</span></a>Z ^^ Y" := <a class="idref" href="COC.CCC.CCC.html#fd1852dd88db3968dcc32e1cb1a8887d"><span class="id" title="notation">[</span></a><span class="id" title="var">Z</span> <a class="idref" href="COC.CCC.CCC.html#fd1852dd88db3968dcc32e1cb1a8887d"><span class="id" title="notation">^^</span></a> <span class="id" title="var">Y</span> <a class="idref" href="COC.CCC.CCC.html#fd1852dd88db3968dcc32e1cb1a8887d"><span class="id" title="notation">on</span></a> <span class="id" title="var">_</span><a class="idref" href="COC.CCC.CCC.html#fd1852dd88db3968dcc32e1cb1a8887d"><span class="id" title="notation">]</span></a> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 40, <span class="id" title="tactic">left</span> <span class="id" title="keyword">associativity</span>).<br/>
+<span class="id" title="keyword">Notation</span> <a name="8e33abc453fedc225235b18f12a021ef"><span class="id" title="notation">&quot;</span></a>T_{ CCC }" := (<a class="idref" href="COC.CCC.CCC.html#ccc_terminal"><span class="id" title="projection">ccc_terminal</span></a> <span class="id" title="var">CCC</span>) (<span class="id" title="var">format</span> "T_{ CCC }").<br/>
+
+<br/>
+<span class="id" title="keyword">Canonical</span> <span class="id" title="keyword">Structure</span> <span class="id" title="var">ccc_of_Setoids</span> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="COC.CCC.CCC.html#Build_CCC"><span class="id" title="constructor">Build_CCC</span></a> <a class="idref" href="COC.Cons.Terminal.html#terminal_of_Setoids"><span class="id" title="definition">terminal_of_Setoids</span></a> <a class="idref" href="COC.Cons.Exponential.html#exponential_of_Setoids"><span class="id" title="definition">exponential_of_Setoids</span></a>.<br/>
+</div>
+</div>
+</div
+</body>
+</html>
