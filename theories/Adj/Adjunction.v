@@ -115,7 +115,7 @@ Lemma adj_satisfies_triangle:
     adj_triangle (adj_unit adj) (adj_counit adj).
 Proof.
   intros; split; simpl; [intro c | intro d];
-    rewrite fmap_id, ?cat_comp_id_dom, ?cat_comp_id_cod.
+    rewrite ?cat_comp_id_dom, ?cat_comp_id_cod.
   - rewrite <- cat_comp_id_cod, <- adj_rl_naturality.
     rewrite fmap_id, !cat_comp_id_cod.
     now rewrite adj_iso_lr_rl.
@@ -145,14 +145,14 @@ Next Obligation.
     rewrite cat_comp_assoc.
     destruct Hadj as [HF HG].
     generalize (HF c); simpl.
-    rewrite fmap_id, !cat_comp_id_cod, !cat_comp_id_dom.
+    rewrite !cat_comp_id_cod, !cat_comp_id_dom.
     now intros H; rewrite H, cat_comp_id_dom.
   - rewrite fmap_comp, cat_comp_assoc.
     rewrite <- (natrans_naturality (IsNatrans:=au) g); simpl.
     rewrite <- cat_comp_assoc.
     destruct Hadj as [HF HG].
     generalize (HG d); simpl.
-    rewrite fmap_id, !cat_comp_id_cod, !cat_comp_id_dom.
+    rewrite !cat_comp_id_cod, !cat_comp_id_dom.
     now intros H; rewrite H, cat_comp_id_cod.
   - rewrite !fmap_comp, !cat_comp_assoc.
     now rewrite (natrans_naturality (IsNatrans:=au) f).

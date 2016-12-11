@@ -95,16 +95,17 @@ Program Definition lan_from_adjunction
    with G, adj_unit adj].
 Next Obligation.
   rewrite <- !cat_comp_assoc.
-  rewrite <- fmap_comp, cat_comp_id_cod, !cat_comp_id_dom.
+  rewrite <- (fmap_id (F:=S) (F X)), <- fmap_comp.
+  rewrite !cat_comp_id_dom.
   rewrite cat_comp_assoc.
   generalize (natrans_naturality (IsNatrans:=e) (adj_lr adj (Id F X))); simpl; intros H; rewrite H; clear H.
   rewrite <- cat_comp_assoc, <- fmap_comp.
-  rewrite <- (cat_comp_id_cod (adj_rl adj _ \o _)).
+  rewrite cat_comp_assoc.
   rewrite <- adj_rl_naturality.
   rewrite !fmap_id, !cat_comp_id_cod.
   now rewrite adj_iso_lr_rl, fmap_id, cat_comp_id_cod.
 
-  rewrite fmap_id, !cat_comp_id_cod, cat_comp_id_dom.
+  rewrite !cat_comp_id_cod, cat_comp_id_dom.
   rewrite <- H.
   rewrite <- cat_comp_assoc.
   rewrite <- (natrans_naturality (IsNatrans:=u) ((adj_rl adj) (Id G X))).
@@ -127,7 +128,7 @@ Program Definition ran_from_adjunction
                \o  [* ==> * \o 1])
    with F, adj_counit adj].
 Next Obligation.
-  rewrite <- fmap_comp, !cat_comp_id_cod, !cat_comp_id_dom.
+  rewrite !cat_comp_id_cod, !cat_comp_id_dom.
   rewrite <- cat_comp_assoc.
   generalize (natrans_naturality (IsNatrans:=e) (adj_rl adj (Id (G X)))); simpl; intros H; rewrite <- H; clear H.
   rewrite cat_comp_assoc, <- fmap_comp.
@@ -136,7 +137,7 @@ Next Obligation.
   rewrite !fmap_id, !cat_comp_id_dom.
   now rewrite adj_iso_rl_lr, fmap_id, cat_comp_id_dom.
 
-  rewrite fmap_id, !cat_comp_id_cod, cat_comp_id_dom.
+  rewrite !cat_comp_id_cod, cat_comp_id_dom.
   rewrite <- H.
   rewrite cat_comp_assoc.
   rewrite (natrans_naturality (IsNatrans:=u) (adj_lr adj (Id (F X)))).
@@ -177,17 +178,17 @@ Lemma counit_from_lan_makes_triangle:
 Proof.
   intros; split.
   - simpl; intros c.
-    rewrite !cat_comp_id_cod, fmap_id, cat_comp_id_dom.
+    rewrite !cat_comp_id_cod, cat_comp_id_dom.
     generalize (lan_universality (IsLan:=Hp) ([ * ==> 1 \o * ] \o Natrans_id F \o [ * \o 1 ==> * ]) c); simpl.
     rewrite cat_comp_id_cod.
     intros H; rewrite H.
-    now rewrite !cat_comp_id_cod, fmap_id.
+    now rewrite !cat_comp_id_cod.
   -
     generalize (lan_uniqueness (IsLan:=Hlan)(e:=au)(u:=Id G)).
     intros H'; rewrite H'; clear H'.
     + apply lan_uniqueness.
       simpl; intros c.
-      rewrite fmap_id, !cat_comp_id_cod, cat_comp_id_dom.
+      rewrite !cat_comp_id_cod, cat_comp_id_dom.
       rewrite cat_comp_assoc.
       rewrite (natrans_naturality (IsNatrans:=au) (au c)); simpl.
       rewrite <- cat_comp_assoc, <- fmap_comp.

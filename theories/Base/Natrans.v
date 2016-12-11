@@ -102,16 +102,16 @@ Canonical Structure Fun.
 Notation "D ^ C" := (Fun C D).
 
 Program Definition Natrans_id_dom (C D: Category)(F: C --> D): (F \o Id C) ==> F :=
-  [X :=> fmap F (Id X)].
+  [X :=> Id (F X)].
 Next Obligation.
-  now rewrite !fmap_id, cat_comp_id_dom, cat_comp_id_cod.
+  now rewrite cat_comp_id_dom, cat_comp_id_cod.
 Qed.
 Notation "[ * \o '1' ==> * ]" := (Natrans_id_dom _).
 
 Program Definition Natrans_id_dom_inv (C D: Category)(F: C --> D): F ==> (F \o Id C) :=
-  [X :=> fmap F (Id X)].
+  [X :=> Id (F X)].
 Next Obligation.
-  now rewrite !fmap_id, cat_comp_id_dom, cat_comp_id_cod.
+  now rewrite cat_comp_id_dom, cat_comp_id_cod.
 Qed.
 Notation "[ * ==> * \o '1' ]" := (Natrans_id_dom_inv _).
 
