@@ -50,7 +50,7 @@ Program Definition Kt_from_Monad (C: Category)(T: Monad C)
 Next Obligation.
   - now intros f g Heq; rewrite Heq.
   - generalize (monad_mult_T_unit (IsMonad:=T) X); simpl.
-    now rewrite fmap_id, cat_comp_id_dom.
+    now rewrite cat_comp_id_dom.
   - rewrite cat_comp_assoc.
     rewrite <- (natrans_naturality (IsNatrans:=monad_unit T) f); simpl.
     generalize (monad_mult_unit_T (IsMonad:=T) Y); simpl.
@@ -86,8 +86,7 @@ Next Obligation.
     rewrite kt_bind_comp.
     now rewrite <- cat_comp_assoc, kt_bind_ret, cat_comp_id_cod.
   - now rewrite cat_comp_id_dom, kt_bind_ret.
-  - rewrite kt_bind_comp, cat_comp_id_dom.
-    rewrite kt_bind_ret, kt_bind_comp.
+  - rewrite cat_comp_id_dom, kt_bind_comp.
     now rewrite <- cat_comp_assoc, kt_bind_ret, cat_comp_id_cod, kt_ret_bind.
 Qed.
 
@@ -127,7 +126,7 @@ Proof.
   intros; repeat split; simpl; try reflexivity.
   - rewrite fmap_comp, <- cat_comp_assoc.
     generalize (monad_mult_T_unit (IsMonad:=T) Y); simpl.
-    rewrite fmap_id, cat_comp_id_dom.
+    rewrite cat_comp_id_dom.
     now intros Heq; rewrite Heq, cat_comp_id_cod.
   - now rewrite fmap_id, cat_comp_id_dom.
 Qed.
@@ -170,10 +169,18 @@ Qed.
 
 Eval compute in
     [do x <-: 0;
-       y <-: hd_error [1;2];
+       y <- hd_error [1;2];
        ret (x, y) in Maybe].
-(* = Some (0, Some 1) *)
-(* : option (product nat (option nat)) *)
+(* = Some (0, 1) *)
+(* : option (product nat nat) *)
+
+Eval compute in
+    [do x <-: 0;
+       y <- hd_error [];
+       ret (x, y) in Maybe].
+(* = None *)
+(* : option (product nat ?B) *)
+
 
 (** List **)
 Lemma flat_map_app:
@@ -198,6 +205,13 @@ Next Obligation.
     now rewrite flat_map_app, IHl.
 Qed.
 
+Eval compute in
+    [do x <- [3;1;4;1;5];
+       y <-: (x + 1);
+       ret y in List].
+(* = [4; 2; 5; 2; 6] *)
+(* : list nat *)
+
 Definition guard {X: Type}(b: X -> bool)(x: X): list X :=
   if b x then [x] else [].
 
@@ -210,12 +224,22 @@ Fixpoint evenb (n: nat): bool :=
 
 Eval compute in
     [do x <- [0;1;2;3] ;
-       :-guard evenb x ;
-       z <-: S x;
-       ret z in List].
-
+       y <-: (x + 1);
+       :- guard evenb y ;
+       ret x in List].
 (* = [1; 3] *)
 (* : list nat *)
+
+Eval compute in
+    [do x <-: 0;
+       y <- (hd_error
+               [do x <- [0;1;2;3] ;
+                  y <-: (x + 1);
+                  :- guard evenb y ;
+                  ret x in List]);
+       ret (x, y) in Maybe].
+(* = Some (0, 1) *)
+(* : option (product nat nat) *)
 
 (** State **)
 Module DirectDefinitionOfState.
@@ -285,21 +309,24 @@ Module StateFromAdjunction.
   Require Import FunctionalExtensionality.
 
   Program Definition exponential_of_Types (Y Z: Type)
-  : Exponential (C:=Types) product_of_Types Y Z :=
-  [Exp (Y -> Z)
-    by (fun (X: Type) f x y => f (x, y))
-   with (fun gy => gy.1 gy.2)].
+    : Exponential (C:=Types) product_of_Types Y Z :=
+    [Exp (Y -> Z)
+      by (fun (X: Type) f x y => f (x, y))
+     with (fun gy => gy.1 gy.2)].
   Next Obligation.
     - now destruct x.
     - now extensionality y; rewrite H.
   Qed.
   
-  Program Instance State (S: Type): Kt Types _ :=
+  Instance State (S: Type): Kt Types _ :=
     Kt_from_Monad
       (Monad_from_adj
          (prod_exp_adjunction exponential_of_Types S)).
 
   Definition state (S: Type) := kt_fobj (State S).
+  Eval compute in state.
+  (* = fun S H : Type => S -> product H S *)
+  (* : Type -> Types -> Types *)
   
   Definition put {S: Type}(s: S): state S unit :=
     (fun _: S => (tt, s)).
@@ -322,10 +349,20 @@ Module StateFromAdjunction.
 
   Eval compute in
       [do x <-: 0;
-         y <-: 1;
-         ret (x, y) in Maybe].
-  (* = Some (0, 1) *)
-  (* : option (product nat nat) *)
+         :- modify S;
+         s <- get;
+         ret (x, s) in State nat].
+  (* = fun y : nat => ((0, S y), S y) *)
+  (* : (Monad_from_adj (prod_exp_adjunction exponential_of_Types nat)) *)
+  (*     (product nat nat) *)
+
+  Eval compute in
+      evalState [do x <-: 0;
+                   :- modify S;
+                   s <- get;
+                   ret (x, s) in State nat] 5.
+  (*   = ((0, 6), 6) *)
+  (* : (Product_2_functor product_of_Types nat) (product nat nat) *)
 
   Eval compute in
       [do x <-: 2;
