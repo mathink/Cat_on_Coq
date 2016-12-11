@@ -44,10 +44,4 @@ Next Obligation.
     rewrite <- (cat_comp_id_dom (Id Y)) at 2.
     rewrite product_map_compose.
     now rewrite <- (cat_comp_assoc _ _ (exp_eval _)), <- exp_universality.
-  - rename c' into W, c into X, d into Z, d' into Z'.
-    rewrite !cat_comp_assoc.
-    rewrite <- product_map_compose, cat_comp_id_dom.
-    rewrite <- (cat_comp_id_dom (Id Y)) at 1.
-    rewrite product_map_compose.
-    now rewrite <- cat_comp_assoc, <- exp_universality, cat_comp_assoc.
 Qed.

@@ -162,7 +162,7 @@ Notation "( x , y )" := (pair_of x y) (format "( x ,  y )").
 Notation "p .1" := (fst p) (at level 5, left associativity, format "p .1").
 Notation "p .2" := (snd p) (at level 5, left associativity, format "p .2").
 
-Program Definition product_of_types (X Y: Type)
+Program Definition product_of_Types (X Y: Type)
   : Product Types X Y :=
   [Product (product X Y) by (fun P f g x => (f x, g x))
    with @fst X Y, @snd X Y].

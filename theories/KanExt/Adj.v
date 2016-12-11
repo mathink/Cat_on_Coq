@@ -316,15 +316,6 @@ Next Obligation.
   - rename c into F, c' into F', d into G, d' into G', f into S, g into T, h into U, X into c.
     rewrite !cat_comp_assoc.
     now rewrite (lan_universality (IsLan:=lan F') (lanN (lan F) \o S) c); simpl.
-  - rename c into F, c' into F', d into G, d' into G', f into S, g into T, h into U, X into d.
-    symmetry.
-    generalize (lan_uniqueness (IsLan:=lan F')); simpl; intros Huniq.
-    eapply (Huniq _ ([c :=> T (K c) from (G \o K) to (G' \o K)] \o U \o S)
-                  (T \o (lanU (lan F) U) \o (lanU (lan F') (lanN (lan F) \o S)))); simpl; intros c.
-    rewrite !cat_comp_assoc.
-    rewrite (lan_universality (IsLan:=lan F')(lanN (lan F) \o S) c); simpl.
-    rewrite <- (cat_comp_assoc (S c)).
-    now rewrite (lan_universality (IsLan:=lan F) U c).
 Qed.
 
 (** Inverse -| Ran **)
@@ -361,7 +352,4 @@ Next Obligation.
     rewrite (ran_universality (IsRan:=ran F')(S \o ranN (ran F)) c); simpl.
     rewrite (cat_comp_assoc _ _ (S c)).
     now rewrite (ran_universality (IsRan:=ran F) U c).
-  - rename d into F, d' into F', c into G, c' into G', f into T, g into S, h into U, X into d.
-    rewrite <- !cat_comp_assoc.
-    now rewrite (ran_universality (IsRan:=ran F') (S \o ranN (ran F)) d); simpl.
 Qed.

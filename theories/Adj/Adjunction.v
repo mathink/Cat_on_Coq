@@ -25,11 +25,7 @@ Class IsAdjunction
 
     adj_lr_naturality:
       forall (c c': C)(d d': D)(f : C c' c)(g: D d d')(h: D (F c) d),
-        lr (g \o h \o fmap F f) == fmap G g \o lr h \o f;
-
-    adj_rl_naturality:
-      forall (c c': C)(d d': D)(f : C c' c)(g: D d d')(h: C c (G d)),
-        rl (fmap G g \o h \o f) == g \o rl h \o fmap F f
+        lr (g \o h \o fmap F f) == fmap G g \o lr h \o f
   }.
 
 Structure Adjunction (C D: Category)(F: C --> D)(G: D --> C) :=
@@ -47,6 +43,18 @@ Notation "[ 'Adj' 'of' F , G 'by' lr , rl ]" :=
   (@Build_Adjunction _ _ F G lr rl _).
 Notation "[ 'Adj' 'by' lr , rl ]" := [Adj of _, _ by lr, rl].
 Notation "[ F -| G 'by' lr , rl ]" := [Adj of F,G by lr,rl].
+
+(*  *)
+Lemma adj_rl_naturality
+      (C D: Category)(F: C --> D)(G: D --> C)
+      (adj: F -| G):
+  forall (c c': C)(d d': D)(f : C c' c)(g: D d d')(h: C c (G d)),
+    adj_rl adj (fmap G g \o h \o f) == g \o adj_rl adj h \o fmap F f.
+Proof.
+  intros.
+  rewrite <- (adj_iso_rl_lr (IsAdjunction:=adj) h) at 1.
+  now rewrite <- adj_lr_naturality, adj_iso_lr_rl.
+Qed.
 
 (** unit of adjunction **)
 Program Definition adj_unit
@@ -148,7 +156,5 @@ Next Obligation.
     now intros H; rewrite H, cat_comp_id_cod.
   - rewrite !fmap_comp, !cat_comp_assoc.
     now rewrite (natrans_naturality (IsNatrans:=au) f).
-  - rewrite !fmap_comp, <- !cat_comp_assoc.
-    now rewrite (natrans_naturality (IsNatrans:=ac) g).
 Qed.
 

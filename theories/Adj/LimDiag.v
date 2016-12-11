@@ -87,16 +87,6 @@ Next Obligation.
   - now rewrite (colimit_universality (IsColimit:=colim c) [Cocone by g to d]).
   - rewrite !cat_comp_assoc.
     now rewrite (colimit_universality (IsColimit:=colim c')[Cocone by i :-> (colim c) i \o f i]).
-  - rename c into D, c' into D', d into c, d' into c', f into S, g into f, h into T.
-    symmetry.
-    apply (colimit_uniqueness (IsColimit:=colim D')(c:=[ Cocone by X :-> f \o T X \o S X])); simpl.
-    intros i.
-    rewrite cat_comp_assoc.
-    apply cat_comp_proper; try now idtac.
-    rewrite cat_comp_assoc.
-    rewrite (colimit_universality (IsColimit:=colim D')[ Cocone by i :-> (colim D) i \o S i]); simpl.
-    rewrite <- cat_comp_assoc.
-    now rewrite (colimit_universality (IsColimit:=colim D) [ Cocone by T to c]); simpl.
 Qed.
 
 
@@ -172,6 +162,4 @@ Next Obligation.
     rewrite (limit_universality (IsLimit:=lim D')[ Cone by i :-> S i \o (lim D) i]); simpl.
     rewrite cat_comp_assoc.
     now rewrite (limit_universality (IsLimit:=lim D) [ Cone by T from c]); simpl.
-  - rewrite <- !cat_comp_assoc.
-    now rewrite (limit_universality (IsLimit:=lim d')[Cone by i :-> g i \o (lim d) i]).
 Qed.
