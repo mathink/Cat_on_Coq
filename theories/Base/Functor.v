@@ -142,7 +142,7 @@ Next Obligation.
   - now rewrite cat_comp_assoc.
   - now rewrite cat_comp_id_cod.
 Qed.
-Notation "'Hom' ( X , -)" := (covariant_hom_functor _ X) (format "'Hom' ( X ,  -)").
+Notation "'Hom' ( X , - )" := (covariant_hom_functor _ X) (format "'Hom' ( X ,  - )").
 
 (** Hom(-,Y): C^op -> Setoids **)
 Program Definition contravariant_hom_functor (C: Category)(Y: C)
@@ -159,4 +159,4 @@ Next Obligation.
   - now rewrite cat_comp_assoc.
   - now rewrite cat_comp_id_dom.
 Qed.
-Notation "'Hom' (- , Y )" := (contravariant_hom_functor _ Y) (format "'Hom' (- ,  Y )").
+Notation "'Hom' ( - , Y )" := (contravariant_hom_functor _ Y) (format "'Hom' ( - ,  Y )").
