@@ -85,14 +85,21 @@ Next Obligation.
     + rewrite cat_comp_assoc, <- (cat_comp_assoc g'), Heqf'.
       now rewrite cat_comp_id_cod, Heqg'.
 Qed.
-Notation "X === Y 'in' C" := (X == Y in (isomorphic_setoid C)) (at level 70, no associativity, Y at next level).
+Notation "X === Y 'in' C" := (isomorphic C X Y) (at level 70, no associativity, Y at next level).
 Notation "X === Y" := (X === Y in _) (at level 70, no associativity).
 
 (** Category of Type **)
+Definition compose (X Y Z: Type)(f: X -> Y)(g: Y -> Z): X -> Z :=
+  fun (x: X) => g (f x).
+Arguments compose X Y Z f g / x.
+
+Definition ident (X: Type): X -> X := fun x => x.
+Arguments ident X / x.
+
 Program Definition Types :=
   [Category by function
-   with (fun X Y Z f g x => g (f x)),
-        (fun X x => x)].
+   with (@compose),
+        (@ident)].
 Next Obligation.
   intros f f' Heqf g g' Heqg x; simpl.
   now rewrite Heqf, Heqg.

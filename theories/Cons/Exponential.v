@@ -80,20 +80,28 @@ Proof.
 Qed.
 
 (** Examples **)
+Program Definition Exp_univ_of_Setoids_aux
+           (Y Z X: Setoid)(f: Map (product_setoid X Y) Z)(x: X): Map Y Z :=
+  [y :-> f (x, y)].
+Next Obligation.
+  now intros y y' Heq; rewrite Heq.
+Qed.
+
+Program Definition Exp_univ_of_Setoids
+           (Y Z X: Setoid)(f: Map (product_setoid X Y) Z): Map X (Setoids Y Z) :=
+  [x :-> Exp_univ_of_Setoids_aux f x].
+Next Obligation.
+  now intros x x' Heq y; simpl; rewrite Heq.
+Qed.
+  
 Program Definition exponential_of_Setoids (Y Z: Setoids)
   : Exponential (C:=Setoids) product_of_Setoids Y Z :=
   [Exp (Setoids Y Z)
-    by (fun (X: Setoid) f => [x :-> [y :-> f (x, y)]])
+    by (@Exp_univ_of_Setoids Y Z)
    with [gy :-> gy.1 gy.2]].
 Next Obligation.
   intros [g y] [g' y'] [Heqg Heqy]; simpl in *.
   now rewrite Heqy, Heqg.
-Qed.
-Next Obligation.
-  now intros y y' Heq; rewrite Heq.
-Qed.
-Next Obligation.
-  now intros x x' Heq y; simpl; rewrite Heq.
 Qed.
 Next Obligation.
   - now destruct x.

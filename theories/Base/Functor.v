@@ -42,7 +42,7 @@ Notation "[ 'Functor' 'by' fmap ]" := [Functor by fmap with _].
 Notation "[ 'Functor' 'by' f :-> Ff 'with' X :-> FX ; C 'to' D ]" := [Functor by (fun _ _ f => Ff) with (fun X => FX) ; C to D].
 Notation "[ 'Functor' 'by' f :-> Ff 'with' X :-> FX ]" := [Functor by f :-> Ff with X :-> FX ; _ to _].
 Notation "[ 'Functor' 'by' f :-> Ff ; C 'to' D ]" :=
-  [Functor by f :-> Ff with _ :-> _ ; _ to _].
+  [Functor by f :-> Ff with _ :-> _ ; C to D].
 Notation "[ 'Functor' 'by' f :-> Ff ]" := [Functor by f :-> Ff with _ :-> _ ; _ to _].
 
 Program Definition Functor_compose (C D E: Category)(F: C --> D)(G: D --> E): C --> E :=
@@ -95,8 +95,12 @@ Proof.
   transitivity g; assumption.
 Qed.
 
+Definition Functor_eq (C D: Category)(F G: Functor C D) :=
+  forall (X Y: C)(f: C X Y), fmap F f =H fmap G f.
+Arguments Functor_eq C D F G / .
+
 Program Definition Functor_setoid (C D: Category): Setoid :=
-  [Setoid by `(forall (X Y: C)(f: C X Y), fmap F f =H fmap G f) on C --> D].
+  [Setoid by (@Functor_eq C D) on C --> D].
 Next Obligation.
   - intros F G Heq X Y f.
     now apply hom_eq_sym, Heq.

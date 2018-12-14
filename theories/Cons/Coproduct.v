@@ -205,19 +205,30 @@ Definition coproduct_hom (C D: Category)(X Y: coproduct C D): Setoid :=
   | _, _ => empty_setoid
   end.
 
+Definition coproduct_comp (C D: Category)(X Y Z: coproduct C D)(f: coproduct_hom C D X Y)(g: coproduct_hom C D Y Z): coproduct_hom C D X Z :=
+  match X as X, Y as Y return coproduct_hom C D X Y -> forall Z, coproduct_hom C D Y Z -> coproduct_hom C D X Z with
+  | inj1 _ X, inj1 _ Y =>
+    fun (f: C X Y)(Z: coproduct C D)(g: coproduct_hom C D (inj1 D Y) Z) =>
+      match Z as Z return coproduct_hom C D (inj1 D Y) Z -> coproduct_hom C D (inj1 D X) Z with
+      | inj1 _ Z => fun (g: C Y Z) => g \o f
+      | _ => fun (g: empty_setoid) => match g with end
+      end g
+  | inj2 _ X, inj2 _ Y =>
+    fun (f: D X Y)(Z: coproduct C D)(g: coproduct_hom C D (inj2 C Y) Z) =>
+      match Z as Z return coproduct_hom C D (inj2 C Y) Z -> coproduct_hom C D (inj2 C X) Z with
+      | inj2 _ Z => fun (g: D Y Z) => g \o f
+      | _ => fun (g: empty_setoid) => match g with end
+      end g
+  | _, _ => fun (f: empty_setoid) Z g => match f with end
+  end f Z g.
+
 Program Definition coproduct_category (C D: Category): Category :=
   [Category by (@coproduct_hom C D)
-   with (fun X Y Z f g => _),
+   with (@coproduct_comp C D),
         (fun X => match X with
                   | inj1 _ X => Id X
                   | inj2 _ X => Id X
                   end)].
-Next Obligation.
-  destruct X as [X | X], Y as [Y | Y], Z as [Z | Z]; simpl in *;
-    try contradiction.
-  - exact (g \o f).
-  - exact (g \o f).
-Defined.
 Next Obligation.
   - now destruct X as [X | X], Y as [Y | Y], Z as [Z | Z]; 
       intros f f' Heqf g g' Heqg; simpl in *;

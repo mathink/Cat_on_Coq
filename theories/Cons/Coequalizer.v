@@ -156,16 +156,12 @@ Next Obligation.
     + now rewrite H0.
 Qed.
 
-Program Definition coequalizer_of_Setoids (X Y: Setoid)(f g: Map X Y) :=
-  [Coequalizer of f, g
-    by (fun z h H => [ y :-> h y])
-   with [y :-> y]
-   to QuotientSetoid (EqCl (coequalize_pair_relation f g)) (EquivClosure_Equivalence Y (coequalize_pair_relation f g))
-     in Setoids].
-Next Obligation.
-  intros y y' Heq.
-  now apply eqcl_refl.
-Qed.
+
+Definition Coeq_of_Setoids (X Y: Setoid)(f g: Map X Y) :=
+  QuotientSetoid (EqCl (coequalize_pair_relation f g)) (EquivClosure_Equivalence Y (coequalize_pair_relation f g)).
+
+Program Definition Coeq_univ_of_Setoids (X Y: Setoid)(f g: Map X Y)(Z: Setoid)(h: Map Y Z)(H: h \o f == h \o g): Map (Coeq_of_Setoids f g) Z :=
+  [ y :-> h y ].
 Next Obligation.
   intros y y' Hr.
   induction Hr.
@@ -176,6 +172,16 @@ Next Obligation.
   - now symmetry.
   - now transitivity (h b).
 Qed.    
+
+Program Definition coequalizer_of_Setoids (X Y: Setoid)(f g: Map X Y) :=
+  [Coequalizer of f, g
+    by (@Coeq_univ_of_Setoids X Y f g)
+   with [y :-> y] to (Coeq_of_Setoids f g)  in Setoids].
+Next Obligation.
+  intros y y' Heq.
+  now apply eqcl_refl.
+Qed.
 Next Obligation.
   now apply eqcl_base, coequalize_pair_def with x.
 Qed.
+

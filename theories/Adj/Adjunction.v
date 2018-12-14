@@ -62,12 +62,13 @@ Program Definition adj_unit
   : (Id C) ==> (G \o F) :=
   [ c :=> adj_lr adj (Id (F c))].
 Next Obligation.
-  rewrite <- cat_comp_id_cod.
+  rewrite <- (cat_comp_id_cod (adj_lr adj (Id F Y))).
   rewrite <- (fmap_id (F Y)).
+  rewrite cat_comp_assoc.
   rewrite <- adj_lr_naturality.
   rewrite !cat_comp_id_cod.
   symmetry.
-  rewrite <- cat_comp_id_dom, cat_comp_assoc.
+  rewrite <- (cat_comp_id_dom (adj_lr adj (Id F X))).
   rewrite <- adj_lr_naturality.
   now rewrite cat_comp_id_cod, fmap_id, cat_comp_id_dom.
 Qed.
@@ -79,11 +80,10 @@ Program Definition adj_counit
   [d :=> adj_rl adj (Id (G d))].
 Next Obligation.
   intros; simpl.
-  rewrite <- cat_comp_id_cod.
+  rewrite <- (cat_comp_id_cod (adj_rl adj (Id G Y))), cat_comp_assoc.
   rewrite <- adj_rl_naturality.
   rewrite fmap_id, cat_comp_id_cod.
-  symmetry.
-  rewrite <- cat_comp_id_dom, <- fmap_id, cat_comp_assoc.
+  rewrite <- (cat_comp_id_dom (adj_rl adj (Id G X))), <- (fmap_id (G X)).
   rewrite <- adj_rl_naturality.
   now rewrite !cat_comp_id_dom, cat_comp_id_cod.
 Qed.
@@ -116,10 +116,10 @@ Lemma adj_satisfies_triangle:
 Proof.
   intros; split; simpl; [intro c | intro d];
     rewrite ?cat_comp_id_dom, ?cat_comp_id_cod.
-  - rewrite <- cat_comp_id_cod, <- adj_rl_naturality.
+  - rewrite <- (cat_comp_id_cod (_ \o _)), <- adj_rl_naturality.
     rewrite fmap_id, !cat_comp_id_cod.
     now rewrite adj_iso_lr_rl.
-  - rewrite <- cat_comp_id_dom, cat_comp_assoc, <- adj_lr_naturality.
+  - rewrite <- (cat_comp_id_dom (_ \o _)), cat_comp_assoc, <- adj_lr_naturality.
     rewrite fmap_id, !cat_comp_id_dom.
     now rewrite adj_iso_rl_lr.
 Qed.

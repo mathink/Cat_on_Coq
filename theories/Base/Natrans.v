@@ -76,8 +76,12 @@ Next Obligation.
 Qed.
 Notation "T <o> S" := (Natrans_hcompose S T) (at level 60, right associativity).
 
+Definition Natrans_eq (C D: Category)(F G: C --> D) :=
+  fun (S T: F ==> G) => forall X, S X == T X.
+Arguments Natrans_eq C D F G S T /.
+
 Program Definition Natrans_setoid (C D: Category)(F G: C --> D): Setoid :=
-  [Setoid by (fun (S T: F ==> G) => forall X, S X == T X)].
+  [Setoid by @Natrans_eq C D F G ].
 Next Obligation.
   intros S T U HeqST HeqTU X.
   now rewrite (HeqST X), (HeqTU X).
@@ -89,7 +93,7 @@ Program Definition Fun (C D: Category): Category :=
    with (@Natrans_compose C D), (@Natrans_id C D)].
 Next Obligation.
   - rename X into F, Y into G, Z into H.
-  intros S S' HeqS T T' HeqT X; simpl.
+  intros S S' HeqS T T' HeqT X; simpl in *.
   now rewrite HeqS, HeqT.
 
   - now rewrite cat_comp_assoc.
